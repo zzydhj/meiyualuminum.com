@@ -1,0 +1,1503 @@
+﻿=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\AGENTS.md ===
+## Development
+
+When starting the dev server, use background mode:
+
+```
+astro dev --background
+```
+
+Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+
+## Documentation
+
+Full documentation: https://docs.astro.build
+
+Consult these guides before working on related tasks:
+
+- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
+- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
+- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
+- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
+- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
+- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\astro.config.mjs ===
+// @ts-check
+import { defineConfig } from "astro/config";
+
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+
+// https://astro.build/config
+export default defineConfig({
+  site: "https://www.meiyualuminum.com",
+
+  // ← 保持静态，不需要改成 server！
+  output: "static",
+
+  trailingSlash: "ignore",
+  integrations: [mdx(), sitemap()],
+
+});
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\CLAUDE.md ===
+## Development
+
+When starting the dev server, use background mode:
+
+```
+astro dev --background
+```
+
+Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+
+## Documentation
+
+Full documentation: https://docs.astro.build
+
+Consult these guides before working on related tasks:
+
+- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
+- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
+- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
+- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
+- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
+- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\package.json ===
+{
+  "name": "virtual-virgo",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^7.0.3",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.0.9"
+  }
+}
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\README.md ===
+# Astro Starter Kit: Basics
+
+```sh
+npm create astro@latest -- --template basics
+```
+
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+
+## 🚀 Project Structure
+
+Inside of your Astro project, you'll see the following folders and files:
+
+```text
+/
+├── public/
+│   └── favicon.svg
+├── src
+│   ├── assets
+│   │   └── astro.svg
+│   ├── components
+│   │   └── Welcome.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   └── pages
+│       └── index.astro
+└── package.json
+```
+
+To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\tsconfig.json ===
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\content-assets.mjs ===
+
+
+export default new Map([]);
+		
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\content-modules.mjs ===
+
+export default new Map([
+["src/blog/post-1.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fblog%2Fpost-1.mdx&astroContentModuleFlag=true")],
+["src/blog/post-2.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fblog%2Fpost-2.mdx&astroContentModuleFlag=true")],
+["src/blog/post-3.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fblog%2Fpost-3.mdx&astroContentModuleFlag=true")],
+["src/blog/post-4.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fblog%2Fpost-4.mdx&astroContentModuleFlag=true")]]);
+		
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\content.d.ts ===
+declare module 'astro:content' {
+	interface Render {
+		'.mdx': Promise<{
+			Content: import('astro').MDXContent;
+			headings: import('astro').MarkdownHeading[];
+			remarkPluginFrontmatter: Record<string, any>;
+			components: import('astro').MDXInstance<{}>['components'];
+		}>;
+	}
+}
+
+declare module 'astro:content' {
+	export interface RenderResult {
+		Content: import('astro/runtime/server/index.js').AstroComponentFactory;
+		headings: import('astro').MarkdownHeading[];
+		remarkPluginFrontmatter: Record<string, any>;
+	}
+	interface Render {
+		'.md': Promise<RenderResult>;
+	}
+
+	export interface RenderedContent {
+		html: string;
+		metadata?: {
+			imagePaths: Array<string>;
+			[key: string]: unknown;
+		};
+	}
+
+	type Flatten<T> = T extends { [K: string]: infer U } ? U : never;
+
+	export type CollectionKey = keyof DataEntryMap;
+	export type CollectionEntry<C extends CollectionKey> = Flatten<DataEntryMap[C]>;
+
+	type AllValuesOf<T> = T extends any ? T[keyof T] : never;
+
+	export type ReferenceDataEntry<
+		C extends CollectionKey,
+		E extends keyof DataEntryMap[C] = string,
+	> = {
+		collection: C;
+		id: E;
+	};
+
+	export type ReferenceLiveEntry<C extends keyof LiveContentConfig['collections']> = {
+		collection: C;
+		id: string;
+	};
+
+	export function getCollection<C extends keyof DataEntryMap, E extends CollectionEntry<C>>(
+		collection: C,
+		filter?: (entry: CollectionEntry<C>) => entry is E,
+	): Promise<E[]>;
+	export function getCollection<C extends keyof DataEntryMap>(
+		collection: C,
+		filter?: (entry: CollectionEntry<C>) => unknown,
+	): Promise<CollectionEntry<C>[]>;
+
+	export function getLiveCollection<C extends keyof LiveContentConfig['collections']>(
+		collection: C,
+		filter?: LiveLoaderCollectionFilterType<C>,
+	): Promise<
+		import('astro').LiveDataCollectionResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>
+	>;
+
+	export function getEntry<
+		C extends keyof DataEntryMap,
+		E extends keyof DataEntryMap[C] | (string & {}),
+	>(
+		entry: ReferenceDataEntry<C, E>,
+	): E extends keyof DataEntryMap[C]
+		? Promise<DataEntryMap[C][E]>
+		: Promise<CollectionEntry<C> | undefined>;
+	export function getEntry<
+		C extends keyof DataEntryMap,
+		E extends keyof DataEntryMap[C] | (string & {}),
+	>(
+		collection: C,
+		id: E,
+	): E extends keyof DataEntryMap[C]
+		? string extends keyof DataEntryMap[C]
+			? Promise<DataEntryMap[C][E]> | undefined
+			: Promise<DataEntryMap[C][E]>
+		: Promise<CollectionEntry<C> | undefined>;
+	export function getLiveEntry<C extends keyof LiveContentConfig['collections']>(
+		collection: C,
+		filter: string | LiveLoaderEntryFilterType<C>,
+	): Promise<import('astro').LiveDataEntryResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>>;
+
+	/** Resolve an array of entry references from the same collection */
+	export function getEntries<C extends keyof DataEntryMap>(
+		entries: ReferenceDataEntry<C, keyof DataEntryMap[C]>[],
+	): Promise<CollectionEntry<C>[]>;
+
+	export function render<C extends keyof DataEntryMap>(
+		entry: DataEntryMap[C][string],
+	): Promise<RenderResult>;
+
+	export function render<C extends keyof LiveContentConfig['collections']>(
+		entry: import('astro').LiveDataEntry<LiveLoaderDataType<C>>,
+	): Promise<RenderResult>;
+
+	export function reference<
+		C extends
+			| keyof DataEntryMap
+			// Allow generic `string` to avoid excessive type errors in the config
+			// if `dev` is not running to update as you edit.
+			// Invalid collection names will be caught at build time.
+			| (string & {}),
+	>(
+		collection: C,
+	): import('astro/zod').ZodPipe<
+		import('astro/zod').ZodString,
+		import('astro/zod').ZodTransform<
+			C extends keyof DataEntryMap
+				? {
+						collection: C;
+						id: string;
+					}
+				: never,
+			string
+		>
+	>;
+
+	type ReturnTypeOrOriginal<T> = T extends (...args: any[]) => infer R ? R : T;
+	type InferEntrySchema<C extends keyof DataEntryMap> = import('astro/zod').infer<
+		ReturnTypeOrOriginal<Required<ContentConfig['collections'][C]>['schema']>
+	>;
+	type ExtractLoaderConfig<T> = T extends { loader: infer L } ? L : never;
+	type InferLoaderSchema<
+		C extends keyof DataEntryMap,
+		L = ExtractLoaderConfig<ContentConfig['collections'][C]>,
+	> = L extends { schema: import('astro/zod').ZodSchema }
+		? import('astro/zod').infer<L['schema']>
+		: any;
+
+	type DataEntryMap = {
+		"blog": Record<string, {
+  id: string;
+  body?: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">;
+  rendered?: RenderedContent;
+  filePath?: string;
+}>;
+
+	};
+
+	type ExtractLoaderTypes<T> = T extends import('astro/loaders').LiveLoader<
+		infer TData,
+		infer TEntryFilter,
+		infer TCollectionFilter,
+		infer TError
+	>
+		? { data: TData; entryFilter: TEntryFilter; collectionFilter: TCollectionFilter; error: TError }
+		: { data: never; entryFilter: never; collectionFilter: never; error: never };
+	type ExtractEntryFilterType<T> = ExtractLoaderTypes<T>['entryFilter'];
+	type ExtractCollectionFilterType<T> = ExtractLoaderTypes<T>['collectionFilter'];
+	type ExtractErrorType<T> = ExtractLoaderTypes<T>['error'];
+	type ExtractDataType<T> = ExtractLoaderTypes<T>['data'];
+
+	type LiveLoaderDataType<C extends keyof LiveContentConfig['collections']> =
+		LiveContentConfig['collections'][C]['schema'] extends undefined
+			? ExtractDataType<LiveContentConfig['collections'][C]['loader']>
+			: import('astro/zod').infer<
+					Exclude<LiveContentConfig['collections'][C]['schema'], undefined>
+				>;
+	type LiveLoaderEntryFilterType<C extends keyof LiveContentConfig['collections']> =
+		ExtractEntryFilterType<LiveContentConfig['collections'][C]['loader']>;
+	type LiveLoaderCollectionFilterType<C extends keyof LiveContentConfig['collections']> =
+		ExtractCollectionFilterType<LiveContentConfig['collections'][C]['loader']>;
+	type LiveLoaderErrorType<C extends keyof LiveContentConfig['collections']> = ExtractErrorType<
+		LiveContentConfig['collections'][C]['loader']
+	>;
+
+	export type ContentConfig = typeof import("./../src/content.config.js");
+	export type LiveContentConfig = never;
+}
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\data-store.json ===
+[["Map",1,2,64,65],"blog",["Map",3,4,21,22,36,37,51,52],"post-1",{"id":3,"data":5,"body":17,"filePath":18,"digest":19,"deferredRender":20},{"title":6,"pubDate":7,"description":8,"author":9,"image":10,"tags":13},"我的第一篇博客文章",["Date","2022-07-01T00:00:00.000Z"],"这是我 Astro 博客的第一篇文章。","Astro 学习者",{"url":11,"alt":12},"https://docs.astro.build/assets/rose.webp","The Astro logo on a dark background with a pink glow.",[14,15,16],"astro2","blogging","learning in public","# 我的第一篇博客文章123\r\n\r\n 发表于：2022-07-01\r\n\r\n 欢迎来到我学习关于 Astro 的新博客！在这里，我将分享我建立新网站的学习历程。\r\n\r\n ## 我做了什么\r\n\r\n 1. **安装 Astro**：首先，我创建了一个新的 Astro 项目并设置好了我的在线账号。\r\n\r\n 2. **制作页面**：然后我学习了如何通过创建新的 `.astro` 文件并将它们保存在 `src/pages/` 文件夹里来制作页面。\r\n\r\n 3. **发表博客文章**：这是我的第一篇博客文章！我现在有用 Astro 编写的页面和用 Markdown 写的文章了！\r\n\r\n ## 下一步计划\r\n\r\n 我将完成 Astro 教程，然后继续编写更多内容。关注我以获取更多信息。","src/blog/post-1.mdx","34dddf4fc4d0e911",true,"post-2",{"id":21,"data":23,"body":33,"filePath":34,"digest":35,"deferredRender":20},{"title":24,"pubDate":25,"description":26,"author":9,"image":27,"tags":30},"我的第二篇博客文章",["Date","2022-07-08T00:00:00.000Z"],"学习了一些 Astro 后，我根本停不下来！",{"url":28,"alt":29},"https://docs.astro.build/assets/arc.webp","The Astro logo on a dark background with a purple gradient arc.",[31,15,16,32],"astro","successes","在学习 Astro 大约一周后，我决定尝试些新的东西。我编写并导入了一个小组件！","src/blog/post-2.mdx","bce76538995a76d2","post-3",{"id":36,"data":38,"body":48,"filePath":49,"digest":50,"deferredRender":20},{"title":39,"pubDate":40,"description":41,"author":9,"image":42,"tags":45},"我的第三篇博客文章",["Date","2022-07-15T00:00:00.000Z"],"我遇到了一些问题，但是在社区里面提问真的很有帮助！",{"url":43,"alt":44},"https://docs.astro.build/assets/rays.webp","The Astro logo on a dark background with rainbow rays.",[31,16,46,47],"setbacks","community","尽管这并不总是一帆风顺，但我很享受使用 Astro 进行搭建。并且，[Discord 社区](https://astro.build/chat)真的很友好而且乐于助人！","src/blog/post-3.mdx","929a903b960e9b13","post-4",{"id":51,"data":53,"body":61,"filePath":62,"digest":63,"deferredRender":20},{"title":54,"pubDate":55,"description":56,"author":9,"image":57,"tags":60},"我的第四篇博客文章",["Date","2022-08-08T00:00:00.000Z"],"这篇文章会自己出现在列表中！",{"url":58,"alt":59},"https://docs.astro.build/default-og-image.png","The word astro against an illustration of planets and stars.",[31,32],"这篇文章应该会与其他的博客文章一起显示，因为 `import.meta.glob()` 会返回一个包含所有文章的列表，以创建这个文章列表。","src/blog/post-4.mdx","03576262f6123099","meta::meta",["Map",66,67,68,69,70,71],"astro-config-digest","{\"root\":{},\"srcDir\":{},\"publicDir\":{},\"outDir\":{},\"cacheDir\":{},\"site\":\"https://www.meiyualuminum.com\",\"compressHTML\":\"jsx\",\"base\":\"/\",\"trailingSlash\":\"ignore\",\"output\":\"static\",\"scopedStyleStrategy\":\"attribute\",\"build\":{\"format\":\"directory\",\"client\":{},\"server\":{},\"assets\":\"_astro\",\"serverEntry\":\"entry.mjs\",\"redirects\":true,\"inlineStylesheets\":\"auto\",\"concurrency\":1},\"server\":{\"open\":false,\"host\":false,\"port\":4321,\"allowedHosts\":[]},\"redirects\":{},\"image\":{\"endpoint\":{\"route\":\"/_image\"},\"service\":{\"entrypoint\":\"astro/assets/services/sharp\",\"config\":{}},\"dangerouslyProcessSVG\":false,\"domains\":[],\"remotePatterns\":[],\"responsiveStyles\":false},\"devToolbar\":{\"enabled\":true},\"markdown\":{\"syntaxHighlight\":{\"type\":\"shiki\",\"excludeLangs\":[\"math\"]},\"shikiConfig\":{\"langs\":[],\"langAlias\":{},\"theme\":\"github-dark\",\"themes\":{},\"wrap\":false,\"transformers\":[]},\"remarkPlugins\":[],\"rehypePlugins\":[],\"remarkRehype\":{},\"processor\":{\"name\":\"satteri\",\"options\":{\"mdastPlugins\":[],\"hastPlugins\":[],\"features\":{}}}},\"security\":{\"checkOrigin\":true,\"allowedDomains\":[],\"csp\":false,\"actionBodySizeLimit\":1048576,\"serverIslandBodySizeLimit\":1048576},\"env\":{\"schema\":{},\"validateSecrets\":false},\"prerenderConflictBehavior\":\"warn\",\"fetchFile\":\"fetch\",\"experimental\":{\"clientPrerender\":false,\"contentIntellisense\":false,\"chromeDevtoolsWorkspace\":false,\"collectionStorage\":\"single-file\"},\"legacy\":{\"collectionsBackwardsCompat\":false}}","astro-version","7.1.1","content-config-digest","f19181cdc7986cb1"]
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\dev.json ===
+{
+	"pid": 73476,
+	"port": 4321,
+	"url": "http://localhost:4321",
+	"urls": {
+		"local": [
+			"http://localhost:4321/"
+		],
+		"network": []
+	},
+	"background": false,
+	"startedAt": "2026-07-20T12:53:05.068Z"
+}
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\settings.json ===
+{
+	"_variables": {
+		"lastUpdateCheck": 1784202916079
+	}
+}
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\types.d.ts ===
+/// <reference types="astro/client" />
+/// <reference path="content.d.ts" />
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\.astro\collections\blog.schema.json ===
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "pubDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "alt"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "canonicalURL": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "pubDate",
+    "description",
+    "author",
+    "image",
+    "tags"
+  ]
+}
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\public\robots.txt ===
+# 示例：允许所有机器人扫描并索引你的网站。
+# 完整语法：https://developers.google.com/search/docs/advanced/robots/create-robots-txt
+User-agent: *
+Allow: /
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\content.config.ts ===
+// 导入 glob 加载器（loader）
+import { glob } from "astro/loaders";
+// 从 `astro:content` 导入工具函数
+import { defineCollection } from "astro:content";
+// 导入 Zod
+import { z } from "astro/zod";
+// 为每个集合定义一个 `loader` 和 `schema`
+const blog = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.mdx", base: "./src/blog" }),
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.date(),
+    description: z.string(),
+    author: z.string(),
+    image: z.object({
+      url: z.string(),
+      alt: z.string(),
+    }),
+    tags: z.array(z.string()),
+    canonicalURL: z.string().optional(), // 可选，手动指定规范链接，防止重复内容被搜索引擎降权
+  }),
+});
+// 导出一个单独的 `collections` 对象用以注册你的集合（们）
+export const collections = { blog };
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\blog\post-1.mdx ===
+---
+title: '我的第一篇博客文章'
+pubDate: 2022-07-01
+description: '这是我 Astro 博客的第一篇文章。'
+author: 'Astro 学习者'
+image:
+    url: 'https://docs.astro.build/assets/rose.webp'
+    alt: 'The Astro logo on a dark background with a pink glow.'
+tags: ["astro2", "blogging", "learning in public"]
+---
+
+# 我的第一篇博客文章123
+
+ 发表于：2022-07-01
+
+ 欢迎来到我学习关于 Astro 的新博客！在这里，我将分享我建立新网站的学习历程。
+
+ ## 我做了什么
+
+ 1. **安装 Astro**：首先，我创建了一个新的 Astro 项目并设置好了我的在线账号。
+
+ 2. **制作页面**：然后我学习了如何通过创建新的 `.astro` 文件并将它们保存在 `src/pages/` 文件夹里来制作页面。
+
+ 3. **发表博客文章**：这是我的第一篇博客文章！我现在有用 Astro 编写的页面和用 Markdown 写的文章了！
+
+ ## 下一步计划
+
+ 我将完成 Astro 教程，然后继续编写更多内容。关注我以获取更多信息。
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\blog\post-2.mdx ===
+---
+title: 我的第二篇博客文章
+author: Astro 学习者
+description: "学习了一些 Astro 后，我根本停不下来！"
+image:
+    url: "https://docs.astro.build/assets/arc.webp"
+    alt: "The Astro logo on a dark background with a purple gradient arc."
+pubDate: 2022-07-08
+tags: ["astro", "blogging", "learning in public", "successes"]
+---
+在学习 Astro 大约一周后，我决定尝试些新的东西。我编写并导入了一个小组件！
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\blog\post-3.mdx ===
+---
+title: 我的第三篇博客文章
+author: Astro 学习者
+description: "我遇到了一些问题，但是在社区里面提问真的很有帮助！"
+image:
+    url: "https://docs.astro.build/assets/rays.webp"
+    alt: "The Astro logo on a dark background with rainbow rays."
+pubDate: 2022-07-15
+tags: ["astro", "learning in public", "setbacks", "community"]
+---
+尽管这并不总是一帆风顺，但我很享受使用 Astro 进行搭建。并且，[Discord 社区](https://astro.build/chat)真的很友好而且乐于助人！
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\blog\post-4.mdx ===
+---
+title: '我的第四篇博客文章'
+author: 'Astro 学习者'
+description: "这篇文章会自己出现在列表中！"
+image:
+  url: "https://docs.astro.build/default-og-image.png"
+  alt: "The word astro against an illustration of planets and stars."
+pubDate: 2022-08-08
+tags: ["astro", "successes"]
+---
+这篇文章应该会与其他的博客文章一起显示，因为 `import.meta.glob()` 会返回一个包含所有文章的列表，以创建这个文章列表。
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\BlogPost.astro ===
+---
+const { title, url } = Astro.props;
+---
+
+<li><a href={url}>{title}</a></li>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\Breadcrumb.astro ===
+---
+/**
+ * Breadcrumb.astro
+ * 面包屑导航组件：同时输出可见的导航路径 + JSON-LD 结构化数据
+ *
+ * 用法示例：
+ *   <Breadcrumb items={[
+ *     { name: "首页", url: "/" },
+ *     { name: "博客", url: "/blog/" },
+ *     { name: "文章标题", url: "/blog/post-1/" },
+ *   ]} />
+ */
+
+interface BreadcrumbItem {
+  name: string;   // 显示名称
+  url: string;    // 相对路径，如 "/blog/"
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+// 将相对路径拼接为完整 URL，供 JSON-LD 使用
+// new URL(item.url, Astro.site) 能正确处理相对路径
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": new URL(item.url, Astro.site).href,
+  })),
+};
+---
+
+<!-- JSON-LD：给搜索引擎看，用户不可见 -->
+<!-- set:html 是 Astro 专有指令，将内容原样注入不做 HTML 转义 -->
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<!-- 可见面包屑导航：用户可以看到并点击 -->
+<nav aria-label="面包屑导航" class="breadcrumb">
+  <ol>
+    {items.map((item, index) => {
+      const isLast = index === items.length - 1;
+      return (
+        <li>
+          {isLast ? (
+            <!-- 最后一项是当前页，不需要链接，用 aria-current 标记 -->
+            <span aria-current="page">{item.name}</span>
+          ) : (
+            <a href={item.url}>{item.name}</a>
+          )}
+          {/* 不是最后一项时，显示分隔符 › */}
+          {!isLast && <span class="separator" aria-hidden="true">›</span>}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: #666;
+  }
+
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;   /* 标题过长时自动换行 */
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .breadcrumb a {
+    color: #0053a0;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  /* 当前页文字样式：加粗，不可点击 */
+  .breadcrumb [aria-current="page"] {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .breadcrumb .separator {
+    color: #999;
+    user-select: none;  /* 分隔符不参与文字选中 */
+  }
+</style>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\Footer.astro ===
+---
+
+import Social from './Social.astro';
+
+---
+
+<style>
+  footer {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+</style>
+
+
+<footer>
+  <Social platform="twitter" username="astrodotbuild" />
+  <Social platform="github" username="withastro" />
+  <Social platform="youtube" username="astrodotbuild" />
+</footer>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\Header.astro ===
+---
+import Menu from "../components/Menu.astro";
+import Navigation from "../components/Navigation.astro";
+---
+
+
+<header>
+    <nav>
+            <Menu />
+        <Navigation />
+    </nav>
+</header>
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\Menu.astro ===
+---
+---
+<button aria-expanded="false" aria-controls="main-menu" class="menu">
+  Menu
+</button>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\Navigation.astro ===
+---
+---
+
+<div id="main-menu" class="nav-links">
+  <a href="/">首页</a>
+  <a href="/about/">关于</a>
+  <a href="/blog/">博客</a>
+  <a href="/tags/">标签</a>
+
+</div>
+
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\Social.astro ===
+---
+const { platform, username } = Astro.props;
+---
+<a href={`https://www.${platform}.com/${username}`}>{platform}</a>
+
+<style>
+  a {
+    padding: 0.5rem 1rem;
+    color: white;
+    background-color: #4c1d95;
+    text-decoration: none;
+  }
+</style>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\components\Welcome.astro ===
+---
+import astroLogo from '../assets/astro.svg';
+import background from '../assets/background.svg';
+---
+
+<div id="container">
+	<img id="background" src={background.src} alt="" fetchpriority="high" />
+	<main>
+		<section id="hero">
+			<a href="https://astro.build"
+				><img src={astroLogo.src} width="115" height="48" alt="Astro Homepage" /></a
+			>
+			<h1>
+				To get started, open the <code><pre>src/pages</pre></code> directory in your project.
+			</h1>
+			<section id="links">
+				<a class="button" href="https://docs.astro.build">Read our docs</a>
+				<a href="https://astro.build/chat"
+					>Join our Discord <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36"
+						><path
+							fill="currentColor"
+							d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
+						></path></svg
+					>
+				</a>
+			</section>
+		</section>
+	</main>
+
+	<a href="https://astro.build/blog/astro-6-beta/" id="news" class="box">
+		<svg width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg"
+			><path
+				d="M24.667 12c1.333 1.414 2 3.192 2 5.334 0 4.62-4.934 5.7-7.334 12C18.444 28.567 18 27.456 18 26c0-4.642 6.667-7.053 6.667-14Zm-5.334-5.333c1.6 1.65 2.4 3.43 2.4 5.333 0 6.602-8.06 7.59-6.4 17.334C13.111 27.787 12 25.564 12 22.666c0-4.434 7.333-8 7.333-16Zm-6-5.333C15.111 3.555 16 5.556 16 7.333c0 8.333-11.333 10.962-5.333 22-3.488-.774-6-4-6-8 0-8.667 8.666-10 8.666-20Z"
+				fill="#111827"></path></svg
+		>
+		<h2>What's New in Astro 6.0?</h2>
+		<p>
+			Redesigned dev server, fonts, live collections, built-in CSP support, and more! Click to
+			explore Astro 6.0's new features.
+		</p>
+	</a>
+</div>
+
+<style>
+	#background {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+		filter: blur(100px);
+	}
+
+	#container {
+		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+		height: 100%;
+	}
+
+	main {
+		height: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	#hero {
+		display: flex;
+		align-items: start;
+		flex-direction: column;
+		justify-content: center;
+		padding: 16px;
+	}
+
+	h1 {
+		font-size: 22px;
+		margin-top: 0.25em;
+	}
+
+	#links {
+		display: flex;
+		gap: 16px;
+	}
+
+	#links a {
+		display: flex;
+		align-items: center;
+		padding: 10px 12px;
+		color: #111827;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	#links a:hover {
+		color: rgb(78, 80, 86);
+	}
+
+	#links a svg {
+		height: 1em;
+		margin-left: 8px;
+	}
+
+	#links a.button {
+		color: white;
+		background: linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%);
+		box-shadow:
+			inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+			inset 0 -2px 0 rgba(0, 0, 0, 0.24);
+		border-radius: 10px;
+	}
+
+	#links a.button:hover {
+		color: rgb(230, 230, 230);
+		box-shadow: none;
+	}
+
+	pre {
+		font-family:
+			ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono',
+			monospace;
+		font-weight: normal;
+		background: linear-gradient(14deg, #d83333 0%, #f041ff 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		margin: 0;
+	}
+
+	h2 {
+		margin: 0 0 1em;
+		font-weight: normal;
+		color: #111827;
+		font-size: 20px;
+	}
+
+	p {
+		color: #4b5563;
+		font-size: 16px;
+		line-height: 24px;
+		letter-spacing: -0.006em;
+		margin: 0;
+	}
+
+	code {
+		display: inline-block;
+		background:
+			linear-gradient(66.77deg, #f3cddd 0%, #f5cee7 100%) padding-box,
+			linear-gradient(155deg, #d83333 0%, #f041ff 18%, #f5cee7 45%) border-box;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		padding: 6px 8px;
+	}
+
+	.box {
+		padding: 16px;
+		background: rgba(255, 255, 255, 1);
+		border-radius: 16px;
+		border: 1px solid white;
+	}
+
+	#news {
+		position: absolute;
+		bottom: 16px;
+		right: 16px;
+		max-width: 300px;
+		text-decoration: none;
+		transition: background 0.2s;
+		backdrop-filter: blur(50px);
+	}
+
+	#news:hover {
+		background: rgba(255, 255, 255, 0.55);
+	}
+
+	@media screen and (max-height: 368px) {
+		#news {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		#container {
+			display: flex;
+			flex-direction: column;
+		}
+
+		#hero {
+			display: block;
+			padding-top: 10%;
+		}
+
+		#links {
+			flex-wrap: wrap;
+		}
+
+		#links a.button {
+			padding: 14px 18px;
+		}
+
+		#news {
+			right: 16px;
+			left: 16px;
+			bottom: 2.5rem;
+			max-width: 100%;
+		}
+
+		h1 {
+			line-height: 1.5;
+		}
+	}
+</style>
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\layouts\BaseLayout.astro ===
+---
+import Header from '../components/Header.astro'; // 导入页头组件，模板中用 <Header /> 使用
+import Footer from '../components/Footer.astro'; // 导入页脚组件，模板中用 <Footer /> 使用
+import '../styles/global.css'; // 导入全局 CSS，所有使用此布局的页面都会应用这份样式
+
+interface Props { // TypeScript 接口，定义此布局组件能接收哪些 props，只做类型声明不产生运行时代码
+  pageTitle: string; // 必填，无 ? 号，父页面不传会报 TypeScript 错误
+  description?: string; // 可选（? 号），不传则值为 undefined
+  image?: string; // 可选，OG 分享卡片的预览图路径
+  canonicalURL?: string; // 可选，页面规范链接，用于防止搜索引擎判定重复内容
+  type?: 'website' | 'article'; // 可选，联合类型，只能传这两个字符串值之一
+  pubDate?: Date; // 可选，文章发布时间，需传入 Date 对象
+  author?: string; // 可选，文章作者名，当前模板未实际使用，预留字段
+}
+
+const {
+  pageTitle, // 必填参数，父页面必须传，否则 TypeScript 报错
+  description = "你的网站默认描述", // 父页面未传时使用此默认值
+  image = "/default-og-image.png", // 父页面未传时使用默认 OG 图片路径
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).href, // 未传时自动拼接完整 URL：Astro.url.pathname 是当前路径如 /about，Astro.site 是配置的根域名，new URL() 将两者合并成完整链接
+  type = "website", // 未传时默认为普通页面类型，文章页需显式传 "article"
+  pubDate, // 可选，无默认值，不传则为 undefined
+  author, // 可选，无默认值，当前模板未使用，仅接收备用
+} = Astro.props; // Astro 内置对象，存放直接父级传来的所有参数
+
+const siteName = "你的网站名"; // 网站名称常量，在 title 和 og:site_name 中复用，改一处全局生效
+
+---
+
+<html lang="en"> <!-- lang="en" 声明页面语言为英语，帮助搜索引擎和屏幕阅读器正确处理 -->
+  <head>
+    <meta charset="utf-8" /> <!-- 声明字符编码为 UTF-8，防止中文乱码，必须放在 head 最前面 -->
+    <meta name="viewport" content="width=device-width" /> <!-- 移动端适配，让页面宽度等于设备屏幕宽度，禁止浏览器默认缩放 -->
+    <meta name="generator" content={Astro.generator} /> <!-- Astro 内置变量，输出当前框架版本信息如 "Astro v4.x.x" -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> <!-- 浏览器标签页上显示的小图标（favicon），使用 SVG 格式 -->
+
+    <!-- ① 基础 SEO -->
+    <title>{pageTitle} | {siteName}</title> <!-- 页面标题，显示在浏览器标签页和搜索结果，格式：页面名 | 网站名 -->
+    <meta name="description" content={description} /> <!-- 页面描述，显示在搜索引擎结果的摘要文字，影响点击率 -->
+    <link rel="canonical" href={canonicalURL} /> <!-- 规范链接，告诉搜索引擎此页面的权威 URL，防止重复内容被降权 -->
+
+
+    <!-- ② Open Graph：链接被分享到微信/微博/Facebook 等平台时，控制预览卡片内容 -->
+    <meta property="og:type" content={type} /> <!-- 内容类型：website 普通页面 / article 文章页 -->
+    <meta property="og:title" content={pageTitle} /> <!-- 分享卡片显示的标题 -->
+    <meta property="og:description" content={description} /> <!-- 分享卡片显示的描述文字 -->
+    <meta property="og:image" content={new URL(image, Astro.site).href} /> <!-- 分享卡片预览图，new URL() 将相对路径拼成完整绝对路径 -->
+    <meta property="og:url" content={canonicalURL} /> <!-- 分享链接对应的页面 URL -->
+    <meta property="og:site_name" content={siteName} /> <!-- 网站名称，显示在分享卡片的来源位置 -->
+    {pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />} <!-- 条件渲染：pubDate 存在才输出此标签；.toISOString() 将 Date 转为标准字符串如 2026-07-20T12:00:00.000Z -->
+
+    <!-- ③ Twitter Card：Twitter 不完全遵循 OG 协议，需单独声明一套 -->
+    <meta name="twitter:card" content="summary_large_image" /> <!-- 卡片样式：summary_large_image 为大图模式 -->
+    <meta name="twitter:title" content={pageTitle} /> <!-- Twitter 卡片标题 -->
+    <meta name="twitter:description" content={description} /> <!-- Twitter 卡片描述 -->
+    <meta name="twitter:image" content={new URL(image, Astro.site).href} /> <!-- Twitter 卡片预览图，同样需要完整 URL -->
+  </head>
+  <body>
+    <Header /> <!-- 渲染页头组件（导航栏等），具体内容定义在 Header.astro 中 -->
+    <h1>{pageTitle}</h1> <!-- 在页面正文顶部显示页面标题，{} 为插值语法，将变量值渲染进 HTML -->
+    <slot /> <!-- 插槽占位符，调用此布局的父页面传入的子内容会渲染在这里 -->
+    <Footer /> <!-- 渲染页脚组件，具体内容定义在 Footer.astro 中 -->
+    <script>
+      import "../scripts/menu.js"; // 客户端脚本，在浏览器端运行（不同于 --- 里的代码在构建时运行），导入菜单交互逻辑 //
+    </script>
+  </body>
+</html>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\layouts\MarkdownPostLayout.astro ===
+---
+import BaseLayout from "../layouts/BaseLayout.astro"; // 导入总布局组件，此文章布局嵌套在 BaseLayout 内部形成两层布局
+import type { CollectionEntry } from "astro:content"; // import type 仅导入类型定义不产生运行时代码，CollectionEntry 用于约束 frontmatter 的数据结构
+
+interface Props {
+  frontmatter: CollectionEntry<'blog'>['data']; // CollectionEntry<'blog'> 表示 blog 集合的一篇条目，['data'] 取其 data 字段，即 Markdown 文件 --- 里定义的所有字段（title/description/pubDate 等）
+}
+
+const { frontmatter } = Astro.props; // 从直接父级传来的 props 中解构出 frontmatter 对象，后续所有文章数据都从它身上取
+const canonicalURL = frontmatter.canonicalURL ?? Astro.url.href; // 优先使用文章手动指定的规范链接，否则自动取当前页面完整 URL
+
+// 结构化数据 JSON-LD：谷歌推荐的 SEO 增强格式，嵌入页面后搜索引擎能读懂文章的作者/时间/图片等信息，可能在搜索结果中显示富文本摘要卡片
+const jsonLd = {
+  "@context": "https://schema.org", // 声明使用 schema.org 词汇规范，搜索引擎据此解读各字段含义
+  "@type": "BlogPosting", // 声明此内容类型为博客文章
+  "headline": frontmatter.title, // 文章标题
+  "description": frontmatter.description, // 文章描述
+  "image": frontmatter.image.url, // 文章封面图 URL
+  "author": {
+    "@type": "Person", // 作者类型为自然人
+    "name": frontmatter.author, // 作者姓名
+  },
+  "datePublished": frontmatter.pubDate.toISOString(), // 发布时间，.toISOString() 将 Date 对象转为标准格式字符串如 2026-07-20T12:00:00.000Z
+  "publisher": {
+    "@type": "Organization", // 发布者类型为组织机构
+    "name": "你的网站名", // 发布者名称
+    "logo": {
+      "@type": "ImageObject", // logo 类型为图片对象
+      "url": new URL("/favicon.svg", Astro.site).href, // new URL() 将相对路径 /favicon.svg 与 Astro.site 根域名拼接成完整绝对 URL
+    }
+  }
+};
+---
+
+<!-- 把文章数据传给 BaseLayout，由 BaseLayout 负责渲染 head 里的 SEO/OG/Twitter Card 标签 -->
+<BaseLayout
+  pageTitle={frontmatter.title}
+  description={frontmatter.description}
+  image={frontmatter.image.url}
+  type="article"
+  pubDate={frontmatter.pubDate}
+  author={frontmatter.author}
+>
+  <!-- JSON-LD 结构化数据注入：type="application/ld+json" 告知浏览器这是 JSON 数据而非可执行脚本；set:html 是 Astro 专属指令将内容原样注入不做 HTML 转义；JSON.stringify() 把 JS 对象序列化为 JSON 字符串 -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <p>{frontmatter.pubDate.toLocaleDateString()}</p> <!-- .toLocaleDateString() 按用户浏览器地区设置格式化日期，如中文环境显示 2026/7/20 -->
+  <p><em>{frontmatter.description}</em></p> <!-- em 标签将文字渲染为斜体，在 HTML 语义上表示强调内容 -->
+  <p>作者：{frontmatter.author}</p> <!-- 显示文章作者名，{} 为 Astro 插值语法将变量值渲染进 HTML -->
+  <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} /> <!-- 文章封面图，alt 属性提供无障碍描述文字，图片加载失败或屏幕阅读器访问时使用 -->
+
+  <!-- 遍历标签数组，每个标签生成一个可点击链接，点击跳转到对应标签聚合页如 /tags/astro。 .map() 遍历数组每一项，tag: string 是 TS 类型注解；模板字符串 `/tags/${tag}` 动态拼接链接路径  -->
+  <div class="tags">
+    {frontmatter.tags.map((tag: string) => (
+      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p> 
+    ))}
+  </div>
+
+
+  <slot /> <!-- 插槽占位符，Markdown 文章的正文内容（--- 以外的部分）会渲染在这里 -->
+</BaseLayout>
+
+<style>
+  /* 标签链接颜色，覆盖浏览器默认的蓝紫色 */
+  a {
+    color: #00539F;
+  }
+
+  /* 标签容器：flex 横向排列，flex-wrap 允许超出宽度时自动换行 */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* 单个标签样式：点状边框 + 圆角 + 内边距 + 浅蓝背景，营造标签胶囊外观 */
+  .tag {
+    margin: 0.25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: .5em;
+    padding: .5em 1em;
+    font-size: 1.15em;
+    background-color: #F8FCFD;
+  }
+</style>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\pages\about.astro ===
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const pageTitle = "关于我";
+
+const identity = {
+  firstName: "莎拉",
+  country: "加拿大",
+  occupation: "技术撰稿人",
+  hobbies: ["摄影", "观鸟", "棒球"],
+};
+
+const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
+
+const happy = true;
+const goal = 3;
+
+const skillColor = "crimson";
+const fontWeight = "bold";
+const textCase = "uppercase";
+---
+
+<BaseLayout pageTitle={pageTitle}>
+      <style define:vars={{ skillColor, fontWeight, textCase }}>
+      h1 {
+        color: purple;
+        font-size: 4rem;
+      }
+      .skill {
+        color: var(--skillColor);
+        font-weight: var(--fontWeight);
+        text-transform: var(--textCase);
+      }
+    </style>
+  <h1>{pageTitle}</h1>
+  <h2>……和我的新 Astro 网站！</h2>
+
+  <p>
+    我正在学习 Astro
+    的入门教程。这是我网站上的第二个页面，也是我自己建立的第一页面！
+  </p>
+
+  <p>随着我完成更多教程，该站点将更新，所以请继续查看我的旅程将如何进行吧！</p>
+  <ul>
+    <li>我的名字是{identity.firstName}.</li>
+    <li>我住在{identity.country}。我的职业是{identity.occupation}。</li>
+    {
+      identity.hobbies.length >= 2 && (
+        <li>
+          我的两个习惯：{identity.hobbies[0]}和{identity.hobbies[1]}
+        </li>
+      )
+    }
+  </ul>
+  <p>我的技能是：</p>
+  <ul>
+    {skills.map((skill) => <li class="skill">{skill}</li>)}
+  </ul>
+
+  {happy && <p>我非常乐意学习 Astro！</p>}
+
+
+  {goal === 3 ? <p>我的目标是在三天内完成。</p> : <p>我的目标不是 3 天。</p>}
+</BaseLayout>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\pages\blog.astro ===
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+
+import BlogPost from "../components/BlogPost.astro";
+
+const pageTitle = "Astro";
+const allPosts = await getCollection("blog");
+
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <h1>我的 Astro 学习博客</h1>
+  <p>这是我的 Astro 学习笔记</p>
+  <ul>
+
+    {
+      allPosts.map((post) => (
+        <BlogPost url={`/blog/${post.id}/`} title={post.data.title} />
+      ))
+    }
+  </ul>
+</BaseLayout>
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\pages\index.astro ===
+---
+import BaseLayout from "../layouts/BaseLayout.astro"; // 导入总布局组件，页面所有内容都会被包裹在 BaseLayout 内部
+const pageTitle = "首页2"; // 定义页面标题字符串，传给 BaseLayout 后显示在浏览器标签页、<h1> 和 SEO title 标签中
+
+const websiteJsonLd = { // 定义网站级别的 JSON-LD 结构化数据对象，嵌入页面后搜索引擎可读取网站基本信息
+  "@context": "https://schema.org", // 声明使用 schema.org 词汇规范，搜索引擎据此解读各字段含义
+  "@type": "WebSite", // 声明此结构化数据描述的是网站整体，区别于文章页使用的 BlogPosting 类型
+  "name": "你的网站名", // 网站名称，搜索引擎在展示站点信息时使用
+  "url": Astro.site, // 网站根域名，取自 astro.config.mjs 中配置的 site 字段，如 https://example.com
+  "potentialAction": { // 声明网站支持的潜在操作，配置后 Google 搜索结果可能直接显示站内搜索框
+    "@type": "SearchAction", // 操作类型为搜索行为
+    "target": `${Astro.site}search?q={search_term_string}`, // 搜索 URL 模板，{search_term_string} 是占位符，Google 会用实际搜索词替换它
+    "query-input": "required name=search_term_string" // 声明 search_term_string 为必填的查询参数名
+  }
+};
+---
+<BaseLayout pageTitle={pageTitle}> <!-- 使用 BaseLayout 作为外层容器，通过 pageTitle={pageTitle} 将标题变量以 prop 形式传入，{} 为 JSX 插值语法 -->
+  <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} /> <!-- type="application/ld+json" 告知浏览器此 script 为结构化数据非可执行脚本；set:html 是 Astro 专有指令，将内容作为原始字符串注入不转义；JSON.stringify() 将 JS 对象序列化为 JSON 字符串 -->
+  <h2>我超棒的博客副标题1232</h2> <!-- 页面副标题，渲染到 BaseLayout 中 <slot /> 插槽所在位置 -->
+</BaseLayout>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\pages\blog\[...slug].astro ===
+---
+import Breadcrumb from '../../components/Breadcrumb.astro';
+
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';  // ← 加这行
+
+import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
+
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post: CollectionEntry<'blog'>) => ({
+    params: { slug: post.id }, props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": Astro.site
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "博客",
+      "item": new URL("/blog/", Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": post.data.title,
+      "item": new URL(Astro.url.pathname, Astro.site).href
+    }
+  ]
+};
+
+---
+
+<MarkdownPostLayout frontmatter={post.data}>
+    <Breadcrumb items={[
+    { name: "首页", url: "/" },
+    { name: "博客", url: "/blog/" },
+    { name: post.data.title, url: `/blog/${post.id}/` },
+  ]} />
+  <Content />
+</MarkdownPostLayout>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\pages\tags\index.astro ===
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+  const allPosts = await getCollection("blog");
+const tags = [...new Set(allPosts.map((post: CollectionEntry<'blog'>) => post.data.tags).flat())];
+const pageTitle = "标签索引";
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <div class="tags">
+    {
+      tags.map((tag) => (
+        <p class="tag">
+          <a href={`/tags/${tag}`}>{tag}</a>
+        </p>
+      ))
+    }
+  </div>
+</BaseLayout>
+<style>
+  a {
+    color: #00539F;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    margin: 0.25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: .5em;
+    padding: .5em 1em;
+    font-size: 1.15em;
+    background-color: #F8FCFD;
+  }
+</style>
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\pages\tags\[tag].astro ===
+---
+import Breadcrumb from '../../components/Breadcrumb.astro';
+
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogPost from "../../components/BlogPost.astro";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  const uniqueTags = [
+    ...new Set(allPosts.map((post: CollectionEntry<'blog'>) => post.data.tags).flat()),
+  ];
+
+  return uniqueTags.map((tag) => {
+    const filteredPosts = allPosts.filter((post: CollectionEntry<'blog'>) =>
+      post.data.tags.includes(tag),
+    );
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": Astro.site
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "标签",
+      "item": new URL("/tags/", Astro.site).href
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": tag,          // ← 改这里，用 tag 而不是 post.data.title
+      "item": new URL(Astro.url.pathname, Astro.site).href
+    }
+  ]
+};
+
+---
+
+<BaseLayout pageTitle={tag}>
+  <Breadcrumb items={[
+  { name: "首页", url: "/" },
+  { name: "标签", url: "/tags/" },
+  { name: tag, url: `/tags/${tag}/` },
+]} />
+  <p>包含「{tag}」标签的文章</p>
+  <ul>
+    {
+      posts.map((post) => (
+        <BlogPost url={`/blog/${post.id}/`} title={post.data.title} />
+      ))
+    }
+  </ul>
+</BaseLayout>
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\scripts\menu.js ===
+const menu = document.querySelector('.menu');
+
+menu?.addEventListener('click', () => {
+  const isExpanded = menu.getAttribute('aria-expanded') === 'true';
+  menu.setAttribute('aria-expanded', `${!isExpanded}`);
+});
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\styles\custom.css ===
+
+
+
+=== C:\Users\Jack\Desktop\astro-2\virtual-virgo\src\styles\global.css ===
+html {
+  background-color: #f1f5f9;
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 80ch;
+  padding: 1rem;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 1rem 0;
+  font-size: 2.5rem;
+}
+
+
+.menu {
+  background-color: #0d0950;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 5px 10px;
+}
+/* 导航样式 */
+
+.nav-links {
+  width: 100%;
+  display: none;
+  margin: 0;
+}
+
+.nav-links a {
+  display: block;
+  text-align: center;
+  padding: 10px 0;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #0d0950;
+}
+
+.nav-links a:hover,
+.nav-links a:focus {
+  background-color: #ff9776;
+}
+:has(.menu[aria-expanded="true"]) .nav-links {
+  display: unset;
+}
+
+@media screen and (min-width: 636px) {
+  .nav-links {
+    margin-left: 5em;
+    display: block;
+    position: static;
+    width: auto;
+    background: none;
+  }
+
+  .nav-links a {
+    display: inline-block;
+    padding: 15px 20px;
+  }
+    .menu {
+    display: none;
+  }
+}
+
+

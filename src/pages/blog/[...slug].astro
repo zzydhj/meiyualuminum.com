@@ -1,4 +1,6 @@
 ---
+import Breadcrumb from '../../components/Breadcrumb.astro';
+
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';  // ← 加这行
 
@@ -15,33 +17,18 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "首页",
-      "item": Astro.site
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "博客",
-      "item": new URL("/blog/", Astro.site).href
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": post.data.title,
-      "item": new URL(Astro.url.pathname, Astro.site).href
-    }
-  ]
-};
 
 ---
 
 <MarkdownPostLayout frontmatter={post.data}>
+    <Breadcrumb
+     root={{ name: "博客", url: "/blog/" }}
+     primaryTag={post.data.primaryTag
+       ? { name: post.data.primaryTag, url: `/tags/${post.data.primaryTag}/` }
+        : undefined
+     }
+     current={post.data.title}
+     currentUrl={`/blog/${post.id}/`}
+   />
   <Content />
 </MarkdownPostLayout>

@@ -1,4 +1,5 @@
 ---
+import Breadcrumb from "../components/Breadcrumb.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const pageTitle = "关于我";
@@ -21,6 +22,10 @@ const textCase = "uppercase";
 ---
 
 <BaseLayout pageTitle={pageTitle}>
+  <Breadcrumb items={[
+    { name: "首页", url: "/" },
+    { name: "关于", url: "/about/" },
+  ]} />
       <style define:vars={{ skillColor, fontWeight, textCase }}>
       h1 {
         color: purple;

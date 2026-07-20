@@ -1,0 +1,178 @@
+---
+/**
+ * Breadcrumb.astro
+ * 面包屑导航组件：同时输出可见的导航路径 + JSON-LD 结构化数据
+ *
+ * ═══════════════════════════════════════════════════
+ * 用法一：直接传完整数组（适合简单固定页面）
+ * ═══════════════════════════════════════════════════
+ *
+ * 关于页面 about.astro：
+ *   <Breadcrumb items={[
+ *     { name: "首页", url: "/" },
+ *     { name: "关于", url: "/about/" },
+ *   ]} />
+ *   效果：首页 › 关于
+ *
+ * 博客汇总页 blog/index.astro：
+ *   <Breadcrumb items={[
+ *     { name: "首页", url: "/" },
+ *     { name: "博客", url: "/blog/" },
+ *   ]} />
+ *   效果：首页 › 博客
+ *
+ * 标签列表页 tags/index.astro：
+ *   <Breadcrumb items={[
+ *     { name: "首页", url: "/" },
+ *     { name: "标签", url: "/tags/" },
+ *   ]} />
+ *   效果：首页 › 标签
+ *
+ * 单个标签页 tags/[tag].astro：
+ * ---
+ *   const { tag } = Astro.params;
+ * ---
+ *   <Breadcrumb items={[
+ *     { name: "首页", url: "/" },
+ *     { name: "标签", url: "/tags/" },
+ *     { name: tag, url: `/tags/${tag}/` },
+ *   ]} />
+ *   效果：首页 › 标签 › aluminum
+ *
+ * ═══════════════════════════════════════════════════
+ * 用法二：传结构化数据，组件自动组装
+ *         （适合有可选中间分类层的内容详情页）
+ * ═══════════════════════════════════════════════════
+ *
+ * 博客文章页 blog/[...slug].astro（有分类）：
+ *   <Breadcrumb
+ *     root={{ name: "博客", url: "/blog/" }}
+ *     category={post.data.category
+ *       ? { name: post.data.category, url: `/tags/${post.data.category}/` }
+ *       : undefined
+ *     }
+ *     current={post.data.title}
+ *     currentUrl={`/blog/${post.id}/`}
+ *   />
+ *   效果（有分类）：首页 › 博客 › 铝型材 › 文章标题
+ *   效果（无分类）：首页 › 博客 › 文章标题
+ *
+ * 产品详情页 products/[...slug].astro（未来）：
+ *   <Breadcrumb
+ *     root={{ name: "产品", url: "/products/" }}
+ *     category={{ name: "铝型材", url: "/products/aluminum/" }}
+ *     current={product.data.name}
+ *     currentUrl={`/products/${product.id}/`}
+ *   />
+ *   效果：首页 › 产品 › 铝型材 › 产品名称
+ *
+ * ═══════════════════════════════════════════════════
+ * 选哪种用法？
+ *   有可选中间层（如分类）→ 用法二
+ *   路径固定或只有一个动态值 → 用法一
+ * ═══════════════════════════════════════════════════
+ */
+
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  // 用法一：直接传完整数组
+  items?: BreadcrumbItem[];
+
+  // 用法二：传结构化数据，组件自动组装
+  root?: BreadcrumbItem;      // 根节点，如 { name: "博客", url: "/blog/" }
+  primaryTag?: BreadcrumbItem;  // 可选的中间分类层
+  current?: string;           // 当前页名称（文章标题 / 产品名）
+  currentUrl?: string;        // 当前页 URL
+}
+
+const { items, root, primaryTag, current, currentUrl } = Astro.props;
+
+// 用法一：直接用传入的数组
+// 用法二：自动组装 首页 → root → category(可选) → current
+const resolvedItems: BreadcrumbItem[] = items ?? [
+  { name: "首页", url: "/" },
+  ...(root        ? [root]                              : []),
+  ...(primaryTag  ? [primaryTag]                        : []),
+  ...(current && currentUrl ? [{ name: current, url: currentUrl }] : []),
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": resolvedItems.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": new URL(item.url, Astro.site).href,
+  })),
+};
+---
+
+<!-- JSON-LD：给搜索引擎看，用户不可见 -->
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<!-- 可见面包屑导航 -->
+<nav aria-label="面包屑导航" class="breadcrumb">
+  <ol>
+    {resolvedItems.map((item, index) => {
+      const isLast = index === resolvedItems.length - 1;
+      return (
+        <li>
+          {isLast ? (
+            <span aria-current="page">{item.name}</span>
+          ) : (
+            <a href={item.url}>{item.name}</a>
+          )}
+          {!isLast && <span class="separator" aria-hidden="true">›</span>}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: #666;
+  }
+
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .breadcrumb a {
+    color: #0053a0;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb [aria-current="page"] {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .breadcrumb .separator {
+    color: #999;
+    user-select: none;
+  }
+</style>
