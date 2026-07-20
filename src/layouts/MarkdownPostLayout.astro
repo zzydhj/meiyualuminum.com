@@ -1,40 +1,78 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import type { CollectionEntry } from "astro:content";
-
+import BaseLayout from "../layouts/BaseLayout.astro"; // 导入总布局组件，此文章布局嵌套在 BaseLayout 内部形成两层布局
+import type { CollectionEntry } from "astro:content"; // import type 仅导入类型定义不产生运行时代码，CollectionEntry 用于约束 frontmatter 的数据结构
 
 interface Props {
-  frontmatter: CollectionEntry<'blog'>['data'];
+  frontmatter: CollectionEntry<'blog'>['data']; // CollectionEntry<'blog'> 表示 blog 集合的一篇条目，['data'] 取其 data 字段，即 Markdown 文件 --- 里定义的所有字段（title/description/pubDate 等）
 }
-const { frontmatter } = Astro.props;
+
+const { frontmatter } = Astro.props; // 从直接父级传来的 props 中解构出 frontmatter 对象，后续所有文章数据都从它身上取
+const canonicalURL = frontmatter.canonicalURL ?? Astro.url.href; // 优先使用文章手动指定的规范链接，否则自动取当前页面完整 URL
+
+// 结构化数据 JSON-LD：谷歌推荐的 SEO 增强格式，嵌入页面后搜索引擎能读懂文章的作者/时间/图片等信息，可能在搜索结果中显示富文本摘要卡片
+const jsonLd = {
+  "@context": "https://schema.org", // 声明使用 schema.org 词汇规范，搜索引擎据此解读各字段含义
+  "@type": "BlogPosting", // 声明此内容类型为博客文章
+  "headline": frontmatter.title, // 文章标题
+  "description": frontmatter.description, // 文章描述
+  "image": frontmatter.image.url, // 文章封面图 URL
+  "author": {
+    "@type": "Person", // 作者类型为自然人
+    "name": frontmatter.author, // 作者姓名
+  },
+  "datePublished": frontmatter.pubDate.toISOString(), // 发布时间，.toISOString() 将 Date 对象转为标准格式字符串如 2026-07-20T12:00:00.000Z
+  "publisher": {
+    "@type": "Organization", // 发布者类型为组织机构
+    "name": "你的网站名", // 发布者名称
+    "logo": {
+      "@type": "ImageObject", // logo 类型为图片对象
+      "url": new URL("/favicon.svg", Astro.site).href, // new URL() 将相对路径 /favicon.svg 与 Astro.site 根域名拼接成完整绝对 URL
+    }
+  }
+};
 ---
 
-<BaseLayout pageTitle={frontmatter.title}>
-  <p>{frontmatter.pubDate.toLocaleDateString()}</p>
-  <p><em>{frontmatter.description}</em></p>
-  <p>作者：{frontmatter.author}</p>
-  <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
+<!-- 把文章数据传给 BaseLayout，由 BaseLayout 负责渲染 head 里的 SEO/OG/Twitter Card 标签 -->
+<BaseLayout
+  pageTitle={frontmatter.title}
+  description={frontmatter.description}
+  image={frontmatter.image.url}
+  type="article"
+  pubDate={frontmatter.pubDate}
+  author={frontmatter.author}
+>
+  <!-- JSON-LD 结构化数据注入：type="application/ld+json" 告知浏览器这是 JSON 数据而非可执行脚本；set:html 是 Astro 专属指令将内容原样注入不做 HTML 转义；JSON.stringify() 把 JS 对象序列化为 JSON 字符串 -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <div class="tags">
+  <p>{frontmatter.pubDate.toLocaleDateString()}</p> <!-- .toLocaleDateString() 按用户浏览器地区设置格式化日期，如中文环境显示 2026/7/20 -->
+  <p><em>{frontmatter.description}</em></p> <!-- em 标签将文字渲染为斜体，在 HTML 语义上表示强调内容 -->
+  <p>作者：{frontmatter.author}</p> <!-- 显示文章作者名，{} 为 Astro 插值语法将变量值渲染进 HTML -->
+  <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} /> <!-- 文章封面图，alt 属性提供无障碍描述文字，图片加载失败或屏幕阅读器访问时使用 -->
+
+  <!-- 遍历标签数组，每个标签生成一个可点击链接，点击跳转到对应标签聚合页如 /tags/astro。 .map() 遍历数组每一项，tag: string 是 TS 类型注解；模板字符串 `/tags/${tag}` 动态拼接链接路径  -->
+  <div class="tags">
     {frontmatter.tags.map((tag: string) => (
-      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
+      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p> 
     ))}
   </div>
 
 
-  <slot />
+  <slot /> <!-- 插槽占位符，Markdown 文章的正文内容（--- 以外的部分）会渲染在这里 -->
 </BaseLayout>
 
 <style>
+  /* 标签链接颜色，覆盖浏览器默认的蓝紫色 */
   a {
     color: #00539F;
   }
 
+  /* 标签容器：flex 横向排列，flex-wrap 允许超出宽度时自动换行 */
   .tags {
     display: flex;
     flex-wrap: wrap;
   }
 
+  /* 单个标签样式：点状边框 + 圆角 + 内边距 + 浅蓝背景，营造标签胶囊外观 */
   .tag {
     margin: 0.25em;
     border: dotted 1px #a1a1a1;

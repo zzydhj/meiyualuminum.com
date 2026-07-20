@@ -1,25 +1,66 @@
 ---
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import '../styles/global.css';
-const { pageTitle } = Astro.props;
+import Header from '../components/Header.astro'; // 导入页头组件，模板中用 <Header /> 使用
+import Footer from '../components/Footer.astro'; // 导入页脚组件，模板中用 <Footer /> 使用
+import '../styles/global.css'; // 导入全局 CSS，所有使用此布局的页面都会应用这份样式
+
+interface Props { // TypeScript 接口，定义此布局组件能接收哪些 props，只做类型声明不产生运行时代码
+  pageTitle: string; // 必填，无 ? 号，父页面不传会报 TypeScript 错误
+  description?: string; // 可选（? 号），不传则值为 undefined
+  image?: string; // 可选，OG 分享卡片的预览图路径
+  canonicalURL?: string; // 可选，页面规范链接，用于防止搜索引擎判定重复内容
+  type?: 'website' | 'article'; // 可选，联合类型，只能传这两个字符串值之一
+  pubDate?: Date; // 可选，文章发布时间，需传入 Date 对象
+  author?: string; // 可选，文章作者名，当前模板未实际使用，预留字段
+}
+
+const {
+  pageTitle, // 必填参数，父页面必须传，否则 TypeScript 报错
+  description = "你的网站默认描述", // 父页面未传时使用此默认值
+  image = "/default-og-image.png", // 父页面未传时使用默认 OG 图片路径
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).href, // 未传时自动拼接完整 URL：Astro.url.pathname 是当前路径如 /about，Astro.site 是配置的根域名，new URL() 将两者合并成完整链接
+  type = "website", // 未传时默认为普通页面类型，文章页需显式传 "article"
+  pubDate, // 可选，无默认值，不传则为 undefined
+  author, // 可选，无默认值，当前模板未使用，仅接收备用
+} = Astro.props; // Astro 内置对象，存放直接父级传来的所有参数
+
+const siteName = "你的网站名"; // 网站名称常量，在 title 和 og:site_name 中复用，改一处全局生效
 ---
 
-<html lang="en">
+<html lang="en"> <!-- lang="zh" 声明页面语言为中文，帮助搜索引擎和屏幕阅读器正确处理 -->
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
+    <meta charset="utf-8" /> <!-- 声明字符编码为 UTF-8，防止中文乱码，必须放在 head 最前面 -->
+    <meta name="viewport" content="width=device-width" /> <!-- 移动端适配，让页面宽度等于设备屏幕宽度，禁止浏览器默认缩放 -->
+    <meta name="generator" content={Astro.generator} /> <!-- Astro 内置变量，输出当前框架版本信息如 "Astro v4.x.x" -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> <!-- 浏览器标签页上显示的小图标（favicon），使用 SVG 格式 -->
+
+    <!-- ① 基础 SEO -->
+    <title>{pageTitle} | {siteName}</title> <!-- 页面标题，显示在浏览器标签页和搜索结果，格式：页面名 | 网站名 -->
+    <meta name="description" content={description} /> <!-- 页面描述，显示在搜索引擎结果的摘要文字，影响点击率 -->
+    <link rel="canonical" href={canonicalURL} /> <!-- 规范链接，告诉搜索引擎此页面的权威 URL，防止重复内容被降权 -->
+
+
+    <!-- ② Open Graph：链接被分享到微信/微博/Facebook 等平台时，控制预览卡片内容 -->
+    <meta property="og:type" content={type} /> <!-- 内容类型：website 普通页面 / article 文章页 -->
+    <meta property="og:title" content={pageTitle} /> <!-- 分享卡片显示的标题 -->
+    <meta property="og:description" content={description} /> <!-- 分享卡片显示的描述文字 -->
+    <meta property="og:image" content={new URL(image, Astro.site).href} /> <!-- 分享卡片预览图，new URL() 将相对路径拼成完整绝对路径 -->
+    <meta property="og:url" content={canonicalURL} /> <!-- 分享链接对应的页面 URL -->
+    <meta property="og:site_name" content={siteName} /> <!-- 网站名称，显示在分享卡片的来源位置 -->
+    {pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />} <!-- 条件渲染：pubDate 存在才输出此标签；.toISOString() 将 Date 转为标准字符串如 2026-07-20T12:00:00.000Z -->
+
+    <!-- ③ Twitter Card：Twitter 不完全遵循 OG 协议，需单独声明一套 -->
+    <meta name="twitter:card" content="summary_large_image" /> <!-- 卡片样式：summary_large_image 为大图模式 -->
+    <meta name="twitter:title" content={pageTitle} /> <!-- Twitter 卡片标题 -->
+    <meta name="twitter:description" content={description} /> <!-- Twitter 卡片描述 -->
+    <meta name="twitter:image" content={new URL(image, Astro.site).href} /> <!-- Twitter 卡片预览图，同样需要完整 URL -->
   </head>
   <body>
-    <Header />
-    <h1>{pageTitle}</h1>
-    <slot />
-    <Footer />
+    <Header /> <!-- 渲染页头组件（导航栏等），具体内容定义在 Header.astro 中 -->
+    <h1>{pageTitle}</h1> <!-- 在页面正文顶部显示页面标题，{} 为插值语法，将变量值渲染进 HTML -->
+    <slot /> <!-- 插槽占位符，调用此布局的父页面传入的子内容会渲染在这里 -->
+    <Footer /> <!-- 渲染页脚组件，具体内容定义在 Footer.astro 中 -->
     <script>
-      import "../scripts/menu.js";
+      import "../scripts/menu.js"; // 客户端脚本，在浏览器端运行（不同于 --- 里的代码在构建时运行），导入菜单交互逻辑 //
     </script>
   </body>
 </html>
