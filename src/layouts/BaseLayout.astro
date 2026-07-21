@@ -15,7 +15,7 @@ interface Props { // TypeScript 接口，定义此布局组件能接收哪些 pr
 
 const {
   pageTitle, // 必填参数，父页面必须传，否则 TypeScript 报错
-  description = "你的网站默认描述", // 父页面未传时使用此默认值
+  description = "Professional automotive parts supplier - OEM quality brake pads, filters, and engine components",
   image = "/default-og-image.png", // 父页面未传时使用默认 OG 图片路径
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href, // 未传时自动拼接完整 URL：Astro.url.pathname 是当前路径如 /about，Astro.site 是配置的根域名，new URL() 将两者合并成完整链接
   type = "website", // 未传时默认为普通页面类型，文章页需显式传 "article"
@@ -23,7 +23,7 @@ const {
   author, // 可选，无默认值，当前模板未使用，仅接收备用
 } = Astro.props; // Astro 内置对象，存放直接父级传来的所有参数
 
-const siteName = "你的网站名"; // 网站名称常量，在 title 和 og:site_name 中复用，改一处全局生效
+const siteName = "Meiyu Aluminum";
 
 ---
 

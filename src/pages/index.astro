@@ -1,17 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro"; // 导入总布局组件，页面所有内容都会被包裹在 BaseLayout 内部
-const pageTitle = "首页2"; // 定义页面标题字符串，传给 BaseLayout 后显示在浏览器标签页、<h1> 和 SEO title 标签中
+const pageTitle = "Home";
 
-const websiteJsonLd = { // 定义网站级别的 JSON-LD 结构化数据对象，嵌入页面后搜索引擎可读取网站基本信息
-  "@context": "https://schema.org", // 声明使用 schema.org 词汇规范，搜索引擎据此解读各字段含义
-  "@type": "WebSite", // 声明此结构化数据描述的是网站整体，区别于文章页使用的 BlogPosting 类型
-  "name": "你的网站名", // 网站名称，搜索引擎在展示站点信息时使用
-  "url": Astro.site, // 网站根域名，取自 astro.config.mjs 中配置的 site 字段，如 https://example.com
-  "potentialAction": { // 声明网站支持的潜在操作，配置后 Google 搜索结果可能直接显示站内搜索框
-    "@type": "SearchAction", // 操作类型为搜索行为
-    "target": `${Astro.site}search?q={search_term_string}`, // 搜索 URL 模板，{search_term_string} 是占位符，Google 会用实际搜索词替换它
-    "query-input": "required name=search_term_string" // 声明 search_term_string 为必填的查询参数名
-  }
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Meiyu Aluminum",
+  "url": Astro.site,
 };
 ---
 <BaseLayout pageTitle={pageTitle}> <!-- 使用 BaseLayout 作为外层容器，通过 pageTitle={pageTitle} 将标题变量以 prop 形式传入，{} 为 JSX 插值语法 -->

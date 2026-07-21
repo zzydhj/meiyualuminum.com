@@ -14,6 +14,16 @@ if (result.error) {
 }
 
 const products = result.data ?? [];
+
+// Fetch all categories for display
+const { data: allCategories } = await supabase
+  .from("categories")
+  .select("id, name, slug");
+
+const categoryMap = new Map<number, { name: string; slug: string }>();
+for (const cat of (allCategories ?? [])) {
+  categoryMap.set(cat.id, { name: cat.name, slug: cat.slug });
+}
 const pageTitle = "Products";
 ---
 
@@ -45,7 +55,11 @@ const pageTitle = "Products";
                 <h2>{product.title}</h2>
                 {product.part_code && <p class="part-code">Part No: {product.part_code}</p>}
                 {product.description && <p class="desc">{product.description}</p>}
-                {product.category && <span class="category">{product.category}</span>}
+                {product.primary_category_id && categoryMap.has(product.primary_category_id) && (
+                  <a href={`/categories/${categoryMap.get(product.primary_category_id)!.slug}/`} class="category">
+                    {categoryMap.get(product.primary_category_id)!.name}
+                  </a>
+                )}
                 {product.price != null && <p class="price">${product.price}</p>}
               </div>
             </a>
