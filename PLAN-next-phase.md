@@ -92,14 +92,37 @@ output: "hybrid"  // 从 "static" 改为 "hybrid"
 
 ---
 
-## 四、实施顺序
+## 四、性能优化
+
+### Supabase 数据库索引
+在 Supabase SQL Editor 中执行，确保 SSR 查询速度（30000 SKU 下 <200ms）：
+
+```sql
+-- 产品表常用筛选字段建索引
+CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
+CREATE INDEX IF NOT EXISTS idx_products_brand ON products(brand);
+CREATE INDEX IF NOT EXISTS idx_products_primary_category_id ON products(primary_category_id);
+CREATE INDEX IF NOT EXISTS idx_products_vehicle_brand ON products(vehicle_brand);
+CREATE INDEX IF NOT EXISTS idx_products_vehicle_model ON products(vehicle_model);
+CREATE INDEX IF NOT EXISTS idx_products_part_code ON products(part_code);
+```
+
+### 部署层缓存（推荐 Vercel）
+- 部署到 Vercel 后，SSR 页面自动获得边缘缓存
+- 可在产品列表页设置 ISR：`export const revalidate = 60`（缓存60秒，兼顾速度和数据新鲜度）
+- CDN 缓存相同 URL 参数的响应，第二次访问直接返回静态副本
+
+---
+
+## 五、实施顺序
 
 1. 改 `astro.config.mjs` 为 hybrid
 2. 给所有现有页面加 `prerender = true`
 3. 构建验证（确保没破坏）
-4. 创建 `Pagination.astro` 通用组件
-5. 重写 `products/index.astro`（SSR + 筛选 + 分页）
-6. 创建 `ProductFilters.astro` 组件
-7. 改 `blog.astro` 用 paginate()
-8. 新建 `contact.astro` 询盘表单页
-9. 最终构建验证
+4. Supabase 建索引（上面的 SQL）
+5. 创建 `Pagination.astro` 通用组件
+6. 重写 `products/index.astro`（SSR + 筛选 + 分页）
+7. 创建 `ProductFilters.astro` 组件
+8. 改 `blog.astro` 用 paginate()
+9. 新建 `contact.astro` 询盘表单页
+10. 最终构建验证
