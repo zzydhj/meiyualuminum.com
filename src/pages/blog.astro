@@ -1,31 +1,35 @@
 ---
-import Breadcrumb from '../components/Breadcrumb.astro';
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-
+import Breadcrumb from "../components/Breadcrumb.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-
 import BlogPost from "../components/BlogPost.astro";
+import { supabase } from "../lib/supabase";
 
+const result = await supabase
+  .from("posts")
+  .select("*")
+  .eq("status", "published")
+  .order("pub_date", { ascending: false });
+
+console.log("error:", result.error);
+console.log("posts:", result.data);
+
+const posts = result.data ?? [];
 const pageTitle = "Astro";
-const allPosts = await getCollection("blog");
-
 ---
 
 <BaseLayout pageTitle={pageTitle}>
-  <Breadcrumb items={[
-  { name: "首页", url: "/" },
-  { name: "博客", url: "/blog/" },
-]} />
-
+  <Breadcrumb
+    items={[
+      { name: "首页", url: "/" },
+      { name: "博客", url: "/blog/" },
+    ]}
+  />
   <h1>我的 Astro 学习博客</h1>
   <p>这是我的 Astro 学习笔记</p>
   <ul>
-
     {
-      allPosts.map((post) => (
-        <BlogPost url={`/blog/${post.id}/`} title={post.data.title} />
+      posts.map((post) => (
+        <BlogPost url={`/blog/${post.slug}/`} title={post.title} />
       ))
     }
   </ul>

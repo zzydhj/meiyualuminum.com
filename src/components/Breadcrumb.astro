@@ -1,76 +1,27 @@
 ---
 /**
  * Breadcrumb.astro
- * 面包屑导航组件：同时输出可见的导航路径 + JSON-LD 结构化数据
+ * Breadcrumb navigation: outputs visible nav + JSON-LD structured data.
  *
- * ═══════════════════════════════════════════════════
- * 用法一：直接传完整数组（适合简单固定页面）
- * ═══════════════════════════════════════════════════
- *
- * 关于页面 about.astro：
+ * Usage 1: Pass a full items array (for simple/fixed pages)
  *   <Breadcrumb items={[
- *     { name: "首页", url: "/" },
- *     { name: "关于", url: "/about/" },
+ *     { name: "Home", url: "/" },
+ *     { name: "About", url: "/about/" },
  *   ]} />
- *   效果：首页 › 关于
  *
- * 博客汇总页 blog/index.astro：
- *   <Breadcrumb items={[
- *     { name: "首页", url: "/" },
- *     { name: "博客", url: "/blog/" },
- *   ]} />
- *   效果：首页 › 博客
- *
- * 标签列表页 tags/index.astro：
- *   <Breadcrumb items={[
- *     { name: "首页", url: "/" },
- *     { name: "标签", url: "/tags/" },
- *   ]} />
- *   效果：首页 › 标签
- *
- * 单个标签页 tags/[tag].astro：
- * ---
- *   const { tag } = Astro.params;
- * ---
- *   <Breadcrumb items={[
- *     { name: "首页", url: "/" },
- *     { name: "标签", url: "/tags/" },
- *     { name: tag, url: `/tags/${tag}/` },
- *   ]} />
- *   效果：首页 › 标签 › aluminum
- *
- * ═══════════════════════════════════════════════════
- * 用法二：传结构化数据，组件自动组装
- *         （适合有可选中间分类层的内容详情页）
- * ═══════════════════════════════════════════════════
- *
- * 博客文章页 blog/[...slug].astro（有分类）：
+ * Usage 2: Structured data with auto-assembly (supports multi-level middle items)
  *   <Breadcrumb
- *     root={{ name: "博客", url: "/blog/" }}
- *     category={post.data.category
- *       ? { name: post.data.category, url: `/tags/${post.data.category}/` }
- *       : undefined
- *     }
- *     current={post.data.title}
- *     currentUrl={`/blog/${post.id}/`}
+ *     root={{ name: "Products", url: "/products/" }}
+ *     middleItems={[
+ *       { name: "Brake System", url: "/categories/brake-system/" },
+ *       { name: "Brake Pads", url: "/categories/brake-pads/" },
+ *     ]}
+ *     current="Product Name"
+ *     currentUrl="/products/product-slug/"
  *   />
- *   效果（有分类）：首页 › 博客 › 铝型材 › 文章标题
- *   效果（无分类）：首页 › 博客 › 文章标题
+ *   Result: Home > Products > Brake System > Brake Pads > Product Name
  *
- * 产品详情页 products/[...slug].astro（未来）：
- *   <Breadcrumb
- *     root={{ name: "产品", url: "/products/" }}
- *     category={{ name: "铝型材", url: "/products/aluminum/" }}
- *     current={product.data.name}
- *     currentUrl={`/products/${product.id}/`}
- *   />
- *   效果：首页 › 产品 › 铝型材 › 产品名称
- *
- * ═══════════════════════════════════════════════════
- * 选哪种用法？
- *   有可选中间层（如分类）→ 用法二
- *   路径固定或只有一个动态值 → 用法一
- * ═══════════════════════════════════════════════════
+ * Backward compatible: primaryTag still works as a single middle item.
  */
 
 interface BreadcrumbItem {
@@ -79,25 +30,27 @@ interface BreadcrumbItem {
 }
 
 interface Props {
-  // 用法一：直接传完整数组
+  // Usage 1: pass a full array directly
   items?: BreadcrumbItem[];
 
-  // 用法二：传结构化数据，组件自动组装
-  root?: BreadcrumbItem;      // 根节点，如 { name: "博客", url: "/blog/" }
-  primaryTag?: BreadcrumbItem;  // 可选的中间分类层
-  current?: string;           // 当前页名称（文章标题 / 产品名）
-  currentUrl?: string;        // 当前页 URL
+  // Usage 2: structured data, component auto-assembles the chain
+  root?: BreadcrumbItem;
+  primaryTag?: BreadcrumbItem;    // legacy: single middle item
+  middleItems?: BreadcrumbItem[]; // new: multiple middle items (for category chains)
+  current?: string;
+  currentUrl?: string;
 }
 
-const { items, root, primaryTag, current, currentUrl } = Astro.props;
+const { items, root, primaryTag, middleItems, current, currentUrl } = Astro.props;
 
-// 用法一：直接用传入的数组
-// 用法二：自动组装 首页 → root → category(可选) → current
+// Usage 1: use the provided items array directly
+// Usage 2: auto-assemble: Home > root > middleItems (or primaryTag) > current
 const resolvedItems: BreadcrumbItem[] = items ?? [
-  { name: "首页", url: "/" },
-  ...(root        ? [root]                              : []),
-  ...(primaryTag  ? [primaryTag]                        : []),
-  ...(current && currentUrl ? [{ name: current, url: currentUrl }] : []),
+  { name: "Home", url: "/" },
+  ...(root        ? [root]                                                       : []),
+  ...(middleItems ? middleItems                                                  : []),
+  ...(primaryTag  ? [primaryTag]                                                 : []),
+  ...(current && currentUrl ? [{ name: current, url: currentUrl }]               : []),
 ];
 
 const jsonLd = {
@@ -112,11 +65,9 @@ const jsonLd = {
 };
 ---
 
-<!-- JSON-LD：给搜索引擎看，用户不可见 -->
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-<!-- 可见面包屑导航 -->
-<nav aria-label="面包屑导航" class="breadcrumb">
+<nav aria-label="Breadcrumb" class="breadcrumb">
   <ol>
     {resolvedItems.map((item, index) => {
       const isLast = index === resolvedItems.length - 1;
@@ -127,7 +78,7 @@ const jsonLd = {
           ) : (
             <a href={item.url}>{item.name}</a>
           )}
-          {!isLast && <span class="separator" aria-hidden="true">›</span>}
+          {!isLast && <span class="separator" aria-hidden="true">/</span>}
         </li>
       );
     })}

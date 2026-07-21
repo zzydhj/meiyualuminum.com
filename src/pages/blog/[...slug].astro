@@ -1,34 +1,53 @@
 ---
 import Breadcrumb from '../../components/Breadcrumb.astro';
-
-import { getCollection, render } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';  // ← 加这行
-
-import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
-
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post: CollectionEntry<'blog'>) => ({
-    params: { slug: post.id }, props: { post },
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('status', 'published')
+
+  if (!posts) return []
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
   }));
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
-
-
 ---
 
-<MarkdownPostLayout frontmatter={post.data}>
-    <Breadcrumb
-     root={{ name: "博客", url: "/blog/" }}
-     primaryTag={post.data.primaryTag
-       ? { name: post.data.primaryTag, url: `/tags/${post.data.primaryTag}/` }
-        : undefined
-     }
-     current={post.data.title}
-     currentUrl={`/blog/${post.id}/`}
-   />
-  <Content />
-</MarkdownPostLayout>
+<BaseLayout
+  pageTitle={post.title}
+  description={post.description}
+  image={post.image_url}
+  type="article"
+  pubDate={post.pub_date ? new Date(post.pub_date) : undefined}
+>
+  <Breadcrumb
+    root={{ name: "博客", url: "/blog/" }}
+    primaryTag={post.primary_tag
+      ? { name: post.primary_tag, url: `/tags/${post.primary_tag}/` }
+      : undefined
+    }
+    current={post.title}
+    currentUrl={`/blog/${post.slug}/`}
+  />
+  <p>{post.pub_date ? new Date(post.pub_date).toLocaleDateString() : ''}</p>
+  <p><em>{post.description}</em></p>
+  <p>作者：{post.author}</p>
+  {post.image_url && <img src={post.image_url} width="300" alt={post.image_alt || ''} />}
+
+  {post.tags && post.tags.length > 0 && (
+    <div class="tags">
+      {post.tags.map((tag) => (
+        <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
+      ))}
+    </div>
+  )}
+
+  <div set:html={post.content} />
+</BaseLayout>

@@ -1,0 +1,258 @@
+---
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { supabase } from "../../lib/supabase";
+import { getCategoryChain } from "../../lib/categoryPath";
+
+export async function getStaticPaths() {
+  const { data: products, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("status", "published");
+
+  if (error) {
+    console.error("Failed to fetch products for static paths:", error);
+    return [];
+  }
+
+  return (products ?? []).map((product) => ({
+    params: { slug: product.slug },
+    props: { product, primaryCategoryId: product.primary_category_id },
+  }));
+}
+
+const { product, primaryCategoryId } = Astro.props;
+
+// Build category breadcrumb chain from primary_category_id
+const categoryChain = await getCategoryChain(primaryCategoryId ?? null);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": product.title,
+  "description": product.description,
+  "image": product.image_url,
+  "sku": product.part_code,
+  "brand": product.brand ? { "@type": "Brand", "name": product.brand } : undefined,
+  "category": product.category,
+  "offers": product.price != null ? {
+    "@type": "Offer",
+    "price": product.price,
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+  } : undefined,
+};
+---
+
+<BaseLayout
+  pageTitle={product.title}
+  description={product.description}
+  image={product.image_url}
+  type="article"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <Breadcrumb
+    root={{ name: "Products", url: "/products/" }}
+    middleItems={categoryChain}
+    current={product.title}
+    currentUrl={`/products/${product.slug}/`}
+  />
+
+  <div class="product-detail">
+    <!-- Image gallery: main image + thumbnails -->
+    <div class="gallery">
+      {product.image_url && (
+        <img
+          id="main-image"
+          src={product.image_url}
+          alt={product.image_alt || product.title}
+          width="600"
+        />
+      )}
+      {(product.gallery && product.gallery.length > 0) && (
+        <div class="thumbnails">
+          {product.image_url && (
+            <img
+              src={product.image_url}
+              alt={product.image_alt || product.title}
+              class="thumb active"
+              data-full={product.image_url}
+              width="80"
+            />
+          )}
+          {product.gallery.map((url: string, i: number) => (
+            <img
+              src={url}
+              alt={`${product.title} - image ${i + 2}`}
+              class="thumb"
+              data-full={url}
+              width="80"
+              loading="lazy"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Product info -->
+    <div class="info">
+      {product.part_code && <p class="part-code">Part No: {product.part_code}</p>}
+      <p><em>{product.description}</em></p>
+
+      {product.price != null && <p class="price">${product.price}</p>}
+
+      <table class="specs">
+        {product.brand && (
+          <tr><th>Brand</th><td>{product.brand}</td></tr>
+        )}
+        {categoryChain.length > 0 && (
+          <tr>
+            <th>Category</th>
+            <td>
+              {categoryChain.map((cat, i) => (
+                <>{i > 0 && " > "}<a href={cat.url}>{cat.name}</a></>
+              ))}
+            </td>
+          </tr>
+        )}
+        {product.spec && (
+          <tr><th>Specification</th><td>{product.spec}</td></tr>
+        )}
+        {product.vehicle_brand && (
+          <tr><th>Vehicle Brand</th><td>{product.vehicle_brand}</td></tr>
+        )}
+        {product.vehicle_model && (
+          <tr><th>Vehicle Model</th><td>{product.vehicle_model}</td></tr>
+        )}
+      </table>
+
+      {product.oe_codes && product.oe_codes.length > 0 && (
+        <div class="oe-codes">
+          <h2>OE Codes</h2>
+          <ul>
+            {product.oe_codes.map((code: string) => (
+              <li><code>{code}</code></li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  </div>
+
+  {product.content && (
+    <div class="product-content" set:html={product.content} />
+  )}
+</BaseLayout>
+
+<script>
+  // Thumbnail click: swap main image
+  const mainImage = document.getElementById('main-image') as HTMLImageElement | null;
+  document.querySelectorAll<HTMLImageElement>('.thumb').forEach((thumb) => {
+    thumb.addEventListener('click', () => {
+      if (!mainImage) return;
+      mainImage.src = thumb.dataset.full || thumb.src;
+      mainImage.alt = thumb.alt;
+      document.querySelectorAll('.thumb').forEach((t) => t.classList.remove('active'));
+      thumb.classList.add('active');
+    });
+  });
+</script>
+
+<style>
+  .product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  @media screen and (max-width: 636px) {
+    .product-detail {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .gallery img#main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .thumb {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .thumb.active {
+    border-color: #0d0950;
+  }
+
+  .part-code {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0 0 0.5rem;
+  }
+
+  .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0d0950;
+  }
+
+  .specs {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    width: 100%;
+  }
+
+  .specs th,
+  .specs td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+  }
+
+  .specs th {
+    color: #64748b;
+    font-weight: normal;
+    width: 35%;
+  }
+
+  .oe-codes h2 {
+    font-size: 1.1rem;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .oe-codes ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .oe-codes code {
+    background: #f1f5f9;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  .product-content {
+    margin-top: 2rem;
+  }
+</style>

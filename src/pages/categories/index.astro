@@ -1,0 +1,143 @@
+---
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { supabase } from "../../lib/supabase";
+
+const { data: allCategories, error } = await supabase
+  .from("categories")
+  .select("id, name, slug, parent_id, description")
+  .order("name");
+
+if (error) {
+  console.error("Failed to fetch categories:", error);
+}
+
+const categories = allCategories ?? [];
+
+// Separate root categories (parent_id = null) and children
+const rootCategories = categories.filter((c) => !c.parent_id);
+const childCategories = categories.filter((c) => c.parent_id);
+
+// Get product counts per category
+const { data: allProducts } = await supabase
+  .from("products")
+  .select("id, category_ids")
+  .eq("status", "published");
+
+const products = allProducts ?? [];
+
+function getProductCount(categoryId: number): number {
+  return products.filter(
+    (p) => p.category_ids && (p.category_ids as number[]).includes(categoryId)
+  ).length;
+}
+
+const pageTitle = "Categories";
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Categories", url: "/categories/" },
+    ]}
+  />
+
+  {rootCategories.length === 0 ? (
+    <p>No categories available at the moment.</p>
+  ) : (
+    <div class="category-tree">
+      {rootCategories.map((root) => {
+        const children = childCategories.filter((c) => c.parent_id === root.id);
+        return (
+          <div class="category-group">
+            <a href={`/categories/${root.slug}/`} class="category-root">
+              <h2>{root.name}</h2>
+              {root.description && <p>{root.description}</p>}
+              <span class="count">{getProductCount(root.id)} products</span>
+            </a>
+            {children.length > 0 && (
+              <div class="subcategories">
+                {children.map((child) => (
+                  <a href={`/categories/${child.slug}/`} class="subcategory">
+                    {child.name}
+                    <span class="count">{getProductCount(child.id)}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .category-tree {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .category-group {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .category-root {
+    display: block;
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s;
+  }
+
+  .category-root:hover {
+    background-color: #f8fafc;
+  }
+
+  .category-root h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+    color: #0d0950;
+  }
+
+  .category-root p {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  .count {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .subcategories {
+    border-top: 1px solid #e2e8f0;
+    padding: 0.5rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .subcategory {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: #0053a0;
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    background: #f1f5f9;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+  }
+
+  .subcategory:hover {
+    background-color: #e2e8f0;
+  }
+</style>
