@@ -10,22 +10,22 @@ const result = await supabase
   .eq("status", "published")
   .order("pub_date", { ascending: false });
 
-console.log("error:", result.error);
-console.log("posts:", result.data);
+if (result.error) {
+  console.error("Failed to fetch posts:", result.error);
+}
 
 const posts = result.data ?? [];
-const pageTitle = "Astro";
+const pageTitle = "Blog";
+const pageDescription = "Latest news, tips and insights about automotive parts and industry trends.";
 ---
 
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout pageTitle={pageTitle} description={pageDescription}>
   <Breadcrumb
     items={[
-      { name: "首页", url: "/" },
-      { name: "博客", url: "/blog/" },
+      { name: "Home", url: "/" },
+      { name: "Blog", url: "/blog/" },
     ]}
   />
-  <h1>我的 Astro 学习博客</h1>
-  <p>这是我的 Astro 学习笔记</p>
   <ul>
     {
       posts.map((post) => (

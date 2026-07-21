@@ -29,17 +29,18 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 const { posts } = Astro.props;
+const pageDescription = `Browse all blog posts tagged with "${tag}".`;
 ---
 
-<BaseLayout pageTitle={tag}>
+<BaseLayout pageTitle={tag} description={pageDescription}>
   <Breadcrumb
     items={[
-      { name: "首页", url: "/" },
-      { name: "标签", url: "/tags/" },
-      { name: tag, url: `/tags/${tag}/` },
+      { name: "Home", url: "/" },
+      { name: "Tags", url: "/tags/" },
+      { name: tag, url: `/tags/${encodeURIComponent(tag)}/` },
     ]}
   />
-  <p>包含「{tag}」标签的文章</p>
+  <p>Posts tagged with "{tag}"</p>
   <ul>
     {
       posts.map((post) => (

@@ -18,19 +18,48 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+
+// Use seo_title/seo_description if available
+const pageTitle = post.seo_title || post.title;
+const pageDescription = post.seo_description || post.description;
+const keywords = post.keywords ?? [];
+
+// BlogPosting JSON-LD
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
+const articleUrl = `${siteUrl}/blog/${post.slug}/`;
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.title,
+  "description": post.description,
+  "datePublished": post.pub_date || undefined,
+  "author": post.author ? { "@type": "Person", "name": post.author } : undefined,
+  "image": post.image_url || undefined,
+  "url": articleUrl,
+  "keywords": post.tags ?? [],
+  "publisher": {
+    "@type": "Organization",
+    "name": "Meiyu Aluminum",
+    "logo": { "@type": "ImageObject", "url": `${siteUrl}/favicon.svg` }
+  }
+};
 ---
 
 <BaseLayout
-  pageTitle={post.title}
-  description={post.description}
+  pageTitle={pageTitle}
+  description={pageDescription}
   image={post.image_url}
   type="article"
   pubDate={post.pub_date ? new Date(post.pub_date) : undefined}
+  author={post.author}
+  keywords={keywords}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+
   <Breadcrumb
-    root={{ name: "博客", url: "/blog/" }}
+    root={{ name: "Blog", url: "/blog/" }}
     primaryTag={post.primary_tag
-      ? { name: post.primary_tag, url: `/tags/${post.primary_tag}/` }
+      ? { name: post.primary_tag, url: `/tags/${encodeURIComponent(post.primary_tag)}/` }
       : undefined
     }
     current={post.title}
@@ -38,13 +67,13 @@ const { post } = Astro.props;
   />
   <p>{post.pub_date ? new Date(post.pub_date).toLocaleDateString() : ''}</p>
   <p><em>{post.description}</em></p>
-  <p>作者：{post.author}</p>
-  {post.image_url && <img src={post.image_url} width="300" alt={post.image_alt || ''} />}
+  <p>Author: {post.author}</p>
+  {post.image_url && <img src={post.image_url} width="300" height="200" alt={post.image_alt || ''} loading="lazy" />}
 
   {post.tags && post.tags.length > 0 && (
     <div class="tags">
-      {post.tags.map((tag) => (
-        <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
+      {post.tags.map((tag: string) => (
+        <p class="tag"><a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a></p>
       ))}
     </div>
   )}

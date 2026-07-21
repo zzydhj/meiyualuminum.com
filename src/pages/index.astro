@@ -1,6 +1,23 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro"; // 导入总布局组件，页面所有内容都会被包裹在 BaseLayout 内部
-const pageTitle = "Home";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import { supabase } from "../lib/supabase";
+
+// Fetch home page data from Supabase
+const { data: homePage, error } = await supabase
+  .from("pages")
+  .select("*")
+  .eq("slug", "home")
+  .eq("status", "published")
+  .single();
+
+if (error) {
+  console.error("Failed to fetch home page:", error);
+}
+
+const pageTitle = homePage?.seo_title || homePage?.title || "Home";
+const pageDescription = homePage?.seo_description || "";
+const keywords = homePage?.keywords ?? [];
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
@@ -9,7 +26,57 @@ const websiteJsonLd = {
   "url": Astro.site,
 };
 ---
-<BaseLayout pageTitle={pageTitle}> <!-- 使用 BaseLayout 作为外层容器，通过 pageTitle={pageTitle} 将标题变量以 prop 形式传入，{} 为 JSX 插值语法 -->
-  <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} /> <!-- type="application/ld+json" 告知浏览器此 script 为结构化数据非可执行脚本；set:html 是 Astro 专有指令，将内容作为原始字符串注入不转义；JSON.stringify() 将 JS 对象序列化为 JSON 字符串 -->
-  <h2>我超棒的博客副标题1232</h2> <!-- 页面副标题，渲染到 BaseLayout 中 <slot /> 插槽所在位置 -->
+
+<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords}>
+  <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
+
+  <!-- Hero section -->
+  {(homePage?.hero_title || homePage?.hero_subtitle) && (
+    <section class="hero">
+      {homePage?.hero_title && <h2>{homePage.hero_title}</h2>}
+      {homePage?.hero_subtitle && <p class="subtitle">{homePage.hero_subtitle}</p>}
+    </section>
+  )}
+
+  <!-- Page content (HTML from database) -->
+  {homePage?.content && (
+    <div class="page-content" set:html={homePage.content} />
+  )}
 </BaseLayout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 2rem 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h2 {
+    font-size: 2rem;
+    margin: 0 0 0.75rem;
+    color: #0d0950;
+  }
+
+  .hero .subtitle {
+    font-size: 1.15rem;
+    color: #475569;
+    margin: 0 auto;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .page-content {
+    line-height: 1.8;
+    font-size: 1rem;
+  }
+
+  .page-content h2 {
+    margin-top: 2rem;
+    color: #1e293b;
+  }
+
+  .page-content p {
+    margin-bottom: 1rem;
+    color: #475569;
+  }
+</style>

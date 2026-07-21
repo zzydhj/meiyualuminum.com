@@ -2,6 +2,7 @@
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
+import { getChildCategoryIds, type CategoryNode } from "../../lib/categoryPath";
 
 const { data: allCategories, error } = await supabase
   .from("categories")
@@ -12,7 +13,7 @@ if (error) {
   console.error("Failed to fetch categories:", error);
 }
 
-const categories = allCategories ?? [];
+const categories = (allCategories ?? []) as CategoryNode[];
 
 // Separate root categories (parent_id = null) and children
 const rootCategories = categories.filter((c) => !c.parent_id);
@@ -27,15 +28,22 @@ const { data: allProducts } = await supabase
 const products = allProducts ?? [];
 
 function getProductCount(categoryId: number): number {
-  return products.filter(
-    (p) => p.category_ids && (p.category_ids as number[]).includes(categoryId)
-  ).length;
+  // Get all descendant IDs (including self) for recursive counting
+  const allIds = getChildCategoryIds(categoryId, categories);
+  return products.filter((p) => {
+    if (!p.category_ids) return false;
+    // category_ids may be string[] or number[] from Supabase JSON column
+    return (p.category_ids as (string | number)[]).some(
+      (id) => allIds.includes(Number(id))
+    );
+  }).length;
 }
 
 const pageTitle = "Categories";
+const pageDescription = "Browse our product categories including brake systems, engine parts, filters and more.";
 ---
 
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout pageTitle={pageTitle} description={pageDescription}>
   <Breadcrumb
     items={[
       { name: "Home", url: "/" },

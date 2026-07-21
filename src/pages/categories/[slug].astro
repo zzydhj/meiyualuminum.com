@@ -42,12 +42,21 @@ if (error) {
   console.error("Failed to fetch products for category:", error);
 }
 
-const products = (allProducts ?? []).filter((p) =>
-  p.category_ids && (p.category_ids as number[]).some((id: number) => allChildIds.includes(id))
-);
+const products = (allProducts ?? []).filter((p) => {
+  if (!p.category_ids) return false;
+  // category_ids may be string[] or number[] from Supabase JSON column
+  return (p.category_ids as (string | number)[]).some(
+    (id: string | number) => allChildIds.includes(Number(id))
+  );
+});
+
+// Use seo_description if available, otherwise fall back to description
+const pageDescription = category.seo_description || category.description || "";
+const pageTitle = category.seo_title || category.name;
+const keywords = category.keywords ?? [];
 ---
 
-<BaseLayout pageTitle={category.name}>
+<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords}>
   <Breadcrumb
     root={{ name: "Categories", url: "/categories/" }}
     middleItems={middleItems}
@@ -83,6 +92,7 @@ const products = (allProducts ?? []).filter((p) =>
                 src={product.image_url}
                 alt={product.image_alt || product.title}
                 width="300"
+                height="180"
                 loading="lazy"
               />
             )}

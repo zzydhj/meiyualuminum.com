@@ -1,0 +1,140 @@
+---
+import Breadcrumb from "../components/Breadcrumb.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { supabase } from "../lib/supabase";
+
+export async function getStaticPaths() {
+  const { data: pages, error } = await supabase
+    .from("pages")
+    .select("*")
+    .eq("status", "published");
+
+  if (error) {
+    console.error("Failed to fetch pages:", error);
+    return [];
+  }
+
+  return (pages ?? []).map((page) => ({
+    params: { page: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+
+// Use seo_title if available, otherwise fall back to title
+const pageTitle = page.seo_title || page.title;
+const pageDescription = page.seo_description || "";
+const keywords = page.keywords ?? [];
+---
+
+<BaseLayout
+  pageTitle={pageTitle}
+  description={pageDescription}
+  image={page.image_url || undefined}
+  keywords={keywords}
+>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: page.title, url: `/${page.slug}/` },
+    ]}
+  />
+
+  <!-- Hero section -->
+  {(page.hero_title || page.hero_subtitle) && (
+    <section class="hero">
+      {page.hero_title && <h2>{page.hero_title}</h2>}
+      {page.hero_subtitle && <p class="subtitle">{page.hero_subtitle}</p>}
+    </section>
+  )}
+
+  <!-- Hero image -->
+  {page.image_url && (
+    <img
+      src={page.image_url}
+      alt={page.image_alt || page.title}
+      width="800"
+      height="400"
+      class="hero-image"
+      loading="lazy"
+    />
+  )}
+
+  <!-- Page content (HTML from database) -->
+  {page.content && (
+    <div class="page-content" set:html={page.content} />
+  )}
+</BaseLayout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 2rem 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h2 {
+    font-size: 2rem;
+    margin: 0 0 0.75rem;
+    color: #0d0950;
+  }
+
+  .hero .subtitle {
+    font-size: 1.15rem;
+    color: #475569;
+    margin: 0;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .page-content {
+    line-height: 1.8;
+    font-size: 1rem;
+  }
+
+  .page-content h2 {
+    margin-top: 2rem;
+    color: #1e293b;
+  }
+
+  .page-content h3 {
+    margin-top: 1.5rem;
+    color: #334155;
+  }
+
+  .page-content p {
+    margin-bottom: 1rem;
+    color: #475569;
+  }
+
+  .page-content ul,
+  .page-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-content a {
+    color: #0053a0;
+  }
+
+  .page-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+</style>

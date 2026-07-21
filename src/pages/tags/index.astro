@@ -1,7 +1,7 @@
 ---
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { supabase } from "../../lib/supabase";  // ✅ 修正路径
+import { supabase } from "../../lib/supabase";
 
 const { data: allPosts } = await supabase
   .from("posts")
@@ -10,28 +10,29 @@ const { data: allPosts } = await supabase
 
 const posts = allPosts ?? [];
 
-// tags 是数组类型，直接 flat 展开去重
+// tags is an array type, flatten and deduplicate
 const tags = [...new Set(
   posts
     .map((post) => post.tags ?? [])
     .flat()
 )];
 
-const pageTitle = "标签索引";
+const pageTitle = "Tags";
+const pageDescription = "Browse all blog post tags and topics.";
 ---
 
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout pageTitle={pageTitle} description={pageDescription}>
   <Breadcrumb
     items={[
-      { name: "首页", url: "/" },
-      { name: "标签", url: "/tags/" },
+      { name: "Home", url: "/" },
+      { name: "Tags", url: "/tags/" },
     ]}
   />
   <div class="tags">
     {
       tags.map((tag) => (
         <p class="tag">
-          <a href={`/tags/${tag}`}>{tag}</a>
+          <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
         </p>
       ))
     }

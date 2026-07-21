@@ -11,7 +11,7 @@ export default defineConfig({
   // ← 保持静态，不需要改成 server！
   output: "static",
 
-  trailingSlash: "ignore",
+  trailingSlash: "always",
   integrations: [mdx(), sitemap()],
 
 });

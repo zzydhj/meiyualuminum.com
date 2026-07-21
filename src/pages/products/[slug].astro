@@ -26,6 +26,11 @@ const { product, primaryCategoryId } = Astro.props;
 // Build category breadcrumb chain from primary_category_id
 const categoryChain = await getCategoryChain(primaryCategoryId ?? null);
 
+// Use seo_title/seo_description if available
+const pageTitle = product.seo_title || product.title;
+const pageDescription = product.seo_description || product.description;
+const keywords = product.keywords ?? [];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
@@ -45,10 +50,12 @@ const jsonLd = {
 ---
 
 <BaseLayout
-  pageTitle={product.title}
-  description={product.description}
+  pageTitle={pageTitle}
+  description={pageDescription}
   image={product.image_url}
   type="article"
+  pubDate={product.created_at ? new Date(product.created_at) : undefined}
+  keywords={keywords}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
@@ -68,6 +75,7 @@ const jsonLd = {
           src={product.image_url}
           alt={product.image_alt || product.title}
           width="600"
+          height="400"
         />
       )}
       {(product.gallery && product.gallery.length > 0) && (
@@ -79,6 +87,7 @@ const jsonLd = {
               class="thumb active"
               data-full={product.image_url}
               width="80"
+              height="60"
             />
           )}
           {product.gallery.map((url: string, i: number) => (
@@ -88,6 +97,7 @@ const jsonLd = {
               class="thumb"
               data-full={url}
               width="80"
+              height="60"
               loading="lazy"
             />
           ))}
