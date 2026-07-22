@@ -1,0 +1,199 @@
+---
+/**
+ * Reusable inquiry form component.
+ * Used on the contact page and inside the inquiry modal.
+ *
+ * ⚠️ SETUP — get your Access Key (free, no signup):
+ *    1. Go to https://web3forms.com
+ *    2. Enter the inbox where you want to receive inquiries
+ *    3. Copy the access key from the email and paste it below
+ */
+const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with your Web3Forms access key
+---
+
+<form
+  action="https://api.web3forms.com/submit"
+  method="POST"
+  class="inquiry-form"
+>
+  <input type="hidden" name="access_key" value={ACCESS_KEY} />
+  <input type="hidden" name="subject" value="New Inquiry — Meiyu Aluminum Website" />
+  <input type="hidden" name="redirect" value="https://www.meiyualuminum.com/thank-you/" />
+  <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
+
+  <div class="form-grid">
+    <label class="field">
+      <span class="label">Full Name <em>*</em></span>
+      <input type="text" name="name" required placeholder="Your name" />
+    </label>
+
+    <label class="field">
+      <span class="label">Email <em>*</em></span>
+      <input type="email" name="email" required placeholder="you@company.com" />
+    </label>
+
+    <label class="field">
+      <span class="label">Company Name</span>
+      <input type="text" name="company" placeholder="Company name" />
+    </label>
+
+    <label class="field">
+      <span class="label">Country</span>
+      <select name="country">
+        <option value="">— Select your country —</option>
+        <option>United States</option>
+        <option>Canada</option>
+        <option>Mexico</option>
+        <option>Brazil</option>
+        <option>United Kingdom</option>
+        <option>Germany</option>
+        <option>France</option>
+        <option>Italy</option>
+        <option>Spain</option>
+        <option>Netherlands</option>
+        <option>Poland</option>
+        <option>Turkey</option>
+        <option>United Arab Emirates</option>
+        <option>Saudi Arabia</option>
+        <option>India</option>
+        <option>Japan</option>
+        <option>South Korea</option>
+        <option>Vietnam</option>
+        <option>Thailand</option>
+        <option>Indonesia</option>
+        <option>Malaysia</option>
+        <option>Philippines</option>
+        <option>Australia</option>
+        <option>Nigeria</option>
+        <option>South Africa</option>
+        <option>Egypt</option>
+        <option>Other</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="label">Product Interest</span>
+      <select name="product_interest">
+        <option value="">— Select a category —</option>
+        <option>Industrial Aluminum Profiles</option>
+        <option>Aluminum Tubes &amp; Pipes</option>
+        <option>Aluminum Sheets &amp; Plates</option>
+        <option>Aluminum Extrusions</option>
+        <option>Automotive Parts</option>
+        <option>Brake System Parts</option>
+        <option>Engine Parts</option>
+        <option>Custom / OEM Order</option>
+        <option>Other</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="label">WhatsApp / Phone</span>
+      <input type="text" name="phone" placeholder="+86 138 0000 0000" />
+    </label>
+  </div>
+
+  <label class="field">
+    <span class="label">Message <em>*</em></span>
+    <textarea
+      name="message"
+      required
+      rows="6"
+      placeholder="Describe the products, quantities, dimensions, or any questions you have. For large drawings/specs, paste a cloud-drive link here..."
+    ></textarea>
+  </label>
+
+  <button type="submit" class="submit-btn">Send Inquiry</button>
+  <p class="note"><em>*</em> Required fields. Your information is only used to respond to your inquiry.</p>
+</form>
+
+<style>
+  .inquiry-form {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  @media screen and (max-width: 636px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-grid .field {
+    margin-bottom: 0;
+  }
+
+  .label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .label em {
+    color: #e11d48;
+    font-style: normal;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font: inherit;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem;
+    background: #fff;
+    color: #0f172a;
+    width: 100%;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: 2px solid #0053a0;
+    outline-offset: 1px;
+    border-color: #0053a0;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  .submit-btn {
+    background-color: #0d0950;
+    color: #fff;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .submit-btn:hover {
+    background-color: #0053a0;
+  }
+
+  .note {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 0.75rem;
+  }
+</style>

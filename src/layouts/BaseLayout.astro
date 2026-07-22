@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import InquiryModal from '../components/InquiryModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -114,5 +115,8 @@ const orgJsonLd = {
 
     <!-- Per-page custom JS (from database, runs after DOM is ready) -->
     {customJs && <script is:inline set:html={customJs} />}
+
+    <!-- Global inquiry modal — triggered from any [data-open-inquiry-modal] button -->
+    <InquiryModal />
   </body>
 </html>

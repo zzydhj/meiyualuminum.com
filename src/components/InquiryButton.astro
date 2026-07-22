@@ -1,0 +1,42 @@
+---
+/**
+ * Reusable button that opens the inquiry modal.
+ * Place it anywhere: header, product page, category page, etc.
+ */
+const { label = "Get Quote", class: className = "" } = Astro.props;
+---
+
+<button
+  type="button"
+  class={`inquiry-btn ${className}`}
+  data-open-inquiry-modal
+>
+  {label}
+</button>
+
+<style>
+  .inquiry-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #69574a;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s, transform 0.15s;
+  }
+
+  .inquiry-btn:hover {
+    background-color: #5a4a3e;
+  }
+
+  .inquiry-btn:active {
+    transform: translateY(1px);
+  }
+</style>

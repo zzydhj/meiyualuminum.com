@@ -1,0 +1,194 @@
+---
+import InquiryForm from "./InquiryForm.astro";
+---
+
+<!--
+  Inquiry modal — included once in BaseLayout.astro.
+  Triggered from any button with data-open-inquiry-modal attribute.
+  Close only via the X button or Escape key. Clicking the backdrop does nothing.
+
+  Uses the native HTML <dialog> element. The browser handles, for free:
+  - scroll lock on the body while the modal is open
+  - focus trapping inside the modal
+  - closing on Escape
+  - dimming via ::backdrop (clicking it does not close by default)
+-->
+<dialog
+  class="inquiry-modal"
+  id="inquiry-modal"
+  aria-labelledby="inquiry-modal-title"
+>
+  <div class="inquiry-modal-dialog">
+    <div class="inquiry-modal-header">
+      <h2 id="inquiry-modal-title">Request a Quote</h2>
+      <button
+        type="button"
+        class="inquiry-modal-close"
+        data-close-inquiry-modal
+        aria-label="Close inquiry form"
+      >
+        <span aria-hidden="true">✕</span>
+      </button>
+    </div>
+
+    <div class="inquiry-modal-body">
+      <InquiryForm />
+    </div>
+  </div>
+</dialog>
+
+<script>
+  (function () {
+    const dialog = document.getElementById("inquiry-modal") as HTMLDialogElement | null;
+    const openButtons = document.querySelectorAll("[data-open-inquiry-modal]");
+    const closeButton = dialog?.querySelector("[data-close-inquiry-modal]");
+
+    openButtons.forEach((btn) =>
+      btn.addEventListener("click", () => dialog?.showModal())
+    );
+
+    closeButton?.addEventListener("click", () => dialog?.close());
+
+    // Expose global helpers so other scripts can trigger the modal
+    (window as any).openInquiryModal = () => dialog?.showModal();
+    (window as any).closeInquiryModal = () => dialog?.close();
+  })();
+</script>
+
+<style>
+  /* ============================================================
+     CSS variables — adjust these to tweak the modal appearance
+     ============================================================ */
+  .inquiry-modal {
+    --modal-overlay-bg: rgba(15, 23, 42, 0.55);
+    --modal-bg: #ffffff;
+    --modal-radius: 0.75rem;
+    --modal-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --modal-max-width: 720px;
+    --modal-padding: 1.5rem;
+    --modal-backdrop-blur: 4px;
+    --close-color: #64748b;
+    --close-hover: #0f172a;
+    --close-size: 1.75rem;
+  }
+
+  /* Reset <dialog> defaults and make it fill the viewport */
+  .inquiry-modal {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 1rem;
+    border: none;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .inquiry-modal[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Backdrop overlay — browser handles this via ::backdrop */
+  .inquiry-modal::backdrop {
+    background-color: var(--modal-overlay-bg);
+    backdrop-filter: blur(var(--modal-backdrop-blur));
+    -webkit-backdrop-filter: blur(var(--modal-backdrop-blur));
+  }
+
+  /* Dialog box */
+  .inquiry-modal-dialog {
+    position: relative;
+    width: 100%;
+    max-width: var(--modal-max-width);
+    max-height: calc(100vh - 2rem);
+    background-color: var(--modal-bg);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
+    overflow-y: auto;
+    animation: modalFadeIn 0.2s ease-out;
+  }
+
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Header */
+  .inquiry-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--modal-padding);
+    padding-bottom: 0;
+  }
+
+  .inquiry-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #0f172a;
+  }
+
+  /* Close button */
+  .inquiry-modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    color: var(--close-color);
+    font-size: var(--close-size);
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 0.375rem;
+    transition: color 0.15s, background-color 0.15s;
+  }
+
+  .inquiry-modal-close:hover,
+  .inquiry-modal-close:focus {
+    color: var(--close-hover);
+    background-color: #f1f5f9;
+  }
+
+  /* Body */
+  .inquiry-modal-body {
+    padding: var(--modal-padding);
+  }
+
+  .inquiry-modal-body :global(.inquiry-form) {
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  /* Mobile: use more of the screen */
+  @media screen and (max-width: 636px) {
+    .inquiry-modal {
+      padding: 0;
+    }
+
+    .inquiry-modal[open] {
+      align-items: flex-end;
+    }
+
+    .inquiry-modal-dialog {
+      max-height: calc(100vh - 2rem);
+      width: calc(100% - 1rem);
+      max-width: none;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>

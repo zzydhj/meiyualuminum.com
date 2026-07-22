@@ -1,6 +1,7 @@
 ---
 import Menu from "../components/Menu.astro";
 import Navigation from "../components/Navigation.astro";
+import InquiryButton from "../components/InquiryButton.astro";
 ---
 
 
@@ -9,6 +10,7 @@ import Navigation from "../components/Navigation.astro";
         <Menu />
         <a class="logo" href="/">MEIYU</a>
         <Navigation />
+        <InquiryButton label="Get Quote" />
     </nav>
 </header>
 
@@ -56,7 +58,7 @@ import Navigation from "../components/Navigation.astro";
     }
   }
 
-  /* Mobile: hamburger top-left, logo centered */
+  /* Mobile: hamburger top-left, Get Quote top-right, logo truly centered */
   @media screen and (max-width: 635px) {
     nav :global(.menu) {
       position: absolute;
@@ -65,8 +67,15 @@ import Navigation from "../components/Navigation.astro";
       transform: translateY(-50%);
     }
 
+    nav :global(.inquiry-btn) {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
     .logo {
-      margin: 0 auto; /* center logo horizontally */
+      margin: 0 auto; /* center logo horizontally (only in-flow item) */
     }
   }
 </style>
