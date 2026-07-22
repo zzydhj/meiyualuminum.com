@@ -12,6 +12,8 @@ interface Props {
   pubDate?: Date;
   author?: string;
   keywords?: string[];
+  customCss?: string;
+  customJs?: string;
 }
 
 const {
@@ -23,6 +25,8 @@ const {
   pubDate,
   author,
   keywords = [],
+  customCss,
+  customJs,
 } = Astro.props;
 
 const siteName = "Meiyu Aluminum";
@@ -80,6 +84,9 @@ const orgJsonLd = {
 
     <!-- Organization Schema -->
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+
+    <!-- Per-page custom CSS (from database) -->
+    {customCss && <style set:html={customCss} />}
   </head>
   <body>
     <Header />
@@ -102,5 +109,8 @@ const orgJsonLd = {
     {gaId && (
       <script is:inline src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
     )}
+
+    <!-- Per-page custom JS (from database, runs after DOM is ready) -->
+    {customJs && <script is:inline set:html={customJs} />}
   </body>
 </html>

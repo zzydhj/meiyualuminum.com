@@ -26,6 +26,10 @@ const { page } = Astro.props;
 const pageTitle = page.seo_title || page.title;
 const pageDescription = page.seo_description || "";
 const keywords = page.keywords ?? [];
+
+// Custom per-page code (plain text columns: custom_css / custom_js)
+const customCss = page.custom_css ?? "";
+const customJs = page.custom_js ?? "";
 ---
 
 <BaseLayout
@@ -33,6 +37,8 @@ const keywords = page.keywords ?? [];
   description={pageDescription}
   image={page.image_url || undefined}
   keywords={keywords}
+  customCss={customCss}
+  customJs={customJs}
 >
   <Breadcrumb
     items={[

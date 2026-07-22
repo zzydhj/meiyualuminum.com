@@ -19,6 +19,10 @@ const pageTitle = homePage?.seo_title || homePage?.title || "Home";
 const pageDescription = homePage?.seo_description || "";
 const keywords = homePage?.keywords ?? [];
 
+// Custom per-page code (plain text columns: custom_css / custom_js)
+const customCss = homePage?.custom_css ?? "";
+const customJs = homePage?.custom_js ?? "";
+
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -27,7 +31,7 @@ const websiteJsonLd = {
 };
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords}>
+<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} customCss={customCss} customJs={customJs}>
   <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
 
   <!-- Hero section -->
