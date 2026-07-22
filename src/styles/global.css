@@ -4,10 +4,11 @@ html {
 }
 
 body {
-  margin: 0 auto;
+  margin: 0;
   width: 100%;
-  max-width: 80ch;
-  padding: 1rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   line-height: 1.5;
 }
 
@@ -18,4 +19,13 @@ body {
 h1 {
   margin: 1rem 0;
   font-size: 2.5rem;
+}
+
+/* Centered content container — header/footer stay full-width (full-bleed) */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+  flex: 1;
 }

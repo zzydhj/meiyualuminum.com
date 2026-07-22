@@ -14,9 +14,16 @@
 
 <style>
   .nav-links {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
     width: 100%;
     display: none;
     margin: 0;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 999;
   }
 
   .nav-links a {
@@ -44,11 +51,11 @@
   /* Desktop: nav always visible, laid out horizontally */
   @media screen and (min-width: 636px) {
     .nav-links {
-      margin-left: 5em;
       display: block;
       position: static;
       width: auto;
       background: none;
+      box-shadow: none;
     }
 
     .nav-links a {

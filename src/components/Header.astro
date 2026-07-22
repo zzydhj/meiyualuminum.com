@@ -6,7 +6,67 @@ import Navigation from "../components/Navigation.astro";
 
 <header>
     <nav>
-            <Menu />
+        <Menu />
+        <a class="logo" href="/">MEIYU</a>
         <Navigation />
     </nav>
 </header>
+
+<style>
+  /* Sticky full-width white header with a subtle bottom shadow */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Nav container — flexbox to align logo, menu and navigation */
+  nav {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Logo */
+  .logo {
+    color: #69574a;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+
+  /* Desktop: fixed 80px height, logo on the left, nav on the right */
+  @media screen and (min-width: 636px) {
+    header {
+      height: 80px;
+    }
+
+    nav {
+      height: 100%;
+      padding: 0 1rem;
+    }
+
+    .logo {
+      margin-right: auto; /* push navigation to the right */
+    }
+  }
+
+  /* Mobile: hamburger top-left, logo centered */
+  @media screen and (max-width: 635px) {
+    nav :global(.menu) {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .logo {
+      margin: 0 auto; /* center logo horizontally */
+    }
+  }
+</style>

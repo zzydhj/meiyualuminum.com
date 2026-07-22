@@ -3,22 +3,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 
 /**
- * Contact / Inquiry page powered by FormSubmit (https://formsubmit.co)
+ * Contact / Inquiry page powered by Web3Forms (https://web3forms.com)
  *
- * ⚠️ IMPORTANT — use your REAL inbox(es):
- *    FormSubmit supports MULTIPLE recipients, just add more emails to the array.
- *    The first submission sends an activation email to EACH address.
- *    You MUST click every activation link before real inquiries arrive.
+ * ⚠️ SETUP — get your Access Key (free, no signup):
+ *    1. Go to https://web3forms.com
+ *    2. Enter the inbox where you want to receive inquiries
+ *    3. Copy the access key from the email and paste it below
+ *
+ * Free plan: 250 submissions/month, hCaptcha protection included.
+ * Note: file attachments require a Pro plan — large files should be
+ * shared via a cloud-drive link in the message instead.
  */
-const FORM_EMAILS = [
-  "zzydhj@outlook.com",
-  // "zzydhj@gmail.com", // ← add more recipients here
-];
-const formAction = `https://formsubmit.co/${FORM_EMAILS.join(",")}`;
+const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with your Web3Forms access key
 
 const pageTitle = "Contact Us";
 const pageDescription =
-  "Request a quote or send us an inquiry about aluminum profiles and automotive parts. Attach drawings or specifications — our team replies within 24 hours.";
+  "Request a quote or send us an inquiry about aluminum profiles and automotive parts. Our team replies within 24 hours.";
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription}>
@@ -31,34 +31,31 @@ const pageDescription =
 
   <p class="intro">
     Have a question or need a quote? Fill in the form below and our team will
-    get back to you within 24 hours. You can also attach drawings or
-    specification sheets.
+    get back to you within 24 hours. For large drawings or specifications,
+    please share a cloud-drive link (Google Drive, Dropbox, etc.) in your
+    message.
   </p>
 
   <!--
-    FormSubmit config (hidden fields):
-    _subject  → email subject line
-    _captcha  → anti-spam captcha page (free plan feature)
-    _template → format the email as a readable table
-    _next     → redirect to our own thank-you page after submit
-                (requires the domain to be activated with FormSubmit)
-    _honey    → honeypot field; bots fill it, humans never see it
+    Web3Forms config (hidden fields):
+    access_key → identifies your inbox (safe to expose, it's an email alias)
+    subject    → email subject line
+    redirect   → our own thank-you page after submit (same domain = free plan OK)
+    botcheck   → honeypot checkbox; bots fill it, humans never see it
   -->
   <form
-    action={formAction}
+    action="https://api.web3forms.com/submit"
     method="POST"
-    enctype="multipart/form-data"
     class="inquiry-form"
   >
-    <input type="hidden" name="_subject" value="New Inquiry — Meiyu Aluminum Website" />
-    <input type="hidden" name="_captcha" value="true" />
-    <input type="hidden" name="_template" value="table" />
-    <input type="hidden" name="_next" value="https://www.meiyualuminum.com/thank-you/" />
-    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+    <input type="hidden" name="access_key" value={ACCESS_KEY} />
+    <input type="hidden" name="subject" value="New Inquiry — Meiyu Aluminum Website" />
+    <input type="hidden" name="redirect" value="https://www.meiyualuminum.com/thank-you/" />
+    <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
 
     <div class="form-grid">
       <label class="field">
-        <span class="label">Name <em>*</em></span>
+        <span class="label">Full Name <em>*</em></span>
         <input type="text" name="name" required placeholder="Your name" />
       </label>
 
@@ -68,80 +65,79 @@ const pageDescription =
       </label>
 
       <label class="field">
-        <span class="label">Company</span>
+        <span class="label">Company Name</span>
         <input type="text" name="company" placeholder="Company name" />
       </label>
 
       <label class="field">
-        <span class="label">Product Model</span>
-        <input type="text" name="product_model" placeholder="e.g. 6061-T6 aluminum profile" />
+        <span class="label">Country</span>
+        <select name="country">
+          <option value="">— Select your country —</option>
+          <option>United States</option>
+          <option>Canada</option>
+          <option>Mexico</option>
+          <option>Brazil</option>
+          <option>United Kingdom</option>
+          <option>Germany</option>
+          <option>France</option>
+          <option>Italy</option>
+          <option>Spain</option>
+          <option>Netherlands</option>
+          <option>Poland</option>
+          <option>Turkey</option>
+          <option>United Arab Emirates</option>
+          <option>Saudi Arabia</option>
+          <option>India</option>
+          <option>Japan</option>
+          <option>South Korea</option>
+          <option>Vietnam</option>
+          <option>Thailand</option>
+          <option>Indonesia</option>
+          <option>Malaysia</option>
+          <option>Philippines</option>
+          <option>Australia</option>
+          <option>Nigeria</option>
+          <option>South Africa</option>
+          <option>Egypt</option>
+          <option>Other</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="label">Product Interest</span>
+        <select name="product_interest">
+          <option value="">— Select a category —</option>
+          <option>Industrial Aluminum Profiles</option>
+          <option>Aluminum Tubes &amp; Pipes</option>
+          <option>Aluminum Sheets &amp; Plates</option>
+          <option>Aluminum Extrusions</option>
+          <option>Automotive Parts</option>
+          <option>Brake System Parts</option>
+          <option>Engine Parts</option>
+          <option>Custom / OEM Order</option>
+          <option>Other</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="label">WhatsApp / Phone</span>
+        <input type="text" name="phone" placeholder="+86 138 0000 0000" />
       </label>
     </div>
 
     <label class="field">
-      <span class="label">Inquiry Details <em>*</em></span>
+      <span class="label">Message <em>*</em></span>
       <textarea
         name="message"
         required
         rows="6"
-        placeholder="Describe the products, quantities, dimensions, or any questions you have..."
+        placeholder="Describe the products, quantities, dimensions, or any questions you have. For large drawings/specs, paste a cloud-drive link here..."
       ></textarea>
-    </label>
-
-    <label class="field">
-      <span class="label">Attachment</span>
-      <input
-        type="file"
-        id="attachment"
-        name="attachment[]"
-        multiple
-        accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.zip"
-      />
-      <span class="hint">Drawings or specs (PDF, DWG, images, ZIP). Total size up to 10MB. For larger files, please share a cloud-drive link in the message.</span>
-      <p id="file-error" class="file-error" hidden></p>
     </label>
 
     <button type="submit" class="submit-btn">Send Inquiry</button>
     <p class="note"><em>*</em> Required fields. Your information is only used to respond to your inquiry.</p>
   </form>
-
-  <!--
-    Client-side file size validation.
-    FormSubmit rejects submissions whose total attachment size exceeds 10MB
-    with an unfriendly 500 page, so we block oversized uploads up front.
-  -->
-  <script>
-    const MAX_TOTAL_MB = 10; // FormSubmit free-plan attachment limit
-    const form = document.querySelector(".inquiry-form") as HTMLFormElement | null;
-    const fileInput = document.getElementById("attachment") as HTMLInputElement | null;
-    const errorBox = document.getElementById("file-error");
-
-    function totalSizeMB(): number {
-      let bytes = 0;
-      if (fileInput?.files) {
-        for (const f of Array.from(fileInput.files)) bytes += f.size;
-      }
-      return bytes / (1024 * 1024);
-    }
-
-    function validateFiles(): boolean {
-      const sizeMB = totalSizeMB();
-      if (sizeMB > MAX_TOTAL_MB) {
-        if (errorBox) {
-          errorBox.textContent = `Attachments total ${sizeMB.toFixed(1)}MB, which exceeds the ${MAX_TOTAL_MB}MB limit. Please compress or remove some files, or share a cloud-drive link instead.`;
-          errorBox.hidden = false;
-        }
-        return false;
-      }
-      if (errorBox) errorBox.hidden = true;
-      return true;
-    }
-
-    fileInput?.addEventListener("change", validateFiles);
-    form?.addEventListener("submit", (e) => {
-      if (!validateFiles()) e.preventDefault();
-    });
-  </script>
 </BaseLayout>
 
 <style>
@@ -196,6 +192,7 @@ const pageDescription =
   }
 
   .field input,
+  .field select,
   .field textarea {
     font: inherit;
     padding: 0.6rem 0.75rem;
@@ -207,6 +204,7 @@ const pageDescription =
   }
 
   .field input:focus,
+  .field select:focus,
   .field textarea:focus {
     outline: 2px solid #0053a0;
     outline-offset: 1px;
@@ -216,28 +214,6 @@ const pageDescription =
   .field textarea {
     resize: vertical;
     min-height: 140px;
-  }
-
-  .field input[type="file"] {
-    padding: 0.4rem;
-    border-style: dashed;
-    background: #f8fafc;
-    cursor: pointer;
-  }
-
-  .hint {
-    font-size: 0.8rem;
-    color: #64748b;
-  }
-
-  .file-error {
-    font-size: 0.85rem;
-    color: #dc2626;
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 0.375rem;
-    padding: 0.5rem 0.75rem;
-    margin: 0.25rem 0 0;
   }
 
   .submit-btn {
