@@ -1,23 +1,398 @@
 ---
-import Social from './Social.astro';
+// Footer component — dark themed, multi-column layout.
+// Replace the external logo URL below with a local file (e.g. /logo-light.png)
+// once you add it to the public/ folder.
 ---
 
+<footer class="my-ft">
+  <div class="my-ft-inner">
+  <!-- Logo + 社媒 -->
+  <div class="my-ft-head">
+    <div class="my-ft-head-logo">
+      <img
+        src="https://meiyualuminum.com/wp-content/uploads/2026/07/4.png"
+        alt="MEIYU Aluminum"
+      />
+    </div>
+
+    <div class="my-ft-socials">
+      <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg></a>
+      <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7H10V9h4v1.76A6 6 0 0 1 16 8zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+      <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.13 6.33 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg></a>
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.072 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.072 4.849-.149 3.225-1.688 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.997 3.997 0 110-7.995 3.997 3.997 0 010 7.995zm6.406-10.845a1.44 1.44 0 11-2.881 0 1.44 1.44 0 012.881 0z"/></svg></a>
+      <a href="#" aria-label="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.77 1.22-5.17 1.22-5.17s-.31-.62-.31-1.54c0-1.45.84-2.53 1.88-2.53.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.88 1.54 1.88 1.85 0 3.27-1.95 3.27-4.76 0-2.49-1.79-4.23-4.34-4.23-2.96 0-4.69 2.22-4.69 4.51 0 .89.34 1.85.77 2.37.08.1.09.19.07.29l-.28 1.18c-.04.19-.14.23-.32.14-1.25-.58-2.03-2.42-2.03-3.89 0-3.15 2.29-6.05 6.61-6.05 3.47 0 6.16 2.47 6.16 5.77 0 3.45-2.17 6.22-5.19 6.22-1.01 0-1.97-.53-2.3-1.15l-.62 2.33c-.23.87-.84 1.96-1.25 2.62.94.29 1.94.45 2.97.45 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg></a>
+      <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></a>
+    </div>
+  </div>
+
+  <!-- 主体 -->
+  <div class="my-ft-top">
+    <!-- 品牌描述 -->
+    <div class="my-ft-brand">
+      <p>Premium aluminum ceiling panels, facade cladding and decorative metal systems — engineered for lasting performance and architectural excellence.</p>
+    </div>
+
+    <!-- Products -->
+    <div class="my-ft-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="/products/">Aluminum Facade Panel</a></li>
+        <li><a href="/products/">Suspended Ceiling</a></li>
+        <li><a href="/products/">Acoustic Ceiling</a></li>
+        <li><a href="/products/">Decorative Screen</a></li>
+        <li><a href="/products/">ACP Panel</a></li>
+        <li><a href="/products/">Curtain Wall System</a></li>
+      </ul>
+    </div>
+
+    <!-- Company -->
+    <div class="my-ft-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about/">About MEIYU</a></li>
+        <li><a href="#">Manufacturing</a></li>
+        <li><a href="#">Certifications</a></li>
+        <li><a href="/blog/">Case Studies</a></li>
+        <li><a href="/blog/">Blog &amp; News</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="my-ft-col">
+      <h4>Contact Us</h4>
+      <ul class="my-ft-contact">
+        <li><span class="ic">📍</span><span>No.88 Industrial Ave, Foshan, Guangdong, China</span></li>
+        <li><span class="ic">📞</span><span>+86 123 4567 8900</span></li>
+        <li><span class="ic">📧</span><span>info@meiyualuminum.com</span></li>
+        <li><span class="ic">🕐</span><span>Mon – Fri: 9:00 AM – 6:00 PM (CST)</span></li>
+      </ul>
+    </div>
+
+    <!-- CTA 卡片 -->
+    <div class="my-ft-cta-box">
+      <strong>Contact MEIYU</strong>
+      <p>Leave us a message for a free quote or catalog. We will respond within 24 hours.</p>
+      <div class="my-ft-cta-btns">
+        <a href="/contact/" class="my-ft-cta-btn primary">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Get a Free Quote
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 认证 -->
+  <div class="my-ft-certs">
+    <span class="my-ft-badge">✓ ISO 9001 Certified</span>
+    <span class="my-ft-badge">✓ SGS Tested</span>
+    <span class="my-ft-badge">✓ CE Certified</span>
+    <span class="my-ft-badge">✓ PVDF Coating</span>
+    <span class="my-ft-badge">✓ 15+ Years Experience</span>
+  </div>
+
+  <!-- 版权 -->
+  <div class="my-ft-bottom">
+    <span>© 2026 MEIYU Aluminum Co., Ltd. All Rights Reserved.</span>
+    <div>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Sitemap</a>
+    </div>
+  </div>
+  </div>
+</footer>
+
 <style>
-  /* Full-width footer bar, flush with the left/right/bottom window edges */
-  footer {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
+  /* ── Base reset ──
+     Only reset box-sizing (no blanket margin/padding override).
+     Browser-default margins on headings, lists, and paragraphs
+     are explicitly zeroed per-element below.
+  */
+  .my-ft {
+    box-sizing: border-box;
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+    background: #1A1008;
+    color: rgba(255, 255, 255, 0.8);
+    width: 100%;
+  }
+  .my-ft *,
+  .my-ft *::before,
+  .my-ft *::after {
+    box-sizing: inherit;
+  }
+  /* Explicit margin reset for elements that have browser defaults */
+  .my-ft h1, .my-ft h2, .my-ft h3, .my-ft h4,
+  .my-ft p, .my-ft ul, .my-ft ol, .my-ft li {
     margin: 0;
-    padding: 1.25rem 1rem;
-    background-color: #fff;
-    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.08);
+    padding: 0;
+  }
+
+  /* ── Centered content container (matches header nav + main .container) ── */
+  .my-ft-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* ── Header: Logo + Social ── */
+  .my-ft-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 36px 0px 28px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.15);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .my-ft-head-logo {
+    display: flex;
+    align-items: center;
+  }
+  .my-ft-head-logo img {
+    height: 48px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+  }
+  .my-ft-socials {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .my-ft-socials a {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(200, 169, 110, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: none;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .my-ft-socials a svg {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+  }
+  .my-ft-socials a:hover {
+    background: #c8a96e;
+    border-color: #c8a96e;
+    color: #fff;
+  }
+
+  /* ── Main Grid ── */
+  .my-ft-top {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.1fr 1.3fr;
+    gap: 40px;
+    padding: 56px 0px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.1);
+    align-items: start;
+  }
+  .my-ft-brand p {
+    font-size: 14px;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.5);
+    max-width: 260px;
+  }
+  .my-ft-col h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #c8a96e;
+    margin-bottom: 20px;
+  }
+  .my-ft-col ul {
+    list-style: none;
+  }
+  .my-ft-col ul li {
+    margin-bottom: 12px;
+  }
+  .my-ft-col ul li a {
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+    line-height: 1.4;
+  }
+  .my-ft-col ul li a:hover {
+    color: #c8a96e;
+  }
+  .my-ft-contact {
+    list-style: none;
+  }
+  .my-ft-contact li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.6;
+  }
+  .my-ft-contact .ic {
+    color: #c8a96e;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── CTA Card ── */
+  .my-ft-cta-box {
+    background: rgba(200, 169, 110, 0.06);
+    border: 1px solid rgba(200, 169, 110, 0.3);
+    border-radius: 10px;
+    padding: 24px 22px;
+  }
+  .my-ft-cta-box strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .my-ft-cta-box p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 18px;
+    line-height: 1.65;
+  }
+  .my-ft-cta-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .my-ft-cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .my-ft-cta-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+  .my-ft-cta-btn.primary {
+    background: #c8a96e;
+    color: #1A1008;
+  }
+  .my-ft-cta-btn.primary:hover {
+    background: #e8d5a8;
+    transform: translateY(-2px);
+  }
+
+  /* ── Certifications ── */
+  .my-ft-certs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 32px 0px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.08);
+  }
+  .my-ft-badge {
+    padding: 8px 20px;
+    border: 1px solid rgba(200, 169, 110, 0.35);
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #c8a96e;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Bottom Bar ── */
+  .my-ft-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px 0px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+    gap: 12px;
+  }
+  .my-ft-bottom a {
+    color: rgba(255, 255, 255, 0.35);
+    text-decoration: none;
+    margin-left: 20px;
+    transition: color 0.2s;
+  }
+  .my-ft-bottom a:hover {
+    color: #c8a96e;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) {
+    .my-ft-top {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .my-ft-brand {
+      grid-column: 1 / -1;
+    }
+    .my-ft-brand p {
+      max-width: 100%;
+    }
+    .my-ft-cta-box {
+      grid-column: span 1;
+    }
+  }
+  @media (max-width: 900px) {
+    .my-ft-inner {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .my-ft-top {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      padding: 40px 0px;
+    }
+    .my-ft-brand {
+      grid-column: 1 / -1;
+    }
+    .my-ft-cta-box {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 500px) {
+    .my-ft-inner {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .my-ft-top {
+      grid-template-columns: 1fr;
+      padding: 36px 0px;
+    }
+    .my-ft-head {
+      padding: 24px 0px;
+    }
+    .my-ft-certs {
+      padding: 20px 0px;
+    }
+    .my-ft-badge {
+      font-size: 11px;
+      padding: 5px 12px;
+    }
+    .my-ft-bottom {
+      padding: 18px 0px;
+      flex-direction: column;
+      text-align: center;
+    }
+    .my-ft-bottom a {
+      margin-left: 0;
+      margin: 0 8px;
+    }
   }
 </style>
-
-<footer>
-  <Social platform="twitter" username="meiyualuminum" />
-  <Social platform="linkedin" username="meiyualuminum" />
-  <Social platform="github" username="meiyualuminum" />
-</footer>
