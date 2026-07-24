@@ -1,0 +1,373 @@
+/* ============================================================
+   1. Solutions Section (Bronze)
+   ============================================================ */
+.solutions-section-bronze * { margin: 0; padding: 0; box-sizing: border-box; }
+
+.solutions-section-bronze {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: #F9F8F6;
+  padding: 80px 0px;
+  width: 100%;
+}
+
+.solutions-container-bronze {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ── Header ── */
+.section-header-bronze {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.section-header-bronze .eyebrow-bronze {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #C0A882;
+  margin-bottom: 12px;
+}
+.section-header-bronze h2 {
+  font-size: 36px;
+  font-weight: 800;
+  color: #242424;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.section-header-bronze h2 span {
+  color: #69574A;
+}
+.section-header-bronze p {
+  font-size: 15px;
+  color: #6b7280;
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.gold-line-bronze {
+  width: 48px;
+  height: 3px;
+  background: #C0A882;
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+/* ── Grid Layout ── */
+.solutions-grid-bronze {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  align-items: stretch;
+}
+
+/* ── Card Base ── */
+.card-bronze {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  border: 2px solid transparent;
+}
+.card-bronze:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(105,87,74,0.12);
+}
+
+.card-img-bronze {
+  width: 100% !important;
+  height: 220px !important;
+  min-height: 220px !important;
+  max-height: 220px !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-bottom: none !important;
+}
+
+.card-body-bronze {
+  padding: 32px 30px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-tag-bronze {
+  display: inline-block;
+  background: rgba(105,87,74,0.08);
+  color: #69574A;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  width: fit-content;
+}
+
+.card-bronze h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #242424;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.card-bronze p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.card-bronze ul {
+  list-style: none;
+  margin-top: auto;
+}
+.card-bronze ul li {
+  font-size: 14px;
+  color: #444;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+.card-bronze ul li:last-child { border-bottom: none; padding-bottom: 0; }
+.card-bronze ul li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #C0A882;
+  flex-shrink: 0;
+}
+
+/* ── Highlighted Card ── */
+.card-highlight-bronze {
+  background: #69574A;
+  border: 2px solid #C0A882;
+  box-shadow: 0 12px 30px rgba(105,87,74,0.2);
+  z-index: 2;
+}
+.card-highlight-bronze:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(105,87,74,0.3);
+}
+.card-highlight-bronze .card-tag-bronze {
+  background: #C0A882;
+  color: #242424;
+}
+.card-highlight-bronze h3 {
+  color: #ffffff;
+}
+.card-highlight-bronze p {
+  color: rgba(255,255,255,0.85);
+}
+.card-highlight-bronze ul li {
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+.card-highlight-bronze ul li {
+  font-size: 15px;
+  font-weight: 700;
+}
+.card-highlight-bronze ul li::before {
+  background: #C0A882;
+}
+
+/* ── Bottom CTA ── */
+.section-cta-bronze {
+  text-align: center;
+  margin-top: 50px;
+}
+.btn-primary-bronze, .btn-secondary-bronze {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 16px 40px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.25s;
+}
+.btn-primary-bronze {
+  background: #69574A;
+  color: #fff;
+  border: 2px solid #69574A;
+}
+.btn-primary-bronze:hover {
+  background: #C0A882;
+  border-color: #C0A882;
+  color: #242424;
+  transform: translateY(-2px);
+}
+.btn-secondary-bronze {
+  background: transparent;
+  color: #69574A;
+  border: 2px solid #69574A;
+  margin-left: 16px;
+}
+.btn-secondary-bronze:hover {
+  background: #69574A;
+  color: #fff;
+}
+
+@media (max-width: 1024px) {
+  .solutions-grid-bronze {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .btn-secondary-bronze {
+    margin-left: 0;
+    margin-top: 16px;
+    display: block;
+    width: fit-content;
+    margin: 16px auto 0;
+  }
+}
+
+/* ============================================================
+   2. Gallery Tabs Section
+   ============================================================ */
+.gallery-tabs-section {
+  padding: 60px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.gallery-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.gallery-tab {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: 2px solid #3a3a3a;
+  background: #fff;
+  color: #3a3a3a;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.gallery-tab:hover {
+  border-color: #69574A;
+  color: #69574A;
+}
+
+.gallery-tab.active {
+  background: #69574A;
+  border-color: #69574A;
+  color: #fff;
+}
+
+/* 面板切换 */
+.gallery-panel {
+  display: none;
+}
+.gallery-panel.active {
+  display: block;
+}
+
+/* ============================================================
+   3. Gallery Grid (ACP)
+   ============================================================ */
+.acp-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 35px;
+  padding: 0;
+  width: 100%;
+}
+
+.acp-gallery-item {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: box-shadow 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.acp-gallery-item:hover {
+  box-shadow: 0 10px 32px rgba(0,0,0,0.16);
+}
+
+.acp-gallery-item .img-wrap {
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+}
+
+.acp-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.acp-gallery-item:hover img {
+  transform: scale(1.02);
+}
+
+.acp-gallery-item .caption {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  color: #333;
+  background: #fff;
+  transition: color 0.6s ease;
+}
+
+.acp-gallery-item:hover .caption {
+  color: #111;
+}
+
+@media (max-width: 900px) {
+  .acp-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .acp-gallery {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+/* ============================================================
+   4. 全宽修复：让 section 突破 .container 限制
+   ============================================================ */
+.page-content .solutions-section-bronze {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}

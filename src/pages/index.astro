@@ -31,42 +31,430 @@ const websiteJsonLd = {
 };
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} customCss={customCss} customJs={customJs}>
+<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} customCss={customCss} customJs={customJs} hideTitle>
   <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
 
-  <!-- Hero section -->
-  {(homePage?.hero_title || homePage?.hero_subtitle) && (
-    <section class="hero">
-      {homePage?.hero_title && <h2>{homePage.hero_title}</h2>}
-      {homePage?.hero_subtitle && <p class="subtitle">{homePage.hero_subtitle}</p>}
-    </section>
-  )}
+  <!-- ===== Full-screen Video Hero Banner ===== -->
+  <section class="video-hero">
+    <video class="video-hero-bg" autoplay muted loop playsinline preload="auto" poster="https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg">
+      <source src="https://file.meiyualuminum.com/meiyu-factory-video.webm" type="video/webm" />
+    </video>
+    <div class="video-hero-overlay"></div>
+    <div class="video-hero-content">
+      <h1>{homePage?.hero_title || pageTitle}</h1>
+      {homePage?.hero_subtitle && <p>{homePage.hero_subtitle}</p>}
+    </div>
+  </section>
 
   <!-- Page content (HTML from database) -->
   {homePage?.content && (
     <div class="page-content" set:html={homePage.content} />
   )}
+
+  <!-- ===== Solutions Section (Bronze) ===== -->
+  <section class="solutions-section-bronze">
+    <div class="solutions-container-bronze">
+      <div class="section-header-bronze">
+        <span class="eyebrow-bronze">What We Offer (Bronze Version)</span>
+        <div class="gold-line-bronze"></div>
+        <h2>Tailored Solutions for <span>Every Project</span></h2>
+        <p>From concept to completion, MEIYU<sup style="font-size:0.65em;color:#C0A882;">®</sup> delivers precision-engineered aluminum ceiling &amp; wall systems built for performance and lasting aesthetics.</p>
+      </div>
+      <div class="solutions-grid-bronze">
+        <div class="card-bronze">
+          <img src="https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg" alt="Aluminum Ceiling Systems" class="card-img-bronze">
+          <div class="card-body-bronze">
+            <span class="card-tag-bronze">Manufacturing</span>
+            <h3>Premium Aluminum Systems</h3>
+            <p>Durable, low-maintenance aluminum ceiling and facade systems tailored for commercial and civic developments.</p>
+            <ul>
+              <li>Fire-resistant &amp; weather-proof</li>
+              <li>Acoustic performance certified</li>
+              <li>Compliant with global standards</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-bronze card-highlight-bronze">
+          <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80" alt="Custom Design & 3D Modeling" class="card-img-bronze">
+          <div class="card-body-bronze">
+            <span class="card-tag-bronze">Core Competence</span>
+            <h3>Custom Design Capabilities</h3>
+            <p>We transform your architectural vision into reality with unmatched precision, offering comprehensive design support from concept to execution.</p>
+            <ul>
+              <li>High-Precision 3D Modeling</li>
+              <li>Shop Drawing Refinement</li>
+              <li>BIM Coordination &amp; Analysis</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-bronze">
+          <img src="https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg" alt="Smart Engineering Support" class="card-img-bronze">
+          <div class="card-body-bronze">
+            <span class="card-tag-bronze">Engineering</span>
+            <h3>Smart Engineering Support</h3>
+            <p>From mock-up samples to on-site technical guidance, our engineers work alongside your team through final installation.</p>
+            <ul>
+              <li>Custom Planning &amp; Mock-Ups</li>
+              <li>On-Site Technical Guidance</li>
+              <li>Full Project Lifecycle Support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="section-cta-bronze">
+        <a href="/contact" class="btn-primary-bronze">Get a Free Quote</a>
+        <a href="/products" class="btn-secondary-bronze">View Projects</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Gallery Tabs Section ===== -->
+  <section class="gallery-tabs-section">
+    <div class="gallery-tabs">
+      <button class="gallery-tab active" data-tab="facade">Aluminum Façade</button>
+      <button class="gallery-tab" data-tab="ceiling">Aluminum Ceiling Project</button>
+      <button class="gallery-tab" data-tab="acoustic">Aluminum Acoustic Ceiling</button>
+      <button class="gallery-tab" data-tab="interior">Interior Decorative Panel</button>
+      <button class="gallery-tab" data-tab="acp">ACP Panel</button>
+    </div>
+
+    <!-- Panel 1: Aluminum Façade -->
+    <div class="gallery-panel active" data-panel="facade">
+      <div class="acp-gallery">
+        <a class="acp-gallery-item" href="/your-link-1.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="caption">Innovative Business Hub ACP Facade</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-2.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="caption">Executive Office Building ACP Cladding</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-3.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-4.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="caption">Corporate Entrance ACP Facade Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-5.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="caption">Auditorium ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-6.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="caption">Office ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-7.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-8.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="caption">Corporate Office ACP Ceiling Project</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Panel 2: Aluminum Ceiling Project -->
+    <div class="gallery-panel" data-panel="ceiling">
+      <div class="acp-gallery">
+        <a class="acp-gallery-item" href="/your-link-1.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="caption">Innovative Business Hub ACP Facade</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-2.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="caption">Executive Office Building ACP Cladding</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-3.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-4.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="caption">Corporate Entrance ACP Facade Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-5.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="caption">Auditorium ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-6.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="caption">Office ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-7.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-8.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="caption">Corporate Office ACP Ceiling Project</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Panel 3: Aluminum Acoustic Ceiling -->
+    <div class="gallery-panel" data-panel="acoustic">
+      <div class="acp-gallery">
+        <a class="acp-gallery-item" href="/your-link-1.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="caption">Innovative Business Hub ACP Facade</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-2.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="caption">Executive Office Building ACP Cladding</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-3.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-4.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="caption">Corporate Entrance ACP Facade Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-5.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="caption">Auditorium ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-6.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="caption">Office ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-7.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-8.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="caption">Corporate Office ACP Ceiling Project</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Panel 4: Interior Decorative Panel -->
+    <div class="gallery-panel" data-panel="interior">
+      <div class="acp-gallery">
+        <a class="acp-gallery-item" href="/your-link-1.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="caption">Innovative Business Hub ACP Facade</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-2.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="caption">Executive Office Building ACP Cladding</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-3.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-4.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="caption">Corporate Entrance ACP Facade Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-5.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="caption">Auditorium ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-6.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="caption">Office ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-7.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-8.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="caption">Corporate Office ACP Ceiling Project</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Panel 5: ACP Panel -->
+    <div class="gallery-panel" data-panel="acp">
+      <div class="acp-gallery">
+        <a class="acp-gallery-item" href="/your-link-1.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="caption">Innovative Business Hub ACP Facade</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-2.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="caption">Executive Office Building ACP Cladding</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-3.html">
+          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-4.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="caption">Corporate Entrance ACP Facade Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-5.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="caption">Auditorium ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-6.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="caption">Office ACP Ceiling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-7.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
+        </a>
+        <a class="acp-gallery-item" href="/your-link-8.html">
+          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="caption">Corporate Office ACP Ceiling Project</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Global Map Section ===== -->
+  <div class="meiyu-map-wrapper">
+    <div class="meiyu-map-container">
+
+      <!-- 顶部标题 + 数据 -->
+      <div class="meiyu-map-topbar">
+        <div>
+          <div class="meiyu-map-tl-tag">Global Projects</div>
+          <div class="meiyu-map-tl-h">Our Work, <span>Worldwide</span></div>
+        </div>
+        <div class="meiyu-map-stats">
+          <div><div class="meiyu-map-st-num" id="meiyu-sC">0</div><div class="meiyu-map-st-lbl">Countries</div></div>
+          <div><div class="meiyu-map-st-num" id="meiyu-sP">0</div><div class="meiyu-map-st-lbl">Projects</div></div>
+          <div><div class="meiyu-map-st-num" id="meiyu-sK">0</div><div class="meiyu-map-st-lbl">Cities</div></div>
+        </div>
+      </div>
+
+      <!-- 主体 -->
+      <div class="meiyu-map-body">
+
+        <!-- 地图 -->
+        <div class="meiyu-map-wrap" id="meiyu-mw">
+          <img src="https://meiyualuminum.com/wp-content/uploads/2026/07/world-2-scaled.webp" alt="World Map" class="meiyu-map-bg">
+
+          <!-- 点位 -->
+          <div class="meiyu-map-pin lg" data-id="cn" style="left:77.5%;top:38.0%"><div class="ring"></div><div class="ring2"></div><div class="core"></div></div>
+          <div class="meiyu-map-pin lg" data-id="me" style="left:63.5%;top:45.0%"><div class="ring" style="animation-delay:.4s"></div><div class="ring2" style="animation-delay:1.2s"></div><div class="core"></div></div>
+          <div class="meiyu-map-pin sm" data-id="sea" style="left:78.5%;top:56.0%"><div class="ring" style="animation-delay:.8s"></div><div class="ring2" style="animation-delay:1.6s"></div><div class="core"></div></div>
+          <div class="meiyu-map-pin sm" data-id="eu" style="left:53.0%;top:30.0%"><div class="ring" style="animation-delay:1.2s"></div><div class="ring2" style="animation-delay:2.0s"></div><div class="core"></div></div>
+          <div class="meiyu-map-pin xs" data-id="au" style="left:85.0%;top:78.0%"><div class="ring" style="animation-delay:1.6s"></div><div class="ring2" style="animation-delay:2.4s"></div><div class="core"></div></div>
+          <div class="meiyu-map-pin xs" data-id="na" style="left:22.0%;top:35.0%"><div class="ring" style="animation-delay:.6s"></div><div class="ring2" style="animation-delay:1.4s"></div><div class="core"></div></div>
+          <div class="meiyu-map-pin xs" data-id="af" style="left:54.0%;top:62.0%"><div class="ring" style="animation-delay:1.0s"></div><div class="ring2" style="animation-delay:1.8s"></div><div class="core"></div></div>
+          <div class="meiyu-map-pin xs" data-id="sa" style="left:32.0%;top:70.0%"><div class="ring" style="animation-delay:1.4s"></div><div class="ring2" style="animation-delay:2.2s"></div><div class="core"></div></div>
+
+          <!-- 图例 -->
+          <div class="meiyu-map-legend">
+            <div class="meiyu-map-leg-i"><div class="meiyu-map-leg-d" style="background:#C0A882"></div>50+ projects</div>
+            <div class="meiyu-map-leg-i"><div class="meiyu-map-leg-d" style="background:#DDD0B8"></div>20–50</div>
+            <div class="meiyu-map-leg-i"><div class="meiyu-map-leg-d" style="background:#8C7B6E"></div>&lt;20</div>
+          </div>
+
+          <!-- Tooltip -->
+          <div class="meiyu-map-tip" id="meiyu-tip">
+            <div class="meiyu-map-tip-reg"  id="meiyu-tReg"></div>
+            <div class="meiyu-map-tip-name" id="meiyu-tName"></div>
+            <div class="meiyu-map-tip-meta" id="meiyu-tMeta"></div>
+            <span class="meiyu-map-tip-count" id="meiyu-tCount"></span>
+          </div>
+        </div>
+
+        <!-- 右侧面板 -->
+        <div class="meiyu-map-panel">
+          <div class="meiyu-map-p-head">
+            <h3 id="meiyu-pReg">All Regions</h3>
+            <p id="meiyu-pDesc">Click a pin to explore projects</p>
+          </div>
+          <div class="meiyu-map-filters">
+            <button class="meiyu-map-fb on" data-r="all">All</button>
+            <button class="meiyu-map-fb" data-r="cn">China</button>
+            <button class="meiyu-map-fb" data-r="me">Mid East</button>
+            <button class="meiyu-map-fb" data-r="sea">SE Asia</button>
+            <button class="meiyu-map-fb" data-r="eu">Europe</button>
+            <button class="meiyu-map-fb" data-r="au">Australia</button>
+          </div>
+          <div class="meiyu-map-clist" id="meiyu-clist"></div>
+          <a class="meiyu-map-cta" href="#"><span>View All Case Studies →</span></a>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </BaseLayout>
 
 <style>
-  .hero {
+  :global(html) { overflow-x: hidden; }
+
+  /* ===== Full-screen Video Hero ===== */
+  .video-hero {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    /* Cancel out the .container's 1rem top padding so the video sits flush against the header */
+    margin-top: -1rem;
+    height: calc(100vh - 60px);
+    height: calc(100svh - 60px);
+    overflow: hidden;
+    /* Fallback background image shown when the video fails to load */
+    background-image: url('https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Hide the video element when it fails, revealing the fallback background */
+  .video-hero-bg.video-failed {
+    display: none;
+  }
+  @media (min-width: 636px) {
+    .video-hero {
+      height: calc(100vh - 80px);
+      height: calc(100svh - 80px);
+    }
+  }
+
+  .video-hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(20,12,6,0.25), rgba(20,12,6,0.55));
+  }
+
+  .video-hero-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 2rem 0;
-    margin-bottom: 1.5rem;
+    padding: 0 24px;
   }
 
-  .hero h2 {
-    font-size: 2rem;
-    margin: 0 0 0.75rem;
-    color: #0d0950;
+  .video-hero-content h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+    max-width: 900px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.35);
   }
 
-  .hero .subtitle {
-    font-size: 1.15rem;
-    color: #475569;
+  .video-hero-content p {
     margin: 0 auto;
-    max-width: 600px;
+    font-size: clamp(1rem, 2vw, 1.25rem);
     line-height: 1.6;
+    color: rgba(255,255,255,0.92);
+    max-width: 640px;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.35);
   }
 
   .page-content {
@@ -83,4 +471,684 @@ const websiteJsonLd = {
     margin-bottom: 1rem;
     color: #475569;
   }
+
+  /* ===== Solutions Section (Bronze) ===== */
+  .solutions-section-bronze {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background: #F9F8F6;
+    padding: 80px 0px;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+
+  .solutions-container-bronze {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .section-header-bronze {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  .section-header-bronze .eyebrow-bronze {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #C0A882;
+    margin-bottom: 12px;
+  }
+  .section-header-bronze h2 {
+    margin: 0 0 16px;
+    font-size: 36px;
+    font-weight: 800;
+    color: #242424;
+    line-height: 1.2;
+  }
+  .section-header-bronze h2 span {
+    color: #69574A;
+  }
+  .section-header-bronze p {
+    margin: 0 auto;
+    font-size: 15px;
+    color: #6b7280;
+    max-width: 650px;
+    line-height: 1.6;
+  }
+
+  .gold-line-bronze {
+    width: 48px;
+    height: 3px;
+    background: #C0A882;
+    margin: 0 auto 20px;
+    border-radius: 2px;
+  }
+
+  .solutions-grid-bronze {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    align-items: stretch;
+  }
+
+  .card-bronze {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    border: 2px solid transparent;
+  }
+  .card-bronze:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(105,87,74,0.12);
+  }
+
+  .card-img-bronze {
+    width: 100% !important;
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    object-fit: cover !important;
+    display: block !important;
+    border-bottom: none !important;
+  }
+
+  .card-body-bronze {
+    padding: 32px 30px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-tag-bronze {
+    display: inline-block;
+    background: rgba(105,87,74,0.08);
+    color: #69574A;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    width: fit-content;
+  }
+
+  .card-bronze h3 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #242424;
+    line-height: 1.3;
+  }
+  .card-bronze p {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  .card-bronze ul {
+    list-style: none;
+    margin: auto 0 0;
+    padding: 0;
+  }
+  .card-bronze ul li {
+    font-size: 14px;
+    color: #444;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+  }
+  .card-bronze ul li:last-child { border-bottom: none; padding-bottom: 0; }
+  .card-bronze ul li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #C0A882;
+    flex-shrink: 0;
+  }
+
+  .card-highlight-bronze {
+    background: #69574A;
+    border: 2px solid #C0A882;
+    box-shadow: 0 12px 30px rgba(105,87,74,0.2);
+    z-index: 2;
+  }
+  .card-highlight-bronze:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(105,87,74,0.3);
+  }
+  .card-highlight-bronze .card-tag-bronze {
+    background: #C0A882;
+    color: #242424;
+  }
+  .card-highlight-bronze h3 { color: #ffffff; }
+  .card-highlight-bronze p { color: rgba(255,255,255,0.85); }
+  .card-highlight-bronze ul li {
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .card-highlight-bronze ul li::before { background: #C0A882; }
+
+  .section-cta-bronze {
+    text-align: center;
+    margin-top: 50px;
+  }
+  .btn-primary-bronze, .btn-secondary-bronze {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .btn-primary-bronze {
+    background: #69574A;
+    color: #fff;
+    border: 2px solid #69574A;
+  }
+  .btn-primary-bronze:hover {
+    background: #C0A882;
+    border-color: #C0A882;
+    color: #242424;
+    transform: translateY(-2px);
+  }
+  .btn-secondary-bronze {
+    background: transparent;
+    color: #69574A;
+    border: 2px solid #69574A;
+    margin-left: 16px;
+  }
+  .btn-secondary-bronze:hover {
+    background: #69574A;
+    color: #fff;
+  }
+
+  @media (max-width: 1024px) {
+    .solutions-grid-bronze {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .btn-secondary-bronze {
+      margin-left: 0;
+      display: block;
+      width: fit-content;
+      margin: 16px auto 0;
+    }
+  }
+
+  /* ===== Gallery Tabs Section ===== */
+  .gallery-tabs-section {
+    padding: 60px 0;
+  }
+
+  .gallery-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .gallery-tab {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: 2px solid #3a3a3a;
+    background: #fff;
+    color: #3a3a3a;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .gallery-tab:hover {
+    background: #69574A;
+    border-color: #69574A;
+    color: #fff;
+  }
+  .gallery-tab.active {
+    background: #69574A;
+    border-color: #69574A;
+    color: #fff;
+  }
+
+  .gallery-panel { display: none; }
+  .gallery-panel.active { display: block; }
+
+  /* ===== Gallery Grid ===== */
+  .acp-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 35px;
+    padding: 0;
+    width: 100%;
+  }
+
+  .acp-gallery-item {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: box-shadow 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .acp-gallery-item:hover {
+    box-shadow: 0 10px 32px rgba(0,0,0,0.16);
+  }
+
+  .acp-gallery-item .img-wrap {
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+  }
+  .acp-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .acp-gallery-item:hover img {
+    transform: scale(1.02);
+  }
+
+  .acp-gallery-item .caption {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+    padding: 12px 14px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    color: #333;
+    background: #fff;
+    transition: color 0.6s ease;
+  }
+  .acp-gallery-item:hover .caption { color: #111; }
+
+  @media (max-width: 900px) {
+    .acp-gallery {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+  }
+  @media (max-width: 480px) {
+    .acp-gallery {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+  }
 </style>
+
+<!-- is:global: JS 通过 innerHTML 动态生成案例列表 DOM，作用域样式无法覆盖 -->
+<style is:global>
+  /* ===== Global Map Section ===== */
+  .meiyu-map-wrapper {
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+    background-color: #2C2018;
+    color: #fff;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    position: relative;
+    overflow: hidden;
+  }
+  .meiyu-map-wrapper * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .meiyu-map-wrapper::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(192,168,130,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,168,130,.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .meiyu-map-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+  }
+
+  .meiyu-map-topbar {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 40px; position: relative; z-index: 2;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .meiyu-map-tl-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0A882; margin-bottom: 8px;
+  }
+  .meiyu-map-tl-h { font-size: 36px; font-weight: 800; color: #fff; line-height: 1.2; }
+  .meiyu-map-tl-h span { color: #C0A882; }
+
+  .meiyu-map-stats { display: flex; gap: 48px; }
+  .meiyu-map-st-num { font-size: 36px; font-weight: 800; color: #C0A882; line-height: 1; }
+  .meiyu-map-st-lbl {
+    font-size: 11px; color: rgba(255,255,255,.4);
+    letter-spacing: 1.5px; text-transform: uppercase; margin-top: 6px;
+  }
+
+  .meiyu-map-body {
+    display: flex; gap: 40px; position: relative; z-index: 2; align-items: flex-start;
+  }
+
+  .meiyu-map-wrap {
+    flex: 1; position: relative;
+    background: #1A1008;
+    border: 1px solid rgba(192,168,130,.2);
+    border-radius: 14px; overflow: hidden;
+    aspect-ratio: 16/9;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .meiyu-map-bg {
+    width: 100%; height: 100%; object-fit: cover;
+    position: absolute; top: 0; left: 0;
+    opacity: 0.85;
+  }
+
+  .meiyu-map-pin {
+    position: absolute; width: 30px; height: 30px;
+    transform: translate(-50%,-50%); cursor: pointer; z-index: 10;
+  }
+  .meiyu-map-pin .core {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    background: #C0A882; border: 2px solid #fff;
+    border-radius: 50%; transition: transform .2s ease;
+  }
+  .meiyu-map-pin:hover .core { transform: translate(-50%,-50%) scale(1.4); }
+  .meiyu-map-pin.lg .core { width: 14px; height: 14px; }
+  .meiyu-map-pin.sm .core { width: 10px; height: 10px; background: #DDD0B8; }
+  .meiyu-map-pin.xs .core { width: 8px; height: 8px; background: #8C7B6E; }
+
+  .meiyu-map-pin .ring, .meiyu-map-pin .ring2 {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%; border: 1px solid #C0A882;
+    opacity: 0; animation: meiyu-ripple 2.4s ease-out infinite;
+  }
+  .meiyu-map-pin .ring2 { animation-delay: .8s; }
+  @keyframes meiyu-ripple {
+    0%   { width: 10px; height: 10px; opacity: .8; }
+    100% { width: 40px; height: 40px; opacity: 0; }
+  }
+
+  .meiyu-map-tip {
+    position: absolute;
+    background: #3A2A1A;
+    border: 1px solid rgba(192,168,130,.45);
+    border-radius: 10px; padding: 14px 16px; width: 200px;
+    pointer-events: none; opacity: 0; transition: opacity .15s;
+    z-index: 20; box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  }
+  .meiyu-map-tip.on { opacity: 1; }
+  .meiyu-map-tip-reg  { font-size: 10px; color: #C0A882; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .meiyu-map-tip-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .meiyu-map-tip-meta { font-size: 11px; color: rgba(255,255,255,.45); }
+  .meiyu-map-tip-count {
+    display: inline-block; margin-top: 8px;
+    background: rgba(192,168,130,.12); border: 1px solid rgba(192,168,130,.3);
+    color: #C0A882; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 4px;
+  }
+
+  .meiyu-map-legend {
+    position: absolute; bottom: 14px; left: 16px;
+    display: flex; gap: 14px; z-index: 5;
+  }
+  .meiyu-map-leg-i { display: flex; align-items: center; gap: 5px; font-size: 10px; color: rgba(255,255,255,.45); }
+  .meiyu-map-leg-d { width: 7px; height: 7px; border-radius: 50%; }
+
+  .meiyu-map-panel { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  .meiyu-map-p-head {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(192,168,130,.18);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .meiyu-map-p-head h3 {
+    font-size: 14px; font-weight: 700; color: #C0A882;
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .meiyu-map-p-head p { font-size: 13px; color: rgba(255,255,255,.4); }
+
+  .meiyu-map-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .meiyu-map-fb {
+    padding: 6px 14px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: transparent; color: rgba(255,255,255,.55);
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all .2s; font-family: inherit;
+  }
+  .meiyu-map-fb:hover,
+  .meiyu-map-fb.on {
+    background: rgba(192,168,130,.18);
+    border-color: #C0A882; color: #C0A882;
+  }
+
+  .meiyu-map-clist {
+    flex: 1; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 10px;
+    max-height: 420px; padding-right: 6px;
+  }
+  .meiyu-map-clist::-webkit-scrollbar { width: 4px; }
+  .meiyu-map-clist::-webkit-scrollbar-thumb { background: rgba(192,168,130,.3); border-radius: 2px; }
+
+  .meiyu-map-cc {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 9px; padding: 14px 16px;
+    cursor: pointer; transition: all .2s;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .meiyu-map-cc:hover,
+  .meiyu-map-cc.on {
+    background: rgba(192,168,130,.1);
+    border-color: rgba(192,168,130,.4);
+  }
+  .meiyu-map-cc-dot { width: 8px; height: 8px; border-radius: 50%; background: #C0A882; flex-shrink: 0; margin-top: 5px; }
+  .meiyu-map-cc-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meiyu-map-cc-meta { font-size: 12px; color: rgba(255,255,255,.4); }
+  .meiyu-map-cc-tag {
+    font-size: 11px; font-weight: 600; color: #C0A882;
+    background: rgba(192,168,130,.1); border-radius: 4px;
+    padding: 3px 8px; margin-top: 6px; display: inline-block;
+  }
+
+  .meiyu-map-cta {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, rgba(192,168,130,.15), rgba(192,168,130,.06));
+    border: 1px solid rgba(192,168,130,.35);
+    border-radius: 9px; padding: 16px 20px;
+    cursor: pointer; transition: all .2s; text-decoration: none;
+  }
+  .meiyu-map-cta:hover {
+    background: linear-gradient(135deg, rgba(192,168,130,.25), rgba(192,168,130,.12));
+  }
+  .meiyu-map-cta span { font-size: 13px; font-weight: 700; color: #C0A882; }
+
+  @media (max-width: 992px) {
+    .meiyu-map-body { flex-direction: column; align-items: stretch; }
+    .meiyu-map-panel { width: 100%; }
+    .meiyu-map-wrap  { aspect-ratio: auto; height: 300px; }
+    .meiyu-map-container { padding: 40px 20px; }
+  }
+</style>
+
+<script>
+  /* ===== Video Hero Fallback =====
+     If the video fails to load, hide it so the CSS fallback background image shows. */
+  const heroVideo = document.querySelector<HTMLVideoElement>('.video-hero-bg');
+  if (heroVideo) {
+    const showFallback = () => heroVideo.classList.add('video-failed');
+    heroVideo.addEventListener('error', showFallback);
+    heroVideo.querySelectorAll('source').forEach((s) => s.addEventListener('error', showFallback));
+    // Safety net: if no data could be loaded at all after a timeout, treat as failed
+    setTimeout(() => {
+      if (heroVideo.readyState === 0 && heroVideo.networkState === 3) {
+        showFallback();
+      }
+    }, 6000);
+  }
+
+  document.querySelectorAll('.gallery-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.gallery-tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.getAttribute('data-tab');
+      document.querySelectorAll('.gallery-panel').forEach((p) => p.classList.remove('active'));
+      document.querySelector(`.gallery-panel[data-panel="${target}"]`)?.classList.add('active');
+    });
+  });
+
+  /* ===== Global Map Section ===== */
+  const DB: Record<string, {n:string;c:string;t:string;r?:string}[]> = {
+    all:[
+      {n:"Guangzhou Finance Center",c:"Guangzhou, CN",t:"Facade Panel",r:"cn"},
+      {n:"Dubai Mall Expansion",c:"Dubai, UAE",t:"Ceiling System",r:"me"},
+      {n:"Singapore Changi T5",c:"Singapore",t:"Acoustic Ceiling",r:"sea"},
+      {n:"Berlin Office Tower",c:"Berlin, DE",t:"Curtain Wall",r:"eu"},
+      {n:"Sydney Convention Ctr",c:"Sydney, AU",t:"Facade Panel",r:"au"},
+      {n:"Shenzhen Bay HQ",c:"Shenzhen, CN",t:"Decorative Screen",r:"cn"},
+      {n:"Abu Dhabi Cultural Hub",c:"Abu Dhabi, UAE",t:"Facade Panel",r:"me"},
+      {n:"KL Tower Renovation",c:"Kuala Lumpur, MY",t:"Ceiling System",r:"sea"},
+    ],
+    cn:[
+      {n:"Guangzhou Finance Center",c:"Guangzhou, CN",t:"Facade Panel"},
+      {n:"Shenzhen Bay HQ",c:"Shenzhen, CN",t:"Decorative Screen"},
+      {n:"Shanghai Bund Plaza",c:"Shanghai, CN",t:"Curtain Wall"},
+    ],
+    me:[
+      {n:"Dubai Mall Expansion",c:"Dubai, UAE",t:"Ceiling System"},
+      {n:"Abu Dhabi Cultural Hub",c:"Abu Dhabi, UAE",t:"Facade Panel"},
+      {n:"Riyadh Metro Station",c:"Riyadh, SA",t:"Acoustic Ceiling"},
+    ],
+    sea:[
+      {n:"Singapore Changi T5",c:"Singapore",t:"Acoustic Ceiling"},
+      {n:"KL Tower Renovation",c:"Kuala Lumpur, MY",t:"Ceiling System"},
+    ],
+    eu:[
+      {n:"Berlin Office Tower",c:"Berlin, DE",t:"Curtain Wall"},
+      {n:"Amsterdam Arena Roof",c:"Amsterdam, NL",t:"Facade Panel"},
+    ],
+    au:[{n:"Sydney Convention Ctr",c:"Sydney, AU",t:"Facade Panel"}],
+    na:[{n:"Toronto Mixed-Use",c:"Toronto, CA",t:"Facade Panel"}],
+    af:[{n:"Lagos Business Hub",c:"Lagos, NG",t:"Ceiling System"}],
+    sa:[{n:"São Paulo Tower",c:"São Paulo, BR",t:"Decorative Screen"}],
+  };
+  const RN: Record<string,string> = {all:"All Regions",cn:"China",me:"Middle East",sea:"Southeast Asia",eu:"Europe",au:"Australia",na:"North America",af:"Africa",sa:"South America"};
+  const TD: Record<string,{reg:string;name:string;meta:string;count:string}> = {
+    cn:{reg:"EAST ASIA",name:"China Projects",meta:"Foshan · Shenzhen · Guangzhou · Shanghai",count:"80+ Projects"},
+    me:{reg:"MIDDLE EAST",name:"Middle East Projects",meta:"Dubai · Abu Dhabi · Riyadh",count:"55+ Projects"},
+    sea:{reg:"SOUTHEAST ASIA",name:"SE Asia Projects",meta:"Singapore · Kuala Lumpur · Bangkok",count:"30+ Projects"},
+    eu:{reg:"EUROPE",name:"Europe Projects",meta:"Berlin · Amsterdam · Paris",count:"25+ Projects"},
+    au:{reg:"OCEANIA",name:"Australia Projects",meta:"Sydney · Melbourne",count:"12+ Projects"},
+    na:{reg:"NORTH AMERICA",name:"N. America Projects",meta:"Toronto · Los Angeles",count:"10+ Projects"},
+    af:{reg:"AFRICA",name:"Africa Projects",meta:"Lagos · Nairobi",count:"8+ Projects"},
+    sa:{reg:"SOUTH AMERICA",name:"S. America Projects",meta:"São Paulo · Buenos Aires",count:"6+ Projects"},
+  };
+
+  function renderMap(r: string) {
+    const d = DB[r] || DB.all;
+    const clist = document.getElementById('meiyu-clist');
+    if (clist) {
+      clist.innerHTML = d.map((c, i) => `
+        <div class="meiyu-map-cc ${i === 0 ? 'on' : ''}">
+          <div class="meiyu-map-cc-dot"></div>
+          <div style="min-width:0;flex:1">
+            <div class="meiyu-map-cc-name">${c.n}</div>
+            <div class="meiyu-map-cc-meta">${c.c}</div>
+            <span class="meiyu-map-cc-tag">${c.t}</span>
+          </div>
+        </div>`).join('');
+    }
+    const pReg = document.getElementById('meiyu-pReg');
+    const pDesc = document.getElementById('meiyu-pDesc');
+    if (pReg) pReg.textContent = RN[r] || 'All Regions';
+    if (pDesc) pDesc.textContent = d.length + ' project' + (d.length > 1 ? 's' : '') + ' in this region';
+  }
+  renderMap('all');
+
+  const tip = document.getElementById('meiyu-tip');
+  const mw = document.getElementById('meiyu-mw');
+  document.querySelectorAll('.meiyu-map-pin').forEach((p) => {
+    p.addEventListener('mouseenter', () => {
+      const id = (p as HTMLElement).dataset.id || '';
+      const d = TD[id]; if (!d || !tip) return;
+      const tReg = document.getElementById('meiyu-tReg');
+      const tName = document.getElementById('meiyu-tName');
+      const tMeta = document.getElementById('meiyu-tMeta');
+      const tCount = document.getElementById('meiyu-tCount');
+      if (tReg) tReg.textContent = d.reg;
+      if (tName) tName.textContent = d.name;
+      if (tMeta) tMeta.textContent = d.meta;
+      if (tCount) tCount.textContent = d.count;
+      tip.classList.add('on');
+    });
+    p.addEventListener('mousemove', (e) => {
+      if (!mw || !tip) return;
+      const ev = e as MouseEvent;
+      const r = mw.getBoundingClientRect();
+      let x = ev.clientX - r.left + 14, y = ev.clientY - r.top - 20;
+      if (x + 210 > r.width) x = ev.clientX - r.left - 220;
+      if (y + 120 > r.height) y = ev.clientY - r.top - 130;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    });
+    p.addEventListener('mouseleave', () => tip?.classList.remove('on'));
+    p.addEventListener('click', () => {
+      const id = (p as HTMLElement).dataset.id || '';
+      renderMap(id);
+      document.querySelectorAll('.meiyu-map-fb').forEach((b) => b.classList.remove('on'));
+      const b = document.querySelector(`.meiyu-map-fb[data-r="${id}"]`);
+      if (b) b.classList.add('on');
+    });
+  });
+
+  document.querySelectorAll('.meiyu-map-fb').forEach((b) => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.meiyu-map-fb').forEach((x) => x.classList.remove('on'));
+      b.classList.add('on');
+      renderMap((b as HTMLElement).dataset.r || 'all');
+    });
+  });
+
+  function anim(id: string, end: number, sfx = '') {
+    let v = 0; const s = Math.ceil(end / 40);
+    const el = document.getElementById(id); if (!el) return;
+    const t = setInterval(() => {
+      v = Math.min(v + s, end);
+      el.textContent = v + sfx;
+      if (v >= end) clearInterval(t);
+    }, 28);
+  }
+  anim('meiyu-sC', 38); anim('meiyu-sP', 240, '+'); anim('meiyu-sK', 120, '+');
+</script>

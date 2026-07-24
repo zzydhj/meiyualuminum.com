@@ -15,6 +15,7 @@ interface Props {
   keywords?: string[];
   customCss?: string;
   customJs?: string;
+  hideTitle?: boolean;
 }
 
 const {
@@ -28,6 +29,7 @@ const {
   keywords = [],
   customCss,
   customJs,
+  hideTitle = false,
 } = Astro.props;
 
 const siteName = "Meiyu Aluminum";
@@ -97,7 +99,7 @@ const orgJsonLd = {
   <body>
     <Header />
     <main class="container">
-      <h1>{pageTitle}</h1>
+      {!hideTitle && <h1>{pageTitle}</h1>}
       <slot />
     </main>
     <Footer />
