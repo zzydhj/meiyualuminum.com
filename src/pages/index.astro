@@ -32,9 +32,9 @@ const websiteJsonLd = {
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} customCss={customCss} customJs={customJs} hideTitle>
-  <!-- Preconnect + preload the hero video so its download starts as early as possible (faster autoplay) -->
+  <!-- Preload the hero video so its download starts as early as possible (faster autoplay).
+       The preload also establishes the connection, so a separate preconnect to the same origin is unnecessary. -->
   <Fragment slot="head">
-    <link rel="preconnect" href="https://file.meiyualuminum.com" />
     <link rel="preload" as="video" type="video/mp4" fetchpriority="high" href="https://file.meiyualuminum.com/meiyu-factory-video.mp4" />
   </Fragment>
 
