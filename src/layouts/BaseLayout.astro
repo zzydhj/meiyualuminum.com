@@ -95,6 +95,9 @@ const orgJsonLd = {
 
     <!-- Per-page custom CSS (from database) -->
     {customCss && <style set:html={customCss} />}
+
+    <!-- Per-page head extras (e.g. resource preloading) -->
+    <slot name="head" />
   </head>
   <body>
     <Header />
