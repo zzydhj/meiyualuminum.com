@@ -34,19 +34,20 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
 
     <label class="field">
       <span class="label">Country</span>
-      <select name="country">
-        <option value="">— Select your country —</option>
+      <input type="text" name="country" list="country-list" placeholder="Type your country" autocomplete="country-name" />
+      <datalist id="country-list">
         <option>United States</option>
-        <option>Canada</option>
-        <option>Mexico</option>
-        <option>Brazil</option>
         <option>United Kingdom</option>
+        <option>Canada</option>
+        <option>Australia</option>
         <option>Germany</option>
         <option>France</option>
         <option>Italy</option>
         <option>Spain</option>
         <option>Netherlands</option>
         <option>Poland</option>
+        <option>Brazil</option>
+        <option>Mexico</option>
         <option>Turkey</option>
         <option>United Arab Emirates</option>
         <option>Saudi Arabia</option>
@@ -58,12 +59,76 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
         <option>Indonesia</option>
         <option>Malaysia</option>
         <option>Philippines</option>
-        <option>Australia</option>
         <option>Nigeria</option>
         <option>South Africa</option>
         <option>Egypt</option>
-        <option>Other</option>
-      </select>
+        <option>Russia</option>
+        <option>Argentina</option>
+        <option>Chile</option>
+        <option>Colombia</option>
+        <option>Peru</option>
+        <option>Kenya</option>
+        <option>Ghana</option>
+        <option>Tanzania</option>
+        <option>Morocco</option>
+        <option>Iraq</option>
+        <option>Qatar</option>
+        <option>Kuwait</option>
+        <option>Oman</option>
+        <option>Bangladesh</option>
+        <option>Pakistan</option>
+        <option>Sri Lanka</option>
+        <option>Nepal</option>
+        <option>Cambodia</option>
+        <option>Myanmar</option>
+        <option>Singapore</option>
+        <option>New Zealand</option>
+        <option>Portugal</option>
+        <option>Greece</option>
+        <option>Czech Republic</option>
+        <option>Romania</option>
+        <option>Hungary</option>
+        <option>Sweden</option>
+        <option>Norway</option>
+        <option>Denmark</option>
+        <option>Finland</option>
+        <option>Belgium</option>
+        <option>Austria</option>
+        <option>Switzerland</option>
+        <option>Ireland</option>
+        <option>Israel</option>
+        <option>Jordan</option>
+        <option>Lebanon</option>
+        <option>Algeria</option>
+        <option>Tunisia</option>
+        <option>Libya</option>
+        <option>Ethiopia</option>
+        <option>Uganda</option>
+        <option>Zambia</option>
+        <option>Zimbabwe</option>
+        <option>Mozambique</option>
+        <option>Angola</option>
+        <option>Cameroon</option>
+        <option>Senegal</option>
+        <option>Ivory Coast</option>
+        <option>Uzbekistan</option>
+        <option>Kazakhstan</option>
+        <option>Azerbaijan</option>
+        <option>Georgia</option>
+        <option>Ukraine</option>
+        <option>Venezuela</option>
+        <option>Ecuador</option>
+        <option>Bolivia</option>
+        <option>Paraguay</option>
+        <option>Uruguay</option>
+        <option>Costa Rica</option>
+        <option>Panama</option>
+        <option>Dominican Republic</option>
+        <option>Guatemala</option>
+        <option>Honduras</option>
+        <option>Jamaica</option>
+        <option>Trinidad and Tobago</option>
+      </datalist>
     </label>
 
     <label class="field">
