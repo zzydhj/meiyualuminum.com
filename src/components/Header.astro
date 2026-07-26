@@ -77,7 +77,8 @@ import InquiryButton from "../components/InquiryButton.astro";
     }
   }
 
-  /* Mobile: hamburger top-left, Get Quote top-right, logo truly centered */
+  /* Mobile: hamburger top-left, logo truly centered.
+     Header CTA is hidden — the floating inquiry FAB covers this on mobile. */
   @media screen and (max-width: 1399px) {
     nav :global(.menu) {
       position: absolute;
@@ -86,11 +87,8 @@ import InquiryButton from "../components/InquiryButton.astro";
       transform: translateY(-50%);
     }
 
-    nav :global(.inquiry-btn) {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
+    nav :global(.header-cta) {
+      display: none;
     }
 
     .logo {

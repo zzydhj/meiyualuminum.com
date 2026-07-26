@@ -33,11 +33,6 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
     </label>
 
     <label class="field">
-      <span class="label">Company Name</span>
-      <input type="text" name="company" placeholder="Company name" />
-    </label>
-
-    <label class="field">
       <span class="label">Country</span>
       <select name="country">
         <option value="">— Select your country —</option>
@@ -67,22 +62,6 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
         <option>Nigeria</option>
         <option>South Africa</option>
         <option>Egypt</option>
-        <option>Other</option>
-      </select>
-    </label>
-
-    <label class="field">
-      <span class="label">Product Interest</span>
-      <select name="product_interest">
-        <option value="">— Select a category —</option>
-        <option>Industrial Aluminum Profiles</option>
-        <option>Aluminum Tubes &amp; Pipes</option>
-        <option>Aluminum Sheets &amp; Plates</option>
-        <option>Aluminum Extrusions</option>
-        <option>Automotive Parts</option>
-        <option>Brake System Parts</option>
-        <option>Engine Parts</option>
-        <option>Custom / OEM Order</option>
         <option>Other</option>
       </select>
     </label>
@@ -125,6 +104,15 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
   @media screen and (max-width: 636px) {
     .form-grid {
       grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .field textarea {
+      min-height: 88px;
+    }
+
+    .note {
+      margin-top: 0.5rem;
     }
   }
 

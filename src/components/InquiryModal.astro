@@ -27,7 +27,9 @@ import InquiryForm from "./InquiryForm.astro";
         data-close-inquiry-modal
         aria-label="Close inquiry form"
       >
-        <span aria-hidden="true">✕</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
       </button>
     </div>
 
@@ -69,7 +71,6 @@ import InquiryForm from "./InquiryForm.astro";
     --modal-backdrop-blur: 4px;
     --close-color: #64748b;
     --close-hover: #0f172a;
-    --close-size: 1.75rem;
   }
 
   /* Reset <dialog> defaults and make it fill the viewport */
@@ -141,18 +142,20 @@ import InquiryForm from "./InquiryForm.astro";
 
   /* Close button */
   .inquiry-modal-close {
+    -webkit-appearance: none;
+    appearance: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    width: 2.75rem;
+    height: 2.75rem;
     background: transparent;
     border: none;
+    padding: 0;
     color: var(--close-color);
-    font-size: var(--close-size);
     line-height: 1;
     cursor: pointer;
-    border-radius: 0.375rem;
+    border-radius: 50%;
     transition: color 0.15s, background-color 0.15s;
   }
 
