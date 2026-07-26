@@ -119,13 +119,34 @@ const articleJsonLd = {
     align-items: start;
   }
 
-  /* 侧栏滚动跟随（桌面端）；内部多个区块用 flex 列排布，间距由容器统一控制 */
+  /* 侧栏滚动跟随（桌面端）；内部多个区块用 flex 列排布，间距由容器统一控制。
+     max-height + overflow 是“保险”：侧栏内容超过可用视口高时（笔记本缩放/小屏）
+     改为内部滚动，避免底部标签卡被 sticky 切掉而滚不到。 */
   .blog-sidebar {
     position: sticky;
     top: 96px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    max-height: calc(100vh - 120px); /* 96px 顶偏移 + 24px 底部余量 */
+    overflow-y: auto;
+    scrollbar-width: thin; /* Firefox 细滚动条 */
+    scrollbar-color: #d6d0ca transparent;
+  }
+
+  /* 细滚动条（WebKit）：平时不占视觉，hover 变主题色 */
+  .blog-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .blog-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .blog-sidebar::-webkit-scrollbar-thumb {
+    background: #d6d0ca;
+    border-radius: 3px;
+  }
+  .blog-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #69574a;
   }
 
   /* 文章内锚点跳转时避开 sticky header */
@@ -153,6 +174,8 @@ const articleJsonLd = {
     }
     .blog-sidebar {
       position: static;
+      max-height: none; /* 移动端侧栏在文章下方正常流，不限高、不内部滚动 */
+      overflow-y: visible;
     }
     .article-content :global(section) {
       padding: 32px 18px;
