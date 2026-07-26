@@ -22,21 +22,24 @@ const { label = "Get Quote", class: className = "" } = Astro.props;
     background-color: #69574a;
     color: #fff;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 999px; /* pill shape */
     padding: 0.55rem 1.25rem;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1;
     cursor: pointer;
     white-space: nowrap;
-    transition: background-color 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(105, 87, 74, 0.3);
+    transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
   }
 
   .inquiry-btn:hover {
     background-color: #5a4a3e;
+    box-shadow: 0 4px 14px rgba(105, 87, 74, 0.45);
   }
 
   .inquiry-btn:active {
     transform: translateY(1px);
+    box-shadow: 0 1px 4px rgba(105, 87, 74, 0.3);
   }
 </style>

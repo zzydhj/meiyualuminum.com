@@ -1,0 +1,65 @@
+---
+/**
+ * FloatingInquiry.astro — 全局悬浮询盘按钮（FAB）
+ *
+ * - 固定在视口右下角，桌面端和移动端均显示
+ * - 点击触发全局询盘弹窗（InquiryModal，通过 data-open-inquiry-modal 属性）
+ * - 在 BaseLayout.astro 中引入一次即可，所有页面自动生效
+ */
+---
+
+<button
+  type="button"
+  class="floating-inquiry"
+  data-open-inquiry-modal
+  aria-label="Open inquiry form"
+>
+  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+    <circle cx="8.5" cy="11.5" r="1.2" fill="currentColor" stroke="none" />
+    <circle cx="12.5" cy="11.5" r="1.2" fill="currentColor" stroke="none" />
+    <circle cx="16.5" cy="11.5" r="1.2" fill="currentColor" stroke="none" />
+  </svg>
+</button>
+
+<style>
+  .floating-inquiry {
+    position: fixed;
+    bottom: 72px;
+    right: 32px;
+    z-index: 900; /* below header(1000) and mobile menu, above page content */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background-color: #69574a;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(105, 87, 74, 0.35);
+    transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+
+  .floating-inquiry:hover {
+    background-color: #5a4a3e;
+    box-shadow: 0 6px 20px rgba(105, 87, 74, 0.5);
+    transform: translateY(-3px) scale(1.05);
+  }
+
+  .floating-inquiry:active {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 2px 8px rgba(105, 87, 74, 0.35);
+  }
+
+  /* Mobile: slightly smaller and closer to the edge */
+  @media screen and (max-width: 1399px) {
+    .floating-inquiry {
+      width: 50px;
+      height: 50px;
+      bottom: 18px;
+      right: 18px;
+    }
+  }
+</style>
