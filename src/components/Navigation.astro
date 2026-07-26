@@ -1,66 +1,214 @@
 ---
+import MegaMenu from "./MegaMenu.astro";
 ---
 
 <div id="main-menu" class="nav-links">
   <a href="/">Home</a>
-  <a href="/about/">About</a>
-  <a href="/products/">Products</a>
-  <a href="/services/">Services</a>
-  <a href="/categories/">Categories</a>
-  <a href="/blog/">Blog</a>
-  <a href="/tags/">Tags</a>
-  <a href="/contact/">Contact</a>
+  <a href="#">Aluminum Solutions</a>
+
+  <div class="has-mega">
+    <a href="/products/">
+      Products
+      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
+        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <MegaMenu />
+  </div>
+
+  <div class="has-dropdown">
+    <a href="/about/">
+      About
+      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
+        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="dropdown">
+      <a href="/services/">Services</a>
+    </div>
+  </div>
+
+  <div class="has-dropdown">
+    <a href="#">
+      Videos
+      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
+        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="dropdown">
+      <a href="#">Project Cases</a>
+      <a href="#">Client Testimonial</a>
+      <a href="#">Factory Tour</a>
+      <a href="#">How It's Made</a>
+      <a href="#">Installation Guide</a>
+      <a href="#">Sample &amp; Custom Service</a>
+      <a href="#">Product Showcase</a>
+      <a href="#">Quality &amp; Certifications</a>
+    </div>
+  </div>
+
+  <a href="#">Distributor</a>
+
+  <div class="has-dropdown">
+    <a href="#">
+      Resource
+      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
+        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="dropdown">
+      <a href="/blog/">Blog</a>
+      <a href="/categories/">Categories</a>
+      <a href="/tags/">Tags</a>
+      <a href="#">FAQ</a>
+      <a href="#">Technical Documentation</a>
+      <a href="/contact/">Contact Us</a>
+    </div>
+  </div>
+
+  <a href="#">Project Gallery</a>
 </div>
 
 <style>
+  /* Mobile (< 1400px): desktop nav completely hidden.
+     Mobile users get the full-screen accordion menu (MobileMenu.astro). */
   .nav-links {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    width: 100%;
     display: none;
-    margin: 0;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 999;
   }
 
-  .nav-links a {
-    display: block;
-    text-align: center;
-    padding: 10px 0;
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #0d0950;
+  /* Chevron indicator: only rendered on desktop (media query below). */
+  .nav-chevron {
+    display: none;
   }
 
-  .nav-links a:hover,
-  .nav-links a:focus {
-    background-color: #ff9776;
-  }
-
-  /* Mobile: expand when the hamburger button (.menu, lives in Menu.astro) is toggled.
-     :global() is required because .menu belongs to a different component. */
-  :global(.menu[aria-expanded="true"]) ~ .nav-links {
-    display: block;
-  }
-
-  /* Desktop: nav always visible, laid out horizontally */
-  @media screen and (min-width: 636px) {
+  /* Desktop (>= 1400px): nav always visible, laid out horizontally.
+     The nav stretches to the full header height so the Mega Menu trigger
+     (.has-mega) can span the whole header, leaving no hover gap between the
+     "Products" link and the dropdown panel. */
+  @media screen and (min-width: 1400px) {
     .nav-links {
-      display: block;
+      display: flex;
+      align-items: center;
       position: static;
       width: auto;
+      height: 100%;
       background: none;
       box-shadow: none;
+      max-height: none; /* undo the mobile scroll constraint */
+      overflow: visible;
     }
 
     .nav-links a {
       display: inline-block;
-      padding: 15px 20px;
+      padding: 15px 15px;
+      font-size: 1.0625rem; /* 17px — refined down from 1.2rem so 8 items fit comfortably */
+      position: relative; /* anchor for the ::after underline */
+    }
+
+    /* Replace the blocky orange hover background with a refined gold underline
+       that grows from the center. Text color is intentionally left unchanged. */
+    .nav-links a:hover,
+    .nav-links a:focus {
+      background-color: transparent;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      right: 15px;
+      bottom: 12px;
+      height: 2px;
+      background: #C09020;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.25s ease;
+    }
+    .nav-links a:hover::after,
+    .nav-links a:focus::after {
+      transform: scaleX(1);
+    }
+
+    /* Chevron on the Products link: flips up while the Mega Menu is open. */
+    .nav-chevron {
+      display: inline-block;
+      margin-left: 7px;
+      vertical-align: 2px;
+      /* Rotate back with the same grace period as the panel's close delay. */
+      transition: transform 0.25s ease 0.18s;
+    }
+    .has-mega:hover .nav-chevron,
+    .has-mega:focus-within .nav-chevron,
+    .has-dropdown:hover .nav-chevron,
+    .has-dropdown:focus-within .nav-chevron {
+      transform: rotate(180deg);
+      transition: transform 0.25s ease 0s; /* flip up instantly on open */
+    }
+
+    /* Mega Menu trigger wrapper: full header height so hover is continuous
+       from the link down to the panel. Kept position: static so the panel's
+       absolute positioning resolves against the <header> (centered, 1400px). */
+    .has-mega {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      position: static;
+    }
+
+    /* ===== Standard vertical dropdown (About / Videos / Resource) =====
+       Coloured to match the Mega Menu's brand palette: dark tab-bar brown
+       (#3A2E26) body with the bright-gold (#F0C96A) top accent, and the
+       same open/close transition + 0.18s close grace period. */
+    .has-dropdown {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      position: relative; /* anchor for the absolute .dropdown */
+    }
+    .nav-links .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 240px;
+      background: #3A2E26;
+      border-top: 3px solid #F0C96A;
+      box-shadow: 0 16px 48px rgba(44, 32, 24, 0.18);
+      padding: 8px 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      /* CLOSE: wait the 0.18s grace period before fading out. */
+      transition: opacity 0.2s ease 0.18s, visibility 0.2s ease 0.18s;
+      z-index: 999;
+    }
+    .has-dropdown:hover .dropdown,
+    .has-dropdown:focus-within .dropdown {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      /* OPEN: instant. */
+      transition: opacity 0.2s ease 0s, visibility 0.2s ease 0s;
+    }
+    .nav-links .dropdown a {
+      display: block;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: none;
+      text-align: left;
+      white-space: nowrap;
+      color: rgba(255, 255, 255, 0.92);
+      background: transparent;
+      position: static;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links .dropdown a:hover,
+    .nav-links .dropdown a:focus {
+      color: #F0C96A;
+      background: rgba(240, 201, 106, 0.1);
+    }
+    /* The top-level gold underline must not appear inside the dark dropdown. */
+    .nav-links .dropdown a::after {
+      content: none;
     }
   }
 </style>

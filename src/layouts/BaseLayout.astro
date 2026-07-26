@@ -61,7 +61,7 @@ const orgJsonLd = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="https://file.meiyualuminum.com/home/favicon.ico" />
 
     <!-- Inter font — used by the footer typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -73,6 +73,11 @@ const orgJsonLd = {
     <meta name="description" content={description} />
     {keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
     <link rel="canonical" href={canonicalURL} />
+
+    <!-- ⚠️ TEMPORARY (pre-launch): keep every page out of search engine indexes.
+         noindex = don't index this page; nofollow = don't follow its links.
+         REMOVE this line when the site goes live. -->
+    <meta name="robots" content="noindex, nofollow" />
 
     <!-- Open Graph -->
     <meta property="og:type" content={type} />

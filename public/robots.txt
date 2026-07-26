@@ -1,4 +1,3 @@
+# Site not yet launched — block all search engine crawlers (including Google)
 User-agent: *
-Allow: /
-
-Sitemap: https://www.meiyualuminum.com/sitemap-index.xml
+Disallow: /

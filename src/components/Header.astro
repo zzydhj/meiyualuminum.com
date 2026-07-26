@@ -1,6 +1,7 @@
 ---
 import Menu from "../components/Menu.astro";
 import Navigation from "../components/Navigation.astro";
+import MobileMenu from "../components/MobileMenu.astro";
 import InquiryButton from "../components/InquiryButton.astro";
 ---
 
@@ -8,11 +9,14 @@ import InquiryButton from "../components/InquiryButton.astro";
 <header>
     <nav>
         <Menu />
-        <a class="logo" href="/">MEIYU</a>
+        <a class="logo" href="/"><img src="https://file.meiyualuminum.com/home/logo.png" alt="MEIYU Aluminum" /></a>
         <Navigation />
-        <InquiryButton label="Get Quote" />
+        <InquiryButton label="Get Quote" class="header-cta" />
     </nav>
 </header>
+
+<!-- 移动端全屏手风琴菜单（< 1400px），独立于桌面端 Navigation -->
+<MobileMenu />
 
 <style>
   /* Sticky full-width white header with a subtle bottom shadow */
@@ -35,15 +39,18 @@ import InquiryButton from "../components/InquiryButton.astro";
 
   /* Logo */
   .logo {
-    color: #69574a;
-    font-size: 1.5rem;
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
-    letter-spacing: 0.05em;
+  }
+  .logo img {
+    height: 42px;
+    width: auto;
+    display: block;
   }
 
   /* Desktop: fixed 80px height, logo on the left, nav on the right */
-  @media screen and (min-width: 636px) {
+  @media screen and (min-width: 1400px) {
     header {
       height: 80px;
     }
@@ -54,12 +61,24 @@ import InquiryButton from "../components/InquiryButton.astro";
     }
 
     .logo {
-      margin-right: auto; /* push navigation to the right */
+      margin-right: 48px; /* keep the nav grouped close to the logo */
+    }
+
+    /* Header-only CTA sizing & right-anchoring.
+       `header-cta` is passed to this instance only, so other pages'
+       InquiryButtons keep the default size. :global() is required because
+       the button is rendered by InquiryButton.astro (different scope).
+       Selector specificity (0,2,1) beats the base .inquiry-btn rule (0,2,0). */
+    nav :global(.header-cta) {
+      margin-left: auto; /* push the CTA to the far right */
+      height: 42px;      /* match the 42px logo for balanced bookends */
+      padding: 0 1.5rem;
+      font-size: 1rem;
     }
   }
 
   /* Mobile: hamburger top-left, Get Quote top-right, logo truly centered */
-  @media screen and (max-width: 635px) {
+  @media screen and (max-width: 1399px) {
     nav :global(.menu) {
       position: absolute;
       left: 1rem;
@@ -76,6 +95,9 @@ import InquiryButton from "../components/InquiryButton.astro";
 
     .logo {
       margin: 0 auto; /* center logo horizontally (only in-flow item) */
+    }
+    .logo img {
+      height: 34px;
     }
   }
 </style>
