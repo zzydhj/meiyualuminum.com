@@ -1,35 +1,34 @@
 ---
+/**
+ * tags/[tag].astro — 标签文章列表第 1 页
+ *
+ * - 第 2~N 页由 tags/[tag]/page/[page].astro 生成（/tags/{tag}/page/N/）
+ * - 每页 PAGE_SIZE 篇，与博客列表共用分页配置与导航组件
+ */
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import BlogPost from "../../components/BlogPost.astro";
-import { supabase } from "../../lib/supabase";
+import PostGrid from "../../components/PostGrid.astro";
+import PaginationNav from "../../components/PaginationNav.astro";
+import { PAGE_SIZE } from "../../lib/pagination";
+import { fetchAllTagPosts, groupPostsByTag } from "../../lib/tagPosts";
 
 export async function getStaticPaths() {
-  const { data: allPosts } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("status", "published");
+  const byTag = groupPostsByTag(await fetchAllTagPosts());
 
-  const posts = allPosts ?? [];
-
-  const uniqueTags = [
-    ...new Set(posts.map((post) => post.tags as string[]).flat()),
-  ];
-
-  return uniqueTags.map((tag) => {
-    const filteredPosts = posts.filter((post) =>
-      (post.tags as string[]).includes(tag),
-    );
-    return {
-      params: { tag },
-      props: { posts: filteredPosts },
-    };
-  });
+  return [...byTag.entries()].map(([tag, tagged]) => ({
+    params: { tag },
+    props: {
+      posts: tagged.slice(0, PAGE_SIZE),
+      currentPage: 1,
+      totalPages: Math.max(1, Math.ceil(tagged.length / PAGE_SIZE)),
+    },
+  }));
 }
 
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+const { posts, currentPage, totalPages } = Astro.props;
 const pageDescription = `Browse all blog posts tagged with "${tag}".`;
+const tagPath = encodeURIComponent(tag);
 ---
 
 <BaseLayout pageTitle={tag} description={pageDescription}>
@@ -37,15 +36,15 @@ const pageDescription = `Browse all blog posts tagged with "${tag}".`;
     items={[
       { name: "Home", url: "/" },
       { name: "Tags", url: "/tags/" },
-      { name: tag, url: `/tags/${encodeURIComponent(tag)}/` },
+      { name: tag, url: `/tags/${tagPath}/` },
     ]}
   />
   <p>Posts tagged with "{tag}"</p>
-  <ul>
-    {
-      posts.map((post) => (
-        <BlogPost url={`/blog/${post.slug}/`} title={post.title} />
-      ))
-    }
-  </ul>
+  <PostGrid posts={posts} />
+  <PaginationNav
+    currentPage={currentPage}
+    totalPages={totalPages}
+    basePath={`/tags/${tagPath}/page`}
+    firstPageUrl={`/tags/${tagPath}/`}
+  />
 </BaseLayout>

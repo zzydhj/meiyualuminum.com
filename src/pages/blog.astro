@@ -1,14 +1,28 @@
 ---
 import Breadcrumb from "../components/Breadcrumb.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import BlogPost from "../components/BlogPost.astro";
+import PostGrid from "../components/PostGrid.astro";
+import PaginationNav from "../components/PaginationNav.astro";
 import { supabase } from "../lib/supabase";
+import { PAGE_SIZE } from "../lib/pagination";
 
+// 已发布文章总数（轻量 count 查询，不拉取行数据）
+const { count } = await supabase
+  .from("posts")
+  .select("*", { count: "exact", head: true })
+  .eq("status", "published");
+
+const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
+
+// 本页只取前 PAGE_SIZE 篇（数据库层分页，不受 Supabase 单次 1000 行上限影响）
+// 次级排序 slug：保证 pub_date 相同时跨页顺序稳定，不重不漏
 const result = await supabase
   .from("posts")
-  .select("*")
+  .select("slug, title, image_url, description, pub_date, author, primary_tag")
   .eq("status", "published")
-  .order("pub_date", { ascending: false });
+  .order("pub_date", { ascending: false })
+  .order("slug", { ascending: true })
+  .range(0, PAGE_SIZE - 1);
 
 if (result.error) {
   console.error("Failed to fetch posts:", result.error);
@@ -26,11 +40,6 @@ const pageDescription = "Latest news, tips and insights about automotive parts a
       { name: "Blog", url: "/blog/" },
     ]}
   />
-  <ul>
-    {
-      posts.map((post) => (
-        <BlogPost url={`/blog/${post.slug}/`} title={post.title} />
-      ))
-    }
-  </ul>
+  <PostGrid posts={posts} />
+  <PaginationNav currentPage={1} totalPages={totalPages} />
 </BaseLayout>

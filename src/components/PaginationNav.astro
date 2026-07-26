@@ -1,0 +1,140 @@
+---
+/**
+ * PaginationNav.astro — 分页导航（纯展示组件）
+ *
+ * - 页码策略：总数 ≤ 7 全显示；否则 首页 + 末页 + 当前页前后各 1 页，其余省略号
+ * - URL 规则：第 1 页 = firstPageUrl（默认 /blog/），第 N 页 = basePath/N/
+ * - 通过 basePath / firstPageUrl 两个 prop 复用于标签页等其他列表
+ */
+interface Props {
+  /** 当前页码（从 1 开始） */
+  currentPage: number;
+  /** 总页数 */
+  totalPages: number;
+  /** 第 2 页起的 URL 前缀，默认 /blog/page → /blog/page/2/ */
+  basePath?: string;
+  /** 第 1 页的 URL，默认 /blog/ */
+  firstPageUrl?: string;
+}
+
+const {
+  currentPage,
+  totalPages,
+  basePath = "/blog/page",
+  firstPageUrl = "/blog/",
+} = Astro.props;
+
+const pageUrl = (n: number) => (n === 1 ? firstPageUrl : `${basePath}/${n}/`);
+
+/** 生成页码序列：(number | "...")[]，页数多时自动插入省略号 */
+function getPageItems(current: number, total: number): (number | "...")[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  const wanted = [1, total, current - 1, current, current + 1]
+    .filter((n) => n >= 1 && n <= total)
+    .sort((a, b) => a - b);
+
+  const items: (number | "...")[] = [];
+  let prev = 0;
+  for (const n of [...new Set(wanted)]) {
+    if (n - prev > 1) items.push("...");
+    items.push(n);
+    prev = n;
+  }
+  return items;
+}
+
+const items = getPageItems(currentPage, totalPages);
+---
+
+{
+  totalPages > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      {currentPage > 1 ? (
+        <a href={pageUrl(currentPage - 1)} class="page-btn">
+          ← Prev
+        </a>
+      ) : (
+        <span class="page-btn disabled">← Prev</span>
+      )}
+
+      {items.map((item) =>
+        item === "..." ? (
+          <span class="page-ellipsis">…</span>
+        ) : (
+          <a
+            href={pageUrl(item)}
+            class:list={["page-num", { current: item === currentPage }]}
+            aria-current={item === currentPage ? "page" : undefined}
+          >
+            {item}
+          </a>
+        )
+      )}
+
+      {currentPage < totalPages ? (
+        <a href={pageUrl(currentPage + 1)} class="page-btn">
+          Next →
+        </a>
+      ) : (
+        <span class="page-btn disabled">Next →</span>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 40px;
+  }
+
+  .page-num,
+  .page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid #e8e4df;
+    border-radius: 999px;
+    background: #fff;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      border-color 0.15s,
+      background 0.15s;
+  }
+
+  a.page-num:hover,
+  a.page-btn:hover {
+    border-color: #69574a;
+    color: #69574a;
+  }
+
+  /* 当前页：主题色实心高亮 */
+  .page-num.current {
+    background: #69574a;
+    border-color: #69574a;
+    color: #fff;
+  }
+
+  .page-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .page-ellipsis {
+    padding: 0 4px;
+    color: #9ca3af;
+  }
+</style>

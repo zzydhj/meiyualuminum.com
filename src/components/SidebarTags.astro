@@ -1,0 +1,56 @@
+---
+/**
+ * SidebarTags.astro — 侧边栏「所有标签」卡片（自包含组件）
+ *
+ * - 自行查询 Supabase posts 表全部已发布文章的 tags
+ * - 扁平化 + 去重得到全站标签，每个标签链接到对应标签页
+ * - 外观与 RecommendedPosts 保持一致（白色圆角卡片 + 主题色小标题）
+ * - 放置于博客详情页推荐区域下方，与推荐区并列的独立区块
+ */
+import { supabase } from '../lib/supabase';
+import Tag from './Tag.astro';
+
+// 只查 tags 字段，扁平化 + 去重（与 /tags/ 页聚合逻辑一致）
+const { data: allPosts } = await supabase
+  .from("posts")
+  .select("tags")
+  .eq("status", "published");
+
+const tags = [...new Set((allPosts ?? []).map((post) => post.tags ?? []).flat())];
+---
+
+{tags.length > 0 && (
+  <aside class="sidebar-tags">
+    <h2 class="sidebar-tags-title">Tags</h2>
+    <div class="sidebar-tags-list">
+      {tags.map((tag) => (
+        <Tag tag={tag} href={`/tags/${encodeURIComponent(tag)}/`} />
+      ))}
+    </div>
+  </aside>
+)}
+
+<style>
+  .sidebar-tags {
+    background: #fff;
+    border: 1px solid #e8e4df;
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .sidebar-tags-title {
+    margin: 0 0 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #69574a;
+  }
+
+  /* 标签按钮流式排列，自动换行 */
+  .sidebar-tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>

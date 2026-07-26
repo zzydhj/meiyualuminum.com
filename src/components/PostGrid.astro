@@ -1,0 +1,50 @@
+---
+/**
+ * PostGrid.astro — 文章宫格列表（布局容器组件）
+ *
+ * - 职责：宫格布局 + 遍历文章渲染 BlogPost 卡片
+ * - 响应式：auto-fill + minmax 自动适配（桌面 3 列 / 平板 2 列 / 手机 1 列）
+ * - 复用于：博客列表页（blog.astro）、标签页（tags/[tag].astro）
+ */
+import BlogPost from "./BlogPost.astro";
+
+interface Props {
+  posts: Array<{
+    slug: string;
+    title: string;
+    image_url?: string | null;
+    description?: string | null;
+    pub_date?: string | null;
+    author?: string | null;
+    primary_tag?: string | null;
+  }>;
+}
+
+const { posts } = Astro.props;
+---
+
+{
+  posts.length > 0 ? (
+    <ul class="post-grid">
+      {posts.map((post) => <BlogPost post={post} />)}
+    </ul>
+  ) : (
+    <p class="post-empty">No articles yet.</p>
+  )
+}
+
+<style>
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .post-empty {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+</style>

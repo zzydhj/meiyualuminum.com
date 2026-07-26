@@ -1,23 +1,40 @@
 ---
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import RecommendedPosts from '../../components/RecommendedPosts.astro';
+import SidebarTags from '../../components/SidebarTags.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { supabase } from '../../lib/supabase';
 
 export async function getStaticPaths() {
+  // 路由生成只查 slug：不拉 content 等大字段，
+  // 文章上万篇时构建期内存/网络开销不随总量膨胀
   const { data: posts } = await supabase
     .from('posts')
-    .select('*')
+    .select('slug')
     .eq('status', 'published')
 
   if (!posts) return []
 
   return posts.map((post) => ({
     params: { slug: post.slug },
-    props: { post },
   }));
 }
 
-const { post } = Astro.props;
+// 当前文章全量数据按需单查：每页只查 1 条，构建成本与文章总数解耦
+// 用 .limit(1) 而非 .maybeSingle()：数据库可能存在重复 slug，取其一即可，避免多行报错
+const { slug } = Astro.params;
+const { data: matches } = await supabase
+  .from('posts')
+  .select('*')
+  .eq('slug', slug)
+  .eq('status', 'published')
+  .limit(1);
+
+const post = matches?.[0];
+
+if (!post) {
+  return Astro.redirect('/blog/');
+}
 
 // Use seo_title/seo_description if available
 const pageTitle = post.seo_title || post.title;
@@ -65,18 +82,80 @@ const articleJsonLd = {
     current={post.title}
     currentUrl={`/blog/${post.slug}/`}
   />
-  <p>{post.pub_date ? new Date(post.pub_date).toLocaleDateString() : ''}</p>
-  <p><em>{post.description}</em></p>
-  <p>Author: {post.author}</p>
-  {post.image_url && <img src={post.image_url} width="300" height="200" alt={post.image_alt || ''} loading="lazy" />}
 
-  {post.tags && post.tags.length > 0 && (
-    <div class="tags">
-      {post.tags.map((tag: string) => (
-        <p class="tag"><a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a></p>
-      ))}
+  <div class="blog-layout">
+    <!-- 左栏：文章正文 -->
+    <article class="blog-article">
+      <p>{post.pub_date ? new Date(post.pub_date).toLocaleDateString() : ''}</p>
+      <p><em>{post.description}</em></p>
+      <p>Author: {post.author}</p>
+      {post.image_url && <img src={post.image_url} width="300" height="200" alt={post.image_alt || ''} loading="lazy" />}
+
+      {post.tags && post.tags.length > 0 && (
+        <div class="tags">
+          {post.tags.map((tag: string) => (
+            <p class="tag"><a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a></p>
+          ))}
+        </div>
+      )}
+
+      <div class="article-content" set:html={post.content} />
+    </article>
+
+    <!-- 右栏：推荐文章 + 所有标签（两个并列的独立区块） -->
+    <div class="blog-sidebar">
+      <RecommendedPosts excludeSlug={post.slug} primaryTag={post.primary_tag} />
+      <SidebarTags />
     </div>
-  )}
-
-  <div set:html={post.content} />
+  </div>
 </BaseLayout>
+
+<style>
+  /* 两栏布局：文章自适应 + 侧栏固定 320px */
+  .blog-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* 侧栏滚动跟随（桌面端）；内部多个区块用 flex 列排布，间距由容器统一控制 */
+  .blog-sidebar {
+    position: sticky;
+    top: 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* 文章内锚点跳转时避开 sticky header */
+  .article-content :global([id]) {
+    scroll-margin-top: 96px;
+  }
+
+  /* 文章 section 内边距：桌面端宽松，手机端收紧。
+     文章 HTML 中不需要写 padding，如需单独覆盖可用内联 style。 */
+  .article-content :global(section) {
+    padding: 48px 44px;
+  }
+
+  /* 防止数据库 HTML 中的图片擑破窄栏 */
+  .article-content :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* < 1024px：单栏，侧栏落到文章下方 */
+  @media screen and (max-width: 1023px) {
+    .blog-layout {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .blog-sidebar {
+      position: static;
+    }
+    .article-content :global(section) {
+      padding: 32px 18px;
+    }
+  }
+</style>

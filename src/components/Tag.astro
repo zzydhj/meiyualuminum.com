@@ -1,0 +1,56 @@
+---
+/**
+ * Tag.astro — 标签胶囊（原子级展示组件）
+ *
+ * - 纯展示，不查询任何数据，放哪都能用
+ * - 传 href → 渲染为可点击 <a>（通常跳 /tags/{tag}/），hover 填充主题色
+ * - 不传 href → 渲染为纯展示 <span>
+ * - 布局间距（margin 等）由使用方的外层容器控制，本组件不含上下文间距
+ */
+interface Props {
+  /** 标签文字 */
+  tag: string;
+  /** 可选跳转链接；不传则为纯展示 */
+  href?: string;
+}
+
+const { tag, href } = Astro.props;
+---
+
+{
+  href ? (
+    <a href={href} class="tag-pill">
+      {tag}
+    </a>
+  ) : (
+    <span class="tag-pill">{tag}</span>
+  )
+}
+
+<style>
+  .tag-pill {
+    display: inline-block;
+    align-self: flex-start; /* 在 flex 列容器中不被拉伸成整行 */
+    padding: 3px 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #69574a;
+    background: #faf8f5;
+    border: 1px solid #e8e4df;
+    border-radius: 999px;
+    text-decoration: none;
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  /* 仅链接态有 hover 效果 */
+  a.tag-pill:hover {
+    background: #69574a;
+    border-color: #69574a;
+    color: #fff;
+  }
+</style>

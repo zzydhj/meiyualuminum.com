@@ -1,0 +1,128 @@
+---
+/**
+ * RecommendedPosts.astro — 推荐文章侧边栏（自包含组件）
+ *
+ * - 自行查询 Supabase posts 表，无需外部传入数据
+ * - 推荐策略：同 primary_tag 文章优先，不足时用最新文章补齐
+ * - 排除当前文章（通过 excludeSlug）
+ * - 样式完全作用域化，可放置于任何页面（博客详情、分类页等）
+ */
+import { supabase } from '../lib/supabase';
+
+interface Props {
+  /** 当前文章 slug，从推荐列表中排除 */
+  excludeSlug: string;
+  /** 当前文章的 primary_tag，同标签文章优先展示 */
+  primaryTag?: string;
+  /** 展示数量，默认 6 */
+  limit?: number;
+}
+
+const { excludeSlug, primaryTag, limit = 6 } = Astro.props;
+
+// 多取一些候选，前端按"同标签优先 + 时间倒序"排序后截取
+const { data } = await supabase
+  .from("posts")
+  .select("slug, title, image_url, pub_date, primary_tag")
+  .eq("status", "published")
+  .neq("slug", excludeSlug)
+  .order("pub_date", { ascending: false })
+  .limit(limit * 3);
+
+const candidates = data ?? [];
+
+const recommended = [
+  // 同标签文章在前（保持时间倒序）
+  ...candidates.filter((p) => primaryTag && p.primary_tag === primaryTag),
+  // 其余文章补齐
+  ...candidates.filter((p) => !primaryTag || p.primary_tag !== primaryTag),
+].slice(0, limit);
+---
+
+{recommended.length > 0 && (
+  <aside class="rec-sidebar">
+    <h2 class="rec-title">Recommended for You</h2>
+    <ul class="rec-list">
+      {recommended.map((post) => (
+        <li class="rec-item">
+          <a href={`/blog/${post.slug}/`} class="rec-card">
+            {post.image_url && (
+              <img
+                src={post.image_url}
+                alt=""
+                width="80"
+                height="60"
+                loading="lazy"
+                class="rec-thumb"
+              />
+            )}
+            <span class="rec-card-title">{post.title}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </aside>
+)}
+
+<style>
+  .rec-sidebar {
+    background: #fff;
+    border: 1px solid #e8e4df;
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .rec-title {
+    margin: 0 0 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #69574a;
+  }
+
+  .rec-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rec-item + .rec-item {
+    border-top: 1px solid #f0ede9;
+  }
+
+  .rec-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .rec-card:hover {
+    background: #faf8f5;
+  }
+
+  .rec-thumb {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .rec-card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .rec-card:hover .rec-card-title {
+    color: #69574a;
+  }
+</style>

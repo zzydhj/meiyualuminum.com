@@ -1,0 +1,69 @@
+---
+/**
+ * blog/page/[page].astro — 博客列表第 2~N 页（静态分页）
+ *
+ * - 第 1 页由 blog.astro 渲染（/blog/ 为规范地址），本路由只生成 /blog/page/2/ 起
+ * - 构建流程：count 查询算总页数 → 生成页码路由 → 每页用 .range() 只取自己那 16 篇
+ * - 文章总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
+ */
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostGrid from "../../../components/PostGrid.astro";
+import PaginationNav from "../../../components/PaginationNav.astro";
+import { supabase } from "../../../lib/supabase";
+import { PAGE_SIZE } from "../../../lib/pagination";
+
+export async function getStaticPaths() {
+  // 只取总数计算页数，不拉取文章数据
+  const { count } = await supabase
+    .from("posts")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+
+  const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
+
+  // 生成第 2 ~ totalPages 页的路由（第 1 页 = /blog/）
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+    params: { page: String(i + 2) },
+    props: { currentPage: i + 2, totalPages },
+  }));
+}
+
+const { currentPage, totalPages } = Astro.props;
+
+// 本页对应的数据切片（.range() 两端含，数据库层分页）
+const from = (currentPage - 1) * PAGE_SIZE;
+const to = from + PAGE_SIZE - 1;
+
+const result = await supabase
+  .from("posts")
+  .select("slug, title, image_url, description, pub_date, author, primary_tag")
+  .eq("status", "published")
+  .order("pub_date", { ascending: false })
+  .order("slug", { ascending: true })
+  .range(from, to);
+
+if (result.error) {
+  console.error(`Failed to fetch posts for page ${currentPage}:`, result.error);
+}
+
+const posts = result.data ?? [];
+---
+
+<BaseLayout
+  pageTitle={`Blog - Page ${currentPage}`}
+  description="Latest news, tips and insights about automotive parts and industry trends."
+>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Blog", url: "/blog/" },
+      {
+        name: `Page ${currentPage}`,
+        url: `/blog/page/${currentPage}/`,
+      },
+    ]}
+  />
+  <PostGrid posts={posts} />
+  <PaginationNav currentPage={currentPage} totalPages={totalPages} />
+</BaseLayout>

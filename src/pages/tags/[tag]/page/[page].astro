@@ -1,0 +1,64 @@
+---
+/**
+ * tags/[tag]/page/[page].astro — 标签文章列表第 2~N 页（静态分页）
+ *
+ * - 第 1 页由 tags/[tag].astro 渲染（/tags/{tag}/ 为规范地址），本路由只生成第 2 页起
+ * - 构建流程：取全部已发布文章 → 按标签分组 → 为每个标签生成 2~totalPages 页路由
+ * - 某标签文章数 ≤ PAGE_SIZE 时不生成该标签的分页（避免空页）
+ */
+import Breadcrumb from "../../../../components/Breadcrumb.astro";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import PostGrid from "../../../../components/PostGrid.astro";
+import PaginationNav from "../../../../components/PaginationNav.astro";
+import { PAGE_SIZE } from "../../../../lib/pagination";
+import { fetchAllTagPosts, groupPostsByTag, type TagPost } from "../../../../lib/tagPosts";
+
+export async function getStaticPaths() {
+  const byTag = groupPostsByTag(await fetchAllTagPosts());
+
+  const paths: {
+    params: { tag: string; page: string };
+    props: { posts: TagPost[]; currentPage: number; totalPages: number };
+  }[] = [];
+
+  for (const [tag, tagged] of byTag) {
+    const totalPages = Math.ceil(tagged.length / PAGE_SIZE);
+    for (let page = 2; page <= totalPages; page++) {
+      const start = (page - 1) * PAGE_SIZE;
+      paths.push({
+        params: { tag, page: String(page) },
+        props: {
+          posts: tagged.slice(start, start + PAGE_SIZE),
+          currentPage: page,
+          totalPages,
+        },
+      });
+    }
+  }
+  return paths;
+}
+
+const { tag, page } = Astro.params;
+const { posts, currentPage, totalPages } = Astro.props;
+const pageDescription = `Browse all blog posts tagged with "${tag}" - page ${currentPage}.`;
+const tagPath = encodeURIComponent(tag);
+---
+
+<BaseLayout pageTitle={`${tag} - Page ${currentPage}`} description={pageDescription}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Tags", url: "/tags/" },
+      { name: tag, url: `/tags/${tagPath}/` },
+      { name: `Page ${currentPage}`, url: `/tags/${tagPath}/page/${page}/` },
+    ]}
+  />
+  <p>Posts tagged with "{tag}" — Page {currentPage}</p>
+  <PostGrid posts={posts} />
+  <PaginationNav
+    currentPage={currentPage}
+    totalPages={totalPages}
+    basePath={`/tags/${tagPath}/page`}
+    firstPageUrl={`/tags/${tagPath}/`}
+  />
+</BaseLayout>
