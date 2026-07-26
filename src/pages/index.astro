@@ -1,27 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Breadcrumb from "../components/Breadcrumb.astro";
-import { supabase } from "../lib/supabase";
 
-// Fetch home page data from Supabase
-const { data: homePage, error } = await supabase
-  .from("pages")
-  .select("*")
-  .eq("slug", "home")
-  .eq("status", "published")
-  .single();
-
-if (error) {
-  console.error("Failed to fetch home page:", error);
-}
-
-const pageTitle = homePage?.seo_title || homePage?.title || "Home";
-const pageDescription = homePage?.seo_description || "";
-const keywords = homePage?.keywords ?? [];
-
-// Custom per-page code (plain text columns: custom_css / custom_js)
-const customCss = homePage?.custom_css ?? "";
-const customJs = homePage?.custom_js ?? "";
+// 首页是纯代码页面：标题、副标题、SEO 信息全部写死在下方常量中，
+// 不依赖数据库 pages 表（home 记录已删除，/home/ 影子路由随之消失）。
+// 如需修改首页文案 / SEO，直接编辑下面的常量，改完重新构建或重启生效。
+const pageTitle = "Meiyu Aluminum - Professional Automotive Parts Supplier";
+const pageDescription = "OEM quality brake pads, filters, and engine components for Toyota, Honda, and more.";
+const keywords = ["automotive parts", "OEM quality", "brake pads", "oil filters", "Meiyu Aluminum"];
+const heroTitle = "Aluminum Building Materials You Can Trust";
+const heroSubtitle = "Professional supplier of aluminum ceiling systems, facade panels & wall cladding";
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
@@ -31,7 +18,7 @@ const websiteJsonLd = {
 };
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} customCss={customCss} customJs={customJs} hideTitle>
+<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} hideTitle>
   <!-- Preload the hero video so its download starts as early as possible (faster autoplay).
        The preload also establishes the connection, so a separate preconnect to the same origin is unnecessary. -->
   <Fragment slot="head">
@@ -47,14 +34,10 @@ const websiteJsonLd = {
     </video>
     <div class="video-hero-overlay"></div>
     <div class="video-hero-content">
-      {homePage?.hero_subtitle && <p>{homePage.hero_subtitle}</p>}
+      <h1>{heroTitle}</h1>
+      <p>{heroSubtitle}</p>
     </div>
   </section>
-
-  <!-- Page content (HTML from database) -->
-  {homePage?.content && (
-    <div class="page-content" set:html={homePage.content} />
-  )}
 
   <!-- ===== Solutions Section (Bronze) ===== -->
   <section class="solutions-section-bronze">
@@ -460,21 +443,6 @@ const websiteJsonLd = {
     color: rgba(255,255,255,0.92);
     max-width: 640px;
     text-shadow: 0 1px 8px rgba(0,0,0,0.35);
-  }
-
-  .page-content {
-    line-height: 1.8;
-    font-size: 1rem;
-  }
-
-  .page-content h2 {
-    margin-top: 2rem;
-    color: #1e293b;
-  }
-
-  .page-content p {
-    margin-bottom: 1rem;
-    color: #475569;
   }
 
   /* ===== Solutions Section (Bronze) ===== */

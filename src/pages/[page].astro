@@ -1,6 +1,7 @@
 ---
 import Breadcrumb from "../components/Breadcrumb.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageBanner from "../components/PageBanner.astro";
 import { supabase } from "../lib/supabase";
 
 export async function getStaticPaths() {
@@ -30,22 +31,42 @@ const keywords = page.keywords ?? [];
 // Custom per-page code (plain text columns: custom_css / custom_js)
 const customCss = page.custom_css ?? "";
 const customJs = page.custom_js ?? "";
+
+// Banner 背景媒体：banner_video_url / banner_poster_url 任一填写即启用横幅，
+// 两者皆空时回退原有布局（BaseLayout 黑标题 + 面包屑 + hero 区）
+const bannerVideoUrl = page.banner_video_url || null;
+const bannerPosterUrl = page.banner_poster_url || null;
+const hasBanner = !!(bannerVideoUrl || bannerPosterUrl);
 ---
 
 <BaseLayout
   pageTitle={pageTitle}
+  headingTitle={page.title}
+  hideTitle={hasBanner}
   description={pageDescription}
   image={page.image_url || undefined}
   keywords={keywords}
   customCss={customCss}
   customJs={customJs}
 >
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: page.title, url: `/${page.slug}/` },
-    ]}
-  />
+  {hasBanner ? (
+    <PageBanner
+      title={page.title}
+      breadcrumbItems={[
+        { name: "Home", url: "/" },
+        { name: page.title, url: `/${page.slug}/` },
+      ]}
+      videoUrl={bannerVideoUrl}
+      posterUrl={bannerPosterUrl}
+    />
+  ) : (
+    <Breadcrumb
+      items={[
+        { name: "Home", url: "/" },
+        { name: page.title, url: `/${page.slug}/` },
+      ]}
+    />
+  )}
 
   <!-- Hero section -->
   {(page.hero_title || page.hero_subtitle) && (

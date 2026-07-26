@@ -7,6 +7,9 @@ import '../styles/global.css';
 
 interface Props {
   pageTitle: string;
+  /** 页面可见大标题（h1）。不传则回退用 pageTitle。
+      用途分离：pageTitle 服务 <title>/OG 等 SEO 标签，headingTitle 服务读者看到的 h1。 */
+  headingTitle?: string;
   description?: string;
   image?: string;
   canonicalURL?: string;
@@ -21,6 +24,7 @@ interface Props {
 
 const {
   pageTitle,
+  headingTitle,
   description = "Professional automotive parts supplier - OEM quality brake pads, filters, and engine components",
   image,
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
@@ -108,7 +112,7 @@ const orgJsonLd = {
   <body>
     <Header />
     <main class="container">
-      {!hideTitle && <h1>{pageTitle}</h1>}
+      {!hideTitle && <h1>{headingTitle || pageTitle}</h1>}
       <slot />
     </main>
     <Footer />

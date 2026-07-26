@@ -2,6 +2,7 @@
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import RecommendedPosts from '../../components/RecommendedPosts.astro';
 import SidebarTags from '../../components/SidebarTags.astro';
+import Tag from '../../components/Tag.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { supabase } from '../../lib/supabase';
 
@@ -70,6 +71,7 @@ const articleJsonLd = {
   pubDate={post.pub_date ? new Date(post.pub_date) : undefined}
   author={post.author}
   keywords={keywords}
+  hideTitle
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
 
@@ -84,20 +86,30 @@ const articleJsonLd = {
   />
 
   <div class="blog-layout">
-    <!-- 左栏：文章正文 -->
+    <!-- 左栏：文章正文（头部结构与视频详情页保持一致） -->
     <article class="blog-article">
-      <p>{post.pub_date ? new Date(post.pub_date).toLocaleDateString() : ''}</p>
-      <p><em>{post.description}</em></p>
-      <p>Author: {post.author}</p>
-      {post.image_url && <img src={post.image_url} width="300" height="200" alt={post.image_alt || ''} loading="lazy" />}
+      {post.image_url && (
+        <div class="post-hero-img">
+          <img src={post.image_url} alt={post.image_alt || post.title} loading="lazy" />
+        </div>
+      )}
+
+      <h1 class="blog-detail-title">{post.title}</h1>
+
+      <div class="blog-detail-meta">
+        {post.pub_date && <time datetime={post.pub_date}>{new Date(post.pub_date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</time>}
+        {post.author && <span>· {post.author}</span>}
+      </div>
 
       {post.tags && post.tags.length > 0 && (
-        <div class="tags">
+        <div class="blog-detail-tags">
           {post.tags.map((tag: string) => (
-            <p class="tag"><a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a></p>
+            <Tag tag={tag} href={`/tags/${encodeURIComponent(tag)}/`} />
           ))}
         </div>
       )}
+
+      {post.description && <p class="blog-detail-desc"><em>{post.description}</em></p>}
 
       <div class="article-content" set:html={post.content} />
     </article>
@@ -117,6 +129,50 @@ const articleJsonLd = {
     grid-template-columns: 1fr 320px;
     gap: 24px;
     align-items: start;
+  }
+
+  /* ===== 文章头部（镜像视频详情页的设计） ===== */
+  /* 特色图：16:9 圆角容器，视觉比例与视频播放器一致 */
+  .post-hero-img {
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f3f4f6;
+  }
+  .post-hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .blog-detail-title {
+    margin: 20px 0 8px;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #0d0950;
+  }
+
+  .blog-detail-meta {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 14px;
+  }
+
+  /* 标签行：可点击，跳转博客标签页（胶囊样式由 Tag.astro 组件提供） */
+  .blog-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .blog-detail-desc {
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #6b7280;
   }
 
   /* 侧栏滚动跟随（桌面端）；内部多个区块用 flex 列排布，间距由容器统一控制。

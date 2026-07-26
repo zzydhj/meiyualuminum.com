@@ -1,0 +1,159 @@
+---
+/**
+ * PageBanner.astro
+ * 通用页面顶部全宽背景横幅：背景视频/图片 + 半透明遮罩 + 白色标题与面包屑。
+ *
+ * 媒体策略（与首页 video hero 一致）：
+ * - video 的 poster 属性先显示封面图，视频下载就绪后浏览器自动无缝切换播放；
+ * - 视频加载失败时 JS 给 video 加 .banner-video-failed 将其隐藏，
+ *   section 的 background-image（同一张封面图）兜底，页面不会开天窗；
+ * - 只填 banner_poster_url 不填 banner_video_url 时，渲染纯静态图片横幅。
+ *
+ * Props:
+ * - title: 页面标题（渲染为 h1，白色，全页唯一 H1）
+ * - breadcrumbItems: 面包屑链（复用 Breadcrumb 组件，白色化）
+ * - videoUrl / posterUrl: 背景媒体地址，均可选
+ */
+import Breadcrumb from "./Breadcrumb.astro";
+
+interface Props {
+  title: string;
+  breadcrumbItems: { name: string; url: string }[];
+  videoUrl?: string | null;
+  posterUrl?: string | null;
+}
+
+const { title, breadcrumbItems, videoUrl, posterUrl } = Astro.props;
+---
+
+<section
+  class="page-banner"
+  style={posterUrl ? `background-image: url('${posterUrl}')` : undefined}
+>
+  {videoUrl && (
+    <video
+      class="page-banner-bg"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster={posterUrl || undefined}
+    >
+      <source src={videoUrl} type="video/mp4" />
+    </video>
+  )}
+  {!videoUrl && posterUrl && (
+    <img class="page-banner-bg" src={posterUrl} alt="" loading="eager" />
+  )}
+  <div class="page-banner-overlay"></div>
+  <div class="page-banner-content">
+    <Breadcrumb items={breadcrumbItems} />
+    <h1>{title}</h1>
+  </div>
+</section>
+
+<script>
+  // 视频加载失败降级：隐藏 video，露出 section 的 background-image 兜底
+  const bannerVideo = document.querySelector<HTMLVideoElement>(".page-banner-bg");
+  if (bannerVideo) {
+    const showFallback = () => bannerVideo.classList.add("banner-video-failed");
+    bannerVideo.addEventListener("error", showFallback);
+    bannerVideo.querySelectorAll("source").forEach((s) => s.addEventListener("error", showFallback));
+    // 安全网：6 秒后仍完全无数据，视为失败
+    setTimeout(() => {
+      if (bannerVideo.readyState === 0 && bannerVideo.networkState === 3) {
+        showFallback();
+      }
+    }, 6000);
+  }
+</script>
+
+<style>
+  .page-banner {
+    position: relative;
+    /* 突破 .container 的 max-width 限制，撑满视口全宽 */
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    /* 抵消 .container 的 1rem 顶部内边距，让 banner 紧贴 header */
+    margin-top: -1rem;
+    /* banner 与下方内容（hero 区 / 正文）的统一留白 */
+    margin-bottom: 2rem;
+    height: 42vh;
+    min-height: 280px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .page-banner-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  video.page-banner-bg.banner-video-failed {
+    display: none;
+  }
+
+  /* 半透明黑色渐变遮罩，与首页 banner 同款，保证白字可读性 */
+  .page-banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(20, 12, 6, 0.25), rgba(20, 12, 6, 0.55));
+  }
+
+  .page-banner-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .page-banner-content h1 {
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0.25rem 0 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  /* banner 内面包屑白色化 + 字号加大（Breadcrumb 组件自身是 14px 深色） */
+  .page-banner :global(.breadcrumb) {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+  .page-banner :global(.breadcrumb a) {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .page-banner :global(.breadcrumb a:hover) {
+    color: #fff;
+    text-decoration: underline;
+  }
+  .page-banner :global(.breadcrumb [aria-current="page"]) {
+    color: #fff;
+  }
+  .page-banner :global(.breadcrumb .separator) {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  @media (max-width: 640px) {
+    .page-banner {
+      height: 32vh;
+      min-height: 220px;
+    }
+    .page-banner-content h1 {
+      font-size: 2rem;
+    }
+    .page-banner :global(.breadcrumb) {
+      font-size: 0.875rem;
+    }
+  }
+</style>

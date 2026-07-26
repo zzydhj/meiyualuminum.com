@@ -56,7 +56,7 @@ const pageTitle = category.seo_title || category.name;
 const keywords = category.keywords ?? [];
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords}>
+<BaseLayout pageTitle={pageTitle} headingTitle={category.name} description={pageDescription} keywords={keywords}>
   <Breadcrumb
     root={{ name: "Categories", url: "/categories/" }}
     middleItems={middleItems}
