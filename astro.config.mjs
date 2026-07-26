@@ -11,7 +11,8 @@ export default defineConfig({
   // ← 保持静态，不需要改成 server！
   output: "static",
 
-  trailingSlash: "always",
+  // "ignore"：/videos 和 /videos/ 两种写法都可访问（"always" 在开发服务器会对不带斜杠的 URL 返回 404）
+  trailingSlash: "ignore",
   integrations: [mdx(), sitemap()],
 
 });

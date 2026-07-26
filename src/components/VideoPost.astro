@@ -1,0 +1,211 @@
+---
+/**
+ * VideoPost.astro — 视频卡片（单个视频的展示组件）
+ *
+ * - 只负责单张卡片的渲染与样式，布局（宫格）由 VideoGrid.astro 控制
+ * - 卡片结构：缩略图（含播放按钮 + 时长角标）→ 标签 → 标题 → 摘要 → 日期/作者
+ * - 封面：优先 thumbnail_url，未填时自动取 YouTube 封面（永远有图）
+ */
+import Tag from './Tag.astro';
+import { parseYouTubeId, youTubeThumb } from '../lib/youtube';
+
+interface Props {
+  video: {
+    slug: string;
+    title: string;
+    video_url: string;
+    thumbnail_url?: string | null;
+    description?: string | null;
+    duration?: string | null;
+    pub_date?: string | null;
+    author?: string | null;
+    primary_tag?: string | null;
+  };
+}
+
+const { video } = Astro.props;
+
+const dateStr = video.pub_date
+  ? new Date(video.pub_date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  : "";
+
+// 封面：自定义优先，否则自动取 YouTube 封面
+const videoId = parseYouTubeId(video.video_url);
+const thumbSrc = video.thumbnail_url || (videoId ? youTubeThumb(videoId) : null);
+---
+
+<li class="video-card">
+  <a href={`/videos/${video.slug}/`} class="video-card-link">
+    <div class="video-thumb">
+      {
+        thumbSrc ? (
+          <img
+            src={thumbSrc}
+            alt={video.title}
+            loading="lazy"
+            onerror="this.remove()"
+          />
+        ) : (
+          <div class="video-thumb-fallback" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="M10 9l5 3-5 3V9z" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+        )
+      }
+      <!-- 播放按钮覆盖层（视频卡片标志性元素） -->
+      <span class="play-overlay" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="48" height="48">
+          <circle cx="24" cy="24" r="23" fill="rgba(0,0,0,0.55)" />
+          <path d="M19 15l14 9-14 9V15z" fill="#fff" />
+        </svg>
+      </span>
+      {video.duration && <span class="duration-badge">{video.duration}</span>}
+    </div>
+    <div class="video-body">
+      {video.primary_tag && (
+        <div class="video-tag-row">
+          <Tag tag={video.primary_tag} />
+        </div>
+      )}
+      <h2 class="video-title">{video.title}</h2>
+      {video.description && <p class="video-excerpt">{video.description}</p>}
+      <div class="video-meta">
+        {dateStr && <time datetime={video.pub_date}>{dateStr}</time>}
+        {video.author && <span>· {video.author}</span>}
+      </div>
+    </div>
+  </a>
+</li>
+
+<style>
+  .video-card {
+    list-style: none;
+  }
+
+  .video-card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border: 1px solid #e8e4df;
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .video-card-link:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(105, 87, 74, 0.14);
+  }
+
+  /* 缩略图区域：16:9（视频标准比例），相对定位用于叠加播放按钮和时长角标 */
+  .video-thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #f0ede9;
+  }
+  .video-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+  .video-card-link:hover .video-thumb img {
+    transform: scale(1.05);
+  }
+  .video-thumb-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c9c2ba;
+  }
+
+  /* 播放按钮：居中半透明圆底三角，hover 时放大 */
+  .play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .play-overlay svg {
+    transition: transform 0.25s ease;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+  }
+  .video-card-link:hover .play-overlay svg {
+    transform: scale(1.12);
+  }
+
+  /* 时长角标：右下角黑底白字小胶囊 */
+  .duration-badge {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    padding: 2px 7px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .video-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 18px 20px 20px;
+  }
+
+  /* 标签行：间距由容器控制，胶囊本体样式在 Tag.astro */
+  .video-tag-row {
+    margin-bottom: 10px;
+  }
+
+  .video-title {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #0d0950;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s;
+  }
+  .video-card-link:hover .video-title {
+    color: #69574a;
+  }
+
+  .video-excerpt {
+    margin: 0 0 14px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #6b7280;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* margin-top:auto 让日期始终贴卡片底部，卡片等高对齐 */
+  .video-meta {
+    margin-top: auto;
+    font-size: 0.78rem;
+    color: #9ca3af;
+  }
+</style>

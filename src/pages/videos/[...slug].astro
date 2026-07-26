@@ -1,0 +1,266 @@
+---
+/**
+ * videos/[...slug].astro — 视频详情页
+ *
+ * - 架构镜像 blog/[...slug].astro：getStaticPaths 只查 slug、正文 .limit(1) 单查、redirect 守卫
+ * - 布局：左栏（16:9 YouTube 播放器 + 信息 + content HTML）+ 右栏（推荐视频 + 标签卡片）
+ */
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import RecommendedVideos from '../../components/RecommendedVideos.astro';
+import SidebarVideoTags from '../../components/SidebarVideoTags.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { supabase } from '../../lib/supabase';
+import { parseYouTubeId, youTubeEmbedUrl, youTubeThumb } from '../../lib/youtube';
+
+export async function getStaticPaths() {
+  // 路由生成只查 slug：不拉 content 等大字段，
+  // 视频上万条时构建期内存/网络开销不随总量膨胀
+  const { data: videos } = await supabase
+    .from('videos')
+    .select('slug')
+    .eq('status', 'published')
+
+  if (!videos) return []
+
+  return videos.map((video) => ({
+    params: { slug: video.slug },
+  }));
+}
+
+// 当前视频全量数据按需单查：每页只查 1 条，构建成本与视频总数解耦
+// 用 .limit(1) 而非 .maybeSingle()：容错重复 slug
+const { slug } = Astro.params;
+const { data: matches } = await supabase
+  .from('videos')
+  .select('*')
+  .eq('slug', slug)
+  .eq('status', 'published')
+  .limit(1);
+
+const video = matches?.[0];
+
+if (!video) {
+  return Astro.redirect('/videos/');
+}
+
+// Use seo_title/seo_description if available
+const pageTitle = video.seo_title || video.title;
+const pageDescription = video.seo_description || video.description;
+const keywords = video.keywords ?? [];
+
+// YouTube 视频 ID 与嵌入地址
+const videoId = parseYouTubeId(video.video_url);
+const embedSrc = videoId ? youTubeEmbedUrl(videoId) : null;
+const thumbUrl = video.thumbnail_url || (videoId ? youTubeThumb(videoId) : undefined);
+
+// VideoObject JSON-LD
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
+const videoUrl = `${siteUrl}/videos/${video.slug}/`;
+const videoJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": video.title,
+  "description": video.description,
+  "uploadDate": video.pub_date || undefined,
+  "duration": video.duration || undefined,
+  "thumbnailUrl": thumbUrl || undefined,
+  "embedUrl": embedSrc ? `${siteUrl}${embedSrc}` : undefined,
+  "url": videoUrl,
+  "publisher": {
+    "@type": "Organization",
+    "name": "Meiyu Aluminum",
+    "logo": { "@type": "ImageObject", "url": `${siteUrl}/favicon.svg` }
+  }
+};
+---
+
+<BaseLayout
+  pageTitle={pageTitle}
+  description={pageDescription}
+  image={thumbUrl}
+  type="article"
+  pubDate={video.pub_date ? new Date(video.pub_date) : undefined}
+  author={video.author}
+  keywords={keywords}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(videoJsonLd)} />
+
+  <Breadcrumb
+    root={{ name: "Videos", url: "/videos/" }}
+    primaryTag={video.primary_tag
+      ? { name: video.primary_tag, url: `/video-tags/${encodeURIComponent(video.primary_tag)}/` }
+      : undefined
+    }
+    current={video.title}
+    currentUrl={`/videos/${video.slug}/`}
+  />
+
+  <div class="video-layout">
+    <!-- 左栏：播放器 + 视频信息 + 详细介绍 -->
+    <article class="video-article">
+      {embedSrc && (
+        <div class="player-wrap">
+          <iframe
+            src={embedSrc}
+            title={video.title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      )}
+
+      <h1 class="video-detail-title">{video.title}</h1>
+
+      <div class="video-detail-meta">
+        {video.pub_date && <time datetime={video.pub_date}>{new Date(video.pub_date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</time>}
+        {video.author && <span>· {video.author}</span>}
+        {video.duration && <span class="meta-duration">· {video.duration}</span>}
+      </div>
+
+      {video.tags && video.tags.length > 0 && (
+        <div class="video-detail-tags">
+          {video.tags.map((tag: string) => (
+            <a href={`/video-tags/${encodeURIComponent(tag)}/`} class="detail-tag">{tag}</a>
+          ))}
+        </div>
+      )}
+
+      {video.description && <p class="video-detail-desc"><em>{video.description}</em></p>}
+
+      {video.content && <div class="video-content" set:html={video.content} />}
+    </article>
+
+    <!-- 右栏：推荐视频 + 所有标签（两个并列的独立区块） -->
+    <div class="video-sidebar">
+      <RecommendedVideos excludeSlug={video.slug} primaryTag={video.primary_tag} />
+      <SidebarVideoTags />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* 两栏布局：内容自适应 + 侧栏固定 320px */
+  .video-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* 播放器：16:9 响应式容器 */
+  .player-wrap {
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+  }
+  .player-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .video-detail-title {
+    margin: 20px 0 8px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #0d0950;
+  }
+
+  .video-detail-meta {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 14px;
+  }
+
+  /* 标签行：可点击，跳转视频标签页 */
+  .video-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .detail-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #69574a;
+    background: #faf8f5;
+    border: 1px solid #e8e4df;
+    border-radius: 999px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .detail-tag:hover {
+    background: #69574a;
+    color: #fff;
+  }
+
+  .video-detail-desc {
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #6b7280;
+  }
+
+  /* content HTML 区域 */
+  .video-content {
+    line-height: 1.8;
+    color: #374151;
+  }
+  .video-content :global([id]) {
+    scroll-margin-top: 96px;
+  }
+  .video-content :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 侧栏滚动跟随（桌面端）；内部多个区块用 flex 列排布，间距由容器统一控制。
+     max-height + overflow 是"保险"：侧栏内容超过可用视口高时（笔记本缩放/小屏）
+     改为内部滚动，避免底部标签卡被 sticky 切掉而滚不到。 */
+  .video-sidebar {
+    position: sticky;
+    top: 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #d6d0ca transparent;
+  }
+
+  .video-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .video-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .video-sidebar::-webkit-scrollbar-thumb {
+    background: #d6d0ca;
+    border-radius: 3px;
+  }
+  .video-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #69574a;
+  }
+
+  /* < 1024px：单栏，侧栏落到视频下方 */
+  @media screen and (max-width: 1023px) {
+    .video-layout {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .video-sidebar {
+      position: static;
+      max-height: none;
+      overflow-y: visible;
+    }
+  }
+</style>

@@ -1,0 +1,56 @@
+---
+/**
+ * videos.astro — 视频列表第 1 页
+ *
+ * - 第 2~N 页由 videos/page/[page].astro 生成（/videos/page/N/）
+ * - 每页 PAGE_SIZE 条，与博客列表共用分页配置与导航组件
+ */
+import Breadcrumb from "../components/Breadcrumb.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import VideoGrid from "../components/VideoGrid.astro";
+import PaginationNav from "../components/PaginationNav.astro";
+import { supabase } from "../lib/supabase";
+import { PAGE_SIZE } from "../lib/pagination";
+
+// 已发布视频总数（轻量 count 查询，不拉取行数据）
+const { count } = await supabase
+  .from("videos")
+  .select("*", { count: "exact", head: true })
+  .eq("status", "published");
+
+const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
+
+// 本页只取前 PAGE_SIZE 条（数据库层分页，不受 Supabase 单次 1000 行上限影响）
+// 次级排序 slug：保证 pub_date 相同时跨页顺序稳定，不重不漏
+const result = await supabase
+  .from("videos")
+  .select("slug, title, video_url, thumbnail_url, description, duration, pub_date, author, primary_tag")
+  .eq("status", "published")
+  .order("pub_date", { ascending: false })
+  .order("slug", { ascending: true })
+  .range(0, PAGE_SIZE - 1);
+
+if (result.error) {
+  console.error("Failed to fetch videos:", result.error);
+}
+
+const videos = result.data ?? [];
+const pageTitle = "Videos";
+const pageDescription = "Watch our factory tours, project cases, installation guides and more.";
+---
+
+<BaseLayout pageTitle={pageTitle} description={pageDescription}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Videos", url: "/videos/" },
+    ]}
+  />
+  <VideoGrid videos={videos} />
+  <PaginationNav
+    currentPage={1}
+    totalPages={totalPages}
+    basePath="/videos/page"
+    firstPageUrl="/videos/"
+  />
+</BaseLayout>

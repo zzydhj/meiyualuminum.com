@@ -1,0 +1,64 @@
+---
+/**
+ * video-tags/index.astro — 全部视频标签聚合页
+ *
+ * - 聚合 videos 表所有已发布视频的 tags，扁平化 + 去重
+ * - 每个标签链接到对应标签列表页 /video-tags/{tag}/
+ */
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { supabase } from "../../lib/supabase";
+
+const { data: allVideos } = await supabase
+  .from("videos")
+  .select("tags")
+  .eq("status", "published");
+
+const videos = allVideos ?? [];
+
+// tags is an array type, flatten and deduplicate
+const tags = [...new Set(
+  videos
+    .map((video) => video.tags ?? [])
+    .flat()
+)];
+
+const pageTitle = "Video Tags";
+const pageDescription = "Browse all video tags and topics.";
+---
+
+<BaseLayout pageTitle={pageTitle} description={pageDescription}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Video Tags", url: "/video-tags/" },
+    ]}
+  />
+  <div class="tags">
+    {
+      tags.map((tag) => (
+        <p class="tag">
+          <a href={`/video-tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+        </p>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  a {
+    color: #00539f;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .tag {
+    margin: 0.25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    font-size: 1.15em;
+    background-color: #f8fcfd;
+  }
+</style>

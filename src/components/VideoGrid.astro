@@ -1,0 +1,52 @@
+---
+/**
+ * VideoGrid.astro — 视频宫格列表（布局容器组件）
+ *
+ * - 职责：宫格布局 + 遍历视频渲染 VideoPost 卡片
+ * - 响应式：auto-fill + minmax 自动适配（桌面 3 列 / 平板 2 列 / 手机 1 列）
+ * - 复用于：视频列表页（videos.astro）、视频标签页（video-tags/[tag].astro）
+ */
+import VideoPost from "./VideoPost.astro";
+
+interface Props {
+  videos: Array<{
+    slug: string;
+    title: string;
+    video_url: string;
+    thumbnail_url?: string | null;
+    description?: string | null;
+    duration?: string | null;
+    pub_date?: string | null;
+    author?: string | null;
+    primary_tag?: string | null;
+  }>;
+}
+
+const { videos } = Astro.props;
+---
+
+{
+  videos.length > 0 ? (
+    <ul class="video-grid">
+      {videos.map((video) => <VideoPost video={video} />)}
+    </ul>
+  ) : (
+    <p class="video-empty">No videos yet.</p>
+  )
+}
+
+<style>
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .video-empty {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+</style>

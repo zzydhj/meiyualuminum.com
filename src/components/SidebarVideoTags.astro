@@ -1,0 +1,56 @@
+---
+/**
+ * SidebarVideoTags.astro — 侧边栏「所有视频标签」卡片（自包含组件）
+ *
+ * - 自行查询 Supabase videos 表全部已发布视频的 tags
+ * - 扁平化 + 去重得到全部视频标签，每个标签链接到对应标签页
+ * - 外观与 RecommendedVideos 保持一致（白色圆角卡片 + 主题色小标题）
+ * - 放置于视频详情页推荐区域下方，与推荐区并列的独立区块
+ */
+import { supabase } from '../lib/supabase';
+import Tag from './Tag.astro';
+
+// 只查 tags 字段，扁平化 + 去重（与 /video-tags/ 页聚合逻辑一致）
+const { data: allVideos } = await supabase
+  .from("videos")
+  .select("tags")
+  .eq("status", "published");
+
+const tags = [...new Set((allVideos ?? []).map((video) => video.tags ?? []).flat())];
+---
+
+{tags.length > 0 && (
+  <aside class="sidebar-video-tags">
+    <h2 class="sidebar-video-tags-title">Tags</h2>
+    <div class="sidebar-video-tags-list">
+      {tags.map((tag) => (
+        <Tag tag={tag} href={`/video-tags/${encodeURIComponent(tag)}/`} />
+      ))}
+    </div>
+  </aside>
+)}
+
+<style>
+  .sidebar-video-tags {
+    background: #fff;
+    border: 1px solid #e8e4df;
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .sidebar-video-tags-title {
+    margin: 0 0 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #69574a;
+  }
+
+  /* 标签按钮流式排列，自动换行 */
+  .sidebar-video-tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>

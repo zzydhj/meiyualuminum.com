@@ -1,0 +1,64 @@
+---
+/**
+ * video-tags/[tag]/page/[page].astro — 视频标签列表第 2~N 页（静态分页）
+ *
+ * - 第 1 页由 video-tags/[tag].astro 渲染（/video-tags/{tag}/ 为规范地址），本路由只生成第 2 页起
+ * - 构建流程：取全部已发布视频 → 按标签分组 → 为每个标签生成 2~totalPages 页路由
+ * - 某标签视频数 ≤ PAGE_SIZE 时不生成该标签的分页（避免空页）
+ */
+import Breadcrumb from "../../../../components/Breadcrumb.astro";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import VideoGrid from "../../../../components/VideoGrid.astro";
+import PaginationNav from "../../../../components/PaginationNav.astro";
+import { PAGE_SIZE } from "../../../../lib/pagination";
+import { fetchAllVideos, groupVideosByTag, type VideoItem } from "../../../../lib/videoTags";
+
+export async function getStaticPaths() {
+  const byTag = groupVideosByTag(await fetchAllVideos());
+
+  const paths: {
+    params: { tag: string; page: string };
+    props: { videos: VideoItem[]; currentPage: number; totalPages: number };
+  }[] = [];
+
+  for (const [tag, tagged] of byTag) {
+    const totalPages = Math.ceil(tagged.length / PAGE_SIZE);
+    for (let page = 2; page <= totalPages; page++) {
+      const start = (page - 1) * PAGE_SIZE;
+      paths.push({
+        params: { tag, page: String(page) },
+        props: {
+          videos: tagged.slice(start, start + PAGE_SIZE),
+          currentPage: page,
+          totalPages,
+        },
+      });
+    }
+  }
+  return paths;
+}
+
+const { tag, page } = Astro.params;
+const { videos, currentPage, totalPages } = Astro.props;
+const pageDescription = `Browse all videos tagged with "${tag}" - page ${currentPage}.`;
+const tagPath = encodeURIComponent(tag);
+---
+
+<BaseLayout pageTitle={`${tag} - Page ${currentPage}`} description={pageDescription}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Video Tags", url: "/video-tags/" },
+      { name: tag, url: `/video-tags/${tagPath}/` },
+      { name: `Page ${currentPage}`, url: `/video-tags/${tagPath}/page/${page}/` },
+    ]}
+  />
+  <p>Videos tagged with "{tag}" — Page {currentPage}</p>
+  <VideoGrid videos={videos} />
+  <PaginationNav
+    currentPage={currentPage}
+    totalPages={totalPages}
+    basePath={`/video-tags/${tagPath}/page`}
+    firstPageUrl={`/video-tags/${tagPath}/`}
+  />
+</BaseLayout>
