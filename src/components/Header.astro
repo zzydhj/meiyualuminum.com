@@ -3,13 +3,18 @@ import Menu from "../components/Menu.astro";
 import Navigation from "../components/Navigation.astro";
 import MobileMenu from "../components/MobileMenu.astro";
 import InquiryButton from "../components/InquiryButton.astro";
+
+/** transparent: 首页传入 true，桌面端 header 初始透明覆盖在 hero 上，滚动后变白 */
+const { transparent = false } = Astro.props;
 ---
 
-
-<header>
+<header class:list={[{ transparent }]}>
     <nav>
         <Menu />
-        <a class="logo" href="/"><img src="https://file.meiyualuminum.com/home/logo.png" alt="MEIYU Aluminum" /></a>
+        <a class="logo" href="/">
+            <img class="logo-dark" src="https://file.meiyualuminum.com/home/logo.png" alt="MEIYU Aluminum" />
+            {transparent && <img class="logo-white" src="https://file.meiyualuminum.com/home/logo-white.png" alt="MEIYU Aluminum" />}
+        </a>
         <Navigation />
         <InquiryButton label="Get Quote" class="header-cta" />
     </nav>
@@ -17,6 +22,20 @@ import InquiryButton from "../components/InquiryButton.astro";
 
 <!-- 移动端全屏手风琴菜单（< 1400px），独立于桌面端 Navigation -->
 <MobileMenu />
+
+{transparent && (
+<script>
+  /* 首页桌面端：滚动超过 50px 后给 header 加 .scrolled 恢复白底 */
+  const header = document.querySelector('header.transparent');
+  if (header) {
+    const onScroll = () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // 初始执行一次，防止刷新时已处于滚动位置
+  }
+</script>
+)}
 
 <style>
   /* Sticky full-width white header with a subtle bottom shadow */
@@ -48,6 +67,9 @@ import InquiryButton from "../components/InquiryButton.astro";
     width: auto;
     display: block;
   }
+  .logo .logo-white {
+    display: none;
+  }
 
   /* Desktop: fixed 80px height, logo on the left, nav on the right */
   @media screen and (min-width: 1400px) {
@@ -74,6 +96,61 @@ import InquiryButton from "../components/InquiryButton.astro";
       height: 42px;      /* match the 42px logo for balanced bookends */
       padding: 0 1.5rem;
       font-size: 1rem;
+    }
+
+    /* ===== Transparent mode (首页桌面端) ===== */
+    header.transparent {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: transparent;
+      box-shadow: none;
+      transition: background-color 0.35s ease, box-shadow 0.35s ease;
+      /* CSS 变量：子组件通过 var() 读取颜色状态 */
+      --nav-link-color: #fff;
+      --cta-bg: rgba(255, 255, 255, 0.15);
+      --cta-color: #fff;
+      --cta-border: rgba(255, 255, 255, 0.7);
+    }
+
+    /* 滚动后恢复白底 */
+    header.transparent.scrolled {
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      --nav-link-color: #0d0950;
+      --cta-bg: #69574a;
+      --cta-color: #fff;
+      --cta-border: transparent;
+    }
+
+    /* Logo 切换：透明态显示白色 logo，滚动后显示深色 logo */
+    header.transparent .logo-dark {
+      display: none;
+    }
+    header.transparent .logo-white {
+      display: block;
+    }
+    header.transparent.scrolled .logo-dark {
+      display: block;
+    }
+    header.transparent.scrolled .logo-white {
+      display: none;
+    }
+
+    /* CTA 按钮透明态样式 */
+    header.transparent nav :global(.header-cta) {
+      background-color: var(--cta-bg);
+      color: var(--cta-color);
+      border: 1.5px solid var(--cta-border);
+      box-shadow: none;
+      transition: background-color 0.35s, color 0.35s, border-color 0.35s;
+    }
+    header.transparent nav :global(.header-cta:hover) {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    header.transparent.scrolled nav :global(.header-cta:hover) {
+      background-color: #5a4a3e;
     }
   }
 

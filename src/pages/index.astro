@@ -18,19 +18,13 @@ const websiteJsonLd = {
 };
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} hideTitle>
-  <!-- Preload the hero video so its download starts as early as possible (faster autoplay).
-       The preload also establishes the connection, so a separate preconnect to the same origin is unnecessary. -->
-  <Fragment slot="head">
-    <link rel="preload" as="video" type="video/mp4" fetchpriority="high" href="https://file.meiyualuminum.com/meiyu-factory-video.mp4" />
-  </Fragment>
-
+<BaseLayout pageTitle={pageTitle} description={pageDescription} keywords={keywords} hideTitle transparentHeader>
   <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
 
   <!-- ===== Full-screen Video Hero Banner ===== -->
   <section class="video-hero">
-    <video class="video-hero-bg" autoplay muted loop playsinline preload="auto" poster="https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg">
-      <source src="https://file.meiyualuminum.com/meiyu-factory-video.mp4" type="video/mp4" />
+    <video class="video-hero-bg" muted loop playsinline preload="none" poster="https://file.meiyualuminum.com/meiyu-video-4.webp">
+      <source src="https://file.meiyualuminum.com/meiyu-video-3.mp4" type="video/mp4" />
     </video>
     <div class="video-hero-overlay"></div>
     <div class="video-hero-content">
@@ -43,102 +37,108 @@ const websiteJsonLd = {
   <section class="solutions-section-bronze">
     <div class="solutions-container-bronze">
       <div class="section-header-bronze">
-        <span class="eyebrow-bronze">What We Offer (Bronze Version)</span>
+        <span class="eyebrow-bronze">What We Offer</span>
         <div class="gold-line-bronze"></div>
         <h2>Tailored Solutions for <span>Every Project</span></h2>
         <p>From concept to completion, MEIYU<sup style="font-size:0.65em;color:#C0A882;">®</sup> delivers precision-engineered aluminum ceiling &amp; wall systems built for performance and lasting aesthetics.</p>
       </div>
       <div class="solutions-grid-bronze">
         <div class="card-bronze">
-          <img src="https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg" alt="Aluminum Ceiling Systems" class="card-img-bronze">
+          <img src="https://file.meiyualuminum.com/home/custom-aluminum-single-panel-design-factory-installation-building-facade.webp" alt="Custom aluminum single panel design showcase including technical drawings, factory production, shipping, on-site installation by worker on suspended platform, and completed building facade in grey metallic finish" class="card-img-bronze">
           <div class="card-body-bronze">
-            <span class="card-tag-bronze">Manufacturing</span>
-            <h3>Premium Aluminum Systems</h3>
-            <p>Durable, low-maintenance aluminum ceiling and facade systems tailored for commercial and civic developments.</p>
+            <span class="card-tag-bronze">Customization</span>
+            <h3>Aluminum Panel &amp; Batten Custom Systems</h3>
+            <p>High-quality aluminum building materials engineered for commercial and civic architecture, with full support for custom dimensions and profiles.</p>
             <ul>
-              <li>Fire-resistant &amp; weather-proof</li>
-              <li>Acoustic performance certified</li>
-              <li>Compliant with global standards</li>
+              <li>Multi-spec sizing, manufactured to drawing</li>
+              <li>Versatile finishes &mdash; PVDF / powder coating available</li>
+              <li>Compliant with international building material standards</li>
             </ul>
+            <button type="button" class="card-cta-bronze" data-open-inquiry-modal>Start Customization</button>
           </div>
         </div>
         <div class="card-bronze card-highlight-bronze">
-          <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80" alt="Custom Design & 3D Modeling" class="card-img-bronze">
+          <img src="https://file.meiyualuminum.com/home/meiyu-engineer-architectural-3d-modeling-laser-scanner-construction-site.webp" alt="MEIYU engineer in safety vest and hard hat reviewing a high-precision 3D building model on a laptop at a construction site with a 3D laser scanner on tripod" class="card-img-bronze">
           <div class="card-body-bronze">
-            <span class="card-tag-bronze">Core Competence</span>
-            <h3>Custom Design Capabilities</h3>
-            <p>We transform your architectural vision into reality with unmatched precision, offering comprehensive design support from concept to execution.</p>
+            <span class="card-tag-bronze">Engineering</span>
+            <h3>High-Precision 3D Modeling Support</h3>
+            <p>From prototype samples to on-site technical guidance, our engineering team leverages high-precision 3D models to support every stage of project delivery and installation.</p>
             <ul>
-              <li>High-Precision 3D Modeling</li>
-              <li>Shop Drawing Refinement</li>
-              <li>BIM Coordination &amp; Analysis</li>
+              <li>High-Precision 3D Modeling &amp; Clash Detection</li>
+              <li>BIM Coordination &amp; Data Delivery</li>
+              <li>Full Project Lifecycle Technical Support</li>
             </ul>
+            <button type="button" class="card-cta-bronze" data-open-inquiry-modal>Request 3D Modeling</button>
           </div>
         </div>
         <div class="card-bronze">
-          <img src="https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg" alt="Smart Engineering Support" class="card-img-bronze">
+          <img src="https://file.meiyualuminum.com/home/south-gate-tower-aluminum-single-panel-curtain-wall-construction-drawing-3d-render.webp" alt="South Gate Tower architectural drawing set showing north facade elevation, aluminum single panel curtain wall construction details, exploded axonometric view, and 3D rendered exterior perspective" class="card-img-bronze">
           <div class="card-body-bronze">
-            <span class="card-tag-bronze">Engineering</span>
-            <h3>Smart Engineering Support</h3>
-            <p>From mock-up samples to on-site technical guidance, our engineers work alongside your team through final installation.</p>
+            <span class="card-tag-bronze">Core Competence</span>
+            <h3>Expert Shop Drawing Capabilities</h3>
+            <p>From schematic design to on-site execution, we deliver end-to-end shop drawing services that translate design intent into precise, production-ready documentation.</p>
             <ul>
-              <li>Custom Planning &amp; Mock-Ups</li>
-              <li>On-Site Technical Guidance</li>
-              <li>Full Project Lifecycle Support</li>
+              <li>Shop Drawing Production &amp; Submission</li>
+              <li>Connection Detail Refinement &amp; Optimization</li>
+              <li>Seamless Coordination with Design Institutes &amp; Main Contractors</li>
             </ul>
+            <button type="button" class="card-cta-bronze" data-open-inquiry-modal>Request Shop Drawings</button>
           </div>
         </div>
-      </div>
-      <div class="section-cta-bronze">
-        <a href="/contact" class="btn-primary-bronze">Get a Free Quote</a>
-        <a href="/products" class="btn-secondary-bronze">View Projects</a>
       </div>
     </div>
   </section>
 
   <!-- ===== Gallery Tabs Section ===== -->
   <section class="gallery-tabs-section">
+    <div class="section-header-bronze">
+      <span class="eyebrow-bronze">Project Gallery</span>
+      <div class="gold-line-bronze"></div>
+      <h2>Explore Our <span>Product Lines</span></h2>
+      <p>From fa&ccedil;ades to acoustic ceilings, MEIYU<sup style="font-size:0.65em;color:#C0A882;">&reg;</sup> delivers complete aluminum surface solutions.<br>Browse our project gallery by product line.</p>
+    </div>
+
     <div class="gallery-tabs">
       <button class="gallery-tab active" data-tab="facade">Aluminum Façade</button>
       <button class="gallery-tab" data-tab="ceiling">Aluminum Ceiling Project</button>
-      <button class="gallery-tab" data-tab="acoustic">Aluminum Acoustic Ceiling</button>
-      <button class="gallery-tab" data-tab="interior">Interior Decorative Panel</button>
-      <button class="gallery-tab" data-tab="acp">ACP Panel</button>
+      <button class="gallery-tab" data-tab="acoustic">Aluminum Baffle Ceiling</button>
+      <button class="gallery-tab" data-tab="interior">Aluminum Strip Ceiling</button>
+      <button class="gallery-tab" data-tab="acp">Aluminum Fluted Panel</button>
     </div>
 
     <!-- Panel 1: Aluminum Façade -->
     <div class="gallery-panel active" data-panel="facade">
       <div class="acp-gallery">
         <a class="acp-gallery-item" href="/your-link-1.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/avant-garde-skyscraper-dark-fins-gold-trim-under-construction.webp" alt="Innovative Business Hub ACP Facade"></div>
           <div class="caption">Innovative Business Hub ACP Facade</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-2.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/modern-stadium-white-canopy-colonnade-exterior-architecture.webp" alt="Exterior view of a modern stadium with a large white cantilevered canopy roof supported by slender white columns and a curved glass facade"></div>
           <div class="caption">Executive Office Building ACP Cladding</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-3.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/organic-wave-balcony-apartment-building-streetview.webp"></div>
           <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-4.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/modern-skyscraper-perforated-facade-low-angle.webp" alt="Corporate Entrance ACP Facade Project"></div>
           <div class="caption">Corporate Entrance ACP Facade Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-5.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/mizuho-building-metallic-lattice-facade-wave-base-low-angle.webp" alt="Auditorium ACP Ceiling Project"></div>
           <div class="caption">Auditorium ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-6.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/modern-building-corner-perforated-metal-panel-louvers-detail.webp" alt="Office ACP Ceiling Project"></div>
           <div class="caption">Office ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-7.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/white-wave-balcony-residential-tower-facade.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
           <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-8.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-facade/parametric-tower-undulating-metal-fins-aerial.webp" alt="Corporate Office ACP Ceiling Project"></div>
           <div class="caption">Corporate Office ACP Ceiling Project</div>
         </a>
       </div>
@@ -148,35 +148,35 @@ const websiteJsonLd = {
     <div class="gallery-panel" data-panel="ceiling">
       <div class="acp-gallery">
         <a class="acp-gallery-item" href="/your-link-1.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/beijing-daxing-airport-terminal-tree-column-curved-aluminum-ceiling-interior.webp" alt="Innovative Business Hub ACP Facade"></div>
           <div class="caption">Innovative Business Hub ACP Facade</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-2.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/modular-aluminum-strip-ceiling-diamond-steel-node-commercial-arcade.webp" alt="Executive Office Building ACP Cladding"></div>
           <div class="caption">Executive Office Building ACP Cladding</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-3.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/black-perforated-aluminum-ceiling-circular-holes-backlit-office-lobby.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
           <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-4.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/hexagonal-honeycomb-aluminum-ceiling-large-span-public-space.webp" alt="Corporate Entrance ACP Facade Project"></div>
           <div class="caption">Corporate Entrance ACP Facade Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-5.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/perforated-metal-ceiling-backlit-triangular-pattern-building-entrance.webp" alt="Auditorium ACP Ceiling Project"></div>
           <div class="caption">Auditorium ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-6.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/gradient-perforated-aluminum-ceiling-panels-linear-led-library-office.webp" alt="Office ACP Ceiling Project"></div>
           <div class="caption">Office ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-7.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/white-curved-aluminum-panel-ceiling-tree-column-airport-transit-hub.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
           <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-8.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/wood-finish-aluminum-strip-ceiling-steel-frame-office-lobby-8-bishopsgate.webp" alt="Corporate Office ACP Ceiling Project"></div>
           <div class="caption">Corporate Office ACP Ceiling Project</div>
         </a>
       </div>
@@ -186,35 +186,35 @@ const websiteJsonLd = {
     <div class="gallery-panel" data-panel="acoustic">
       <div class="acp-gallery">
         <a class="acp-gallery-item" href="/your-link-1.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/circular-ring-aluminum-baffle-ceiling-led-strip-shopping-mall-corridor.webp" alt="Innovative Business Hub ACP Facade"></div>
           <div class="caption">Innovative Business Hub ACP Facade</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-2.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/curved-wood-grain-aluminum-baffle-ceiling-linear-led-public-building-corridor.webp" alt="Executive Office Building ACP Cladding"></div>
           <div class="caption">Executive Office Building ACP Cladding</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-3.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/curved-wood-grain-aluminum-baffle-ceiling-warm-led-cove-lighting-hotel-lobby.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
           <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-4.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/dark-gray-aluminum-baffle-ceiling-linear-led-marble-staircase-interior.webp" alt="Corporate Entrance ACP Facade Project"></div>
           <div class="caption">Corporate Entrance ACP Facade Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-5.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/u-baffle-wood-grain-aluminum-square-tube-ceiling-commercial-interior.webp" alt="Auditorium ACP Ceiling Project"></div>
           <div class="caption">Auditorium ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-6.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/wave-wood-grain-aluminum-baffle-ceiling-shopping-mall.webp" alt="Office ACP Ceiling Project"></div>
           <div class="caption">Office ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-7.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/white-wave-aluminum-baffle-ceiling-atrium-large-columns-shopping-complex.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
           <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-8.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-square-tube/airport-terminal-curved-white-aluminum-baffle-ceiling-mushroom-columns.webp" alt="Corporate Office ACP Ceiling Project"></div>
           <div class="caption">Corporate Office ACP Ceiling Project</div>
         </a>
       </div>
@@ -224,35 +224,35 @@ const websiteJsonLd = {
     <div class="gallery-panel" data-panel="interior">
       <div class="acp-gallery">
         <a class="acp-gallery-item" href="/your-link-1.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/commercial-interior-aluminium-strip-ceiling-grid-recessed-warm-lights.webp" alt="Innovative Business Hub ACP Facade"></div>
           <div class="caption">Innovative Business Hub ACP Facade</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-2.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/indoor-aluminium-strip-ceiling-glass-curtain-wall-interior.webp" alt="Executive Office Building ACP Cladding"></div>
           <div class="caption">Executive Office Building ACP Cladding</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-3.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/large-span-outdoor-aluminium-strip-ceiling-steel-structure-canopy.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
           <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-4.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/luxury-interior-aluminium-strip-ceiling-living-room-design.webp" alt="Corporate Entrance ACP Facade Project"></div>
           <div class="caption">Corporate Entrance ACP Facade Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-5.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/modern-exterior-aluminium-strip-ceiling-black-steel-frame-glass-facade.webp" alt="Auditorium ACP Ceiling Project"></div>
           <div class="caption">Auditorium ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-6.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/outdoor-aluminium-strip-ceiling-balcony-overhang-spotlight.webp" alt="Office ACP Ceiling Project"></div>
           <div class="caption">Office ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-7.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/semi-outdoor-aluminium-strip-ceiling-recessed-lights-open-air-space.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
           <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-8.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/wide-plank-aluminium-strip-ceiling-outdoor-corridor-wood-grain-texture.webp" alt="Corporate Office ACP Ceiling Project"></div>
           <div class="caption">Corporate Office ACP Ceiling Project</div>
         </a>
       </div>
@@ -262,35 +262,35 @@ const websiteJsonLd = {
     <div class="gallery-panel" data-panel="acp">
       <div class="acp-gallery">
         <a class="acp-gallery-item" href="/your-link-1.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Innovative Business Hub ACP Facade"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-corridor-doorway-cladding-integrated-linear-lighting.webp" alt="Innovative Business Hub ACP Facade"></div>
           <div class="caption">Innovative Business Hub ACP Facade</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-2.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727321795406-2/jpg70-t4-width720.webp" alt="Executive Office Building ACP Cladding"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-feature-wall-backlit-landscape-projection-interior.webp" alt="Executive Office Building ACP Cladding"></div>
           <div class="caption">Executive Office Building ACP Cladding</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-3.html">
-          <div class="img-wrap"><img src="https://prancebuilding.com/lifisher-m4842/1727336006034-1/jpg70-t4-width720.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-partition-wall-moss-green-wall-biophilic-office-interior.webp" alt="Advanced Medical Facility ACP Ceiling Project"></div>
           <div class="caption">Advanced Medical Facility ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-4.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Entrance ACP Facade Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-wall-ceiling-continuous-cladding-led-strip-public-corridor.webp" alt="Corporate Entrance ACP Facade Project"></div>
           <div class="caption">Corporate Entrance ACP Facade Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-5.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Auditorium ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/black-aluminium-batten-wall-wave-woven-accent-luxury-corridor.webp" alt="Auditorium ACP Ceiling Project"></div>
           <div class="caption">Auditorium ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-6.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/curved-aluminium-batten-ceiling-wall-luxury-restaurant-interior.webp" alt="Office ACP Ceiling Project"></div>
           <div class="caption">Office ACP Ceiling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-7.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/exterior-aluminium-batten-facade-cladding-commercial-building.webp" alt="Luxury Residence ACP Wall Paneling Project"></div>
           <div class="caption">Luxury Residence ACP Wall Paneling Project</div>
         </a>
         <a class="acp-gallery-item" href="/your-link-8.html">
-          <div class="img-wrap"><img src="https://meiyualuminum.com/wp-content/uploads/2026/07/jpg70-t4-width720.webp" alt="Corporate Office ACP Ceiling Project"></div>
+          <div class="img-wrap"><img src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/large-scale-aluminium-batten-wall-ceiling-corridor-white-linear-lights.webp" alt="Corporate Office ACP Ceiling Project"></div>
           <div class="caption">Corporate Office ACP Ceiling Project</div>
         </a>
       </div>
@@ -319,7 +319,7 @@ const websiteJsonLd = {
 
         <!-- 地图 -->
         <div class="meiyu-map-wrap" id="meiyu-mw">
-          <img src="https://meiyualuminum.com/wp-content/uploads/2026/07/world-2-scaled.webp" alt="World Map" class="meiyu-map-bg">
+          <img src="https://file.meiyualuminum.com/home/world-map.webp" alt="World Map" class="meiyu-map-bg" data-no-watermark>
 
           <!-- 点位 -->
           <div class="meiyu-map-pin lg" data-id="cn" style="left:77.5%;top:38.0%"><div class="ring"></div><div class="ring2"></div><div class="core"></div></div>
@@ -368,6 +368,38 @@ const websiteJsonLd = {
       </div>
     </div>
   </div>
+
+  <!-- ===== Certificates Section ===== -->
+  <section class="certificates-section">
+    <div class="certificates-container">
+      <div class="section-header-bronze">
+        <span class="eyebrow-bronze">Quality Assurance</span>
+        <div class="gold-line-bronze"></div>
+        <h2>Certificates &amp; <span>Compliance</span></h2>
+        <p>MEIYU<sup style="font-size:0.65em;color:#C0A882;">&reg;</sup> products are certified by internationally recognized bodies, ensuring compliance with global building material standards.</p>
+      </div>
+      <div class="certificates-grid">
+        <div class="cert-card">
+          <img src="https://file.meiyualuminum.com/home/certificates/cert-icr-1.webp" alt="ICR Verification of Conformity Certificate" data-no-watermark>
+        </div>
+        <div class="cert-card">
+          <img src="https://file.meiyualuminum.com/home/certificates/cert-icr-2.webp" alt="ICR Verification of Conformity Certificate" data-no-watermark>
+        </div>
+        <div class="cert-card">
+          <img src="https://file.meiyualuminum.com/home/certificates/cert-sgs.webp" alt="SGS Verification of Conformity Certificate" data-no-watermark>
+        </div>
+        <div class="cert-card">
+          <img src="https://file.meiyualuminum.com/home/certificates/cert-udem-1.webp" alt="UDEM Attestation Certificate" data-no-watermark>
+        </div>
+        <div class="cert-card">
+          <img src="https://file.meiyualuminum.com/home/certificates/cert-udem-2.webp" alt="UDEM Attestation Certificate" data-no-watermark>
+        </div>
+        <div class="cert-card">
+          <img src="https://file.meiyualuminum.com/home/certificates/cert-udem-3.webp" alt="UDEM Attestation of Conformity Certificate" data-no-watermark>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
@@ -384,7 +416,7 @@ const websiteJsonLd = {
     height: calc(100svh - 60px);
     overflow: hidden;
     /* Fallback background image shown when the video fails to load */
-    background-image: url('https://meiyualuminum.com/wp-content/uploads/2026/07/wsW3FpIdZh.jpeg');
+    background-image: url('https://file.meiyualuminum.com/meiyu-video-4.webp');
     background-size: cover;
     background-position: center;
   }
@@ -399,6 +431,14 @@ const websiteJsonLd = {
       height: calc(100svh - 80px);
     }
   }
+  /* ≥1400px: header 为 fixed 透明覆盖，hero 占满整个视口 */
+  @media (min-width: 1400px) {
+    .video-hero {
+      margin-top: -1rem;
+      height: 100vh;
+      height: 100svh;
+    }
+  }
 
   .video-hero-bg {
     position: absolute;
@@ -406,6 +446,16 @@ const websiteJsonLd = {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* 隐藏移动端浏览器叠加的原生播放按钮 */
+    pointer-events: none;
+  }
+  /* iOS Safari / Android Chrome 原生播放按钮隐藏 */
+  .video-hero-bg::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none;
+  }
+  .video-hero-bg::-webkit-media-controls {
+    display: none !important;
   }
 
   .video-hero-overlay {
@@ -448,7 +498,7 @@ const websiteJsonLd = {
   /* ===== Solutions Section (Bronze) ===== */
   .solutions-section-bronze {
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-    background: #F9F8F6;
+    background: #ffffff;
     padding: 80px 0px;
     width: 100vw;
     margin-left: calc(-50vw + 50%);
@@ -514,8 +564,8 @@ const websiteJsonLd = {
     display: flex;
     flex-direction: column;
     height: 100%;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-    border: 2px solid transparent;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #e8e4df;
   }
   .card-bronze:hover {
     transform: translateY(-8px);
@@ -524,9 +574,7 @@ const websiteJsonLd = {
 
   .card-img-bronze {
     width: 100% !important;
-    height: 220px !important;
-    min-height: 220px !important;
-    max-height: 220px !important;
+    aspect-ratio: 3 / 2;
     object-fit: cover !important;
     display: block !important;
     border-bottom: none !important;
@@ -616,53 +664,44 @@ const websiteJsonLd = {
   }
   .card-highlight-bronze ul li::before { background: #C0A882; }
 
-  .section-cta-bronze {
-    text-align: center;
-    margin-top: 50px;
-  }
-  .btn-primary-bronze, .btn-secondary-bronze {
-    display: inline-block;
+  /* Card CTA buttons — 普通卡片描边，高亮卡片实心金色 */
+  .card-cta-bronze {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px 24px;
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    padding: 16px 40px;
     border-radius: 4px;
-    text-decoration: none;
+    border: 2px solid #69574A;
+    background: transparent;
+    color: #69574A;
+    cursor: pointer;
     transition: all 0.25s;
   }
-  .btn-primary-bronze {
+  .card-cta-bronze:hover {
     background: #69574A;
     color: #fff;
-    border: 2px solid #69574A;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(105, 87, 74, 0.25);
   }
-  .btn-primary-bronze:hover {
+  .card-highlight-bronze .card-cta-bronze {
     background: #C0A882;
     border-color: #C0A882;
     color: #242424;
-    transform: translateY(-2px);
   }
-  .btn-secondary-bronze {
-    background: transparent;
-    color: #69574A;
-    border: 2px solid #69574A;
-    margin-left: 16px;
-  }
-  .btn-secondary-bronze:hover {
-    background: #69574A;
-    color: #fff;
+  .card-highlight-bronze .card-cta-bronze:hover {
+    background: #d4bc98;
+    border-color: #d4bc98;
+    box-shadow: 0 6px 18px rgba(192, 168, 130, 0.4);
   }
 
   @media (max-width: 1024px) {
     .solutions-grid-bronze {
       grid-template-columns: 1fr;
       gap: 40px;
-    }
-    .btn-secondary-bronze {
-      margin-left: 0;
-      display: block;
-      width: fit-content;
-      margin: 16px auto 0;
     }
   }
 
@@ -773,6 +812,57 @@ const websiteJsonLd = {
     .acp-gallery {
       grid-template-columns: 1fr;
       gap: 14px;
+    }
+  }
+
+  /* ===== Certificates Section ===== */
+  .certificates-section {
+    background: #fff;
+    padding: 80px 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  .certificates-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .certificates-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+  .cert-card {
+    border: 1px solid #e8e4df;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fafafa;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .cert-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(105, 87, 74, 0.12);
+  }
+  .cert-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 12px;
+  }
+  @media (max-width: 900px) {
+    .certificates-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+  }
+  @media (max-width: 480px) {
+    .certificates-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .certificates-section {
+      padding: 50px 0;
     }
   }
 </style>
@@ -978,19 +1068,60 @@ const websiteJsonLd = {
 </style>
 
 <script>
-  /* ===== Video Hero Fallback =====
-     If the video fails to load, hide it so the CSS fallback background image shows. */
+  /* ===== Video Hero: 3-stage deferred loading =====
+     1. 首次加载：只显示 poster 封面图，不下载视频
+     2. 页面加载完成：开始下载视频
+     3. 边下边播：canplay 后立即播放
+     移动端兼容：play() 被拒绝时监听首次用户交互再播放 */
   const heroVideo = document.querySelector<HTMLVideoElement>('.video-hero-bg');
   if (heroVideo) {
     const showFallback = () => heroVideo.classList.add('video-failed');
     heroVideo.addEventListener('error', showFallback);
     heroVideo.querySelectorAll('source').forEach((s) => s.addEventListener('error', showFallback));
-    // Safety net: if no data could be loaded at all after a timeout, treat as failed
+
+    // 确保 muted（移动端 autoplay 策略要求）
+    heroVideo.muted = true;
+
+    // 尝试播放，失败则等用户首次交互
+    const tryPlay = () => {
+      const p = heroVideo.play();
+      if (p) {
+        p.catch(() => {
+          // autoplay 被拦截，等用户触摸/点击后重试
+          const onInteract = () => {
+            heroVideo.play().catch(() => {});
+            document.removeEventListener('touchstart', onInteract);
+            document.removeEventListener('click', onInteract);
+          };
+          document.addEventListener('touchstart', onInteract, { once: true, passive: true });
+          document.addEventListener('click', onInteract, { once: true });
+        });
+      }
+    };
+
+    // 阶段 2：页面加载完成后开始下载视频
+    const startLoad = () => {
+      heroVideo.preload = 'auto';
+      heroVideo.load();
+    };
+
+    // 阶段 3：视频可以播放时立即播放
+    heroVideo.addEventListener('canplay', () => {
+      if (heroVideo.paused) tryPlay();
+    }, { once: true });
+
+    if (document.readyState === 'complete') {
+      startLoad();
+    } else {
+      window.addEventListener('load', startLoad, { once: true });
+    }
+
+    // Safety net: 8s 后如果完全没加载到数据，显示 fallback
     setTimeout(() => {
       if (heroVideo.readyState === 0 && heroVideo.networkState === 3) {
         showFallback();
       }
-    }, 6000);
+    }, 8000);
   }
 
   document.querySelectorAll('.gallery-tab').forEach((tab) => {

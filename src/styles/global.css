@@ -1,5 +1,5 @@
 html {
-  background-color: #f1f5f9;
+  background-color: #ffffff;
   font-family: sans-serif;
 }
 
@@ -28,4 +28,25 @@ h1 {
   margin: 0 auto;
   padding: 1rem;
   flex: 1;
+}
+
+/* ===== Image Watermark ===== */
+.img-watermark {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+.img-watermark > img {
+  display: block;
+}
+.img-watermark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    url('https://file.meiyualuminum.com/logo-clear.png') left 20px top 20px / 120px auto no-repeat,
+    url('https://file.meiyualuminum.com/logo-clear.png') right 20px bottom 20px / 120px auto no-repeat;
+  opacity: 0.29;
+  pointer-events: none;
+  z-index: 1;
 }

@@ -20,6 +20,8 @@ interface Props {
   customCss?: string;
   customJs?: string;
   hideTitle?: boolean;
+  /** 首页传入 true：桌面端 header 初始透明，滚动后变白 */
+  transparentHeader?: boolean;
 }
 
 const {
@@ -35,6 +37,7 @@ const {
   customCss,
   customJs,
   hideTitle = false,
+  transparentHeader = false,
 } = Astro.props;
 
 const siteName = "Meiyu Aluminum";
@@ -110,7 +113,7 @@ const orgJsonLd = {
     <slot name="head" />
   </head>
   <body>
-    <Header />
+    <Header transparent={transparentHeader} />
     <main class="container">
       {!hideTitle && <h1>{headingTitle || pageTitle}</h1>}
       <slot />
@@ -118,6 +121,7 @@ const orgJsonLd = {
     <Footer />
     <script>
       import "../scripts/menu.js";
+      import "../scripts/watermark.js";
     </script>
 
     <!-- Google Analytics -->
