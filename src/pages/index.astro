@@ -786,12 +786,6 @@ const websiteJsonLd = {
     aspect-ratio: 1 / 1;
     flex-shrink: 0;
   }
-  /* 水印 wrapper 在画廊内需填满容器 */
-  .acp-gallery-item .img-wrap > :global(.img-watermark) {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
   .acp-gallery-item img {
     width: 100%;
     height: 100%;
@@ -1141,40 +1135,23 @@ const websiteJsonLd = {
       }
     }, 8000);
 
-    // ===== 阶段 4：关键资源就绪后，空闲时预加载懒加载图片 =====
-    let videoReady = false;
-    let pageLoaded = false;
-
+    // ===== 阶段 4：视频开始播放后，空闲时预加载懒加载图片 =====
+    // playing 事件 = 视频已缓冲足够并真正开始播放，此时视频不会卡顿，
+    // 剩余带宽可用来预加载图片；decode() 后台线程解码，不影响视频和滚动
     const preloadLazyImages = () => {
       const idle = (window as any).requestIdleCallback || ((cb: Function) => setTimeout(cb, 2000));
       idle(() => {
         document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => {
           img.loading = 'eager';
-          // 如果图片还没开始加载，手动触发
+          // 用 decode() 在后台线程解码，不阻塞主线程（避免滚动时卡顿）
           if (!img.complete) {
-            img.src = img.src;
+            img.decode().catch(() => {}); // 解码失败不影响正常显示
           }
         });
       }, { timeout: 5000 }); // 最多等 5s 空闲，超时也执行
     };
 
-    const checkAllReady = () => {
-      if (videoReady && pageLoaded) preloadLazyImages();
-    };
-
-    heroVideo.addEventListener('canplay', () => {
-      videoReady = true;
-      checkAllReady();
-    }, { once: true });
-
-    if (document.readyState === 'complete') {
-      pageLoaded = true;
-    } else {
-      window.addEventListener('load', () => {
-        pageLoaded = true;
-        checkAllReady();
-      }, { once: true });
-    }
+    heroVideo.addEventListener('playing', preloadLazyImages, { once: true });
   }
 
   document.querySelectorAll('.gallery-tab').forEach((tab) => {
