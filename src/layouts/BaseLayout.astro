@@ -71,10 +71,11 @@ const orgJsonLd = {
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/x-icon" href="https://file.meiyualuminum.com/home/favicon.ico" />
 
-    <!-- Inter font — used by the footer typography -->
+    <!-- Inter font — 异步加载，不阻塞首屏渲染 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" /></noscript>
 
     <!-- Basic SEO -->
     <title>{pageTitle} | {siteName}</title>
