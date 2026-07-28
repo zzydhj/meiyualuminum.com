@@ -1127,6 +1127,41 @@ const websiteJsonLd = {
         showFallback();
       }
     }, 8000);
+
+    // ===== 阶段 4：关键资源就绪后，空闲时预加载懒加载图片 =====
+    let videoReady = false;
+    let pageLoaded = false;
+
+    const preloadLazyImages = () => {
+      const idle = (window as any).requestIdleCallback || ((cb: Function) => setTimeout(cb, 2000));
+      idle(() => {
+        document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => {
+          img.loading = 'eager';
+          // 如果图片还没开始加载，手动触发
+          if (!img.complete) {
+            img.src = img.src;
+          }
+        });
+      }, { timeout: 5000 }); // 最多等 5s 空闲，超时也执行
+    };
+
+    const checkAllReady = () => {
+      if (videoReady && pageLoaded) preloadLazyImages();
+    };
+
+    heroVideo.addEventListener('canplay', () => {
+      videoReady = true;
+      checkAllReady();
+    }, { once: true });
+
+    if (document.readyState === 'complete') {
+      pageLoaded = true;
+    } else {
+      window.addEventListener('load', () => {
+        pageLoaded = true;
+        checkAllReady();
+      }, { once: true });
+    }
   }
 
   document.querySelectorAll('.gallery-tab').forEach((tab) => {
