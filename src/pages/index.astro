@@ -579,10 +579,17 @@ const websiteJsonLd = {
 
   .card-img-bronze {
     width: 100% !important;
+    height: auto !important;
     aspect-ratio: 3 / 2;
     object-fit: cover !important;
     display: block !important;
     border-bottom: none !important;
+  }
+  /* 水印 wrapper 在卡片内需继承尺寸约束，否则 inline-block 会破坏 aspect-ratio */
+  .card-bronze > :global(.img-watermark) {
+    display: block;
+    width: 100%;
+    overflow: hidden;
   }
 
   .card-body-bronze {
@@ -778,6 +785,12 @@ const websiteJsonLd = {
     width: 100%;
     aspect-ratio: 1 / 1;
     flex-shrink: 0;
+  }
+  /* 水印 wrapper 在画廊内需填满容器 */
+  .acp-gallery-item .img-wrap > :global(.img-watermark) {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
   .acp-gallery-item img {
     width: 100%;
