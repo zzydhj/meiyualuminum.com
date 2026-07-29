@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FloatingInquiry from '../components/FloatingInquiry.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import InquiryModal from '../components/InquiryModal.astro';
 import '../styles/global.css';
 
@@ -143,6 +144,9 @@ const orgJsonLd = {
 
     <!-- Global floating inquiry FAB — fixed bottom-right, all pages -->
     <FloatingInquiry />
+
+    <!-- Global floating WhatsApp button — above inquiry FAB -->
+    <FloatingWhatsApp />
 
     <!-- Global inquiry modal — triggered from any [data-open-inquiry-modal] button -->
     <InquiryModal />
