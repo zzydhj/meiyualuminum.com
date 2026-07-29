@@ -147,6 +147,16 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
     ></textarea>
   </label>
 
+  <label class="checkbox-field">
+    <input type="checkbox" name="free_sample" value="Yes" />
+    <span class="checkbox-box" aria-hidden="true">
+      <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.5 8.5l3 3 6-7" />
+      </svg>
+    </span>
+    <span class="checkbox-text">We support free samples for you to test the quality. Do you need them?</span>
+  </label>
+
   <button type="submit" class="submit-btn">Send Inquiry</button>
   <p class="note"><em>*</em> Required fields. Your information is only used to respond to your inquiry.</p>
 </form>
@@ -251,5 +261,73 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
     font-size: 0.8rem;
     color: #94a3b8;
     margin-top: 0.75rem;
+  }
+
+  /* 勾选框 — 带浅色背景卡片，更醒目 */
+  .checkbox-field {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.25rem 0 1.25rem;
+    padding: 0.7rem 0.9rem;
+    background: linear-gradient(135deg, #faf6f3 0%, #f5ede7 100%);
+    border: 1px solid #e8ddd5;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .checkbox-field:hover {
+    border-color: #c9b8a8;
+    box-shadow: 0 2px 8px rgba(105, 87, 74, 0.1);
+  }
+
+  .checkbox-field input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .checkbox-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #b8a494;
+    border-radius: 4px;
+    background: #fff;
+    transition: background-color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .checkbox-box svg {
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.15s, transform 0.15s;
+  }
+
+  .checkbox-field input:checked + .checkbox-box {
+    background: #69574a;
+    border-color: #69574a;
+  }
+
+  .checkbox-field input:checked + .checkbox-box svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .checkbox-field input:focus-visible + .checkbox-box {
+    outline: 2px solid #0053a0;
+    outline-offset: 1px;
+  }
+
+  .checkbox-text {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #5a4a3e;
+    line-height: 1.4;
   }
 </style>

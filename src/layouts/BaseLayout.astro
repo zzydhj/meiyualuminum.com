@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FloatingInquiry from '../components/FloatingInquiry.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import FloatingFreeSample from '../components/FloatingFreeSample.astro';
 import InquiryModal from '../components/InquiryModal.astro';
 import '../styles/global.css';
 
@@ -71,6 +72,15 @@ const orgJsonLd = {
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/x-icon" href="https://file.meiyualuminum.com/home/favicon.ico" />
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MNY00M46JX"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-MNY00M46JX');
+    </script>
 
     <!-- Inter font — 异步加载，不阻塞首屏渲染 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -144,6 +154,9 @@ const orgJsonLd = {
 
     <!-- Global floating inquiry FAB — fixed bottom-right, all pages -->
     <FloatingInquiry />
+
+    <!-- Global floating Free Sample capsule — above WhatsApp, desktop only -->
+    <FloatingFreeSample />
 
     <!-- Global floating WhatsApp button — above inquiry FAB -->
     <FloatingWhatsApp />

@@ -20,7 +20,13 @@ import InquiryForm from "./InquiryForm.astro";
 >
   <div class="inquiry-modal-dialog">
     <div class="inquiry-modal-header">
-      <h2 id="inquiry-modal-title">Request a Quote</h2>
+      <div class="inquiry-modal-titles">
+        <h2 id="inquiry-modal-title">Request a Quote</h2>
+        <p class="inquiry-modal-subtitle">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+          We reply within 1 hour
+        </p>
+      </div>
       <button
         type="button"
         class="inquiry-modal-close"
@@ -134,10 +140,43 @@ import InquiryForm from "./InquiryForm.astro";
     padding-bottom: 0;
   }
 
+  .inquiry-modal-titles {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
   .inquiry-modal-header h2 {
     margin: 0;
     font-size: 1.25rem;
+    line-height: 1.3;
     color: #0f172a;
+  }
+
+  /* 响应承诺徽章 — 暖色 pill，醒目但贴合主题 */
+  .inquiry-modal-subtitle {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    align-self: flex-start;
+    padding: 0.3rem 0.7rem;
+    background: linear-gradient(135deg, #faf6f3 0%, #f3e9e1 100%);
+    border: 1px solid #ecdfd4;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #69574a;
+    line-height: 1;
+  }
+
+  .inquiry-modal-subtitle svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    color: #c2703d;
   }
 
   /* Close button */
