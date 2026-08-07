@@ -15,17 +15,7 @@ import MegaMenu from "./MegaMenu.astro";
     <MegaMenu />
   </div>
 
-  <div class="has-dropdown">
-    <a href="/about/">
-      About
-      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
-        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
-    <div class="dropdown">
-      <a href="/services/">Services</a>
-    </div>
-  </div>
+  <a href="/about/">About</a>
 
   <div class="has-dropdown">
     <a href="/videos/">
@@ -58,12 +48,13 @@ import MegaMenu from "./MegaMenu.astro";
       <a href="/categories/">Categories</a>
       <a href="/tags/">Tags</a>
       <a href="#">FAQ</a>
-      <a href="#">Technical Documentation</a>
-      <a href="/contact/">Contact Us</a>
+      <a href="/technical-documentation/">Technical Documentation</a>
     </div>
   </div>
 
   <a href="#">Project Gallery</a>
+
+  <a href="/contact/">Contact Us</a>
 </div>
 
 <style>
@@ -97,7 +88,7 @@ import MegaMenu from "./MegaMenu.astro";
 
     .nav-links a {
       display: inline-block;
-      padding: 15px 10px;
+      padding: 15px 17px;
       font-size: 1rem; /* 16px */
       font-weight: bold;
       text-decoration: none;
@@ -116,8 +107,8 @@ import MegaMenu from "./MegaMenu.astro";
     .nav-links a::after {
       content: '';
       position: absolute;
-      left: 15px;
-      right: 15px;
+      left: 17px;
+      right: 17px;
       bottom: 12px;
       height: 2px;
       background: #C09020;

@@ -1,232 +1,112 @@
 ---
 /**
- * Mega Menu dropdown panel for the "Products" navigation item.
+ * MegaMenu.astro — Products mega dropdown (desktop only, >= 1400px)
  *
- * - Show / hide is driven by PURE CSS hover on the wrapping `.has-mega`
- *   container (defined in Navigation.astro). Because this panel is a DOM
- *   descendant of that container, moving the mouse from the "Products" link
- *   into the panel keeps it open, and leaving the whole area closes it.
- * - Tab switching inside the panel is handled by the small script at the bottom.
- * - The panel is desktop-only (>= 1400px). Below that breakpoint the site uses
- *   the mobile hamburger navigation and this panel stays hidden.
+ * 4x2 image-card grid layout. Each card = full-bleed photo + gradient overlay
+ * + category name. Hover triggers image zoom, gold accent line, and "Explore" CTA.
+ * Panel open/close is pure CSS hover on `.has-mega` (Navigation.astro).
  */
 ---
 
 <div class="mega-panel">
-  <div class="mega-tabs">
-    <a class="mega-tab active" data-pane="p1" href="/custom-metal-panel.html">Custom Metal Panel</a>
-    <a class="mega-tab" data-pane="p2" href="/metal-ceiling.html">Metal Ceiling</a>
-    <a class="mega-tab" data-pane="p3" href="javascript:;">Glass &amp; Window</a>
-    <a class="mega-tab" data-pane="p4" href="javascript:;">Soundproof Panel</a>
-    <a class="mega-tab" data-pane="p5" href="/dome-sunroom.html">Dome Sunroom</a>
-    <a class="mega-tab" data-pane="p6" href="/modular-house.html">Modular House</a>
-    <a class="mega-tab" data-pane="p7" href="/louvered-pergola.html">Louvered Pergola</a>
-    <a class="mega-tab" data-pane="p8" href="javascript:;">Other Aluminum</a>
-    <a class="mega-tab" data-pane="p9" href="javascript:;">Camping Scene</a>
+  <div class="mega-header">
+    <span class="mega-header-label">Our Product Lines</span>
   </div>
+  <div class="mega-grid">
+    <a href="/custom-metal-panel.html" class="mega-card" style="--i:0">
+      <img src="https://picsum.photos/seed/alum-facade/600/400" alt="Custom Metal Panel" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">Custom Metal Panel</span>
+        <span class="mega-card-cta">Explore <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </div>
+      <span class="mega-card-accent"></span>
+    </a>
 
-  <div class="mega-content" id="megaContent">
+    <a href="/metal-ceiling.html" class="mega-card" style="--i:1">
+      <img src="https://picsum.photos/seed/ceil-metal/600/400" alt="Metal Ceiling" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">Metal Ceiling</span>
+        <span class="mega-card-cta">Explore <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </div>
+      <span class="mega-card-accent"></span>
+    </a>
 
-    <div class="mega-pane active" id="p1">
-      <div class="mega-pane-title">Custom Metal Panel</div>
-      <div class="mega-grid">
-        <a href="/stainless-steel-water-ripple-panel.html" class="mega-grid-item">Stainless Steel Water Ripple Panel</a>
-        <a href="/flat-metal-panel.html" class="mega-grid-item">Flat Metal Panel</a>
-        <a href="/mesh-panel.html" class="mega-grid-item">Mesh Panel</a>
-        <a href="/metal-great-wall-and-ceiling-panel.html" class="mega-grid-item">Corrugated Metal Panel (Watchband)</a>
-        <a href="/metal-carving-panel.html" class="mega-grid-item">Metal Carving Panel</a>
-        <a href="/woven-ceiling.html" class="mega-grid-item">Woven Ceiling</a>
-        <a href="/special-metalwork.html" class="mega-grid-item">Special Metalwork</a>
+    <a href="/glass-curtain-wall.html" class="mega-card" style="--i:2">
+      <img src="https://picsum.photos/seed/glass-wall/600/400" alt="Glass & Window" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">Glass & Window</span>
+        <span class="mega-card-cta">Explore <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </div>
-      <div class="mega-sub-group">
-        <a href="/curved-metal-panels.html" class="mega-sub-label">Curved Metal Panels</a>
-        <div class="mega-sub-children">
-          <a href="/metal-column-cover.html" class="mega-sub-child">Metal Column Cover</a>
-          <a href="/hyperbolic-panel.html" class="mega-sub-child">Hyperbolic Panel</a>
-        </div>
-      </div>
-      <div class="mega-sub-group">
-        <a href="/metal-composite-panel.html" class="mega-sub-label">Metal Composite Panel</a>
-        <div class="mega-sub-children">
-          <a href="/corrugated-ceiling-panels.html" class="mega-sub-child">Corrugated Ceiling Panels</a>
-          <a href="/honeycomb-panel.html" class="mega-sub-child">Honeycomb Panel</a>
-        </div>
-      </div>
-      <div class="mega-sub-group">
-        <a href="/perforated-panel.html" class="mega-sub-label">Perforated Panel</a>
-        <div class="mega-sub-children">
-          <a href="/standard-perforated-panel.html" class="mega-sub-child">Standard Perforated Panel</a>
-          <a href="/decorative-perforated-metal-panels.html" class="mega-sub-child">Decorative Perforated Metal Panels</a>
-        </div>
-      </div>
-      <div class="mega-cta">
-        <div class="mega-cta-text">
-          <strong>🏆 Most Popular</strong>
-          Custom Metal Panels — trusted by architects &amp; contractors worldwide.
-        </div>
-        <a href="/contact-us/" class="mega-cta-btn">Get a Free Quote</a>
-      </div>
-    </div>
+      <span class="mega-card-accent"></span>
+    </a>
 
-    <div class="mega-pane" id="p2">
-      <div class="mega-pane-title">Metal Ceiling</div>
-      <div class="mega-grid">
-        <a href="/sky-one-combination-ceilings.html" class="mega-grid-item">Sky-one Combination Ceilings</a>
-        <a href="/open-ceiling.html" class="mega-grid-item">Open Ceiling</a>
-        <a href="/sky-x-clip-in-ceiling.html" class="mega-grid-item">Sky-X Clip in Ceiling</a>
-        <a href="/clip-in-ceiling.html" class="mega-grid-item">Clip in Ceiling</a>
+    <a href="/acoustic-baffle-ceiling.html" class="mega-card" style="--i:3">
+      <img src="https://picsum.photos/seed/acoustic-panel/600/400" alt="Soundproof Panel" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">Soundproof Panel</span>
+        <span class="mega-card-cta">Explore <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </div>
-      <div class="mega-sub-group">
-        <a href="/tegular-ceiling-system.html" class="mega-sub-label">Tegular Ceiling System</a>
-        <div class="mega-sub-children">
-          <a href="/lay-on-ceiling.html" class="mega-sub-child">Lay On Ceiling</a>
-          <a href="/lay-in-ceiling.html" class="mega-sub-child">Lay In Ceiling</a>
-        </div>
-      </div>
-      <div class="mega-sub-group">
-        <a href="/metal-plank-ceiling.html" class="mega-sub-label">Metal Plank Ceiling</a>
-        <div class="mega-sub-children">
-          <a href="/b-plank-ceiling.html" class="mega-sub-child">B-Plank Ceiling</a>
-          <a href="/c-plank-ceiling.html" class="mega-sub-child">C-Plank Ceiling</a>
-          <a href="/g-plank-ceiling.html" class="mega-sub-child">G-Plank Ceiling</a>
-          <a href="/r-plank-ceiling.html" class="mega-sub-child">R-Plank Ceiling</a>
-          <a href="/s-plank-ceiling.html" class="mega-sub-child">S-Plank Ceiling</a>
-          <a href="/v-plank-ceiling.html" class="mega-sub-child">V-Plank Ceiling</a>
-          <a href="/f-plank-ceiling.html" class="mega-sub-child">F-Plank Ceiling</a>
-        </div>
-      </div>
-      <div class="mega-sub-group">
-        <a href="/metal-baffle-ceiling.html" class="mega-sub-label">Metal Baffle Ceiling</a>
-        <div class="mega-sub-children">
-          <a href="/profile-baffle-ceiling.html" class="mega-sub-child">Profile Baffle Ceiling</a>
-          <a href="/u-baffle-ceiling.html" class="mega-sub-child">U Baffle Ceiling</a>
-          <a href="/metal-square-tube.html" class="mega-sub-child">Square Profile Baffle</a>
-          <a href="/sky-curve-panel.html" class="mega-sub-child">Sky-Curved Panel</a>
-          <a href="/o-profile-baffle-ceiling.html" class="mega-sub-child">Round Profile Baffle</a>
-          <a href="/profile-round-tube.html" class="mega-sub-child">Profile Round Tube</a>
-          <a href="/combination-square-tube.html" class="mega-sub-child">Combination Square Tube</a>
-          <a href="/a-baffle-ceiling.html" class="mega-sub-child">A-Baffle Ceiling</a>
-          <a href="/7-baffle-ceiling.html" class="mega-sub-child">7-Baffle Ceiling</a>
-          <a href="/j-baffle-ceiling.html" class="mega-sub-child">J-Baffle Ceiling</a>
-          <a href="/water-drop-baffle-ceiling.html" class="mega-sub-child">Water Drop Baffle</a>
-          <a href="/bullet-baffle-ceiling.html" class="mega-sub-child">Bullet Baffle Ceiling</a>
-          <a href="/metal-open-cell-ceiling.html" class="mega-sub-child">Metal Open Cell Ceiling</a>
-          <a href="/open-ceiling-square-lay-in.html" class="mega-sub-child">Open Ceiling Square Lay-in</a>
-        </div>
-      </div>
-    </div>
+      <span class="mega-card-accent"></span>
+    </a>
 
-    <div class="mega-pane" id="p3">
-      <div class="mega-pane-title">Glass &amp; Window Systems</div>
-      <div class="mega-grid">
-        <a href="/glass-curtain-wall.html" class="mega-grid-item">Glass Curtain Wall</a>
-        <a href="/aluminum-window-system.html" class="mega-grid-item">Aluminum Window System</a>
-        <a href="/aluminum-door-system1.html" class="mega-grid-item">Aluminum Door System</a>
-        <a href="/photovoltaic-glass.html" class="mega-grid-item">Photovoltaic Glass</a>
+    <a href="/dome-sunroom.html" class="mega-card" style="--i:4">
+      <img src="https://picsum.photos/seed/dome-sun/600/400" alt="Dome Sunroom" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">Dome Sunroom</span>
+        <span class="mega-card-cta">Explore <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </div>
-      <div class="mega-cta">
-        <div class="mega-cta-text">
-          <strong>Custom Glass Solutions</strong>
-          Curtain walls &amp; window systems engineered for performance.
-        </div>
-        <a href="/contact-us/" class="mega-cta-btn">Get a Free Quote</a>
-      </div>
-    </div>
+      <span class="mega-card-accent"></span>
+    </a>
 
-    <div class="mega-pane" id="p4">
-      <div class="mega-pane-title">Soundproof Panel (Ceiling &amp; Wall)</div>
-      <div class="mega-grid">
-        <a href="/acoustic-baffle-ceiling.html" class="mega-grid-item">Acoustic Baffle Ceiling</a>
-        <a href="/acoustic-mineral-fiber-board.html" class="mega-grid-item">Acoustic Mineral Fiber Board</a>
-        <a href="/micro-perforated-panel.html" class="mega-grid-item">Micro-Perforated Panel</a>
-        <a href="/soundproof-wall-panels.html" class="mega-grid-item">Soundproof Wall Panels</a>
+    <a href="/modular-house.html" class="mega-card" style="--i:5">
+      <img src="https://picsum.photos/seed/mod-house/600/400" alt="Modular House" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">Modular House</span>
+        <span class="mega-card-cta">Explore <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </div>
-    </div>
+      <span class="mega-card-accent"></span>
+    </a>
 
-    <div class="mega-pane" id="p5">
-      <div class="mega-pane-title">Dome Sunroom</div>
-      <div class="mega-grid">
-        <a href="/sirius-dome-sunroom.html" class="mega-grid-item">Sirius Dome Sunroom</a>
-        <a href="/classic-dome-sunroom.html" class="mega-grid-item">Classic Dome Sunroom</a>
-        <a href="/classic-bubble-house1.html" class="mega-grid-item">Classic Bubble House</a>
-        <a href="/oval-dome-sunroom.html" class="mega-grid-item">Oval Dome Sunroom</a>
+    <a href="/louvered-pergola.html" class="mega-card" style="--i:6">
+      <img src="https://picsum.photos/seed/pergola-lv/600/400" alt="Louvered Pergola" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">Louvered Pergola</span>
+        <span class="mega-card-cta">Explore <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </div>
-    </div>
+      <span class="mega-card-accent"></span>
+    </a>
 
-    <div class="mega-pane" id="p6">
-      <div class="mega-pane-title">Modular House</div>
-      <div class="mega-grid">
-        <a href="/integrated-house.html" class="mega-grid-item">Integrated House</a>
-        <a href="/prefab-house.html" class="mega-grid-item">Prefab House</a>
-        <a href="/pod-house1.html" class="mega-grid-item">Pod House</a>
-        <a href="/a-frame-house.html" class="mega-grid-item">A Frame House</a>
+    <a href="/products/" class="mega-card" style="--i:7">
+      <img src="https://picsum.photos/seed/alum-other/600/400" alt="More Products" loading="lazy" />
+      <div class="mega-card-overlay"></div>
+      <div class="mega-card-content">
+        <span class="mega-card-title">More Products</span>
+        <span class="mega-card-cta">View All <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </div>
-    </div>
-
-    <div class="mega-pane" id="p7">
-      <div class="mega-pane-title">Louvered Pergola</div>
-      <p class="mega-pergola-note">
-        Adjustable aluminum louvered pergola systems for outdoor spaces —
-        customizable size, color &amp; automation options available.
-      </p>
-      <a href="/louvered-pergola.html" class="mega-cta-btn mega-pergola-btn">View Louvered Pergola →</a>
-    </div>
-
-    <div class="mega-pane" id="p8">
-      <div class="mega-pane-title">Other Aluminum Products</div>
-      <div class="mega-grid">
-        <a href="/soundproof-pod.html" class="mega-grid-item">Soundproof Pod</a>
-        <a href="/metal-railing-systems.html" class="mega-grid-item">Metal Railing Systems</a>
-      </div>
-      <div class="mega-sub-group">
-        <a href="/space-capsule.html" class="mega-sub-label">Space Capsule</a>
-        <div class="mega-sub-children">
-          <a href="/mini-modular-space-capsule.html" class="mega-sub-child">Mini Modular Space Capsule</a>
-          <a href="/12m-modular-space-capsule.html" class="mega-sub-child">12M Modular Space Capsule</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="mega-pane" id="p9">
-      <div class="mega-pane-title">Camping Scene Product</div>
-      <div class="mega-grid">
-        <a href="/jungle-camping.html" class="mega-grid-item">Jungle Camping Solution</a>
-        <a href="/island-camping.html" class="mega-grid-item">Island Camping Solution</a>
-        <a href="/beach-camping1.html" class="mega-grid-item">Beach Camping Solution</a>
-        <a href="/desert-camping.html" class="mega-grid-item">Desert Camping Solution</a>
-        <a href="/mountain-camping.html" class="mega-grid-item">Mountain Camping Solution</a>
-        <a href="/snow-camping.html" class="mega-grid-item">Snow Camping Solution</a>
-      </div>
-    </div>
-
+      <span class="mega-card-accent"></span>
+    </a>
   </div>
 </div>
 
 <style>
-  /*
-   * Brand color tokens are defined on the panel root (NOT on :root).
-   * Astro scopes :root into :root[data-astro-cid], which never matches <html>,
-   * so :root variables would silently break inside a component <style>.
-   */
   .mega-panel {
-    --brand-deep:    #3A2E26;
-    --brand-main:    #69574A;
-    --brand-light:   #7A6A5E;
-    --brand-gold:    #C0A882;
-    --brand-gold-lt: #E8D5B0;
+    --brand-gold: #C0A882;
     --brand-gold-bright: #F0C96A;
-    --border:        rgba(192,168,130,0.25);
+    --panel-bg: #110e0b;
 
-    /* Scoped box-sizing (NOT a bare `* {}` reset — that caused specificity
-       conflicts elsewhere in this project). */
     box-sizing: border-box;
-
-    /* Hidden everywhere by default; only becomes a dropdown on desktop. */
     display: none;
     flex-direction: column;
-    background: #fff;
-    border-top: 3px solid var(--brand-gold-bright);
-    box-shadow: 0 16px 48px rgba(44,32,24,0.18);
+    background: var(--panel-bg);
+    border-top: 2px solid var(--brand-gold-bright);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
   }
   .mega-panel *,
   .mega-panel *::before,
@@ -234,272 +114,191 @@
     box-sizing: inherit;
   }
 
-  /*
-   * Desktop only (>= 1400px): render as a 1400x500 dropdown that sits flush
-   * below the header and is horizontally centered with the 1400px nav.
-   *
-   * Positioning trick: the wrapping `.has-mega` (in Navigation.astro) is
-   * position: static, so this absolutely-positioned panel resolves against the
-   * nearest positioned ancestor — the sticky <header> (full viewport width).
-   *   top: 100%        -> right below the 80px header
-   *   left: 50% + translateX(-50%) -> centered in the viewport (= the nav)
-   */
   @media screen and (min-width: 1400px) {
     .mega-panel {
       display: flex;
       position: absolute;
       top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1400px;
-      height: 500px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 24px 48px 32px;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      /* CLOSE transition: wait a short grace period (0.18s) before fading out,
-         so the panel doesn't slam shut if the mouse briefly slips outside.
-         This delayed transition only applies when leaving hover — the opening
-         rule below overrides it with a zero-delay transition. */
-      transition: opacity 0.2s ease 0.18s, visibility 0.2s ease 0.18s;
-      /* Below the header's own z-index (1000); still above page content
-         because the panel lives inside the header's stacking context. */
+      transition: opacity 0.25s ease 0.15s, visibility 0.25s ease 0.15s;
       z-index: 999;
     }
 
-    /* Open when the wrapping `.has-mega` is hovered or keyboard-focused.
-       :global() is required because `.has-mega` is rendered by a different
-       component (Navigation.astro) with its own scope attribute. */
     :global(.has-mega:hover) .mega-panel,
     :global(.has-mega:focus-within) .mega-panel {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
-      /* OPEN transition: no delay — the panel appears instantly. */
-      transition: opacity 0.2s ease 0s, visibility 0.2s ease 0s;
+      transition: opacity 0.25s ease 0s, visibility 0.25s ease 0s;
     }
   }
 
-  /* ===== Tab bar ===== */
-  .mega-tabs {
-    display: flex;
-    background: var(--brand-deep);
-    border-bottom: 2px solid rgba(240,201,106,0.2);
-    flex-shrink: 0;
+  /* Header label */
+  .mega-header {
+    margin-bottom: 16px;
+    padding-left: 4px;
   }
-
-  .mega-tab {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 8px;
-    height: 48px;
-    flex: 1;
-    min-width: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
-    text-decoration: none;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    white-space: nowrap;
-    text-align: center;
-    letter-spacing: 0.2px;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-  }
-  .mega-tab:hover {
-    color: var(--brand-gold-bright);
-    background: rgba(240,201,106,0.10);
-  }
-  .mega-tab.active {
-    color: #ffffff;
+  .mega-header-label {
+    font-size: 11px;
     font-weight: 700;
-    border-bottom-color: var(--brand-gold-bright);
-    background: rgba(240,201,106,0.15);
-  }
-
-  /* ===== Content area (fills the fixed 500px panel, scrolls if a pane is tall) ===== */
-  .mega-content {
-    position: relative;
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  .mega-pane {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    padding: 28px 36px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.18s;
-  }
-  .mega-pane.active {
-    position: relative;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .mega-pane p {
-    margin: 0;
-  }
-
-  .mega-pane-title {
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 0.5px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: #8B6914;
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1.5px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .mega-pane-title::before {
-    content: '';
-    display: block;
-    width: 3px; height: 14px;
-    border-radius: 2px;
-    background: var(--brand-gold-bright);
-    flex-shrink: 0;
+    color: var(--brand-gold);
+    opacity: 0.85;
   }
 
+  /* 4x2 Grid */
   .mega-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px 12px;
-    margin-bottom: 20px;
-  }
-  .mega-grid-item {
-    display: block;
-    padding: 9px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-    color: #1A1208;
-    line-height: 1.35;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-  }
-  .mega-grid-item:hover {
-    background: #fdf0d8;
-    color: #3A2E26;
-    border-color: rgba(192,168,130,0.4);
-  }
-
-  .mega-sub-group { margin-bottom: 16px; }
-  .mega-sub-label {
-    display: inline-flex;
-    align-items: center;
-    padding: 7px 14px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #3A2E26;
-    background: #f5e8cc;
-    border-left: 3px solid var(--brand-gold-bright);
-    border-radius: 0 5px 5px 0;
-    text-decoration: none;
-    margin-bottom: 8px;
-    transition: all 0.15s;
-  }
-  .mega-sub-label:hover {
-    background: #edd9a3;
-    color: #1A1208;
-  }
-
-  .mega-sub-children {
-    display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 2px 8px;
-    padding-left: 16px;
-  }
-  .mega-sub-child {
-    display: block;
-    padding: 6px 8px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 500;
-    color: #5A4A3A;
-    transition: all 0.15s;
-  }
-  .mega-sub-child::before {
-    content: '– ';
-    color: #C09020;
-  }
-  .mega-sub-child:hover {
-    color: #1A1208;
-    background: #fdf0d8;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 16px;
+    flex: 1;
   }
 
-  .mega-cta {
-    margin-top: 20px;
-    padding: 14px 20px;
-    background: linear-gradient(135deg, #2C2018, #4A3D33);
-    border-radius: 8px;
+  /* Card */
+  .mega-card {
+    position: relative;
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    text-decoration: none;
+    aspect-ratio: 16 / 10;
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+    transition: opacity 0.35s ease calc(var(--i) * 0.04s + 0.05s),
+                transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.04s + 0.05s);
+  }
+
+  :global(.has-mega:hover) .mega-card,
+  :global(.has-mega:focus-within) .mega-card {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .mega-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .mega-card:hover img {
+    transform: scale(1.08);
+  }
+
+  /* Gradient overlay */
+  .mega-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(10, 8, 5, 0.82) 0%,
+      rgba(10, 8, 5, 0.35) 45%,
+      rgba(10, 8, 5, 0.05) 100%
+    );
+    transition: background 0.3s ease;
+  }
+
+  .mega-card:hover .mega-card-overlay {
+    background: linear-gradient(
+      to top,
+      rgba(10, 8, 5, 0.88) 0%,
+      rgba(10, 8, 5, 0.25) 50%,
+      rgba(10, 8, 5, 0) 100%
+    );
+  }
+
+  /* Content */
+  .mega-card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 1;
+  }
+
+  .mega-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.2px;
+    line-height: 1.3;
+    transition: transform 0.3s ease;
+  }
+
+  .mega-card:hover .mega-card-title {
+    transform: translateY(-2px);
+  }
+
+  .mega-card-cta {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .mega-cta-text {
-    font-size: 13px;
-    color: rgba(255,255,255,0.90);
-    line-height: 1.5;
-  }
-  .mega-cta-text strong {
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 600;
     color: var(--brand-gold-bright);
-    display: block;
-    margin-bottom: 2px;
-    font-size: 13.5px;
-  }
-  .mega-cta-btn {
-    flex-shrink: 0;
-    padding: 8px 20px;
-    border-radius: 5px;
-    background: var(--brand-gold-bright);
-    color: #1A1208;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 800;
-    white-space: nowrap;
-    transition: all 0.2s;
-  }
-  .mega-cta-btn:hover {
-    background: #FFD97A;
-    transform: translateY(-1px);
+    letter-spacing: 0.3px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
   }
 
-  /* Louvered Pergola pane (previously inline styles) */
-  .mega-pergola-note {
-    font-size: 14px;
-    color: #5A4A3A;
-    line-height: 1.8;
-    margin-bottom: 20px;
+  .mega-card:hover .mega-card-cta {
+    opacity: 1;
+    transform: translateY(0);
   }
-  .mega-pergola-btn {
-    display: inline-block;
-    background: #C09020;
-    color: #fff;
+
+  .mega-card-cta svg {
+    transition: transform 0.2s ease;
+  }
+
+  .mega-card:hover .mega-card-cta svg {
+    transform: translateX(3px);
+  }
+
+  /* Gold accent line at bottom */
+  .mega-card-accent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand-gold-bright), var(--brand-gold));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .mega-card:hover .mega-card-accent {
+    transform: scaleX(1);
+  }
+
+  /* Subtle border glow on hover */
+  .mega-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    transition: border-color 0.3s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .mega-card:hover::after {
+    border-color: rgba(240, 201, 106, 0.35);
   }
 </style>
-
-<script>
-  /* Tab switching inside the Mega Menu (show/hide of the panel itself is pure CSS). */
-  const megaTabs = document.querySelectorAll<HTMLAnchorElement>('.mega-tab[data-pane]');
-  const megaPanes = document.querySelectorAll<HTMLElement>('.mega-pane');
-
-  megaTabs.forEach((tab) => {
-    tab.addEventListener('mouseenter', () => {
-      megaTabs.forEach((t) => t.classList.remove('active'));
-      megaPanes.forEach((p) => p.classList.remove('active'));
-      tab.classList.add('active');
-      const paneId = tab.getAttribute('data-pane');
-      if (paneId) {
-        document.getElementById(paneId)?.classList.add('active');
-      }
-    });
-  });
-</script>

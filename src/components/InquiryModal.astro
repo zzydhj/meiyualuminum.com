@@ -7,6 +7,11 @@ import InquiryForm from "./InquiryForm.astro";
   Triggered from any button with data-open-inquiry-modal attribute.
   Close only via the X button or Escape key. Clicking the backdrop does nothing.
 
+  Download gate mode: buttons with data-download-file="<file URL>" (and optional
+  data-doc-name="<document title>") open this same modal; on form submit the
+  file download is triggered and the requested document is recorded in the
+  inquiry email (hidden "requested_document" field).
+
   Uses the native HTML <dialog> element. The browser handles, for free:
   - scroll lock on the body while the modal is open
   - focus trapping inside the modal
@@ -39,6 +44,20 @@ import InquiryForm from "./InquiryForm.astro";
       </button>
     </div>
 
+    <!-- Download gate banner — shown only when opened via [data-download-file] -->
+    <div class="download-banner" id="download-banner" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <path d="M14 2v6h6"/>
+        <path d="M12 18v-6"/>
+        <path d="M9 15l3 3 3-3"/>
+      </svg>
+      <div class="download-banner-text">
+        <strong>Fill in the form below to download:</strong>
+        <span id="download-doc-name"></span>
+      </div>
+    </div>
+
     <div class="inquiry-modal-body">
       <InquiryForm />
     </div>
@@ -60,6 +79,104 @@ import InquiryForm from "./InquiryForm.astro";
     // Expose global helpers so other scripts can trigger the modal
     (window as any).openInquiryModal = () => dialog?.showModal();
     (window as any).closeInquiryModal = () => dialog?.close();
+  })();
+
+  /* ===== Download gate =====
+     任何带 data-download-file 的按钮：打开询盘弹窗，提交时自动下载文件，
+     并在询盘邮件中记录客户请求的文档名（hidden 字段 requested_document）。 */
+  (function () {
+    const dialog = document.getElementById("inquiry-modal") as HTMLDialogElement | null;
+    const banner = document.getElementById("download-banner");
+    const docNameEl = document.getElementById("download-doc-name");
+    const form = dialog?.querySelector("form") as HTMLFormElement | null | undefined;
+    if (!dialog || !form || !banner || !docNameEl) return;
+
+    let pendingFile: string | null = null;
+    let pendingDoc = "";
+
+    // 下载模式提交：fetch 异步提交（避免页面导航取消下载），成功后触发下载并留在页面反馈；
+    // 普通询盘（pendingFile 为空）不拦截，保持原生提交行为不变。
+    form.addEventListener("submit", async (e) => {
+      if (!pendingFile) return;
+      e.preventDefault();
+
+      const file = pendingFile;
+      const doc = pendingDoc;
+
+      // 在询盘邮件中记录客户请求的文档名
+      let hidden = form.querySelector<HTMLInputElement>('input[name="requested_document"]');
+      if (!hidden) {
+        hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "requested_document";
+        form.appendChild(hidden);
+      }
+      hidden.value = doc || file;
+
+      const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]");
+      const originalLabel = submitBtn?.textContent || "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting…";
+      }
+
+      const startDownload = () => {
+        const a = document.createElement("a");
+        a.href = file;
+        a.download = "";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      };
+
+      const showSuccess = () => {
+        const strong = banner.querySelector("strong");
+        if (strong) strong.textContent = "✓ Submitted — your download is starting";
+        docNameEl.textContent = "";
+      };
+
+      try {
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: new FormData(form),
+        });
+        if (!res.ok) throw new Error("submit failed");
+        startDownload();
+        showSuccess();
+        form.reset();
+        setTimeout(() => dialog.close(), 2000);
+      } catch {
+        // fetch 失败时回退原生提交，保证询盘不丢
+        startDownload();
+        form.submit();
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalLabel;
+        }
+      }
+    });
+
+    // 关闭时重置横幅状态与文案，避免普通询盘误显下载提示
+    dialog.addEventListener("close", () => {
+      pendingFile = null;
+      pendingDoc = "";
+      banner.hidden = true;
+      const strong = banner.querySelector("strong");
+      if (strong) strong.textContent = "Fill in the form below to download:";
+    });
+
+    document.querySelectorAll<HTMLElement>("[data-download-file]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        pendingFile = btn.getAttribute("data-download-file") || null;
+        pendingDoc = btn.getAttribute("data-doc-name") || "";
+        docNameEl.textContent = pendingDoc;
+        banner.hidden = false;
+        dialog.showModal();
+      });
+    });
   })();
 </script>
 
@@ -207,6 +324,45 @@ import InquiryForm from "./InquiryForm.astro";
   /* Body */
   .inquiry-modal-body {
     padding: var(--modal-padding);
+  }
+
+  /* Download gate banner — 弹窗顶部提示条，仅在下载拦截模式下显示 */
+  .download-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin: 1rem var(--modal-padding) 0;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #faf6f3 0%, #f3e9e1 100%);
+    border: 1px solid #ecdfd4;
+    border-radius: 0.5rem;
+    color: #5a4a3e;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+    /* display:flex 会覆盖 hidden 属性的默认 display:none，必须显式补回 */
+  .download-banner[hidden] {
+    display: none;
+  }
+
+  .download-banner svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #69574a;
+  }
+
+  .download-banner strong {
+    display: block;
+    font-weight: 700;
+    color: #4a3c32;
+  }
+
+  .download-banner #download-doc-name {
+    font-weight: 600;
+    color: #69574a;
   }
 
   .inquiry-modal-body :global(.inquiry-form) {

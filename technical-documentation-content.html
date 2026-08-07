@@ -1,0 +1,361 @@
+<!-- ============================================================
+  Technical Documentation 页面 — 粘贴到 pages 表 content 字段
+  slug: technical-documentation    title: Technical Documentation
+  占位文件地址：把 data-download-file 换成真实 PDF 链接即可
+============================================================ -->
+<style>
+  .td-wrap { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; }
+
+  .td-intro {
+    font-size: 1.05rem; line-height: 1.8; color: #475569;
+    max-width: 860px; margin: 0 0 1.25rem;
+  }
+  .td-note {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    padding: 0.7rem 1.1rem; margin-bottom: 2.75rem;
+    background: linear-gradient(135deg, #faf6f3 0%, #f3e9e1 100%);
+    border: 1px solid #ecdfd4; border-radius: 999px;
+    font-size: 0.9rem; font-weight: 600; color: #69574a;
+  }
+  .td-note svg { width: 17px; height: 17px; flex-shrink: 0; color: #c2703d; }
+
+  .td-section { margin-bottom: 3rem; }
+  .td-section-head {
+    display: flex; align-items: center; gap: 0.85rem;
+    margin: 0 0 1.25rem; padding-bottom: 0.85rem;
+    border-bottom: 1px solid #e8e4df;
+  }
+  .td-section-num {
+    font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; color: #fff;
+    background: #69574a; border-radius: 6px; padding: 0.3rem 0.55rem;
+  }
+  .td-section-head h2 {
+    margin: 0; font-size: 1.35rem; font-weight: 800; color: #242424; line-height: 1.3;
+  }
+  .td-section-head p { margin: 0.15rem 0 0; font-size: 0.85rem; color: #94a3b8; }
+
+  .td-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+  }
+  @media (max-width: 800px) { .td-grid { grid-template-columns: 1fr; } }
+
+  .td-card {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.35rem 1.5rem;
+    background: #fff; border: 1px solid #e8e4df; border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .td-card:hover {
+    transform: translateY(-4px);
+    border-color: #c9b8a8;
+    box-shadow: 0 12px 30px rgba(105, 87, 74, 0.14);
+  }
+
+  .td-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px; flex-shrink: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f5ede7 0%, #ecdfd4 100%);
+    color: #69574a;
+  }
+  .td-icon svg { width: 26px; height: 26px; }
+
+  .td-info { flex: 1; min-width: 0; }
+  .td-info h3 { margin: 0 0 0.3rem; font-size: 1.02rem; font-weight: 700; color: #242424; line-height: 1.35; }
+  .td-info p { margin: 0 0 0.75rem; font-size: 0.86rem; color: #64748b; line-height: 1.55; }
+
+  .td-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .td-tag {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+    padding: 0.22rem 0.6rem; border-radius: 999px;
+    background: rgba(105, 87, 74, 0.08); color: #69574a;
+  }
+
+  .td-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    margin-top: 0.9rem; padding: 0.55rem 1.25rem;
+    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px;
+    color: #69574a; background: #fff;
+    border: 2px solid #69574a; border-radius: 999px;
+    cursor: pointer; font-family: inherit;
+    transition: all 0.2s ease;
+  }
+  .td-btn svg { width: 15px; height: 15px; transition: transform 0.2s ease; }
+  .td-btn:hover { background: #69574a; color: #fff; box-shadow: 0 6px 18px rgba(105, 87, 74, 0.28); }
+  .td-btn:hover svg { transform: translateY(2px); }
+
+  .td-help {
+    margin-top: 3.25rem; padding: 1.75rem 2rem;
+    background: #69574a; border-radius: 14px; color: #fff;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1.25rem;
+  }
+  .td-help h2 { margin: 0 0 0.35rem; font-size: 1.15rem; font-weight: 800; color: #fff; }
+  .td-help p { margin: 0; font-size: 0.9rem; color: rgba(255,255,255,0.82); }
+  .td-help-btn {
+    padding: 0.8rem 1.8rem; border: none; border-radius: 999px;
+    background: #C0A882; color: #242424;
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .td-help-btn:hover { background: #d4bc98; transform: translateY(-2px); }
+</style>
+
+<div class="td-wrap">
+  <p class="td-intro">
+    Everything your project team needs — in one place. MEIYU&reg; publishes complete
+    technical documentation for our aluminum facade, ceiling and baffle systems,
+    covering product specifications, installation procedures, CAD details, finishes
+    and test reports. All documents reflect current production standards and are
+    updated as systems evolve.
+  </p>
+  <span class="td-note">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+    Free download — simply fill in the short form and the file starts immediately.
+  </span>
+
+  <!-- 01 Product Specifications -->
+  <section class="td-section">
+    <div class="td-section-head">
+      <span class="td-section-num">01</span>
+      <div>
+        <h2>Product Specifications</h2>
+        <p>Alloy, thickness, coating and dimensional data for each system</p>
+      </div>
+    </div>
+    <div class="td-grid">
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Aluminum Facade Panel &mdash; Specification Sheet</h3>
+          <p>Alloy 1100/3003/5005, thickness 1.5&ndash;4.0 mm, max panel size, PVDF &amp; powder coating systems, tolerances per AAMA 2605.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">9.8 MB</span><span class="td-tag">Rev. 2026-01</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/technical-documentation/MC%20catalogue.pdf" data-doc-name="Aluminum Facade Panel — Specification Sheet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Aluminum Ceiling System &mdash; Specification Sheet</h3>
+          <p>Lay-in / clip-in / hook-on ceiling panels, panel formats 600&times;600 to 1200&times;2400 mm, perforation patterns, acoustic backing options.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">2.1 MB</span><span class="td-tag">Rev. 2026-01</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/ceiling-system-spec.pdf" data-doc-name="Aluminum Ceiling System — Specification Sheet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Baffle &amp; Linear Ceiling &mdash; Specification Sheet</h3>
+          <p>U-profile and square-tube baffles, profile heights 30&ndash;200 mm, spacing options, curved baffle capabilities, suspension carriers.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">1.8 MB</span><span class="td-tag">Rev. 2026-01</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/baffle-ceiling-spec.pdf" data-doc-name="Baffle &amp; Linear Ceiling — Specification Sheet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 Installation Guides -->
+  <section class="td-section">
+    <div class="td-section-head">
+      <span class="td-section-num">02</span>
+      <div>
+        <h2>Installation Guides</h2>
+        <p>Step-by-step procedures for site teams and installers</p>
+      </div>
+    </div>
+    <div class="td-grid">
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Facade Panel Installation Manual</h3>
+          <p>Substructure checks, bracket setting, panel fixing sequence, joint alignment, sealant application and final inspection checklist.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">5.6 MB</span><span class="td-tag">EN</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/facade-installation-manual.pdf" data-doc-name="Facade Panel Installation Manual">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Ceiling &amp; Baffle System Installation Manual</h3>
+          <p>Hanger layout, carrier spacing, panel/baffle clipping order, perimeter trims, access panel zones and lighting coordination notes.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">4.9 MB</span><span class="td-tag">EN</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/ceiling-installation-manual.pdf" data-doc-name="Ceiling &amp; Baffle System Installation Manual">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 Technical Drawings -->
+  <section class="td-section">
+    <div class="td-section-head">
+      <span class="td-section-num">03</span>
+      <div>
+        <h2>Technical Drawings</h2>
+        <p>CAD details for architects, consultants and shop-drawing teams</p>
+      </div>
+    </div>
+    <div class="td-grid">
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Standard Node Details &mdash; Facade Systems</h3>
+          <p>Typical horizontal / vertical sections, corner and parapet details, window surround and expansion joint details in DWG format.</p>
+          <div class="td-meta"><span class="td-tag">DWG</span><span class="td-tag">12.3 MB</span><span class="td-tag">AutoCAD 2018+</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/facade-node-details.zip" data-doc-name="Standard Node Details — Facade Systems (DWG)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Ceiling Suspension Details &mdash; Section Library</h3>
+          <p>Carrier and hanger assemblies, perimeter conditions, shadow-gap trims and baffle suspension details, ready for consultant issue.</p>
+          <div class="td-meta"><span class="td-tag">DWG</span><span class="td-tag">8.7 MB</span><span class="td-tag">AutoCAD 2018+</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/ceiling-suspension-details.zip" data-doc-name="Ceiling Suspension Details — Section Library (DWG)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Finishes & Colors -->
+  <section class="td-section">
+    <div class="td-section-head">
+      <span class="td-section-num">04</span>
+      <div>
+        <h2>Finishes &amp; Colors</h2>
+        <p>Coating systems, color charts and surface texture references</p>
+      </div>
+    </div>
+    <div class="td-grid">
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>PVDF &amp; Powder Coating Color Chart</h3>
+          <p>Standard RAL colors, metallic and wood-grain finishes, gloss levels, coating thickness per AAMA 2604 / 2605, custom color procedure.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">6.2 MB</span><span class="td-tag">Rev. 2026-01</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/color-finish-chart.pdf" data-doc-name="PVDF &amp; Powder Coating Color Chart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Anodized &amp; Special Finish Guide</h3>
+          <p>Anodizing classes, brushed and mirror finishes, perforation pattern library with open-area ratios for acoustic applications.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">3.5 MB</span><span class="td-tag">Rev. 2025-11</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/anodized-finish-guide.pdf" data-doc-name="Anodized &amp; Special Finish Guide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Test Reports & Certificates -->
+  <section class="td-section">
+    <div class="td-section-head">
+      <span class="td-section-num">05</span>
+      <div>
+        <h2>Test Reports &amp; Certificates</h2>
+        <p>Third-party verified performance data for approvals and tenders</p>
+      </div>
+    </div>
+    <div class="td-grid">
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Fire Reaction Classification Report</h3>
+          <p>Fire performance classification of coated and uncoated panels, EN 13501-1 based testing by accredited third-party laboratory.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">1.9 MB</span><span class="td-tag">Third-party</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/fire-classification-report.pdf" data-doc-name="Fire Reaction Classification Report">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Wind Load &amp; Structural Performance Data</h3>
+          <p>Panel deflection data, fixing pull-out values and span tables for common wind-load zones, supporting facade engineering design.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">2.7 MB</span><span class="td-tag">Third-party</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/wind-load-performance.pdf" data-doc-name="Wind Load &amp; Structural Performance Data">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Acoustic Performance Report</h3>
+          <p>NRC and sound absorption data for perforated panels with acoustic fleece backing, by perforation pattern and cavity depth.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">1.4 MB</span><span class="td-tag">Third-party</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/acoustic-performance-report.pdf" data-doc-name="Acoustic Performance Report">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Maintenance -->
+  <section class="td-section">
+    <div class="td-section-head">
+      <span class="td-section-num">06</span>
+      <div>
+        <h2>Maintenance &amp; Care</h2>
+        <p>Keep coatings and surfaces performing for decades</p>
+      </div>
+    </div>
+    <div class="td-grid">
+      <div class="td-card">
+        <div class="td-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div class="td-info">
+          <h3>Cleaning &amp; Maintenance Guide</h3>
+          <p>Recommended cleaning agents and intervals by environment class, stain removal, coating inspection and touch-up procedure.</p>
+          <div class="td-meta"><span class="td-tag">PDF</span><span class="td-tag">1.1 MB</span><span class="td-tag">EN</span></div>
+          <button type="button" class="td-btn" data-download-file="https://file.meiyualuminum.com/docs/cleaning-maintenance-guide.pdf" data-doc-name="Cleaning &amp; Maintenance Guide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Help box -->
+  <div class="td-help">
+    <div>
+      <h2>Need a document we haven't published?</h2>
+      <p>Tell us your project requirements and our engineers will prepare custom technical documentation for you.</p>
+    </div>
+    <button type="button" class="td-help-btn" data-open-inquiry-modal>Request Custom Document</button>
+  </div>
+</div>
