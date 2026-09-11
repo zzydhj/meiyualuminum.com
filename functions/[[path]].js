@@ -71,7 +71,7 @@ const HTML = `<!DOCTYPE html>
     <div class="logo">MEIYU <span>ALUMINUM</span></div>
     <h1>Coming Soon</h1>
     <p>We're building something great.<br />Our new website is on its way.</p>
-    <a href="mailto:info@meiyualuminum.com" class="contact">Contact Us</a>
+    <a href="https://wa.me/8613509838008?text=Hi%2C%20I'm%20interested%20in%20your%20aluminum%20products" target="_blank" rel="noopener" class="contact">Chat on WhatsApp</a>
   </div>
 </body>
 </html>`;
