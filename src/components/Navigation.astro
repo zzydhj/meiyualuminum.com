@@ -8,8 +8,20 @@ import MegaMenu from "./MegaMenu.astro";
   <div class="has-mega">
     <a href="/products/">
       Products
-      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
-        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg
+        class="nav-chevron"
+        width="11"
+        height="7"
+        viewBox="0 0 11 7"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M1.5 1.5L5.5 5.5L9.5 1.5"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
       </svg>
     </a>
     <MegaMenu />
@@ -20,8 +32,20 @@ import MegaMenu from "./MegaMenu.astro";
   <div class="has-dropdown">
     <a href="/videos/">
       Videos
-      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
-        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg
+        class="nav-chevron"
+        width="11"
+        height="7"
+        viewBox="0 0 11 7"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M1.5 1.5L5.5 5.5L9.5 1.5"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
       </svg>
     </a>
     <div class="dropdown">
@@ -30,29 +54,84 @@ import MegaMenu from "./MegaMenu.astro";
       <a href="/video-tags/Factory%20Tour/">Factory Tour</a>
       <a href="/video-tags/How%20It's%20Made/">How It's Made</a>
       <a href="/video-tags/Installation%20Guide/">Installation Guide</a>
-      <a href="/video-tags/Sample%20%26%20Custom%20Service/">Sample &amp; Custom Service</a>
+      <a href="/video-tags/Sample%20%26%20Custom%20Service/"
+        >Sample &amp; Custom Service</a
+      >
       <a href="/video-tags/Product%20Showcase/">Product Showcase</a>
-      <a href="/video-tags/Quality%20%26%20Certifications/">Quality &amp; Certifications</a>
+      <a href="/video-tags/Quality%20%26%20Certifications/"
+        >Quality &amp; Certifications</a
+      >
     </div>
   </div>
 
   <div class="has-dropdown">
     <a href="#">
       Resource
-      <svg class="nav-chevron" width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true">
-        <path d="M1.5 1.5L5.5 5.5L9.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg
+        class="nav-chevron"
+        width="11"
+        height="7"
+        viewBox="0 0 11 7"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M1.5 1.5L5.5 5.5L9.5 1.5"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
       </svg>
     </a>
     <div class="dropdown">
       <a href="/blog/">Blog</a>
       <a href="/categories/">Categories</a>
       <a href="/tags/">Tags</a>
-      <a href="#">FAQ</a>
+      <a href="/faq/">FAQ</a>
       <a href="/technical-documentation/">Technical Documentation</a>
     </div>
   </div>
 
-  <a href="#">Project Gallery</a>
+  <div class="has-dropdown">
+    <a href="#">
+      Projects
+      <svg
+        class="nav-chevron"
+        width="11"
+        height="7"
+        viewBox="0 0 11 7"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M1.5 1.5L5.5 5.5L9.5 1.5"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </a>
+    <div class="dropdown">
+      <a href="/project-shanghai-pudong-financial-tower/"
+        >Shanghai Financial Tower</a
+      >
+      <a href="/project-beijing-daxing-airport-ceiling/"
+        >Beijing Daxing Airport</a
+      >
+      <a href="/project-hangzhou-olympic-stadium-facade/"
+        >Hangzhou Olympic Stadium</a
+      >
+      <a href="/project-shanghai-bund-hotel-interior/">Shanghai Bund Hotel</a>
+      <a href="/project-guangzhou-medical-center-cladding/"
+        >Guangzhou Medical Center</a
+      >
+      <a href="/project-shenzhen-bay-mall-atrium/">Shenzhen Bay Mall</a>
+      <a href="/project-shenzhen-tech-hq-office/">Shenzhen Tech HQ</a>
+      <a href="/project-chengdu-riverside-residences/"
+        >Chengdu Riverside Residences</a
+      >
+    </div>
+  </div>
 
   <a href="/contact/">Contact Us</a>
 </div>
@@ -105,13 +184,13 @@ import MegaMenu from "./MegaMenu.astro";
       background-color: transparent;
     }
     .nav-links a::after {
-      content: '';
+      content: "";
       position: absolute;
       left: 17px;
       right: 17px;
       bottom: 12px;
       height: 2px;
-      background: #C09020;
+      background: #c09020;
       transform: scaleX(0);
       transform-origin: center;
       transition: transform 0.25s ease;
@@ -162,15 +241,17 @@ import MegaMenu from "./MegaMenu.astro";
       top: 100%;
       left: 0;
       min-width: 240px;
-      background: #3A2E26;
-      border-top: 3px solid #F0C96A;
+      background: #3a2e26;
+      border-top: 3px solid #f0c96a;
       box-shadow: 0 16px 48px rgba(44, 32, 24, 0.18);
       padding: 8px 0;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
       /* CLOSE: wait the 0.18s grace period before fading out. */
-      transition: opacity 0.2s ease 0.18s, visibility 0.2s ease 0.18s;
+      transition:
+        opacity 0.2s ease 0.18s,
+        visibility 0.2s ease 0.18s;
       z-index: 999;
     }
     .has-dropdown:hover .dropdown,
@@ -179,7 +260,9 @@ import MegaMenu from "./MegaMenu.astro";
       visibility: visible;
       pointer-events: auto;
       /* OPEN: instant. */
-      transition: opacity 0.2s ease 0s, visibility 0.2s ease 0s;
+      transition:
+        opacity 0.2s ease 0s,
+        visibility 0.2s ease 0s;
     }
     .nav-links .dropdown a {
       display: block;
@@ -192,11 +275,13 @@ import MegaMenu from "./MegaMenu.astro";
       color: rgba(255, 255, 255, 0.92);
       background: transparent;
       position: static;
-      transition: color 0.15s, background 0.15s;
+      transition:
+        color 0.15s,
+        background 0.15s;
     }
     .nav-links .dropdown a:hover,
     .nav-links .dropdown a:focus {
-      color: #F0C96A;
+      color: #f0c96a;
       background: rgba(240, 201, 106, 0.1);
     }
     /* The top-level gold underline must not appear inside the dark dropdown. */
@@ -205,4 +290,3 @@ import MegaMenu from "./MegaMenu.astro";
     }
   }
 </style>
-
