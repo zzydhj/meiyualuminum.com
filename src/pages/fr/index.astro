@@ -1,0 +1,8 @@
+---
+// Page d'accueil en français — réutiliser le composant Home, lang='fr'
+export const prerender = false;
+import Home from "../index.astro";
+Astro.locals.lang = "fr";
+---
+
+<Home />

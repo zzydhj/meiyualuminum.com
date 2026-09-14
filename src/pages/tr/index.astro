@@ -1,0 +1,8 @@
+---
+// Türkçe ana sayfa — Home bileşenini yeniden kullan, lang='tr'
+export const prerender = false;
+import Home from "../index.astro";
+Astro.locals.lang = "tr";
+---
+
+<Home />

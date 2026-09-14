@@ -6,6 +6,7 @@ import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import FloatingFreeSample from '../components/FloatingFreeSample.astro';
 import InquiryModal from '../components/InquiryModal.astro';
 import '../styles/global.css';
+import { DEFAULT_LANG, buildAlternates, type Lang } from '../lib/i18n';
 
 interface Props {
   pageTitle: string;
@@ -24,6 +25,10 @@ interface Props {
   hideTitle?: boolean;
   /** 首页传入 true：桌面端 header 初始透明，滚动后变白 */
   transparentHeader?: boolean;
+  /** 当前页面语言（用于 <html lang> 和导航链接前缀） */
+  lang?: Lang;
+  /** hreflang 多语言替代链接（自动从 URL 生成，也可手动覆盖） */
+  alternates?: { lang: string; href: string }[];
 }
 
 const {
@@ -40,7 +45,12 @@ const {
   customJs,
   hideTitle = false,
   transparentHeader = false,
+  lang = DEFAULT_LANG,
+  alternates: alternatesProp,
 } = Astro.props;
+
+// 自动生成 hreflang：手动传入 alternates 时优先用，否则从当前 URL 路径生成
+const alternates = alternatesProp ?? buildAlternates(Astro.url.pathname);
 
 const siteName = "Meiyu Aluminum";
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
@@ -66,7 +76,7 @@ const orgJsonLd = {
 };
 ---
 
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -93,6 +103,14 @@ const orgJsonLd = {
     <meta name="description" content={description} />
     {keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
     <link rel="canonical" href={canonicalURL} />
+
+    <!-- hreflang 多语言替代链接 -->
+    {alternates.map((alt) => (
+      <link rel="alternate" hreflang={alt.lang} href={new URL(alt.href, Astro.site).href} />
+    ))}
+    {alternates.length > 0 && (
+      <link rel="alternate" hreflang="x-default" href={new URL(alternates.find((a) => a.lang === DEFAULT_LANG)?.href ?? canonicalURL, Astro.site).href} />
+    )}
 
     <!-- ⚠️ TEMPORARY (pre-launch): keep every page out of search engine indexes.
          noindex = don't index this page; nofollow = don't follow its links.
@@ -125,12 +143,12 @@ const orgJsonLd = {
     <slot name="head" />
   </head>
   <body>
-    <Header transparent={transparentHeader} />
+    <Header transparent={transparentHeader} lang={lang} />
     <main class="container">
       {!hideTitle && <h1>{headingTitle || pageTitle}</h1>}
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
     <script>
       import "../scripts/menu.js";
       import "../scripts/watermark.js";

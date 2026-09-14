@@ -1,0 +1,8 @@
+---
+// Arabic homepage — reuse root Home component, set lang='ar'
+export const prerender = false;
+import Home from "../index.astro";
+Astro.locals.lang = "ar";
+---
+
+<Home />

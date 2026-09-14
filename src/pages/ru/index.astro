@@ -1,0 +1,8 @@
+---
+// Главная страница на русском — переиспользуем Home, lang='ru'
+export const prerender = false;
+import Home from "../index.astro";
+Astro.locals.lang = "ru";
+---
+
+<Home />

@@ -1,17 +1,25 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
+// SSR：多语言 rewrite 目标页必须是 server-rendered（/en/ /zh/ 内部重写到 /）
+export const prerender = false;
+
 // 首页是纯代码页面：标题、副标题、SEO 信息全部写死在下方常量中，
 // 不依赖数据库 pages 表（home 记录已删除，/home/ 影子路由随之消失）。
 // 如需修改首页文案 / SEO，直接编辑下面的常量，改完重新构建或重启生效。
-const pageTitle = "Meiyu Aluminum - Professional Automotive Parts Supplier";
+const pageTitle =
+  "Meiyu Aluminum — Professional Aluminum Building Materials Supplier | Facade & Ceiling Systems";
 const pageDescription =
-  "OEM quality brake pads, filters, and engine components for Toyota, Honda, and more.";
+  "Manufacturer of aluminum veneer panels, ceiling tiles, honeycomb panels, baffle ceilings & fluted panels. Custom CNC fabrication, PVDF/powder coating, BIM support. Factory direct pricing.";
 const keywords = [
-  "automotive parts",
-  "OEM quality",
-  "brake pads",
-  "oil filters",
+  "aluminum veneer",
+  "aluminum facade cladding",
+  "aluminum ceiling panels",
+  "aluminum honeycomb panel",
+  "aluminum baffle ceiling",
+  "fluted aluminum panel",
+  "PVDF coated aluminum",
+  "building materials manufacturer",
   "Meiyu Aluminum",
 ];
 const heroTitle = "Aluminum Building Materials You Can Trust";
@@ -59,6 +67,12 @@ const websiteJsonLd = {
     <div class="video-hero-content">
       <h1>{heroTitle}</h1>
       <p>{heroSubtitle}</p>
+      <div class="hero-cta-row">
+        <button type="button" class="hero-cta-primary" data-open-inquiry-modal
+          >Get a Free Quote</button
+        >
+        <a href="/products/" class="hero-cta-outline">View All Products</a>
+      </div>
     </div>
   </section>
 
@@ -937,189 +951,6 @@ const websiteJsonLd = {
     </div>
   </section>
 
-  <!-- ===== Global Map Section ===== -->
-  <div class="meiyu-map-wrapper">
-    <div class="meiyu-map-container">
-      <!-- 顶部标题 + 数据 -->
-      <div class="meiyu-map-topbar">
-        <div>
-          <div class="meiyu-map-tl-tag">Global Projects</div>
-          <div class="meiyu-map-tl-h">Our Work, <span>Worldwide</span></div>
-        </div>
-        <div class="meiyu-map-stats">
-          <div>
-            <div class="meiyu-map-st-num" id="meiyu-sC">0</div><div
-              class="meiyu-map-st-lbl"
-            >
-              Countries
-            </div>
-          </div>
-          <div>
-            <div class="meiyu-map-st-num" id="meiyu-sP">0</div><div
-              class="meiyu-map-st-lbl"
-            >
-              Projects
-            </div>
-          </div>
-          <div>
-            <div class="meiyu-map-st-num" id="meiyu-sK">0</div><div
-              class="meiyu-map-st-lbl"
-            >
-              Cities
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 主体 -->
-      <div class="meiyu-map-body">
-        <!-- 地图 -->
-        <div class="meiyu-map-wrap" id="meiyu-mw">
-          <img
-            src="https://file.meiyualuminum.com/home/world-map.webp"
-            alt="World Map"
-            class="meiyu-map-bg"
-            data-no-watermark
-            loading="lazy"
-            width="1920"
-            height="960"
-          />
-
-          <!-- 点位 -->
-          <div
-            class="meiyu-map-pin lg"
-            data-id="cn"
-            style="left:77.5%;top:38.0%"
-          >
-            <div class="ring"></div><div class="ring2"></div><div class="core">
-            </div>
-          </div>
-          <div
-            class="meiyu-map-pin lg"
-            data-id="me"
-            style="left:63.5%;top:45.0%"
-          >
-            <div class="ring" style="animation-delay:.4s"></div><div
-              class="ring2"
-              style="animation-delay:1.2s"
-            >
-            </div><div class="core"></div>
-          </div>
-          <div
-            class="meiyu-map-pin sm"
-            data-id="sea"
-            style="left:78.5%;top:56.0%"
-          >
-            <div class="ring" style="animation-delay:.8s"></div><div
-              class="ring2"
-              style="animation-delay:1.6s"
-            >
-            </div><div class="core"></div>
-          </div>
-          <div
-            class="meiyu-map-pin sm"
-            data-id="eu"
-            style="left:53.0%;top:30.0%"
-          >
-            <div class="ring" style="animation-delay:1.2s"></div><div
-              class="ring2"
-              style="animation-delay:2.0s"
-            >
-            </div><div class="core"></div>
-          </div>
-          <div
-            class="meiyu-map-pin xs"
-            data-id="au"
-            style="left:85.0%;top:78.0%"
-          >
-            <div class="ring" style="animation-delay:1.6s"></div><div
-              class="ring2"
-              style="animation-delay:2.4s"
-            >
-            </div><div class="core"></div>
-          </div>
-          <div
-            class="meiyu-map-pin xs"
-            data-id="na"
-            style="left:22.0%;top:35.0%"
-          >
-            <div class="ring" style="animation-delay:.6s"></div><div
-              class="ring2"
-              style="animation-delay:1.4s"
-            >
-            </div><div class="core"></div>
-          </div>
-          <div
-            class="meiyu-map-pin xs"
-            data-id="af"
-            style="left:54.0%;top:62.0%"
-          >
-            <div class="ring" style="animation-delay:1.0s"></div><div
-              class="ring2"
-              style="animation-delay:1.8s"
-            >
-            </div><div class="core"></div>
-          </div>
-          <div
-            class="meiyu-map-pin xs"
-            data-id="sa"
-            style="left:32.0%;top:70.0%"
-          >
-            <div class="ring" style="animation-delay:1.4s"></div><div
-              class="ring2"
-              style="animation-delay:2.2s"
-            >
-            </div><div class="core"></div>
-          </div>
-
-          <!-- 图例 -->
-          <div class="meiyu-map-legend">
-            <div class="meiyu-map-leg-i">
-              <div class="meiyu-map-leg-d" style="background:#C0A882"></div>50+
-              projects
-            </div>
-            <div class="meiyu-map-leg-i">
-              <div class="meiyu-map-leg-d" style="background:#DDD0B8">
-              </div>20–50
-            </div>
-            <div class="meiyu-map-leg-i">
-              <div class="meiyu-map-leg-d" style="background:#8C7B6E">
-              </div>&lt;20
-            </div>
-          </div>
-
-          <!-- Tooltip -->
-          <div class="meiyu-map-tip" id="meiyu-tip">
-            <div class="meiyu-map-tip-reg" id="meiyu-tReg"></div>
-            <div class="meiyu-map-tip-name" id="meiyu-tName"></div>
-            <div class="meiyu-map-tip-meta" id="meiyu-tMeta"></div>
-            <span class="meiyu-map-tip-count" id="meiyu-tCount"></span>
-          </div>
-        </div>
-
-        <!-- 右侧面板 -->
-        <div class="meiyu-map-panel">
-          <div class="meiyu-map-p-head">
-            <h3 id="meiyu-pReg">All Regions</h3>
-            <p id="meiyu-pDesc">Click a pin to explore projects</p>
-          </div>
-          <div class="meiyu-map-filters">
-            <button class="meiyu-map-fb on" data-r="all">All</button>
-            <button class="meiyu-map-fb" data-r="cn">China</button>
-            <button class="meiyu-map-fb" data-r="me">Mid East</button>
-            <button class="meiyu-map-fb" data-r="sea">SE Asia</button>
-            <button class="meiyu-map-fb" data-r="eu">Europe</button>
-            <button class="meiyu-map-fb" data-r="au">Australia</button>
-          </div>
-          <div class="meiyu-map-clist" id="meiyu-clist"></div>
-          <a class="meiyu-map-cta" href="#"
-            ><span>View All Case Studies →</span></a
-          >
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ===== Our Products Section ===== -->
   <section class="products-section">
     <div class="products-container">
@@ -1329,29 +1160,219 @@ const websiteJsonLd = {
             >
           </div>
         </a>
-        <a href="/products/" class="product-card product-card-more">
-          <div class="product-card-body product-card-body-center">
-            <span class="product-card-more-icon"
+        <a href="/categories/aluminum-skirting-board/" class="product-card">
+          <div class="product-card-img">
+            <img
+              src="https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp"
+              alt="Aluminum Skirting Board — decorative wall base trim"
+              loading="lazy"
+              width="480"
+              height="300"
+            />
+          </div>
+          <div class="product-card-body">
+            <h3>Aluminum Skirting Board</h3>
+            <span class="product-card-arrow"
               ><svg
                 viewBox="0 0 24 24"
-                width="32"
-                height="32"
+                width="16"
+                height="16"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="1.5"
+                stroke-width="2.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                ><circle cx="12" cy="12" r="10"></circle><path
-                  d="M12 8v8M8 12h8"></path></svg
+                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
               ></span
             >
-            <h3>View All Products</h3>
-            <p>Browse our complete product catalog</p>
           </div>
         </a>
       </div>
     </div>
   </section>
+
+  <!-- ===== Global Map Section ===== -->
+  <div class="meiyu-map-wrapper">
+    <div class="meiyu-map-container">
+      <!-- 顶部标题 + 数据 -->
+      <div class="meiyu-map-topbar">
+        <div>
+          <div class="meiyu-map-tl-tag">Global Projects</div>
+          <div class="meiyu-map-tl-h">Our Work, <span>Worldwide</span></div>
+        </div>
+        <div class="meiyu-map-stats">
+          <div>
+            <div class="meiyu-map-st-num" id="meiyu-sC">0</div><div
+              class="meiyu-map-st-lbl"
+            >
+              Countries
+            </div>
+          </div>
+          <div>
+            <div class="meiyu-map-st-num" id="meiyu-sP">0</div><div
+              class="meiyu-map-st-lbl"
+            >
+              Projects
+            </div>
+          </div>
+          <div>
+            <div class="meiyu-map-st-num" id="meiyu-sK">0</div><div
+              class="meiyu-map-st-lbl"
+            >
+              Cities
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主体 -->
+      <div class="meiyu-map-body">
+        <!-- 地图 -->
+        <div class="meiyu-map-wrap" id="meiyu-mw">
+          <img
+            src="https://file.meiyualuminum.com/home/world-map.webp"
+            alt="World Map"
+            class="meiyu-map-bg"
+            data-no-watermark
+            loading="lazy"
+            width="1920"
+            height="960"
+          />
+
+          <!-- 点位 -->
+          <div
+            class="meiyu-map-pin lg"
+            data-id="cn"
+            style="left:77.5%;top:38.0%"
+          >
+            <div class="ring"></div><div class="ring2"></div><div class="core">
+            </div>
+          </div>
+          <div
+            class="meiyu-map-pin lg"
+            data-id="me"
+            style="left:63.5%;top:45.0%"
+          >
+            <div class="ring" style="animation-delay:.4s"></div><div
+              class="ring2"
+              style="animation-delay:1.2s"
+            >
+            </div><div class="core"></div>
+          </div>
+          <div
+            class="meiyu-map-pin sm"
+            data-id="sea"
+            style="left:78.5%;top:56.0%"
+          >
+            <div class="ring" style="animation-delay:.8s"></div><div
+              class="ring2"
+              style="animation-delay:1.6s"
+            >
+            </div><div class="core"></div>
+          </div>
+          <div
+            class="meiyu-map-pin sm"
+            data-id="eu"
+            style="left:53.0%;top:30.0%"
+          >
+            <div class="ring" style="animation-delay:1.2s"></div><div
+              class="ring2"
+              style="animation-delay:2.0s"
+            >
+            </div><div class="core"></div>
+          </div>
+          <div
+            class="meiyu-map-pin xs"
+            data-id="au"
+            style="left:85.0%;top:78.0%"
+          >
+            <div class="ring" style="animation-delay:1.6s"></div><div
+              class="ring2"
+              style="animation-delay:2.4s"
+            >
+            </div><div class="core"></div>
+          </div>
+          <div
+            class="meiyu-map-pin xs"
+            data-id="na"
+            style="left:22.0%;top:35.0%"
+          >
+            <div class="ring" style="animation-delay:.6s"></div><div
+              class="ring2"
+              style="animation-delay:1.4s"
+            >
+            </div><div class="core"></div>
+          </div>
+          <div
+            class="meiyu-map-pin xs"
+            data-id="af"
+            style="left:54.0%;top:62.0%"
+          >
+            <div class="ring" style="animation-delay:1.0s"></div><div
+              class="ring2"
+              style="animation-delay:1.8s"
+            >
+            </div><div class="core"></div>
+          </div>
+          <div
+            class="meiyu-map-pin xs"
+            data-id="sa"
+            style="left:32.0%;top:70.0%"
+          >
+            <div class="ring" style="animation-delay:1.4s"></div><div
+              class="ring2"
+              style="animation-delay:2.2s"
+            >
+            </div><div class="core"></div>
+          </div>
+
+          <!-- 图例 -->
+          <div class="meiyu-map-legend">
+            <div class="meiyu-map-leg-i">
+              <div class="meiyu-map-leg-d" style="background:#C0A882"></div>50+
+              projects
+            </div>
+            <div class="meiyu-map-leg-i">
+              <div class="meiyu-map-leg-d" style="background:#DDD0B8">
+              </div>20–50
+            </div>
+            <div class="meiyu-map-leg-i">
+              <div class="meiyu-map-leg-d" style="background:#8C7B6E">
+              </div>&lt;20
+            </div>
+          </div>
+
+          <!-- Tooltip -->
+          <div class="meiyu-map-tip" id="meiyu-tip">
+            <div class="meiyu-map-tip-reg" id="meiyu-tReg"></div>
+            <div class="meiyu-map-tip-name" id="meiyu-tName"></div>
+            <div class="meiyu-map-tip-meta" id="meiyu-tMeta"></div>
+            <span class="meiyu-map-tip-count" id="meiyu-tCount"></span>
+          </div>
+        </div>
+
+        <!-- 右侧面板 -->
+        <div class="meiyu-map-panel">
+          <div class="meiyu-map-p-head">
+            <h3 id="meiyu-pReg">All Regions</h3>
+            <p id="meiyu-pDesc">Click a pin to explore projects</p>
+          </div>
+          <div class="meiyu-map-filters">
+            <button class="meiyu-map-fb on" data-r="all">All</button>
+            <button class="meiyu-map-fb" data-r="cn">China</button>
+            <button class="meiyu-map-fb" data-r="me">Mid East</button>
+            <button class="meiyu-map-fb" data-r="sea">SE Asia</button>
+            <button class="meiyu-map-fb" data-r="eu">Europe</button>
+            <button class="meiyu-map-fb" data-r="au">Australia</button>
+          </div>
+          <div class="meiyu-map-clist" id="meiyu-clist"></div>
+          <a class="meiyu-map-cta" href="#"
+            ><span>View All Case Studies →</span></a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ===== Certificates Section ===== -->
   <section class="certificates-section">
@@ -1560,6 +1581,54 @@ const websiteJsonLd = {
     color: rgba(255, 255, 255, 0.92);
     max-width: 640px;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Hero CTA Buttons */
+  .hero-cta-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 32px;
+    background: #c09020;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      transform 0.15s;
+    text-shadow: none;
+  }
+  .hero-cta-primary:hover {
+    background: #a87a15;
+    transform: translateY(-1px);
+  }
+  .hero-cta-outline {
+    display: inline-flex;
+    align-items: center;
+    padding: 13px 32px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      background 0.2s,
+      border-color 0.2s;
+    text-shadow: none;
+  }
+  .hero-cta-outline:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
   }
 
   /* ===== Solutions Section (Bronze) ===== */
@@ -2089,8 +2158,8 @@ const websiteJsonLd = {
   }
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
   }
   .product-card {
     display: flex;
@@ -2194,16 +2263,22 @@ const websiteJsonLd = {
   .product-card-more:hover .product-card-more-icon {
     transform: scale(1.1);
   }
-  @media (max-width: 1024px) {
+  @media (max-width: 1200px) {
     .products-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 18px;
+    }
+  }
+  @media (max-width: 768px) {
+    .products-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
     }
   }
   @media (max-width: 480px) {
     .products-grid {
-      grid-template-columns: 1fr;
-      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
     .products-section {
       padding: 50px 0;
@@ -2366,6 +2441,165 @@ const websiteJsonLd = {
       font-size: 0.8rem;
     }
   }
+
+  /* ===== Certificates Section ===== */
+  .certificates-section {
+    background: #fff;
+    padding: 80px 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  .certificates-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .certificates-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+  .cert-card {
+    border: 1px solid #e8e4df;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fafafa;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .cert-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(105, 87, 74, 0.12);
+  }
+  .cert-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 12px;
+  }
+  @media (max-width: 900px) {
+    .certificates-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+  }
+  @media (max-width: 480px) {
+    .certificates-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .certificates-section {
+      padding: 50px 0;
+    }
+  }
+
+  /* ===== Trusted By Section ===== */
+  .trust-section {
+    background: #0d0950;
+    padding: 80px 0;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+  .trust-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+  .trust-section .section-header-bronze h2 {
+    color: #fff;
+  }
+  .trust-section .section-header-bronze h2 span {
+    color: #c0a882;
+  }
+  .trust-section .section-header-bronze p {
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 600px;
+    margin: 12px auto 0;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .trust-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 48px 0 40px;
+  }
+  .trust-logo-item {
+    flex: 0 1 calc(12.5% - 0px);
+    min-width: 100px;
+    padding: 20px 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition:
+      color 0.3s,
+      border-color 0.3s;
+    text-align: center;
+    user-select: none;
+  }
+  .trust-logo-item:hover {
+    color: #c0a882;
+    border-color: rgba(192, 168, 130, 0.3);
+  }
+  .trust-cta {
+    margin-top: 16px;
+  }
+  .trust-cta p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+  .trust-cta-btn {
+    display: inline-block;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #c0a882, #a3845e);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+  .trust-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(192, 168, 130, 0.35);
+  }
+  @media (max-width: 768px) {
+    .trust-section {
+      padding: 50px 0;
+    }
+    .trust-logo-item {
+      flex: 0 1 calc(25% - 0px);
+      min-width: 80px;
+      font-size: 0.85rem;
+      padding: 14px 10px;
+      letter-spacing: 1px;
+    }
+    .trust-logos {
+      margin: 32px 0 28px;
+    }
+  }
+  @media (max-width: 480px) {
+    .trust-logo-item {
+      flex: 0 1 calc(33.33% - 0px);
+      font-size: 0.8rem;
+    }
+  }
+
+
 </style>
 
 <!-- is:global: JS 通过 innerHTML 动态生成案例列表 DOM，作用域样式无法覆盖 -->
@@ -2947,6 +3181,7 @@ const websiteJsonLd = {
     );
     observer.observe(vgSection);
   }
+
 
   /* ===== Global Map Section ===== */
   const DB: Record<string, { n: string; c: string; t: string; r?: string }[]> =

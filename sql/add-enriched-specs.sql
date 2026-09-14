@@ -1,0 +1,78 @@
+-- ═══════════════════════════════════════════════════════════
+-- products 表新增 enriched_specs JSONB 字段
+-- 用途：存放每个产品专属的技术参数、特性、概述等结构化数据
+-- 产品详情页优先读取此字段，没有则回退用品类级通用内容
+--
+-- 执行方式：在 Supabase SQL Editor 中粘贴执行即可
+-- ═══════════════════════════════════════════════════════════
+
+-- 1. 添加 JSONB 字段（默认 NULL，不影响现有产品）
+ALTER TABLE products ADD COLUMN IF NOT EXISTS enriched_specs JSONB;
+
+-- 2. 添加注释（在 Supabase 表编辑器中可看到说明）
+COMMENT ON COLUMN products.enriched_specs IS '产品专属结构化数据（JSONB）。包含 specs（技术参数）、features（核心卖点）、summary（产品概述）。产品详情页优先读取此字段，没有则回退用品类级通用内容（productKnowledge.ts）。';
+
+-- ═══════════════════════════════════════════════════════════
+-- JSONB 字段数据格式说明
+-- ═══════════════════════════════════════════════════════════
+--
+-- {
+--   "summary": "产品专属概述（1-2 句话），描述这个具体产品的特点和定位",
+--   "specs": [
+--     { "label": "Panel Thickness", "value": "2.5mm" },
+--     { "label": "Alloy", "value": "AA3003-H24" },
+--     { "label": "Standard Width", "value": "1500mm" },
+--     { "label": "Max Length", "value": "4000mm" },
+--     { "label": "Weight", "value": "6.8 kg/m²" },
+--     { "label": "Coating System", "value": "2-coat PVDF (Kynar 500®)" },
+--     { "label": "Coating Thickness", "value": "30μm" },
+--     { "label": "Color Warranty", "value": "25 years (AAMA 2605)" },
+--     { "label": "Fire Rating", "value": "A2-s1,d0 (EN 13501-1)" },
+--     { "label": "Wind Load", "value": "Up to 4.5 kPa @ 1200mm span" }
+--   ],
+--   "features": [
+--     "Custom CNC formed to project-specific dimensions and shapes",
+--     "PVDF Kynar 500® coating with 25-year color warranty",
+--     "Factory pre-fabricated with concealed fix bracket system"
+--   ],
+--   "applications": [
+--     "Mid-to-high-rise commercial facades",
+--     "Institutional buildings (museums, government)",
+--     "Coastal and high-UV environments"
+--   ]
+-- }
+--
+-- ═══════════════════════════════════════════════════════════
+-- 示例：给一个产品填入 enriched_specs 数据
+-- （把 'your-product-slug' 替换为实际的产品 slug）
+-- ═══════════════════════════════════════════════════════════
+--
+-- UPDATE products SET enriched_specs = '{
+--   "summary": "2.5mm PVDF aluminum veneer panel designed for mid-to-high-rise exterior facade applications. Factory CNC formed with concealed fix bracket system for clean, screw-free appearance.",
+--   "specs": [
+--     { "label": "Panel Thickness", "value": "2.5mm" },
+--     { "label": "Alloy Grade", "value": "AA3003-H24" },
+--     { "label": "Standard Width", "value": "1000 / 1220 / 1500mm" },
+--     { "label": "Max Length", "value": "4000mm" },
+--     { "label": "Weight", "value": "6.8 kg/m²" },
+--     { "label": "Tensile Strength", "value": "≥ 130 MPa" },
+--     { "label": "Coating", "value": "2-coat PVDF (Kynar 500®)" },
+--     { "label": "Film Thickness", "value": "30μm" },
+--     { "label": "Color Warranty", "value": "25 years (AAMA 2605)" },
+--     { "label": "Fire Rating", "value": "A2-s1,d0" },
+--     { "label": "Wind Load", "value": "Up to 4.5 kPa @ 1200mm span" },
+--     { "label": "Flatness", "value": "≤ 1.5mm per 1000mm" }
+--   ],
+--   "features": [
+--     "Custom CNC formed: flat, curved, folded, or parametric shapes",
+--     "PVDF Kynar 500® coating — 25-year color retention",
+--     "Concealed fix bracket system — no visible screws on facade",
+--     "Lightweight at 6.8 kg/m² — 30% lighter than stone cladding"
+--   ],
+--   "applications": [
+--     "Commercial high-rise facades (10–50 stories)",
+--     "Airport terminals and transit stations",
+--     "Coastal environment buildings"
+--   ]
+-- }'::jsonb
+-- WHERE slug = 'your-product-slug';

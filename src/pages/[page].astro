@@ -2,26 +2,27 @@
 import Breadcrumb from "../components/Breadcrumb.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageBanner from "../components/PageBanner.astro";
+import ProjectGallery from "../components/ProjectGallery.astro";
 import { supabase } from "../lib/supabase";
+import { currentLang } from "../lib/i18n";
 
-export async function getStaticPaths() {
-  const { data: pages, error } = await supabase
-    .from("pages")
-    .select("*")
-    .eq("status", "published");
+// SSR 按需渲染
+export const prerender = false;
 
-  if (error) {
-    console.error("Failed to fetch pages:", error);
-    return [];
-  }
+const lang = currentLang(Astro.locals);
 
-  return (pages ?? []).map((page) => ({
-    params: { page: page.slug },
-    props: { page },
-  }));
+const { page: pageSlug } = Astro.params;
+const { data: page, error } = await supabase
+  .from("pages")
+  .select("*")
+  .eq("slug", pageSlug)
+  .eq("lang", lang)
+  .eq("status", "published")
+  .maybeSingle();
+
+if (error || !page) {
+  return new Response("Page not found", { status: 404 });
 }
-
-const { page } = Astro.props;
 
 // Use seo_title if available, otherwise fall back to title
 const pageTitle = page.seo_title || page.title;
@@ -37,6 +38,9 @@ const customJs = page.custom_js ?? "";
 const bannerVideoUrl = page.banner_video_url || null;
 const bannerPosterUrl = page.banner_poster_url || null;
 const hasBanner = !!(bannerVideoUrl || bannerPosterUrl);
+
+// 特殊页面类型检测
+const isProjectGallery = page.slug === "project-gallery";
 ---
 
 <BaseLayout
@@ -49,49 +53,56 @@ const hasBanner = !!(bannerVideoUrl || bannerPosterUrl);
   customCss={customCss}
   customJs={customJs}
 >
-  {hasBanner ? (
-    <PageBanner
-      title={page.title}
-      breadcrumbItems={[
-        { name: "Home", url: "/" },
-        { name: page.title, url: `/${page.slug}/` },
-      ]}
-      videoUrl={bannerVideoUrl}
-      posterUrl={bannerPosterUrl}
-    />
-  ) : (
-    <Breadcrumb
-      items={[
-        { name: "Home", url: "/" },
-        { name: page.title, url: `/${page.slug}/` },
-      ]}
-    />
-  )}
+  {
+    hasBanner ? (
+      <PageBanner
+        title={page.title}
+        breadcrumbItems={[
+          { name: "Home", url: "/" },
+          { name: page.title, url: `/${page.slug}/` },
+        ]}
+        videoUrl={bannerVideoUrl}
+        posterUrl={bannerPosterUrl}
+      />
+    ) : (
+      <Breadcrumb
+        items={[
+          { name: "Home", url: "/" },
+          { name: page.title, url: `/${page.slug}/` },
+        ]}
+      />
+    )
+  }
 
   <!-- Hero section -->
-  {(page.hero_title || page.hero_subtitle) && (
-    <section class="hero">
-      {page.hero_title && <h2>{page.hero_title}</h2>}
-      {page.hero_subtitle && <p class="subtitle">{page.hero_subtitle}</p>}
-    </section>
-  )}
+  {
+    (page.hero_title || page.hero_subtitle) && (
+      <section class="hero">
+        {page.hero_title && <h2>{page.hero_title}</h2>}
+        {page.hero_subtitle && <p class="subtitle">{page.hero_subtitle}</p>}
+      </section>
+    )
+  }
 
   <!-- Hero image -->
-  {page.image_url && (
-    <img
-      src={page.image_url}
-      alt={page.image_alt || page.title}
-      width="800"
-      height="400"
-      class="hero-image"
-      loading="lazy"
-    />
-  )}
+  {
+    page.image_url && (
+      <img
+        src={page.image_url}
+        alt={page.image_alt || page.title}
+        width="800"
+        height="400"
+        class="hero-image"
+        loading="lazy"
+      />
+    )
+  }
 
   <!-- Page content (HTML from database) -->
-  {page.content && (
-    <div class="page-content" set:html={page.content} />
-  )}
+  {page.content && <div class="page-content" set:html={page.content} />}
+
+  <!-- Project Gallery (动态渲染 posts 表中 primary_tag='projects' 的文章) -->
+  {isProjectGallery && <ProjectGallery />}
 </BaseLayout>
 
 <style>

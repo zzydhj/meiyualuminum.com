@@ -12,7 +12,7 @@ export interface CategoryNode {
  * e.g., given "Brake Pads" (parent: Brake System), returns:
  *   [{ name: "Brake System", url: "/categories/brake-system/" }, { name: "Brake Pads", url: "/categories/brake-pads/" }]
  */
-export async function getCategoryChain(categoryId: number | null): Promise<{ name: string; url: string }[]> {
+export async function getCategoryChain(categoryId: number | null): Promise<{ name: string; url: string; slug: string }[]> {
   if (!categoryId) return [];
 
   const { data: allCategories } = await supabase
@@ -26,11 +26,11 @@ export async function getCategoryChain(categoryId: number | null): Promise<{ nam
     categoryMap.set(cat.id, cat as CategoryNode);
   }
 
-  const chain: { name: string; url: string }[] = [];
+  const chain: { name: string; url: string; slug: string }[] = [];
   let current: CategoryNode | undefined = categoryMap.get(categoryId);
 
   while (current) {
-    chain.unshift({ name: current.name, url: `/categories/${current.slug}/` });
+    chain.unshift({ name: current.name, url: `/categories/${current.slug}/`, slug: current.slug });
     current = current.parent_id ? categoryMap.get(current.parent_id) : undefined;
   }
 

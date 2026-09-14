@@ -1,0 +1,8 @@
+---
+// 中文首页 — 复用根首页组件，设置 lang='zh'
+export const prerender = false;
+import Home from "../index.astro";
+Astro.locals.lang = "zh";
+---
+
+<Home />

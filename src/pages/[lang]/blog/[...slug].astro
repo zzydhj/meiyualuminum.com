@@ -1,0 +1,13 @@
+---
+// [lang]/blog/[...slug].astro — 多语言博客/项目案例详情
+// 瘦包装：设置 locals.lang 后复用根路由组件，零模板重复。
+export const prerender = false;
+import Post from "../../blog/[...slug].astro";
+import { isValidLang, DEFAULT_LANG } from "../../../lib/i18n";
+
+Astro.locals.lang = isValidLang(Astro.params.lang)
+    ? Astro.params.lang
+    : DEFAULT_LANG;
+---
+
+<Post />

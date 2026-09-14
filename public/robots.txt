@@ -1,3 +1,6 @@
 # Site not yet launched — block all search engine crawlers (including Google)
+# REMOVE "Disallow: /" when the site goes live
 User-agent: *
 Disallow: /
+
+Sitemap: https://www.meiyualuminum.com/sitemap.xml

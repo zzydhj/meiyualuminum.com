@@ -1,0 +1,13 @@
+---
+// [lang]/videos/[...slug].astro — 多语言视频详情
+// 瘦包装：设置 locals.lang 后复用根路由组件，零模板重复。
+export const prerender = false;
+import Video from "../../videos/[...slug].astro";
+import { isValidLang, DEFAULT_LANG } from "../../../lib/i18n";
+
+Astro.locals.lang = isValidLang(Astro.params.lang)
+    ? Astro.params.lang
+    : DEFAULT_LANG;
+---
+
+<Video />

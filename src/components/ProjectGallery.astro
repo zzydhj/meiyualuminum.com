@@ -1,0 +1,439 @@
+---
+import { supabase } from "../lib/supabase";
+
+interface Props {
+    pageTitle?: string;
+}
+
+const { pageTitle = "Project Gallery" } = Astro.props;
+
+// 从 posts 表查询项目案例（primary_tag = 'projects'）
+const { data: projectPosts } = await supabase
+    .from("posts")
+    .select("slug, title, description, image_url, image_alt, tags, pub_date")
+    .eq("status", "published")
+    .eq("primary_tag", "projects")
+    .order("pub_date", { ascending: false });
+
+const projects = projectPosts ?? [];
+
+// 从所有项目的 tags 中提取唯一分类
+const allTags = new Set<string>();
+projects.forEach((p) => {
+    (p.tags ?? []).forEach((t: string) => {
+        if (t !== "projects") allTags.add(t);
+    });
+});
+
+const categoryMap: Record<string, { label: string; icon: string }> = {
+    airport: { label: "Airport", icon: "✈" },
+    hotel: { label: "Hotel & Resort", icon: "🏨" },
+    mall: { label: "Shopping Mall", icon: "🛍" },
+    office: { label: "Office Building", icon: "🏢" },
+    hospital: { label: "Hospital", icon: "🏥" },
+    school: { label: "School", icon: "🎓" },
+    station: { label: "Station", icon: "🚇" },
+    government: { label: "Government", icon: "🏛" },
+};
+
+// 构建分类列表（只保留有项目的分类）
+const categories = [
+    { id: "all", label: "All Projects", icon: "🏗" },
+    ...[...allTags]
+        .filter((t) => categoryMap[t])
+        .map((t) => ({ id: t, ...categoryMap[t] })),
+];
+
+// 统计
+const regionSet = new Set<string>();
+projects.forEach((p) => {
+    (p.tags ?? []).forEach((t: string) => {
+        if (
+            [
+                "china",
+                "asia",
+                "europe",
+                "north-america",
+                "south-america",
+                "africa",
+                "middle-east",
+                "oceania",
+            ].includes(t)
+        ) {
+            regionSet.add(t);
+        }
+    });
+});
+
+const stats = {
+    total: projects.length,
+    regions: regionSet.size,
+    sectors: categories.length - 1,
+};
+---
+
+<!-- Stats Strip -->
+<section class="pg-stats">
+    <div class="pg-stats-inner">
+        <div class="pg-stat">
+            <span class="pg-stat-num">{stats.total}+</span>
+            <span class="pg-stat-label">Projects</span>
+        </div>
+        <div class="pg-stat">
+            <span class="pg-stat-num">{stats.regions}</span>
+            <span class="pg-stat-label">Regions</span>
+        </div>
+        <div class="pg-stat">
+            <span class="pg-stat-num">{stats.sectors}</span>
+            <span class="pg-stat-label">Sectors</span>
+        </div>
+        <div class="pg-stat">
+            <span class="pg-stat-num">15+</span>
+            <span class="pg-stat-label">Years Experience</span>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery -->
+<section class="pg-gallery">
+    <div class="pg-container">
+        <!-- Category Filters -->
+        <div class="pg-filters">
+            {
+                categories.map((cat) => (
+                    <button class="pg-filter-btn" data-filter={cat.id}>
+                        <span class="pg-filter-icon">{cat.icon}</span>
+                        <span class="pg-filter-label">{cat.label}</span>
+                    </button>
+                ))
+            }
+        </div>
+
+        <!-- Project Grid -->
+        {
+            projects.length > 0 ? (
+                <div class="pg-grid" id="pgGrid">
+                    {projects.map((post) => {
+                        const postTags = (post.tags ?? []) as string[];
+                        const categoryTag =
+                            postTags.find((t) => categoryMap[t]) ?? "";
+                        const regionTag =
+                            postTags.find((t) =>
+                                [
+                                    "china",
+                                    "asia",
+                                    "europe",
+                                    "north-america",
+                                    "south-america",
+                                    "africa",
+                                    "middle-east",
+                                    "oceania",
+                                ].includes(t),
+                            ) ?? "";
+                        const catLabel =
+                            categoryMap[categoryTag]?.label ?? "Project";
+                        const regionLabel = regionTag
+                            ? regionTag
+                                  .replace(/-/g, " ")
+                                  .replace(/\b\w/g, (c) => c.toUpperCase())
+                            : "";
+
+                        return (
+                            <a
+                                href={`/blog/${post.slug}/`}
+                                class="pg-card"
+                                data-tags={postTags.join(",")}
+                            >
+                                <div class="pg-card-img">
+                                    <img
+                                        src={post.image_url || ""}
+                                        alt={post.image_alt || post.title}
+                                        loading="lazy"
+                                        width="600"
+                                        height="400"
+                                    />
+                                    <div class="pg-card-badges">
+                                        <span class="pg-badge-cat">
+                                            {catLabel}
+                                        </span>
+                                        {regionLabel && (
+                                            <span class="pg-badge-region">
+                                                {regionLabel}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                                <div class="pg-card-body">
+                                    <h3>{post.title}</h3>
+                                    <p>{post.description}</p>
+                                </div>
+                            </a>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div class="pg-empty">
+                    <p>
+                        No project cases yet. Add blog posts with tag "projects"
+                        to see them here.
+                    </p>
+                </div>
+            )
+        }
+    </div>
+</section>
+
+<style>
+    /* ===== Stats Strip ===== */
+    .pg-stats {
+        background: linear-gradient(135deg, #69574a 0%, #4a3d32 100%);
+        padding: 32px 0;
+    }
+    .pg-stats-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .pg-stat {
+        text-align: center;
+        min-width: 120px;
+    }
+    .pg-stat-num {
+        display: block;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #c09020;
+        line-height: 1.1;
+    }
+    .pg-stat-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 600;
+    }
+
+    /* ===== Gallery ===== */
+    .pg-gallery {
+        padding: 60px 0 80px;
+        background: #f8f6f3;
+    }
+    .pg-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    /* ===== Filters ===== */
+    .pg-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 48px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #e8e4df;
+    }
+    .pg-filter-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
+        border: 2px solid #e8e4df;
+        border-radius: 50px;
+        background: #fff;
+        color: #69574a;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+    }
+    .pg-filter-btn:hover {
+        border-color: #c09020;
+        color: #c09020;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(192, 144, 32, 0.15);
+    }
+    .pg-filter-btn.active {
+        background: #c09020;
+        border-color: #c09020;
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(192, 144, 32, 0.3);
+    }
+    .pg-filter-icon {
+        font-size: 1rem;
+    }
+
+    /* ===== Grid ===== */
+    .pg-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+    }
+
+    /* ===== Card ===== */
+    .pg-card {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #ece8e3;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .pg-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 48px rgba(105, 87, 74, 0.16);
+        border-color: rgba(192, 144, 32, 0.3);
+    }
+    .pg-card.hidden {
+        display: none;
+    }
+
+    /* ===== Card Image ===== */
+    .pg-card-img {
+        position: relative;
+        aspect-ratio: 3 / 2;
+        overflow: hidden;
+    }
+    .pg-card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .pg-card:hover .pg-card-img img {
+        transform: scale(1.08);
+    }
+    .pg-card-badges {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.45) 0%,
+            transparent 100%
+        );
+    }
+    .pg-badge-cat {
+        padding: 4px 12px;
+        background: rgba(192, 144, 32, 0.9);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+    .pg-badge-region {
+        padding: 4px 10px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 20px;
+    }
+
+    /* ===== Card Body ===== */
+    .pg-card-body {
+        padding: 20px 22px 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .pg-card-body h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 8px;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .pg-card-body p {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* ===== Empty ===== */
+    .pg-empty {
+        text-align: center;
+        padding: 80px 20px;
+        color: #94a3b8;
+        font-size: 1.1rem;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+        .pg-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+    }
+    @media (max-width: 640px) {
+        .pg-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .pg-filters {
+            gap: 8px;
+        }
+        .pg-filter-btn {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+        }
+        .pg-filter-label {
+            display: none;
+        }
+        .pg-filter-icon {
+            font-size: 1.2rem;
+        }
+        .pg-stat-num {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+
+<script>
+    const btns = document.querySelectorAll<HTMLButtonElement>(".pg-filter-btn");
+    const cards = document.querySelectorAll<HTMLElement>(".pg-card");
+
+    if (btns.length > 0) btns[0].classList.add("active");
+
+    btns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            btns.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            const filter = btn.dataset.filter!;
+
+            cards.forEach((card) => {
+                const tags = (card.dataset.tags ?? "").split(",");
+                const show = filter === "all" || tags.includes(filter);
+                card.classList.toggle("hidden", !show);
+            });
+        });
+    });
+</script>

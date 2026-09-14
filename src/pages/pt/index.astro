@@ -1,0 +1,8 @@
+---
+// Página inicial em português — reutilizar Home, lang='pt'
+export const prerender = false;
+import Home from "../index.astro";
+Astro.locals.lang = "pt";
+---
+
+<Home />

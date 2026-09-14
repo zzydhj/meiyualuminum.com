@@ -1,0 +1,592 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import InquiryButton from "../components/InquiryButton.astro";
+
+const pageTitle = "Surface Treatment Comparison Guide";
+const pageDescription =
+    "Compare PVDF, powder coating, anodized, roller coating, and wood grain transfer finishes for aluminum building products. Find the right surface treatment for your project.";
+---
+
+<BaseLayout pageTitle={pageTitle} description={pageDescription}>
+    <Breadcrumb
+        items={[
+            { name: "Home", url: "/" },
+            { name: "Resources", url: "#" },
+            {
+                name: "Surface Treatment Guide",
+                url: "/surface-treatment-comparison/",
+            },
+        ]}
+    />
+
+    <div class="stg-intro">
+        <p>
+            Choosing the right surface treatment is one of the most important
+            decisions for any aluminum building product. The coating determines
+            color longevity, weather resistance, maintenance requirements, and
+            overall project cost. This guide compares the five main finishing
+            systems available for MEIYU aluminum products.
+        </p>
+    </div>
+
+    <!-- ══════ COMPARISON TABLE ══════ -->
+    <section class="stg-compare">
+        <h2>Side-by-Side Comparison</h2>
+        <div class="stg-table-wrap">
+            <table class="stg-table">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>PVDF Coating</th>
+                        <th>Powder Coating</th>
+                        <th>Anodized</th>
+                        <th>Roller Coating (PE)</th>
+                        <th>Wood Grain Transfer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Coating Type</th>
+                        <td>Fluorocarbon (Kynar 500®)</td>
+                        <td>Thermoset polyester</td>
+                        <td>Electrochemical oxide layer</td>
+                        <td>Coil-coated PE</td>
+                        <td>Heat transfer film</td>
+                    </tr>
+                    <tr>
+                        <th>Film Thickness</th>
+                        <td>25–40 μm</td>
+                        <td>60–80 μm</td>
+                        <td>10–25 μm</td>
+                        <td>18–25 μm</td>
+                        <td>Film on base coat</td>
+                    </tr>
+                    <tr>
+                        <th>Color Warranty</th>
+                        <td><strong>25 years</strong> (AAMA 2605)</td>
+                        <td>10–15 years (AAMA 2604)</td>
+                        <td>20+ years</td>
+                        <td>10 years</td>
+                        <td>10 years</td>
+                    </tr>
+                    <tr>
+                        <th>UV Resistance</th>
+                        <td><span class="stg-excellent">Excellent</span></td>
+                        <td><span class="stg-good">Good</span></td>
+                        <td><span class="stg-excellent">Excellent</span></td>
+                        <td><span class="stg-fair">Fair</span></td>
+                        <td><span class="stg-good">Good</span></td>
+                    </tr>
+                    <tr>
+                        <th>Chemical Resistance</th>
+                        <td><span class="stg-excellent">Excellent</span></td>
+                        <td><span class="stg-good">Good</span></td>
+                        <td><span class="stg-good">Good</span></td>
+                        <td><span class="stg-fair">Fair</span></td>
+                        <td><span class="stg-fair">Fair</span></td>
+                    </tr>
+                    <tr>
+                        <th>Scratch / Abrasion</th>
+                        <td><span class="stg-good">Good</span></td>
+                        <td><span class="stg-excellent">Excellent</span></td>
+                        <td><span class="stg-excellent">Excellent</span></td>
+                        <td><span class="stg-fair">Fair</span></td>
+                        <td><span class="stg-fair">Fair</span></td>
+                    </tr>
+                    <tr>
+                        <th>Color Range</th>
+                        <td>Full RAL + metallic + custom</td>
+                        <td>Full RAL + textured</td>
+                        <td>Silver, bronze, black, gold</td>
+                        <td>Full RAL (limited gloss range)</td>
+                        <td>Natural wood patterns</td>
+                    </tr>
+                    <tr>
+                        <th>Best Environment</th>
+                        <td>Coastal, high UV, harsh climate</td>
+                        <td>Standard exterior, interior</td>
+                        <td>Interior, mild exterior</td>
+                        <td>Interior, large-area budget projects</td>
+                        <td>Interior feature walls, hospitality</td>
+                    </tr>
+                    <tr>
+                        <th>Relative Cost</th>
+                        <td><span class="stg-cost-high">$$$</span></td>
+                        <td><span class="stg-cost-mid">$$</span></td>
+                        <td><span class="stg-cost-mid">$$</span></td>
+                        <td><span class="stg-cost-low">$</span></td>
+                        <td><span class="stg-cost-mid">$$</span></td>
+                    </tr>
+                    <tr>
+                        <th>Suitable Products</th>
+                        <td>Aluminum Veneer, Facade Panels, Honeycomb</td>
+                        <td>All products</td>
+                        <td>Square Tubes, Skirting, Facade Fins</td>
+                        <td>Strip Panels, Ceiling Tiles</td>
+                        <td>Strip Panels, Baffles, Skirting</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ══════ DETAILED CARDS ══════ -->
+    <section class="stg-details">
+        <h2>Detailed Finish Profiles</h2>
+        <div class="stg-cards">
+            <div class="stg-card">
+                <div class="stg-card-head stg-pvdf">
+                    <h3>PVDF (Fluorocarbon) Coating</h3>
+                    <span class="stg-badge">Premium Choice</span>
+                </div>
+                <p>
+                    PVDF (Polyvinylidene Fluoride) coatings based on Kynar 500®
+                    or Hylar 5000® resin are the gold standard for exterior
+                    aluminum facade applications. Applied as a multi-coat system
+                    (primer + PVDF topcoat, optionally with a clear coat), PVDF
+                    delivers unmatched UV stability, chalk resistance, and color
+                    retention in the harshest environments.
+                </p>
+                <h4>When to Specify PVDF:</h4>
+                <ul>
+                    <li>
+                        Exterior facades in coastal or industrial environments
+                    </li>
+                    <li>Projects requiring 25+ year color warranties</li>
+                    <li>
+                        Metallic, pearlescent, or custom colors with long-term
+                        stability
+                    </li>
+                    <li>Landmark architecture and institutional buildings</li>
+                    <li>
+                        Regions with high UV exposure (Middle East, Australia,
+                        tropics)
+                    </li>
+                </ul>
+                <h4>Application Standard:</h4>
+                <p>
+                    AAMA 2605-22 — "Voluntary Specification, Test Procedures and
+                    Performance Requirements for Fluoropolymer Coatings on
+                    Aluminum Extrusions and Panels"
+                </p>
+            </div>
+
+            <div class="stg-card">
+                <div class="stg-card-head stg-powder">
+                    <h3>Powder Coating (Polyester)</h3>
+                    <span class="stg-badge">Best Value</span>
+                </div>
+                <p>
+                    Thermoset polyester powder coating is the most widely used
+                    finish for aluminum building products. Applied
+                    electrostatically and cured at high temperature, it produces
+                    a thick, uniform film with excellent mechanical durability
+                    and a wide range of colors and textures (matte, satin,
+                    gloss, textured).
+                </p>
+                <h4>When to Specify Powder Coating:</h4>
+                <ul>
+                    <li>Standard commercial facades and interiors</li>
+                    <li>Budget-conscious projects requiring good durability</li>
+                    <li>
+                        Ceiling panels, skirting boards, and interior elements
+                    </li>
+                    <li>Projects requiring specific RAL color matching</li>
+                    <li>High-traffic areas where scratch resistance matters</li>
+                </ul>
+                <h4>Application Standard:</h4>
+                <p>
+                    AAMA 2604-22 — "Voluntary Specification, Test Procedures and
+                    Performance Requirements for High Performance Organic
+                    Coatings on Aluminum Extrusions and Panels"
+                </p>
+            </div>
+
+            <div class="stg-card">
+                <div class="stg-card-head stg-anodized">
+                    <h3>Anodized Finish</h3>
+                    <span class="stg-badge">Natural Metallic</span>
+                </div>
+                <p>
+                    Anodizing is an electrochemical process that converts the
+                    aluminum surface into a hard aluminum oxide layer. Unlike
+                    applied coatings, anodizing is integral to the metal — it
+                    cannot peel, flake, or blister. The result is a durable
+                    metallic finish that preserves the natural luster of
+                    aluminum.
+                </p>
+                <h4>When to Specify Anodized:</h4>
+                <ul>
+                    <li>
+                        Modern minimalist architecture requiring metallic
+                        aesthetics
+                    </li>
+                    <li>
+                        Facade fins, sun louvers, and structural aluminum
+                        elements
+                    </li>
+                    <li>
+                        Interior applications where abrasion resistance is
+                        critical
+                    </li>
+                    <li>
+                        Projects where coating peeling is a concern (high
+                        humidity)
+                    </li>
+                    <li>Skirting boards in high-traffic commercial areas</li>
+                </ul>
+                <h4>Application Standard:</h4>
+                <p>
+                    AA (Aluminum Association) Class I (exterior) / Class II
+                    (interior) — Minimum oxide thickness 18 μm (Class I), 8 μm
+                    (Class II)
+                </p>
+            </div>
+
+            <div class="stg-card">
+                <div class="stg-card-head stg-roller">
+                    <h3>Roller Coating (PE)</h3>
+                    <span class="stg-badge">Cost-Effective</span>
+                </div>
+                <p>
+                    Continuous coil coating (roller coating) applies PE
+                    (polyester) paint to aluminum coil in a factory-controlled
+                    process. The result is exceptional color consistency from
+                    batch to batch, making it ideal for large-area projects
+                    where color uniformity is essential. Cost-effective for
+                    high-volume applications.
+                </p>
+                <h4>When to Specify Roller Coating:</h4>
+                <ul>
+                    <li>
+                        Large-area ceiling projects (airports, malls, offices)
+                    </li>
+                    <li>Budget-sensitive commercial interiors</li>
+                    <li>Projects requiring batch-to-batch color consistency</li>
+                    <li>
+                        Strip panels and ceiling tiles in controlled
+                        environments
+                    </li>
+                </ul>
+            </div>
+
+            <div class="stg-card">
+                <div class="stg-card-head stg-woodgrain">
+                    <h3>Wood Grain Transfer</h3>
+                    <span class="stg-badge">Warm Aesthetics</span>
+                </div>
+                <p>
+                    Heat transfer printing applies realistic wood grain patterns
+                    onto a pre-coated aluminum substrate. The result looks and
+                    feels like real timber but delivers the fire rating,
+                    moisture resistance, and zero maintenance of aluminum.
+                    Available in oak, walnut, teak, and other popular species.
+                </p>
+                <h4>When to Specify Wood Grain:</h4>
+                <ul>
+                    <li>
+                        Interior feature walls and ceilings in hospitality /
+                        retail
+                    </li>
+                    <li>
+                        Projects wanting timber aesthetics in wet areas or
+                        fire-rated zones
+                    </li>
+                    <li>Skirting boards to complement wood-look flooring</li>
+                    <li>
+                        Renovation projects replacing real timber for
+                        maintenance reasons
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ SELECTION GUIDE ══════ -->
+    <section class="stg-guide">
+        <h2>Quick Selection Guide by Project Type</h2>
+        <div class="stg-guide-grid">
+            <div class="stg-guide-item">
+                <h4>Exterior Facade (Coastal / High UV)</h4>
+                <p class="stg-rec">→ PVDF Coating</p>
+                <p>
+                    Maximum UV and salt-spray resistance with 25-year warranty.
+                </p>
+            </div>
+            <div class="stg-guide-item">
+                <h4>Exterior Facade (Standard Climate)</h4>
+                <p class="stg-rec">→ Powder Coating</p>
+                <p>Excellent durability at a lower cost. Wide color range.</p>
+            </div>
+            <div class="stg-guide-item">
+                <h4>Interior Ceiling (Office / Commercial)</h4>
+                <p class="stg-rec">→ Powder Coating or Roller Coating</p>
+                <p>
+                    Good aesthetics and durability, cost-effective for large
+                    areas.
+                </p>
+            </div>
+            <div class="stg-guide-item">
+                <h4>Interior Ceiling (Hospitality / Feature)</h4>
+                <p class="stg-rec">→ Wood Grain Transfer</p>
+                <p>Warm timber aesthetics with zero maintenance.</p>
+            </div>
+            <div class="stg-guide-item">
+                <h4>Sun Louvers / Facade Fins</h4>
+                <p class="stg-rec">→ Anodized or PVDF</p>
+                <p>
+                    Integral oxide layer resists abrasion; PVDF for color
+                    options.
+                </p>
+            </div>
+            <div class="stg-guide-item">
+                <h4>Skirting Boards (High Traffic)</h4>
+                <p class="stg-rec">→ Anodized (Hard Coat)</p>
+                <p>Lifetime durability, will not peel or scratch easily.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ BOTTOM CTA ══════ -->
+    <section class="stg-cta">
+        <h2>Not Sure Which Finish to Choose?</h2>
+        <p>
+            Our technical team can review your project specifications and
+            recommend the optimal coating system based on your environment,
+            design requirements, and budget.
+        </p>
+        <InquiryButton label="Get Expert Advice" class="stg-cta-btn" />
+    </section>
+</BaseLayout>
+
+<style>
+    .stg-intro {
+        max-width: 800px;
+        margin-bottom: 2rem;
+    }
+    .stg-intro p {
+        font-size: 0.95rem;
+        color: #475569;
+        line-height: 1.8;
+    }
+
+    /* Comparison table */
+    .stg-compare {
+        margin-bottom: 3rem;
+    }
+    .stg-compare h2 {
+        font-size: 1.5rem;
+        margin: 0 0 1rem;
+    }
+    .stg-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .stg-table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 700px;
+    }
+    .stg-table thead th {
+        background: #1e293b;
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 14px;
+        text-align: left;
+    }
+    .stg-table tbody th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .stg-table tbody td {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        color: #334155;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .stg-table tbody tr:hover {
+        background: #fafbfc;
+    }
+    .stg-excellent {
+        color: #059669;
+        font-weight: 700;
+    }
+    .stg-good {
+        color: #2563eb;
+        font-weight: 600;
+    }
+    .stg-fair {
+        color: #d97706;
+        font-weight: 600;
+    }
+    .stg-cost-high {
+        color: #dc2626;
+        font-weight: 700;
+    }
+    .stg-cost-mid {
+        color: #d97706;
+        font-weight: 700;
+    }
+    .stg-cost-low {
+        color: #059669;
+        font-weight: 700;
+    }
+
+    /* Detail cards */
+    .stg-details {
+        margin-bottom: 3rem;
+    }
+    .stg-details h2 {
+        font-size: 1.5rem;
+        margin: 0 0 1.25rem;
+    }
+    .stg-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .stg-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .stg-card-head {
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    .stg-card-head h3 {
+        margin: 0;
+        font-size: 1.15rem;
+        color: #fff;
+    }
+    .stg-pvdf {
+        background: linear-gradient(135deg, #1e3a5f, #2563eb);
+    }
+    .stg-powder {
+        background: linear-gradient(135deg, #065f46, #059669);
+    }
+    .stg-anodized {
+        background: linear-gradient(135deg, #374151, #6b7280);
+    }
+    .stg-roller {
+        background: linear-gradient(135deg, #92400e, #d97706);
+    }
+    .stg-woodgrain {
+        background: linear-gradient(135deg, #78350f, #a16207);
+    }
+    .stg-badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.15);
+        padding: 4px 10px;
+        border-radius: 4px;
+    }
+    .stg-card-body,
+    .stg-card > p,
+    .stg-card > h4,
+    .stg-card > ul {
+        padding: 0 20px;
+    }
+    .stg-card > p {
+        font-size: 0.9rem;
+        color: #475569;
+        line-height: 1.7;
+        margin: 16px 20px;
+    }
+    .stg-card > h4 {
+        font-size: 0.9rem;
+        color: #1e293b;
+        margin: 16px 20px 8px;
+    }
+    .stg-card > ul {
+        margin: 0 20px 16px;
+        padding: 0 0 0 18px;
+    }
+    .stg-card > ul li {
+        font-size: 0.88rem;
+        color: #334155;
+        margin-bottom: 4px;
+        line-height: 1.5;
+    }
+
+    /* Quick selection guide */
+    .stg-guide {
+        margin-bottom: 3rem;
+    }
+    .stg-guide h2 {
+        font-size: 1.5rem;
+        margin: 0 0 1.25rem;
+    }
+    .stg-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+    }
+    .stg-guide-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 18px;
+        background: #fff;
+    }
+    .stg-guide-item h4 {
+        margin: 0 0 8px;
+        font-size: 0.95rem;
+        color: #1e293b;
+    }
+    .stg-rec {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #c09020;
+        margin: 0 0 6px;
+    }
+    .stg-guide-item > p:last-child {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Bottom CTA */
+    .stg-cta {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #f8f6f3;
+        border-radius: 12px;
+        margin: 2rem 0;
+    }
+    .stg-cta h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.5rem;
+        color: #1e293b;
+    }
+    .stg-cta p {
+        font-size: 0.95rem;
+        color: #64748b;
+        max-width: 550px;
+        margin: 0 auto 1.5rem;
+        line-height: 1.6;
+    }
+    .stg-cta :global(.stg-cta-btn) {
+        background-color: #69574a !important;
+        padding: 0.75rem 2.5rem !important;
+        font-size: 1rem !important;
+    }
+</style>

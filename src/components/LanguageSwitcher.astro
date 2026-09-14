@@ -1,0 +1,241 @@
+---
+/**
+ * LanguageSwitcher — 多语言切换下拉按钮
+ * 自动从 URL 检测当前语言，生成其他语言的切换链接。
+ * 英语 = 根路径（无前缀），其他语言 = /{lang}/... 前缀。
+ */
+import {
+    LANG_PREFIXES,
+    LANG_LABELS,
+    flagUrl,
+    DEFAULT_LANG,
+    type Lang,
+} from "../lib/i18n";
+
+// 从当前 URL 检测语言
+const pathname = Astro.url.pathname;
+const firstSegment = pathname.split("/").filter(Boolean)[0] ?? "";
+const currentLang: Lang = (LANG_PREFIXES as readonly string[]).includes(
+    firstSegment,
+)
+    ? (firstSegment as Lang)
+    : DEFAULT_LANG;
+
+// 生成其他语言的切换 URL
+const otherLangs = ([DEFAULT_LANG, ...LANG_PREFIXES] as Lang[]).filter(
+    (l) => l !== currentLang,
+);
+
+/** 将当前路径转换为其他语言的路径 */
+function switchLangPath(targetLang: Lang): string {
+    if (currentLang === DEFAULT_LANG) {
+        // 英语根路径 → /{target}/...
+        return `/${targetLang}${pathname === "/" ? "/" : pathname}`;
+    }
+    if (targetLang === DEFAULT_LANG) {
+        // 非英语 → 英语根路径（去掉前缀）
+        return pathname.slice(currentLang.length + 1) || "/";
+    }
+    // 非英语 → 其他非英语
+    return `/${targetLang}${pathname.slice(currentLang.length + 1) || "/"}`;
+}
+---
+
+<div class="lang-switcher">
+    <button
+        class="lang-toggle"
+        aria-expanded="false"
+        aria-label="Switch language"
+    >
+        <img
+            class="lang-flag"
+            src={flagUrl(currentLang)}
+            alt=""
+            width="20"
+            height="14"
+            loading="lazy"
+        />
+        <span class="lang-label">{LANG_LABELS[currentLang]}</span>
+        <svg
+            class="chevron"
+            width="10"
+            height="6"
+            viewBox="0 0 10 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+        >
+            <path d="M1 1l4 4 4-4"></path>
+        </svg>
+    </button>
+    <div class="lang-dropdown">
+        {
+            otherLangs.map((lang) => (
+                <a href={switchLangPath(lang)} hreflang={lang}>
+                    <img
+                        class="lang-flag"
+                        src={flagUrl(lang)}
+                        alt=""
+                        width="20"
+                        height="14"
+                        loading="lazy"
+                    />
+                    <span class="lang-name">{LANG_LABELS[lang]}</span>
+                </a>
+            ))
+        }
+    </div>
+</div>
+
+<script>
+    // 点击切换下拉
+    const switchers = document.querySelectorAll(".lang-switcher");
+    switchers.forEach((sw) => {
+        const toggle = sw.querySelector(".lang-toggle") as HTMLButtonElement;
+        const dropdown = sw.querySelector(".lang-dropdown") as HTMLElement;
+        toggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const open = toggle.getAttribute("aria-expanded") === "true";
+            // 关闭其他已打开的切换器
+            document
+                .querySelectorAll(
+                    '.lang-switcher .lang-toggle[aria-expanded="true"]',
+                )
+                .forEach((t) => {
+                    t.setAttribute("aria-expanded", "false");
+                });
+            toggle.setAttribute("aria-expanded", String(!open));
+        });
+    });
+    // 点击页面其他位置关闭
+    document.addEventListener("click", () => {
+        document
+            .querySelectorAll(
+                '.lang-switcher .lang-toggle[aria-expanded="true"]',
+            )
+            .forEach((t) => {
+                t.setAttribute("aria-expanded", "false");
+            });
+    });
+</script>
+
+<style>
+    .lang-switcher {
+        position: relative;
+        margin-left: 12px;
+        flex-shrink: 0;
+    }
+
+    .lang-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border: 1.5px solid #e0dbd5;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--nav-link-color, #0d0950);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+            border-color 0.2s,
+            background 0.2s;
+        white-space: nowrap;
+    }
+    .lang-toggle:hover {
+        border-color: #c09020;
+        background: rgba(192, 144, 32, 0.06);
+    }
+    .lang-toggle svg:first-child {
+        width: 16px;
+        height: 16px;
+        opacity: 0.7;
+    }
+    .lang-flag {
+        width: 20px;
+        height: 14px;
+        object-fit: contain;
+        border-radius: 2px;
+        flex-shrink: 0;
+        /* subtle shadow for white flags on white bg */
+        filter: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.12));
+    }
+    .lang-toggle .chevron {
+        transition: transform 0.2s;
+        opacity: 0.5;
+    }
+    .lang-toggle[aria-expanded="true"] .chevron {
+        transform: rotate(180deg);
+    }
+
+    .lang-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        min-width: 140px;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 10px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        padding: 6px 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition:
+            opacity 0.2s,
+            visibility 0.2s,
+            transform 0.2s;
+        z-index: 1001;
+    }
+    .lang-toggle[aria-expanded="true"] + .lang-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .lang-dropdown a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+        white-space: nowrap;
+        transition:
+            background 0.15s,
+            color 0.15s;
+    }
+    .lang-dropdown a:hover {
+        background: #f8f6f3;
+        color: #c09020;
+    }
+    .lang-dropdown .lang-flag {
+        width: 24px;
+        height: 16px;
+    }
+    .lang-dropdown .lang-name {
+        flex: 1;
+    }
+
+    /* 移动端：隐藏语言标签文字，只留国旗图标 */
+    @media screen and (max-width: 1399px) {
+        .lang-toggle .lang-label {
+            display: none;
+        }
+        .lang-toggle {
+            padding: 8px;
+        }
+        .lang-toggle .chevron {
+            display: none;
+        }
+        .lang-switcher {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+</style>
