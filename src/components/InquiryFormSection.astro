@@ -1,0 +1,305 @@
+---
+/**
+ * InquiryFormSection.astro — 详情页底部内嵌询盘表单区块
+ *
+ * - 用于产品详情页 / Blog 文章页 / 视频页的内容末尾、页脚之前
+ * - 左栏：头文案 / 三步流程 / 「Prefer to talk now?」直接联系模块三块，
+ *         用 space-between 均摊纵向空间，避免左右结构下左栏留大白洞
+ * - 右栏：复用 InquiryForm（与联系页、询盘弹窗同一套 web3forms 提交）
+ * - 暖色渐变带 + 圆角描边，与站点品牌色（棕 #69574a / 金 #c09020）协调
+ */
+import InquiryForm from "./InquiryForm.astro";
+
+interface Props {
+    /** 来源页路径，透传给 InquiryForm 的隐藏字段 */
+    source?: string;
+    /** 询盘关联对象（如产品/文章/视频标题），透传给 InquiryForm 的隐藏字段 */
+    regarding?: string;
+    /** 区块主标题（可按页面类型微调） */
+    title?: string;
+    /** 区块说明文案 */
+    desc?: string;
+}
+
+const {
+    source = "",
+    regarding = "",
+    title = "Send Us an Inquiry",
+    desc = "Tell us about your project — our engineering team replies within 24 hours with pricing, specifications and recommendations.",
+} = Astro.props;
+
+const WHATSAPP_URL =
+    "https://wa.me/8613509838008?text=" +
+    encodeURIComponent("Hi, I'm interested in your aluminum products");
+---
+
+<section class="ifs" aria-label="Inquiry form">
+    <div class="ifs-inner">
+        <div class="ifs-copy">
+            <div class="ifs-head">
+                <p class="ifs-eyebrow">Get a Free Quote</p>
+                <h2 class="ifs-title">{title}</h2>
+                <p class="ifs-desc">{desc}</p>
+            </div>
+
+            <ol class="ifs-steps">
+                <li>
+                    <span class="ifs-step-no" aria-hidden="true">1</span>
+                    <span class="ifs-step-txt">
+                        <strong>Send your inquiry</strong>
+                        <small
+                            >Products, sizes, quantities — or paste a drawing /
+                            cloud-drive link.</small
+                        >
+                    </span>
+                </li>
+                <li>
+                    <span class="ifs-step-no" aria-hidden="true">2</span>
+                    <span class="ifs-step-txt">
+                        <strong>Get an engineer's reply</strong>
+                        <small
+                            >Within 24 hours: pricing, specifications and
+                            recommendations.</small
+                        >
+                    </span>
+                </li>
+                <li>
+                    <span class="ifs-step-no" aria-hidden="true">3</span>
+                    <span class="ifs-step-txt">
+                        <strong>Confirm samples &amp; drawings</strong>
+                        <small
+                            >Free samples and shop drawings before you place an
+                            order.</small
+                        >
+                    </span>
+                </li>
+            </ol>
+
+            <!-- 沉底直接联系模块：填住左下空白，同时提供表单之外的转化路径 -->
+            <div class="ifs-direct">
+                <p class="ifs-direct-title">Prefer to talk now?</p>
+                <a
+                    class="ifs-direct-row"
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="ifs-ic ifs-ic-wa" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="currentColor"
+                            ><path
+                                d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23m4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28"
+                            ></path></svg
+                        >
+                    </span>
+                    <span class="ifs-direct-txt">
+                        <strong>WhatsApp</strong>
+                        <small>+86 135 0983 8008</small>
+                    </span>
+                </a>
+                <a class="ifs-direct-row" href="mailto:info@meiyualuminum.com">
+                    <span class="ifs-ic" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><rect x="2" y="4" width="20" height="16" rx="2"
+                            ></rect><path d="m22 7-10 6L2 7"></path></svg
+                        >
+                    </span>
+                    <span class="ifs-direct-txt">
+                        <strong>Email</strong>
+                        <small>info@meiyualuminum.com</small>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="ifs-form">
+            <InquiryForm source={source} regarding={regarding} />
+        </div>
+    </div>
+</section>
+
+<style>
+    .ifs {
+        margin: 3rem 0 0;
+    }
+
+    .ifs-inner {
+        display: grid;
+        grid-template-columns: 1fr 1.25fr;
+        gap: 2rem;
+        align-items: stretch;
+        background: linear-gradient(135deg, #f5eee6 0%, #ecdfd2 100%);
+        border: 1px solid #ddcbb8;
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    /* 左栏拉满整列高度：头 / 步骤 / 联系三块均摊纵向空间，避免中段留一大洞 */
+    .ifs-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1.75rem;
+    }
+
+    .ifs-eyebrow {
+        margin: 0 0 0.5rem;
+        color: #c09020;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .ifs-title {
+        margin: 0 0 0.75rem;
+        color: #1e293b;
+        font-size: 1.6rem;
+        line-height: 1.25;
+    }
+
+    .ifs-desc {
+        margin: 0 0 1.25rem;
+        color: #475569;
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    .ifs-steps {
+        list-style: none;
+        margin: 0.25rem 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+    }
+
+    .ifs-steps li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.7rem;
+    }
+
+    .ifs-step-no {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #c09020;
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .ifs-step-txt {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        line-height: 1.45;
+    }
+
+    .ifs-step-txt strong {
+        color: #334155;
+        font-size: 0.92rem;
+    }
+
+    .ifs-step-txt small {
+        color: #64748b;
+        font-size: 0.82rem;
+    }
+
+    /* 直接联系模块：虚线分隔，与上方步骤区分组 */
+    .ifs-direct {
+        padding-top: 1.5rem;
+        border-top: 1px dashed #d8c6b2;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .ifs-direct-title {
+        margin: 0 0 0.1rem;
+        color: #69574a;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .ifs-direct-row {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        background: #fff;
+        border: 1px solid #e8ddd5;
+        border-radius: 10px;
+        padding: 0.6rem 0.8rem;
+        text-decoration: none;
+        color: #1e293b;
+        transition:
+            border-color 0.2s,
+            box-shadow 0.2s,
+            transform 0.2s;
+    }
+
+    .ifs-direct-row:hover {
+        border-color: #c9b8a8;
+        box-shadow: 0 2px 8px rgba(105, 87, 74, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .ifs-ic {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: #eef2f6;
+        color: #475569;
+        flex-shrink: 0;
+    }
+
+    .ifs-ic-wa {
+        background: #e7f6ec;
+        color: #1ebe5d;
+    }
+
+    .ifs-direct-txt {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.3;
+    }
+
+    .ifs-direct-txt strong {
+        font-size: 0.9rem;
+    }
+
+    .ifs-direct-txt small {
+        color: #64748b;
+        font-size: 0.78rem;
+    }
+
+    @media screen and (max-width: 900px) {
+        .ifs-inner {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+    }
+</style>

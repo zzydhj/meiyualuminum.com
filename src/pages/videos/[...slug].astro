@@ -8,6 +8,7 @@
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import RecommendedVideos from "../../components/RecommendedVideos.astro";
 import SidebarVideoTags from "../../components/SidebarVideoTags.astro";
+import InquiryFormSection from "../../components/InquiryFormSection.astro";
 import Tag from "../../components/Tag.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
@@ -167,6 +168,13 @@ const videoJsonLd = {
       <SidebarVideoTags />
     </div>
   </div>
+
+  <InquiryFormSection
+    source={Astro.url.pathname}
+    regarding={video.title}
+    title="Interested in What You See?"
+    desc="Want pricing, samples or a solution for your project? Send us an inquiry and our team will get back to you within 24 hours."
+  />
 </BaseLayout>
 
 <style>

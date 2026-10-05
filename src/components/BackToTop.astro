@@ -1,0 +1,99 @@
+---
+/**
+ * BackToTop.astro — 全局"回到顶部"粘性底座标签
+ *
+ * - 位于右下角悬浮列的最底部：询盘 FAB 正下方
+ * - 底边贴合浏览器窗口下沿（bottom:0），仅左上/右上圆角
+ * - 宽度与上方圆形按钮一致（桌面 56 / 移动 50），右对齐同一列
+ * - 滚动超过阈值（600px）后从底部滑入；回到顶部附近滑出
+ * - 在 BaseLayout.astro 中引入一次即可，所有页面自动生效
+ */
+---
+
+<button
+    type="button"
+    class="back-to-top"
+    id="backToTop"
+    aria-label="Back to top"
+>
+    <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+    >
+        <path d="M12 19V5M5 12l7-7 7 7"></path>
+    </svg>
+</button>
+
+<script>
+    const btn = document.getElementById("backToTop")!;
+    const THRESHOLD = 600; // 滚动超过 600px 才显示
+    const onScroll = () =>
+        btn.classList.toggle("visible", window.scrollY > THRESHOLD);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    btn.addEventListener("click", () =>
+        window.scrollTo({ top: 0, behavior: "smooth" }),
+    );
+</script>
+
+<style>
+    .back-to-top {
+        position: fixed;
+        bottom: 0; /* 底边贴合窗口下沿 */
+        right: 32px; /* 与悬浮列同列 */
+        z-index: 899;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px; /* 与上方圆钮同宽 */
+        height: 32px; /* 扁长方形 */
+        border: none;
+        border-radius: 10px 10px 0 0; /* 仅左上/右上圆角 */
+        background-color: #69574a; /* 与询盘 FAB 同色，读作同一根柱子 */
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+        transform: translateY(100%); /* 隐藏时完全沉到窗口下沿之外 */
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            transform 0.3s ease,
+            visibility 0.3s ease,
+            background-color 0.2s;
+    }
+
+    .back-to-top.visible {
+        transform: translateY(0);
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .back-to-top:hover {
+        background-color: #5a4a3e;
+    }
+
+    .back-to-top:active {
+        background-color: #4e4238;
+    }
+
+    /* Mobile: 与移动悬浮列同宽同列 */
+    @media screen and (max-width: 1399px) {
+        .back-to-top {
+            width: 50px;
+            height: 36px; /* 扁但可点；配合移动端悬浮列上移 26px */
+            right: 18px;
+            border-radius: 8px 8px 0 0;
+        }
+        .back-to-top svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+</style>

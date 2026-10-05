@@ -19,6 +19,24 @@ export type Lang = (typeof SUPPORTED_LANGS)[number];
 /** 默认语言 = 英语（根路径，无前缀） */
 export const DEFAULT_LANG: Lang = 'en';
 
+/**
+ * 多语言总开关（软停放）。
+ * false = 停放：对外仅英文，/zh/ 等非英语路由不生效，hreflang/sitemap 只输出英文；
+ *           页眉切换器保留为「即将上线」预告态。
+ * true  = 启用完整多语言（需先恢复 [lang] 路由包装 + 语言首页文件）。
+ */
+export const MULTILINGUAL_ENABLED = false;
+
+/** 当前实际生效的语言（停放时仅英语） */
+export const ACTIVE_LANGS: readonly Lang[] = MULTILINGUAL_ENABLED
+    ? SUPPORTED_LANGS
+    : [DEFAULT_LANG];
+
+/** 当前实际生效的 URL 前缀语言（停放时为空） */
+export const ACTIVE_PREFIXES: readonly Lang[] = ACTIVE_LANGS.filter(
+    (l) => l !== DEFAULT_LANG,
+);
+
 /** 需要 URL 前缀的语言，不含英语 */
 export const LANG_PREFIXES = [
     'zh', 'ar', 'es', 'fr', 'ru', 'pt', 'tr', 'vi', 'id', 'de',
@@ -61,12 +79,12 @@ export function flagUrl(lang: Lang): string {
 
 /** 判断是否为支持的语言 */
 export function isValidLang(value: string | undefined): value is Lang {
-    return !!value && (SUPPORTED_LANGS as readonly string[]).includes(value);
+    return !!value && (ACTIVE_LANGS as readonly string[]).includes(value);
 }
 
 /** 判断是否为需要 URL 前缀的语言 */
 export function hasPrefix(value: string | undefined): boolean {
-    return !!value && (LANG_PREFIXES as readonly string[]).includes(value);
+    return !!value && (ACTIVE_PREFIXES as readonly string[]).includes(value);
 }
 
 /**
@@ -85,7 +103,8 @@ export function currentLang(locals: unknown): Lang {
  */
 export function loc(lang: Lang, path: string): string {
     const clean = path.startsWith('/') ? path : `/${path}`;
-    if (lang === DEFAULT_LANG) return clean;
+    // 停放时非英语不生效，统一回退干净英文路径，避免产出死链 /zh/...
+    if (lang === DEFAULT_LANG || !(ACTIVE_LANGS as readonly string[]).includes(lang)) return clean;
     return `/${lang}${clean === '/' ? '/' : clean}`;
 }
 
@@ -111,8 +130,10 @@ export function buildAlternates(pathname: string): { lang: string; href: string 
     }
     if (!basePath.startsWith('/')) basePath = '/' + basePath;
 
-    // 为每种语言生成 URL
-    return (SUPPORTED_LANGS as readonly Lang[]).map(lang => ({
+    // 停放（仅一种语言）时不输出 hreflang，避免广告不存在的语言版本
+    if (ACTIVE_LANGS.length <= 1) return [];
+    // 为每种生效语言生成 URL
+    return (ACTIVE_LANGS as readonly Lang[]).map(lang => ({
         lang,
         href: loc(lang, basePath),
     }));

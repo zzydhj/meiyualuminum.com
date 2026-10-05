@@ -22,6 +22,8 @@ const currentLang: Lang = (LANG_PREFIXES as readonly string[]).includes(
     : DEFAULT_LANG;
 
 // 生成其他语言的切换 URL
+// 停放（MULTILINGUAL_ENABLED=false）期间：下拉项仅作「即将上线」预告，不导航。
+// 恢复多语言时把下方下拉项改回 <a href={switchLangPath(lang)} hreflang={lang}> 即可。
 const otherLangs = ([DEFAULT_LANG, ...LANG_PREFIXES] as Lang[]).filter(
     (l) => l !== currentLang,
 );
@@ -69,9 +71,10 @@ function switchLangPath(targetLang: Lang): string {
         </svg>
     </button>
     <div class="lang-dropdown">
+        <div class="lang-soon-note">More languages coming soon</div>
         {
             otherLangs.map((lang) => (
-                <a href={switchLangPath(lang)} hreflang={lang}>
+                <span class="lang-option" aria-disabled="true">
                     <img
                         class="lang-flag"
                         src={flagUrl(lang)}
@@ -81,7 +84,8 @@ function switchLangPath(targetLang: Lang): string {
                         loading="lazy"
                     />
                     <span class="lang-name">{LANG_LABELS[lang]}</span>
-                </a>
+                    <span class="lang-soon">soon</span>
+                </span>
             ))
         }
     </div>
@@ -211,6 +215,40 @@ function switchLangPath(targetLang: Lang): string {
     .lang-dropdown a:hover {
         background: #f8f6f3;
         color: #c09020;
+    }
+
+    /* 停放态：下拉项为不可点的「即将上线」预告 */
+    .lang-soon-note {
+        padding: 6px 16px 4px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #9a938a;
+    }
+    .lang-dropdown .lang-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #8a8580;
+        white-space: nowrap;
+        cursor: default;
+    }
+    .lang-dropdown .lang-option .lang-flag {
+        opacity: 0.55;
+        filter: grayscale(0.5) drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.12));
+    }
+    .lang-soon {
+        margin-left: auto;
+        padding: 1px 7px;
+        border-radius: 999px;
+        background: rgba(192, 144, 32, 0.12);
+        color: #c09020;
+        font-size: 0.62rem;
+        font-weight: 700;
     }
     .lang-dropdown .lang-flag {
         width: 24px;

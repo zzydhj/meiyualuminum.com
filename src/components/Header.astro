@@ -65,7 +65,7 @@ const { transparent = false } = Astro.props;
     text-decoration: none;
   }
   .logo img {
-    height: 42px;
+    height: 40px;
     width: auto;
     display: block;
   }
@@ -73,10 +73,10 @@ const { transparent = false } = Astro.props;
     display: none;
   }
 
-  /* Desktop: fixed 80px height, logo on the left, nav on the right */
+  /* Desktop: fixed 72px height, logo on the left, nav on the right */
   @media screen and (min-width: 1400px) {
     header {
-      height: 80px;
+      height: 72px;
     }
 
     nav {
@@ -95,7 +95,7 @@ const { transparent = false } = Astro.props;
        Selector specificity (0,2,1) beats the base .inquiry-btn rule (0,2,0). */
     nav :global(.header-cta) {
       margin-left: auto; /* push the CTA to the far right */
-      height: 42px;      /* match the 42px logo for balanced bookends */
+      height: 40px;      /* match the 40px logo for balanced bookends */
       padding: 0 1.5rem;
       font-size: 1rem;
     }

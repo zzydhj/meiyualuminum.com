@@ -2,6 +2,7 @@
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import RecommendedPosts from "../../components/RecommendedPosts.astro";
 import SidebarTags from "../../components/SidebarTags.astro";
+import InquiryFormSection from "../../components/InquiryFormSection.astro";
 import Tag from "../../components/Tag.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
@@ -52,6 +53,58 @@ const articleJsonLd = {
     logo: { "@type": "ImageObject", url: `${siteUrl}/favicon.svg` },
   },
 };
+
+// ── Table of Contents：服务端解析正文 h2/h3 并注入锚点 id ──
+// 链接随初始 HTML 下发，搜索引擎可直接抓取；正文与目录共用同一套 id。
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+}
+const decodeEntities = (s: string) =>
+  s
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&");
+const slugifyHeading = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "section";
+
+// 目录深度：2 = 只收 H2（默认，避免长文目录过长）；改 3 可同时收 H3 子节
+const TOC_MAX_LEVEL = 2;
+// 不参与目录的组件级或文末标题（即使深度放开也不收）
+const TOC_SKIP = new Set([
+  "references",
+  "potential benefits",
+  "limitations & considerations",
+]);
+const toc: TocItem[] = [];
+const seenIds = new Map<string, number>();
+const articleContent = (post.content || "").replace(
+  /<(h2|h3)\b([^>]*)>([\s\S]*?)<\/\1>/gi,
+  (_m: string, tag: string, attrs: string, inner: string) => {
+    const text = decodeEntities(inner.replace(/<[^>]*>/g, " "))
+      .replace(/\s+/g, " ")
+      .trim();
+    const existing = /\sid\s*=\s*["']([^"']+)["']/i.exec(attrs);
+    const base = existing ? existing[1] : slugifyHeading(text);
+    const n = seenIds.get(base) || 0;
+    seenIds.set(base, n + 1);
+    const id = n ? `${base}-${n + 1}` : base;
+    const level = Number(tag[1]);
+    // 只把深度内、非组件级的标题放进目录；id 仍注入所有标题供深链
+    if (level <= TOC_MAX_LEVEL && !TOC_SKIP.has(text.toLowerCase())) {
+      toc.push({ id, text, level });
+    }
+    // 已有 id 的标题保持原样，避免破坏正文内部引用
+    return existing ? _m : `<${tag}${attrs} id="${id}">${inner}</${tag}>`;
+  },
+);
 ---
 
 <BaseLayout
@@ -77,6 +130,34 @@ const articleJsonLd = {
     current={post.title}
     currentUrl={`/blog/${post.slug}/`}
   />
+
+  {
+    /* 目录：≥1880px 常驻左 gutter；1200–1879px 左缘竖标签点击滑出；<1200px 隐藏 */
+  }
+  {
+    toc.length >= 2 && (
+      <>
+        <button
+          class="toc-tab"
+          type="button"
+          aria-expanded="false"
+          aria-controls="toc-panel"
+        >
+          Contents
+        </button>
+        <nav id="toc-panel" class="toc-rail" aria-label="Table of contents">
+          <p class="toc-title">On this page</p>
+          <ul class="toc-list">
+            {toc.map((item) => (
+              <li class:list={[{ "toc-l3": item.level === 3 }]}>
+                <a href={`#${item.id}`}>{item.text}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </>
+    )
+  }
 
   <div class="blog-layout">
     <!-- 左栏：文章正文（头部结构与视频详情页保持一致） -->
@@ -128,7 +209,7 @@ const articleJsonLd = {
         )
       }
 
-      <div class="article-content" set:html={post.content} />
+      <div class="article-content" set:html={articleContent} />
     </article>
 
     <!-- 右栏：推荐文章 + 所有标签（两个并列的独立区块） -->
@@ -137,7 +218,82 @@ const articleJsonLd = {
       <SidebarTags />
     </div>
   </div>
+
+  <InquiryFormSection
+    source={Astro.url.pathname}
+    regarding={post.title}
+    title="Questions About This Topic?"
+    desc="Need pricing, specifications or a recommendation for your project? Send us an inquiry and our team will get back to you within 24 hours."
+  />
 </BaseLayout>
+
+<script>
+  // TOC 抽屉开关（仅 1200–1879px 抽屉模式可见标签）
+  const tocTab = document.querySelector<HTMLButtonElement>(".toc-tab");
+  const tocRail = document.getElementById("toc-panel");
+  if (tocTab && tocRail) {
+    const setOpen = (open: boolean) => {
+      tocRail.classList.toggle("open", open);
+      tocTab.setAttribute("aria-expanded", String(open));
+    };
+    tocTab.addEventListener("click", () =>
+      setOpen(!tocRail.classList.contains("open")),
+    );
+    // 点目录链接跳转后自动收起抽屉
+    tocRail.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("a")) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+  }
+
+  // 滚到页脚时隐藏目录浮轨，避免透明目录压在深色页脚上
+  const footerEl = document.querySelector("footer");
+  if (tocRail && footerEl && "IntersectionObserver" in window) {
+    new IntersectionObserver(
+      (entries) =>
+        entries.forEach((en) =>
+          tocRail.classList.toggle("toc-at-footer", en.isIntersecting),
+        ),
+      { threshold: 0 },
+    ).observe(footerEl);
+  }
+
+  // Scrollspy：滚过哪个标题就高亮哪条目录
+  const tocLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>(".toc-list a"),
+  );
+  if (tocLinks.length) {
+    const heads = tocLinks
+      .map((a) => document.getElementById(a.getAttribute("href")!.slice(1)))
+      .filter((el): el is HTMLElement => !!el);
+    const setActive = (id: string) =>
+      tocLinks.forEach((a) =>
+        a.classList.toggle("active", a.getAttribute("href") === `#${id}`),
+      );
+    const onScroll = () => {
+      let current = heads[0]?.id || "";
+      for (const h of heads) {
+        if (h.getBoundingClientRect().top <= 120) current = h.id;
+        else break;
+      }
+      setActive(current);
+    };
+    // rAF 节流：平滑滚动期间 scroll 事件连续触发，每帧最多重算一次高亮
+    let ticking = false;
+    const onScrollFrame = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        onScroll();
+        ticking = false;
+      });
+    };
+    onScroll();
+    document.addEventListener("scroll", onScrollFrame, { passive: true });
+  }
+</script>
 
 <style>
   /* 两栏布局：文章自适应 + 侧栏固定 320px */
@@ -254,4 +410,133 @@ const articleJsonLd = {
       padding: 32px 18px;
     }
   }
+
+  /* ===== TOC 浮轨 / 抽屉 ===== */
+  .toc-tab,
+  .toc-rail {
+    display: none;
+  }
+
+  @media screen and (min-width: 1200px) {
+    /* 抽屉模式：左缘竖排标签 + 滑出白卡面板 */
+    .toc-tab {
+      display: block;
+      position: fixed;
+      left: 0;
+      top: 45%;
+      z-index: 901;
+      writing-mode: vertical-rl;
+      background: #69574a;
+      color: #fff;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      padding: 0.9rem 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(105, 87, 74, 0.35);
+      transition: background-color 0.2s;
+    }
+    .toc-tab:hover {
+      background: #5a4a3e;
+    }
+
+    .toc-rail {
+      display: block;
+      position: fixed;
+      left: 0;
+      top: 88px;
+      z-index: 900;
+      width: 264px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.14);
+      padding: 1rem 1rem 1.25rem;
+      transform: translateX(-105%);
+      transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+    }
+    .toc-rail.open {
+      transform: translateX(0);
+    }
+  }
+
+  /* 超宽屏：左 gutter 足够，浮轨常驻，无需标签 */
+  @media screen and (min-width: 1880px) {
+    .toc-tab {
+      display: none;
+    }
+    .toc-rail {
+      transform: none;
+      left: calc((100vw - 1400px) / 2 - 236px);
+      top: 96px;
+      width: 212px;
+      background: transparent;
+      border: none;
+      border-left: 2px solid #d8c6b2;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0.25rem 0 0.25rem 1rem;
+    }
+  }
+
+  /* 滚到页脚时隐藏浮轨，避免透明目录压在深色页脚上 */
+  .toc-rail.toc-at-footer {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .toc-title {
+    margin: 0 0 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #69574a;
+  }
+
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .toc-list a {
+    display: block;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    color: #475569;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      background-color 0.15s;
+  }
+
+  .toc-list .toc-l3 a {
+    padding-left: 1.1rem;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .toc-list a:hover,
+  .toc-list a.active {
+    color: #c09020;
+    background: #faf6f3;
+  }
+
+  /* 注意：active 不改 font-weight。加粗会改变字形宽度→重新换行→行数变化→
+     整个目录跳高度。仅用颜色+背景高亮，度量不变，布局稳定。 */
 </style>

@@ -1,0 +1,90 @@
+---
+/**
+ * products/page/[page].astro — 产品列表第 2~N 页（静态分页）
+ *
+ * - 第 1 页由 products/index.astro 渲染（/products/ 为规范地址），本路由只生成 /products/page/2/ 起
+ * - 构建流程：count 查询算总页数 → 生成页码路由 → 每页用 .range() 只取自己那 PAGE_SIZE 个
+ * - 产品总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
+ * - 卡片网格与第 1 页共用 ProductGrid 组件
+ */
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ProductGrid from "../../../components/ProductGrid.astro";
+import PaginationNav from "../../../components/PaginationNav.astro";
+import { supabase } from "../../../lib/supabase";
+import { currentLang, loc } from "../../../lib/i18n";
+import { PAGE_SIZE } from "../../../lib/pagination";
+
+export async function getStaticPaths() {
+    // 只取总数计算页数，不拉取产品数据（停放期仅英语）
+    const { count } = await supabase
+        .from("products")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "published")
+        .eq("lang", "en");
+
+    const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
+
+    // 生成第 2 ~ totalPages 页的路由（第 1 页 = /products/）
+    return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+        params: { page: String(i + 2) },
+        props: { currentPage: i + 2, totalPages },
+    }));
+}
+
+const { currentPage, totalPages } = Astro.props;
+
+const lang = currentLang(Astro.locals);
+
+// 本页对应的数据切片（.range() 两端含，数据库层分页）
+const from = (currentPage - 1) * PAGE_SIZE;
+const to = from + PAGE_SIZE - 1;
+
+const result = await supabase
+    .from("products")
+    .select("*")
+    .eq("status", "published")
+    .eq("lang", lang)
+    .order("created_at", { ascending: false })
+    .order("slug", { ascending: true })
+    .range(from, to);
+
+if (result.error) {
+    console.error(
+        `Failed to fetch products for page ${currentPage}:`,
+        result.error,
+    );
+}
+
+const products = result.data ?? [];
+
+// Fetch all categories for display
+const { data: allCategories } = await supabase
+    .from("categories")
+    .select("id, name, slug");
+
+const categoryMap = new Map<number, { name: string; slug: string }>();
+for (const cat of allCategories ?? []) {
+    categoryMap.set(cat.id, { name: cat.name, slug: cat.slug });
+}
+---
+
+<BaseLayout pageTitle={`Products - Page ${currentPage}`} lang={lang}>
+    <Breadcrumb
+        items={[
+            { name: "Home", url: loc(lang, "/") },
+            { name: "Products", url: loc(lang, "/products/") },
+            {
+                name: `Page ${currentPage}`,
+                url: `/products/page/${currentPage}/`,
+            },
+        ]}
+    />
+    <ProductGrid products={products} categoryMap={categoryMap} lang={lang} />
+    <PaginationNav
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath="/products/page"
+        firstPageUrl="/products/"
+    />
+</BaseLayout>

@@ -1511,8 +1511,8 @@ const websiteJsonLd = {
   }
   @media (min-width: 636px) {
     .video-hero {
-      height: calc(100vh - 80px);
-      height: calc(100svh - 80px);
+      height: calc(100vh - 72px);
+      height: calc(100svh - 72px);
     }
   }
   /* ≥1400px: header 为 fixed 透明覆盖，hero 占满整个视口 */
@@ -2598,8 +2598,6 @@ const websiteJsonLd = {
       font-size: 0.8rem;
     }
   }
-
-
 </style>
 
 <!-- is:global: JS 通过 innerHTML 动态生成案例列表 DOM，作用域样式无法覆盖 -->
@@ -3181,7 +3179,6 @@ const websiteJsonLd = {
     );
     observer.observe(vgSection);
   }
-
 
   /* ===== Global Map Section ===== */
   const DB: Record<string, { n: string; c: string; t: string; r?: string }[]> =

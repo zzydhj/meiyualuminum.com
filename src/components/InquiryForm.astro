@@ -9,6 +9,15 @@
  *    3. Copy the access key from the email and paste it below
  */
 const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with your Web3Forms access key
+
+interface Props {
+  /** 来源页路径（如 /products/xxx/），作为隐藏字段随询盘提交，便于追踪转化来源 */
+  source?: string;
+  /** 询盘关联对象（如产品/文章/视频标题），作为隐藏字段随询盘提交 */
+  regarding?: string;
+}
+
+const { source = "", regarding = "" } = Astro.props;
 ---
 
 <form
@@ -17,9 +26,24 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
   class="inquiry-form"
 >
   <input type="hidden" name="access_key" value={ACCESS_KEY} />
-  <input type="hidden" name="subject" value="New Inquiry — Meiyu Aluminum Website" />
-  <input type="hidden" name="redirect" value="https://www.meiyualuminum.com/thank-you/" />
-  <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
+  <input
+    type="hidden"
+    name="subject"
+    value="New Inquiry — Meiyu Aluminum Website"
+  />
+  <input
+    type="hidden"
+    name="redirect"
+    value="https://www.meiyualuminum.com/thank-you/"
+  />
+  <input
+    type="checkbox"
+    name="botcheck"
+    class="hidden"
+    style="display: none;"
+  />
+  {source && <input type="hidden" name="source_page" value={source} />}
+  {regarding && <input type="hidden" name="regarding" value={regarding} />}
 
   <div class="form-grid">
     <label class="field">
@@ -34,7 +58,13 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
 
     <label class="field">
       <span class="label">Country</span>
-      <input type="text" name="country" list="country-list" placeholder="Type your country" autocomplete="country-name" />
+      <input
+        type="text"
+        name="country"
+        list="country-list"
+        placeholder="Type your country"
+        autocomplete="country-name"
+      />
       <datalist id="country-list">
         <option>United States</option>
         <option>United Kingdom</option>
@@ -142,7 +172,7 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
     <textarea
       name="message"
       required
-      rows="6"
+      rows="5"
       placeholder="Describe the products, quantities, dimensions, or any questions you have. For large drawings/specs, paste a cloud-drive link here..."
     ></textarea>
   </label>
@@ -150,15 +180,28 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
   <label class="checkbox-field">
     <input type="checkbox" name="free_sample" value="Yes" />
     <span class="checkbox-box" aria-hidden="true">
-      <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3.5 8.5l3 3 6-7" />
+      <svg
+        viewBox="0 0 16 16"
+        width="12"
+        height="12"
+        fill="none"
+        stroke="#fff"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3.5 8.5l3 3 6-7"></path>
       </svg>
     </span>
-    <span class="checkbox-text">We support free samples for you to test the quality. Do you need them?</span>
+    <span class="checkbox-text"
+      >We support free samples for you to test the quality. Do you need them?</span
+    >
   </label>
 
   <button type="submit" class="submit-btn">Send Inquiry</button>
-  <p class="note"><em>*</em> Required fields. Your information is only used to respond to your inquiry.</p>
+  <p class="note">
+    <em>*</em> Required fields. Your information is only used to respond to your inquiry.
+  </p>
 </form>
 
 <style>
@@ -235,7 +278,7 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
 
   .field textarea {
     resize: vertical;
-    min-height: 140px;
+    min-height: 120px;
   }
 
   .submit-btn {
@@ -249,7 +292,9 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(105, 87, 74, 0.3);
-    transition: background-color 0.2s, box-shadow 0.2s;
+    transition:
+      background-color 0.2s,
+      box-shadow 0.2s;
   }
 
   .submit-btn:hover {
@@ -275,7 +320,9 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
     border-radius: 8px;
     cursor: pointer;
     user-select: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
   }
 
   .checkbox-field:hover {
@@ -299,14 +346,18 @@ const ACCESS_KEY = "35b74595-640c-4dc8-90e8-dc6c2469f4c5"; // ← replace with y
     border: 2px solid #b8a494;
     border-radius: 4px;
     background: #fff;
-    transition: background-color 0.15s, border-color 0.15s;
+    transition:
+      background-color 0.15s,
+      border-color 0.15s;
     flex-shrink: 0;
   }
 
   .checkbox-box svg {
     opacity: 0;
     transform: scale(0.6);
-    transition: opacity 0.15s, transform 0.15s;
+    transition:
+      opacity 0.15s,
+      transform 0.15s;
   }
 
   .checkbox-field input:checked + .checkbox-box {

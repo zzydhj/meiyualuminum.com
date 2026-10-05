@@ -2,238 +2,137 @@
 /**
  * MegaMenu.astro — Products mega dropdown (desktop only, >= 1400px)
  *
- * 4x2 image-card grid layout. Each card = full-bleed photo + gradient overlay
- * + category name. Hover triggers image zoom, gold accent line, and "Explore" CTA.
- * Panel open/close is pure CSS hover on `.has-mega` (Navigation.astro).
+ * 双栏结构：左侧竖排菜单（悬停/点击切换）+ 右侧 4x2 大图卡面板。
+ * 右侧卡片沿用原有风格：满幅图 + 渐变遮罩 + 标题（整卡可点，无额外 CTA）。
+ *
+ * ★ 当前全部为占位内容。以后替换内容只需编辑下方 MENU 数组：
+ *   - label      : 左侧菜单项文字
+ *   - cards[]    : 该项对应的右侧卡片（img / title / href）
+ * 面板开合仍由 Navigation.astro 的 .has-mega 悬停控制（纯 CSS）。
  */
+
+// 占位图（复用现有 CDN 图作为视觉占位，后续可换）
+const IMGS = [
+  "https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp",
+  "https://file.meiyualuminum.com/home/mega-menu/aluminum-strip-panel.webp",
+  "https://file.meiyualuminum.com/home/mega-menu/u-shaped-aluminum-square-tube.webp",
+  "https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp",
+  "https://file.meiyualuminum.com/home/mega-menu/aluminum-ceiling-tile.webp",
+  "https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp",
+  "https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp",
+  "https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp",
+];
+
+// 左菜单名称（从上往下）；右侧卡片暂为占位，后续替换
+const LABELS = [
+  "Aluminum Ceiling Systems",
+  "Aluminum Soffit & Fascia",
+  "Interior Aluminum Wall Panels",
+  "Exterior Aluminum Facade & Cladding Panels",
+  "Aluminum Screens & Partitions",
+  "Aluminum Trim, Baseboard",
+  "Ceiling Accessories",
+];
+
+const MENU = LABELS.map((label, i) => ({
+  label,
+  cards: Array.from({ length: 8 }, (_, j) => ({
+    img: IMGS[j],
+    title: `${label} · Card 0${j + 1}`,
+    href: "#",
+  })),
+}));
 ---
 
 <div class="mega-panel">
-  <div class="mega-header">
-    <span class="mega-header-label">Our Product Lines</span>
-  </div>
-  <div class="mega-grid">
-    <a href="/categories/aluminum-veneer/" class="mega-card" style="--i:0">
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp"
-        alt="Aluminum Veneer"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">Aluminum Veneer</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
-      </div>
-      <span class="mega-card-accent"></span>
-    </a>
+  <div class="mega-inner">
+    <div class="mega-header">
+      <span class="mega-header-label">Our Product Lines</span>
+    </div>
 
-    <a href="/categories/aluminum-strip-panel/" class="mega-card" style="--i:1">
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/aluminum-strip-panel.webp"
-        alt="Aluminum Strip Panel"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">Aluminum Strip Panel</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
-      </div>
-      <span class="mega-card-accent"></span>
-    </a>
+    <div class="mega-body">
+      <!-- 左：竖排菜单 -->
+      <nav class="mega-nav" aria-label="Product lines">
+        {
+          MENU.map((m, i) => (
+            <button
+              class:list={["mega-nav-item", { active: i === 0 }]}
+              data-pane={i}
+              aria-controls={`mega-pane-${i}`}
+              aria-expanded={i === 0 ? "true" : "false"}
+            >
+              <span>{m.label}</span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          ))
+        }
+      </nav>
 
-    <a
-      href="/categories/u-shaped-aluminum-square-tube/"
-      class="mega-card"
-      style="--i:2"
-    >
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/u-shaped-aluminum-square-tube.webp"
-        alt="U-Shaped Aluminum Square Tube"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">U-Shaped Aluminum Square Tube</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
+      <!-- 右：每个菜单项对应一个卡片面板 -->
+      <div class="mega-content">
+        {
+          MENU.map((m, i) => (
+            <div class="mega-pane" id={`mega-pane-${i}`} hidden={i !== 0}>
+              <div class="mega-grid">
+                {m.cards.map((c, j) => (
+                  <a href={c.href} class="mega-card" style={`--i:${j}`}>
+                    <img src={c.img} alt={c.title} loading="lazy" />
+                    <div class="mega-card-overlay" />
+                    <div class="mega-card-content">
+                      <span class="mega-card-title">{c.title}</span>
+                    </div>
+                    <span class="mega-card-accent" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))
+        }
       </div>
-      <span class="mega-card-accent"></span>
-    </a>
-
-    <a
-      href="/categories/aluminum-honeycomb-core-panel/"
-      class="mega-card"
-      style="--i:3"
-    >
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp"
-        alt="Aluminum Honeycomb Core Panel"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">Aluminum Honeycomb Core Panel</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
-      </div>
-      <span class="mega-card-accent"></span>
-    </a>
-
-    <a
-      href="/categories/aluminum-ceiling-tile/"
-      class="mega-card"
-      style="--i:4"
-    >
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/aluminum-ceiling-tile.webp"
-        alt="Aluminum Ceiling Tile"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">Aluminum Ceiling Tile</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
-      </div>
-      <span class="mega-card-accent"></span>
-    </a>
-
-    <a href="/categories/aluminum-square-tube/" class="mega-card" style="--i:5">
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp"
-        alt="Aluminum Square Tube"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">Aluminum Square Tube</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
-      </div>
-      <span class="mega-card-accent"></span>
-    </a>
-
-    <a
-      href="/categories/fluted-aluminum-panel/"
-      class="mega-card"
-      style="--i:6"
-    >
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp"
-        alt="Fluted Aluminum Panel"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">Fluted Aluminum Panel</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
-      </div>
-      <span class="mega-card-accent"></span>
-    </a>
-
-    <a
-      href="/categories/aluminum-skirting-board/"
-      class="mega-card"
-      style="--i:7"
-    >
-      <img
-        src="https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp"
-        alt="Aluminum Skirting Board"
-        loading="lazy"
-      />
-      <div class="mega-card-overlay"></div>
-      <div class="mega-card-content">
-        <span class="mega-card-title">Aluminum Skirting Board</span>
-        <span class="mega-card-cta"
-          >Explore <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          ></span
-        >
-      </div>
-      <span class="mega-card-accent"></span>
-    </a>
+    </div>
   </div>
 </div>
+
+<script>
+  // 左菜单悬停/点击/聚焦 → 切换右侧面板
+  const panel = document.querySelector(".mega-panel");
+  if (panel) {
+    const items = Array.from(
+      panel.querySelectorAll<HTMLButtonElement>(".mega-nav-item"),
+    );
+    const panes = Array.from(panel.querySelectorAll<HTMLElement>(".mega-pane"));
+    const activate = (idx: number) => {
+      items.forEach((el, i) => {
+        el.classList.toggle("active", i === idx);
+        el.setAttribute("aria-expanded", String(i === idx));
+      });
+      panes.forEach((p, i) => {
+        p.hidden = i !== idx;
+      });
+    };
+    items.forEach((el, i) => {
+      el.addEventListener("mouseenter", () => activate(i));
+      el.addEventListener("focus", () => activate(i));
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        activate(i);
+      });
+    });
+    activate(0);
+  }
+</script>
 
 <style>
   .mega-panel {
@@ -262,7 +161,7 @@
       left: 0;
       right: 0;
       width: 100%;
-      padding: 24px 48px 32px;
+      padding: 32px 0 40px;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -283,6 +182,14 @@
     }
   }
 
+  /* 内容限宽居中：与页头/页面 1400px 栅格对齐（背景仍全宽） */
+  .mega-inner {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
   /* Header label */
   .mega-header {
     margin-bottom: 16px;
@@ -297,13 +204,82 @@
     opacity: 0.85;
   }
 
+  /* ===== 双栏：左菜单 + 右面板 ===== */
+  .mega-body {
+    display: flex;
+    gap: 28px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* 左：竖排菜单 */
+  .mega-nav {
+    width: 260px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(240, 201, 106, 0.16);
+    padding-right: 4px;
+  }
+  .mega-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    /* 均分撑满左栏全高，底部不留空白 */
+    flex: 1 1 0;
+    min-height: 44px;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-left: 3px solid transparent;
+    color: #cfc8bd;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      background 0.2s,
+      border-color 0.2s;
+  }
+  .mega-nav-item svg {
+    opacity: 0.45;
+    flex-shrink: 0;
+    transition:
+      transform 0.2s,
+      opacity 0.2s;
+  }
+  .mega-nav-item:hover {
+    color: #fff;
+    background: rgba(240, 201, 106, 0.06);
+  }
+  .mega-nav-item.active {
+    color: #fff;
+    border-left-color: var(--brand-gold-bright);
+    background: rgba(240, 201, 106, 0.1);
+  }
+  .mega-nav-item.active svg {
+    opacity: 0.9;
+    transform: translateX(2px);
+  }
+
+  /* 右：面板容器 */
+  .mega-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .mega-pane[hidden] {
+    display: none;
+  }
+
   /* 4x2 Grid */
   .mega-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 16px;
-    flex: 1;
+    gap: 22px;
   }
 
   /* Card */
@@ -313,7 +289,7 @@
     border-radius: 10px;
     overflow: hidden;
     text-decoration: none;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     opacity: 0;
     transform: translateY(8px) scale(0.97);
     transition:
@@ -334,6 +310,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 32%;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
@@ -347,9 +324,9 @@
     inset: 0;
     background: linear-gradient(
       to top,
-      rgba(10, 8, 5, 0.78) 0%,
-      rgba(10, 8, 5, 0.28) 34%,
-      rgba(10, 8, 5, 0) 68%
+      rgba(10, 8, 5, 0.86) 0%,
+      rgba(10, 8, 5, 0.42) 30%,
+      rgba(10, 8, 5, 0) 62%
     );
     transition: background 0.3s ease;
   }
@@ -357,9 +334,9 @@
   .mega-card:hover .mega-card-overlay {
     background: linear-gradient(
       to top,
-      rgba(10, 8, 5, 0.84) 0%,
-      rgba(10, 8, 5, 0.2) 38%,
-      rgba(10, 8, 5, 0) 72%
+      rgba(10, 8, 5, 0.9) 0%,
+      rgba(10, 8, 5, 0.34) 34%,
+      rgba(10, 8, 5, 0) 66%
     );
   }
 
@@ -369,7 +346,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 20px 22px;
+    padding: 16px 18px;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -377,11 +354,15 @@
   }
 
   .mega-card-title {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
     color: #fff;
     letter-spacing: 0.2px;
     line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     transition: transform 0.3s ease;
   }
 
@@ -389,40 +370,12 @@
     transform: translateY(-2px);
   }
 
-  .mega-card-cta {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--brand-gold-bright);
-    letter-spacing: 0.3px;
-    opacity: 0;
-    transform: translateY(6px);
-    transition:
-      opacity 0.3s ease 0.05s,
-      transform 0.3s ease 0.05s;
-  }
-
-  .mega-card:hover .mega-card-cta {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .mega-card-cta svg {
-    transition: transform 0.2s ease;
-  }
-
-  .mega-card:hover .mega-card-cta svg {
-    transform: translateX(3px);
-  }
-
-  /* Gold accent line at bottom */
+  /* Gold accent line on hover */
   .mega-card-accent {
     position: absolute;
-    bottom: 0;
     left: 0;
     right: 0;
+    bottom: 0;
     height: 3px;
     background: linear-gradient(
       90deg,
@@ -431,26 +384,11 @@
     );
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.35s ease;
+    z-index: 2;
   }
 
   .mega-card:hover .mega-card-accent {
     transform: scaleX(1);
-  }
-
-  /* Subtle border glow on hover */
-  .mega-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-    border: 1.5px solid transparent;
-    transition: border-color 0.3s ease;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .mega-card:hover::after {
-    border-color: rgba(240, 201, 106, 0.35);
   }
 </style>

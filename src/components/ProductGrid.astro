@@ -1,0 +1,268 @@
+---
+/**
+ * ProductGrid.astro — 产品卡片网格（纯展示组件）
+ *
+ * - 被 /products/ 第 1 页与 /products/page/N/ 分页页共用，避免卡片 markup+CSS 多处复制
+ * - 卡片结构：div.card-box（不可用 <a> 包裹，内部含分类链接/询盘按钮，嵌套 <a> 属非法 HTML）
+ *   整卡可点靠标题链接的 stretched-link（::after inset:0）实现
+ */
+import { loc } from "../lib/i18n";
+
+interface Props {
+    products: Array<Record<string, any>>;
+    categoryMap: Map<number, { name: string; slug: string }>;
+    lang: string;
+}
+
+const { products, categoryMap, lang } = Astro.props;
+---
+
+<ul class="product-list">
+    {
+        products.map((product) => (
+            <li class="product-card">
+                {/* 外层不能用 <a>：内部分类链接会造成 <a> 套 <a> 的非法 HTML，
+          浏览器会提前闭合外层 <a> 把卡片拆成横排。改用 div + stretched-link */}
+                <div class="card-box">
+                    {product.image_url && (
+                        <a
+                            class="card-media"
+                            href={loc(lang, `/products/${product.slug}/`)}
+                            tabindex="-1"
+                            aria-hidden="true"
+                        >
+                            <img
+                                src={product.image_url}
+                                alt={product.image_alt || product.title}
+                                width="300"
+                                height="180"
+                                loading="lazy"
+                            />
+                        </a>
+                    )}
+                    <div class="product-info">
+                        <h2>
+                            <a
+                                class="card-title"
+                                href={loc(lang, `/products/${product.slug}/`)}
+                            >
+                                {product.title}
+                            </a>
+                        </h2>
+                        {product.primary_category_id &&
+                            categoryMap.has(product.primary_category_id) && (
+                                <a
+                                    href={`/categories/${categoryMap.get(product.primary_category_id)!.slug}/`}
+                                    class="category"
+                                >
+                                    {
+                                        categoryMap.get(
+                                            product.primary_category_id,
+                                        )!.name
+                                    }
+                                </a>
+                            )}
+                        {product.description && (
+                            <p class="desc">{product.description}</p>
+                        )}
+                        <div class="card-footer">
+                            {product.part_code && (
+                                <span class="part-code">
+                                    Part No: {product.part_code}
+                                </span>
+                            )}
+                            <button
+                                type="button"
+                                class="card-inquiry"
+                                data-open-inquiry-modal
+                            >
+                                Inquiry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        ))
+    }
+</ul>
+
+<style>
+    .product-list {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        grid-auto-rows: 1fr; /* 所有行等高 → 全部卡片统一高度 */
+        gap: 1.5rem;
+    }
+
+    .product-card {
+        display: flex; /* 让内部 <a> 能撑满网格行高 */
+    }
+
+    .card-box {
+        position: relative; /* stretched-link 的定位基准 */
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        border: 1px solid #e9edf2;
+        border-radius: 0.625rem;
+        overflow: hidden;
+        background: #fff;
+        /* 静置即有柔和投影 → 卡片从一开始就像浮在平面上的独立物体 */
+        box-shadow:
+            0 1px 2px rgba(15, 23, 42, 0.06),
+            0 2px 8px rgba(15, 23, 42, 0.05);
+        transition:
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .card-box:hover {
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+        transform: translateY(-3px);
+    }
+
+    .card-media {
+        display: block;
+    }
+
+    .card-media img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* 标题链接铺满整卡（stretched-link），实现整卡可点 */
+    .card-title {
+        color: inherit;
+        text-decoration: none;
+    }
+    .card-title::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+    }
+
+    .product-info {
+        padding: 0.75rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-info h2 {
+        margin: 0 0 0.35rem;
+        font-size: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Part No 沉到底行左侧，作为 muted 信息平衡右下询盘按钮 */
+    .part-code {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .desc {
+        margin: 0 0 0.5rem;
+        font-size: 0.85rem;
+        color: #475569;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* 描述默认只保留两行 */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .category {
+        position: relative;
+        z-index: 1; /* 浮在 stretched-link 之上，保证分类可单独点击 */
+        align-self: flex-start;
+        display: inline-block;
+        margin: 0 0 0.4rem;
+        font-size: 0.8rem;
+        background: #f1f5f9;
+        border-radius: 0.25rem;
+        padding: 0.15rem 0.5rem;
+        color: #334155;
+    }
+
+    /* 卡片底行：Part No 左、询盘按钮右；沉底对齐 */
+    .card-footer {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .card-inquiry {
+        position: relative;
+        z-index: 1; /* 浮在 stretched-link 之上，保证按钮可点 */
+        flex-shrink: 0;
+        border: none;
+        border-radius: 999px;
+        background: #69574a;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.3rem 0.7rem;
+        cursor: pointer;
+        transition:
+            background-color 0.2s,
+            transform 0.2s,
+            box-shadow 0.2s;
+    }
+
+    .card-inquiry:hover {
+        background: #5a4a3e;
+        transform: translateY(-1px) scale(1.05);
+        box-shadow: 0 4px 10px rgba(105, 87, 74, 0.35);
+    }
+
+    .card-inquiry:active {
+        transform: translateY(0) scale(0.98);
+        box-shadow: none;
+    }
+
+    /* 移动端：两列紧凑卡片，提升浏览效率 */
+    @media (max-width: 640px) {
+        .product-list {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        .card-media img {
+            height: 110px;
+        }
+        .product-info {
+            padding: 0.5rem;
+        }
+        .product-info h2,
+        .product-info h3 {
+            font-size: 0.82rem;
+            margin-bottom: 0.25rem;
+        }
+        /* 窄列下描述/型号/分类标签过挤，隐藏以保证两列紧凑可读 */
+        .part-code,
+        .desc,
+        .category {
+            display: none;
+        }
+        .card-footer {
+            justify-content: flex-end;
+        }
+        .card-inquiry {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.6rem;
+        }
+    }
+</style>

@@ -1,13 +1,41 @@
 ---
+/**
+ * products/index.astro — 产品列表第 1 页
+ *
+ * - 第 2~N 页由 products/page/[page].astro 生成（/products/page/N/）
+ * - 每页 PAGE_SIZE 个，与博客/视频列表共用分页配置与导航组件
+ * - 卡片网格抽到 ProductGrid 组件，与分页页共用，避免 markup+CSS 复制
+ */
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProductGrid from "../../components/ProductGrid.astro";
+import PaginationNav from "../../components/PaginationNav.astro";
 import { supabase } from "../../lib/supabase";
+import { currentLang, loc } from "../../lib/i18n";
+import { PAGE_SIZE } from "../../lib/pagination";
 
+// 当前语言（[lang] 包装会写入 locals.lang；无前缀根路由为 'en'）
+const lang = currentLang(Astro.locals);
+
+// 已发布产品总数（轻量 count 查询，不拉取行数据）
+const { count } = await supabase
+  .from("products")
+  .select("*", { count: "exact", head: true })
+  .eq("status", "published")
+  .eq("lang", lang);
+
+const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
+
+// 按语言过滤 + 数据库层分页：本页只取前 PAGE_SIZE 个
+// 次级排序 slug：保证 created_at 相同时跨页顺序稳定，不重不漏
 const result = await supabase
   .from("products")
   .select("*")
   .eq("status", "published")
-  .order("created_at", { ascending: false });
+  .eq("lang", lang)
+  .order("created_at", { ascending: false })
+  .order("slug", { ascending: true })
+  .range(0, PAGE_SIZE - 1);
 
 if (result.error) {
   console.error("Failed to fetch products:", result.error);
@@ -21,121 +49,47 @@ const { data: allCategories } = await supabase
   .select("id, name, slug");
 
 const categoryMap = new Map<number, { name: string; slug: string }>();
-for (const cat of (allCategories ?? [])) {
+for (const cat of allCategories ?? []) {
   categoryMap.set(cat.id, { name: cat.name, slug: cat.slug });
 }
-const pageTitle = "Products";
+// 页面框架文案（轻量本地化；完整站点词典见后续 i18n 工作）
+const UI = {
+  en: {
+    products: "Products",
+    home: "Home",
+    empty: "No products available at the moment.",
+  },
+  zh: { products: "产品", home: "首页", empty: "暂无产品。" },
+} as const;
+const t = UI[lang as keyof typeof UI] ?? UI.en;
+const pageTitle = t.products;
 ---
 
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout pageTitle={pageTitle} lang={lang}>
   <Breadcrumb
     items={[
-      { name: "Home", url: "/" },
-      { name: "Products", url: "/products/" },
+      { name: t.home, url: loc(lang, "/") },
+      { name: t.products, url: loc(lang, "/products/") },
     ]}
   />
 
-  {products.length === 0 ? (
-    <p>No products available at the moment.</p>
-  ) : (
-    <ul class="product-list">
-      {
-        products.map((product) => (
-          <li class="product-card">
-            <a href={`/products/${product.slug}/`}>
-              {product.image_url && (
-                <img
-                  src={product.image_url}
-                  alt={product.image_alt || product.title}
-                  width="300"
-                  height="200"
-                  loading="lazy"
-                />
-              )}
-              <div class="product-info">
-                <h2>{product.title}</h2>
-                {product.part_code && <p class="part-code">Part No: {product.part_code}</p>}
-                {product.description && <p class="desc">{product.description}</p>}
-                {product.primary_category_id && categoryMap.has(product.primary_category_id) && (
-                  <a href={`/categories/${categoryMap.get(product.primary_category_id)!.slug}/`} class="category">
-                    {categoryMap.get(product.primary_category_id)!.name}
-                  </a>
-                )}
-                {product.price != null && <p class="price">${product.price}</p>}
-              </div>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  )}
+  {
+    products.length === 0 ? (
+      <p>{t.empty}</p>
+    ) : (
+      <>
+        <ProductGrid
+          products={products}
+          categoryMap={categoryMap}
+          lang={lang}
+        />
+        <PaginationNav
+          currentPage={1}
+          totalPages={totalPages}
+          basePath="/products/page"
+          firstPageUrl="/products/"
+        />
+      </>
+    )
+  }
 </BaseLayout>
-
-<style>
-  .product-list {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .product-card a {
-    display: block;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    background: #fff;
-    transition: box-shadow 0.2s;
-  }
-
-  .product-card a:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .product-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .product-info {
-    padding: 1rem;
-  }
-
-  .product-info h2 {
-    margin: 0 0 0.5rem;
-    font-size: 1.15rem;
-  }
-
-  .part-code {
-    margin: 0 0 0.5rem;
-    font-size: 0.85rem;
-    color: #64748b;
-  }
-
-  .desc {
-    margin: 0 0 0.75rem;
-    font-size: 0.9rem;
-    color: #475569;
-  }
-
-  .category {
-    display: inline-block;
-    font-size: 0.8rem;
-    background: #f1f5f9;
-    border-radius: 0.25rem;
-    padding: 0.15rem 0.5rem;
-    color: #334155;
-  }
-
-  .price {
-    margin: 0.75rem 0 0;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #0d0950;
-  }
-</style>

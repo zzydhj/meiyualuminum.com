@@ -2,6 +2,7 @@
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import InquiryButton from "../../components/InquiryButton.astro";
+import InquiryFormSection from "../../components/InquiryFormSection.astro";
 import { supabase } from "../../lib/supabase";
 import { getCategoryChain } from "../../lib/categoryPath";
 import { productKnowledge, type ProductKnowledge } from "../../lib/productKnowledge";
@@ -54,17 +55,12 @@ const jsonLd = {
   "sku": product.part_code,
   "brand": product.brand ? { "@type": "Brand", name: product.brand } : undefined,
   "category": categoryChain.length > 0 ? categoryChain.map(c => c.name).join(" > ") : undefined,
-  "offers": product.price != null ? {
-    "@type": "Offer",
-    "price": product.price,
-    "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock",
-  } : undefined,
 };
 ---
 
 <BaseLayout
   pageTitle={pageTitle}
+  lang={lang}
   headingTitle={product.title}
   description={pageDescription}
   image={product.image_url}
@@ -104,7 +100,6 @@ const jsonLd = {
     <div class="pk-hero-info">
       {product.part_code && <p class="pk-part-code">Part No: {product.part_code}</p>}
       <p class="pk-desc"><em>{product.description}</em></p>
-      {product.price != null && <p class="pk-price">Starting from <strong>${product.price}</strong></p>}
 
       <!-- Quick Specs: enriched_specs 优先，回退品类通用 -->
       {displaySpecs.length > 0 && (
@@ -313,15 +308,13 @@ const jsonLd = {
     <div class="pk-db-content" set:html={product.content} />
   )}
 
-  <!-- ══════ BOTTOM CTA ══════ -->
-  <section class="pk-bottom-cta">
-    <h2>Need Help Selecting the Right Product?</h2>
-    <p>Our engineering team provides free technical consultation, shop drawing support, and custom quotations. Tell us about your project and we'll recommend the optimal solution.</p>
-    <div class="pk-bottom-cta-btns">
-      <InquiryButton label="Get a Free Quote" class="pk-cta-primary" />
-      <a href="/contact/" class="pk-cta-outline">Contact Our Team</a>
-    </div>
-  </section>
+  <!-- ══════ BOTTOM INQUIRY FORM ══════ -->
+  <InquiryFormSection
+    source={Astro.url.pathname}
+    regarding={product.title}
+    title="Need Help Selecting the Right Product?"
+    desc="Our engineering team provides free technical consultation, shop drawing support, and custom quotations. Tell us about your project and we'll recommend the optimal solution."
+  />
 </BaseLayout>
 
 <script>
@@ -365,8 +358,6 @@ const jsonLd = {
 
   .pk-part-code { font-size: .85rem; color: #64748b; margin: 0 0 .5rem; }
   .pk-desc { color: #475569; margin: 0 0 .75rem; line-height: 1.6; }
-  .pk-price { font-size: 1.1rem; color: #1e293b; margin: 0 0 1rem; }
-  .pk-price strong { font-size: 1.35rem; color: #0d0950; }
 
   .pk-quick-specs { border-collapse: collapse; width: 100%; margin: 0 0 1.25rem; }
   .pk-quick-specs th, .pk-quick-specs td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #f1f5f9; font-size: .85rem; }
@@ -391,12 +382,16 @@ const jsonLd = {
 
   /* ═══ TABS ═══ */
   .pk-tabs { margin-bottom: 2.5rem; }
-  .pk-tab-nav { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .pk-tab-btn { padding: 12px 20px; font-size: .88rem; font-weight: 600; color: #64748b; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; white-space: nowrap; transition: color .2s, border-color .2s; }
-  .pk-tab-btn:hover { color: #334155; }
-  .pk-tab-btn.active { color: #c09020; border-bottom-color: #c09020; }
+  /* 分段控件式 tab：整条灰色轨道把 6 个选项包成“一个控件”，
+     明确传达“点击会切换下方内容”，而非散落的标签 chip；
+     flex-wrap 换行取代横向滚动，无滚动条把手 */
+  .pk-tab-nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; background: #eef2f6; border: 1px solid #e2e8f0; border-radius: 14px; }
+  .pk-tab-btn { padding: 9px 18px; font-size: .88rem; font-weight: 600; color: #475569; background: transparent; border: 1px solid transparent; border-radius: 999px; cursor: pointer; white-space: nowrap; transition: color .2s, background-color .2s, border-color .2s; }
+  .pk-tab-btn:hover { color: #c09020; background: #fff; }
+  .pk-tab-btn.active { color: #fff; background: #c09020; border-color: #c09020; box-shadow: 0 1px 3px rgba(192, 144, 32, 0.4); }
 
-  .pk-tab-panel { display: none; padding: 1.5rem 0; }
+  /* 面板装进白色卡片，与上方轨道组成一个完整的 tab 组件 */
+  .pk-tab-panel { display: none; margin-top: 12px; padding: 1.5rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; }
   .pk-tab-panel.active { display: block; }
   .pk-tab-panel h3 { font-size: 1.25rem; margin: 0 0 1rem; color: #1e293b; }
 
@@ -462,12 +457,4 @@ const jsonLd = {
   /* DB content (legacy) */
   .pk-db-content { margin-top: 2rem; }
 
-  /* Bottom CTA */
-  .pk-bottom-cta { text-align: center; padding: 3rem 2rem; background: #f8f6f3; border-radius: 12px; margin: 2rem 0; }
-  .pk-bottom-cta h2 { margin: 0 0 .5rem; font-size: 1.5rem; color: #1e293b; }
-  .pk-bottom-cta p { font-size: .95rem; color: #64748b; max-width: 600px; margin: 0 auto 1.5rem; line-height: 1.6; }
-  .pk-bottom-cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-  .pk-bottom-cta-btns :global(.pk-cta-primary) { background-color: #69574a !important; padding: .7rem 2rem !important; font-size: 1rem !important; }
-  .pk-cta-outline { display: inline-flex; align-items: center; padding: .65rem 2rem; border: 2px solid #69574a; border-radius: 999px; color: #69574a; text-decoration: none; font-size: 1rem; font-weight: 700; transition: all .2s; }
-  .pk-cta-outline:hover { background: #69574a; color: #fff; }
 </style>

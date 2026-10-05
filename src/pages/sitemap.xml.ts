@@ -8,24 +8,27 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { supabase } from "../lib/supabase";
-import { SUPPORTED_LANGS, loc, DEFAULT_LANG, type Lang } from "../lib/i18n";
+import { ACTIVE_LANGS, loc, type Lang } from "../lib/i18n";
 
 export const GET: APIRoute = async ({ site }) => {
     const SITE = site?.toString().replace(/\/$/, "") || "https://www.meiyualuminum.com";
     const today = new Date().toISOString().split("T")[0];
 
-    // 辅助：生成一个 URL 的 hreflang XML 片段
+    // 辅助：生成一个 URL 的 hreflang XML 片段（停放时仅英文，不输出 hreflang）
     function urlEntry(basePath: string, lastmod: string): string {
-        const hrefs = (SUPPORTED_LANGS as readonly Lang[]).map(lang => {
-            const href = loc(lang, basePath);
-            return `    <xhtml:link rel="alternate" hreflang="${lang}" href="${SITE}${href}" />`;
-        });
-        // x-default 指向英语（根路径）
-        hrefs.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${basePath}" />`);
+        let altBlock = "";
+        if (ACTIVE_LANGS.length > 1) {
+            const hrefs = (ACTIVE_LANGS as readonly Lang[]).map(lang => {
+                const href = loc(lang, basePath);
+                return `    <xhtml:link rel="alternate" hreflang="${lang}" href="${SITE}${href}" />`;
+            });
+            // x-default 指向英语（根路径）
+            hrefs.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${basePath}" />`);
+            altBlock = "\n" + hrefs.join("\n");
+        }
         return `  <url>
     <loc>${SITE}${basePath}</loc>
-    <lastmod>${lastmod}</lastmod>
-${hrefs.join("\n")}
+    <lastmod>${lastmod}</lastmod>${altBlock}
   </url>`;
     }
 
@@ -51,41 +54,35 @@ ${hrefs.join("\n")}
     }
 
     // 数据库查询：所有已发布的英语内容
-    try {
-        const [postsRes, productsRes, pagesRes, videosRes] = await Promise.all([
-            supabase.from("posts").select("slug, updated_at, created_at").eq("lang", "en").eq("status", "published"),
-            supabase.from("products").select("slug, updated_at, created_at").eq("lang", "en").eq("status", "published"),
-            supabase.from("pages").select("slug, updated_at, created_at").eq("lang", "en").eq("status", "published"),
-            supabase.from("videos").select("slug, updated_at, created_at").eq("lang", "en").eq("status", "published"),
-        ]);
-
-        if (postsRes.data) {
-            for (const p of postsRes.data) {
-                const lastmod = (p.updated_at || p.created_at || today).split("T")[0];
-                entries.push(urlEntry(`/blog/${p.slug}/`, lastmod));
+    // 各表日期列不一致：posts/products 有 created_at；videos 用 pub_date；pages 无日期列。
+    // supabase-js 出错不抛异常只返回 error，故逐表独立查询并记日志，避免单表问题拖垮整个 sitemap。
+    async function collect(table: string, pathPrefix: string, dateCol: string | null) {
+        try {
+            const cols = dateCol ? `slug, ${dateCol}` : "slug";
+            const res = await supabase
+                .from(table)
+                .select(cols)
+                .eq("lang", "en")
+                .eq("status", "published");
+            if (res.error) {
+                console.error(`[sitemap] ${table} query error:`, res.error.message);
+                return;
             }
-        }
-        if (productsRes.data) {
-            for (const p of productsRes.data) {
-                const lastmod = (p.updated_at || p.created_at || today).split("T")[0];
-                entries.push(urlEntry(`/products/${p.slug}/`, lastmod));
+            const rows = (res.data ?? []) as unknown as Array<Record<string, string | null>>;
+            for (const row of rows) {
+                const raw = dateCol ? row[dateCol] : null;
+                const lastmod = (raw || today).split("T")[0];
+                entries.push(urlEntry(`${pathPrefix}${row.slug}/`, lastmod));
             }
+        } catch (e) {
+            console.error(`[sitemap] ${table} query failed:`, e);
         }
-        if (pagesRes.data) {
-            for (const p of pagesRes.data) {
-                const lastmod = (p.updated_at || p.created_at || today).split("T")[0];
-                entries.push(urlEntry(`/${p.slug}/`, lastmod));
-            }
-        }
-        if (videosRes.data) {
-            for (const v of videosRes.data) {
-                const lastmod = (v.updated_at || v.created_at || today).split("T")[0];
-                entries.push(urlEntry(`/videos/${v.slug}/`, lastmod));
-            }
-        }
-    } catch (e) {
-        console.error("[sitemap] DB query failed, using static paths only:", e);
     }
+
+    await collect("posts", "/blog/", "created_at");
+    await collect("products", "/products/", "created_at");
+    await collect("pages", "/", null);
+    await collect("videos", "/videos/", "pub_date");
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
