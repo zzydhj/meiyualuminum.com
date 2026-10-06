@@ -4,6 +4,9 @@ dist/
 # generated types
 .astro/
 
+# cloudflare wrangler / miniflare local dev state（本地状态，非核心网站，绝不进仓库）
+.wrangler/
+
 # dependencies
 node_modules/
 
@@ -16,6 +19,18 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+.env.local
+
+# 机密：R2 / Supabase 凭据（供 docs/ 文件夹整体拷走时自带，绝不进仓库）
+docs/r2-credentials.env
+*credentials*.env
+!docs/r2-credentials.env.example
+
+# python 临时产物（docs/r2-image-pipeline.py 下载缓存与字节码）
+.tmp-img/
+.tmp-migrate/
+__pycache__/
+*.pyc
 
 # macOS-specific files
 .DS_Store

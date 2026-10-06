@@ -1,8 +1,28 @@
-# Blog 交付提示词 v5.7
+# Blog 交付提示词 v5.7.6
 
 > 用途：把任意参考文章（网址或 HTML）重写成**质量高于参考原文**的英文 Blog，
 > 并产出一个"交付页面"（预览 + 一键复制正文/字段/整条记录 + 一键导入 SQL），供直接导入 Supabase `posts` 表。
 >
+> v5.7.6 变化（密钥随 docs/ 迁移）：新增第三密钥来源 `docs/r2-credentials.env`（已 gitignore，拷
+> `docs/` 文件夹即自带 → 换电脑/换 IDE 零配置）；读取优先级：环境变量 > 项目根 .env/.env.local >
+> 该文件；附录 B `creds()` 同步（pipeline-core v1.1，70 行）；密钥红线补「禁入提示词正文」。
+> v5.7.5 变化（流水线可执行化 + 跳机可复现）：新增 P0 环境自检（Python/boto3/密钥/桶可达，
+> 任一失败自动转回退热链）；新增【附录 B】自包含上传实现（与 docs/r2-image-pipeline.py 同源
+> pipeline-core v1.0）；P4 补临时文件清理（公开校验 200 后立即删本地副本）；密钥改为
+> 环境变量或项目根 .env（已 gitignore）；配套 docs/r2-setup.md 说明令牌获取与跳机迁移。
+> v5.7.4 变化（全文审计修复）：① 第三条 figure 令牌 src 改为「最终 R2 URL（默认）/ 参考站原图（回退）」
+> 消除与流水线冲突；② 修正 P1 内部引用错号（反爬回退为本条 4，原写 2）；③ P1 补单图下载失败
+> 规则（省略图位不用 stock）；④ P4 补密钥安全（仅环境变量注入，禁写入交付页/仓库/SQL）。
+> v5.7.3 变化（第四条 P3 补主题判定顺序与 general 治理）：主题按确定性顺序判定（材质/产品族→
+> 功能修饰→项目语境→九类内最接近→general 兜底），禁止 AI 自创文件夹；general 为候选池，
+> 新主题须用户升版本新增、旧图不强制迁移；文件夹名不影响 SEO（关键词在文件名/alt/正文）。
+> v5.7.2 变化（第四条新增图片资产流水线）：写文前先下载→vision 核对→语义+内容哈希(sha1前6位)命名→
+> HEAD 去重上传 R2（桶 meiyu / 域 file.meiyualuminum.com / 有界主题文件夹）→正文与 image_url 直接用
+> 最终 URL；并发/跨 AI/重写靠内容哈希不撞名；R2 不可用回退热链+Zone4 TODO；新增写前查重与竞品
+> 品牌词清洗；画面水印归用户后期处理。
+> v5.7.1 变化（第四条补图片内容真实性红线，与案例 v5.8.5 对齐）：alt / figcaption 的具体视觉
+> 描述必须基于实际看过图内容（vision 核对）或用户确认；仅文件名 / 上下文可得时退到主题级描述，
+> 不编造画面细节。
 > v5.7 变化（核心原则）：新增「宁缺毋滥」最高原则——真实性与内部一致性永远高于任何数量门槛；
 > 当字数/案例数/References 数/数值无法用真实·优质·不矛盾的内容填满时，宁可减少也不得注水/编造/自相矛盾；
 > 第六条所有硬性数量指标均加此豁免；新增全文内部一致性（数值/论断不自相矛盾）自检。
@@ -31,8 +51,13 @@
 公司事实已内置于附录 A（随提示词一体复制），当次可用 `公司事实：…` 临时补充或更正；
 AI 会自己读取本文件并执行，交付页默认保存到 `deliveries/<slug>-delivery.html`。
 
+**首次使用（每台新电脑一次）**：`pip install boto3` → `python docs/r2-image-pipeline.py --check` 全 OK。
+密钥已随 `docs/r2-credentials.env` 到位（该文件被 gitignore：**拷 `docs/` 文件夹时会跟着走、提交仓库不会走**）；
+换令牌或在新项目另配时，改这个文件或项目根 `.env` 均可。详见 `docs/r2-setup.md`。
+未配置也不会卡住：自动走回退热链路径（第四条【回退】）。
+
 **方式 B · 任意其他 AI**
-1. 复制下方「提示词正文」代码块全部内容（含末尾附录 A 公司事实）；
+1. 复制下方「提示词正文」代码块全部内容（含末尾附录 A 公司事实与附录 B 上传实现）；
 2. 粘贴到对话里，末尾追加：`参考文章：<URL 或粘贴的 HTML>`；
 3. AI 输出完整 HTML 文件内容 → 保存为 `xxx-delivery.html` → 双击打开使用。
 
@@ -42,7 +67,8 @@ AI 会自己读取本文件并执行，交付页默认保存到 `deliveries/<slu
 2. **最快路径**：Zone 6「Copy Import SQL」→ 打开 Supabase → SQL Editor → 粘贴 → Run，一条搞定整篇导入；
 3. 备用路径：Zone 2「Copy Content HTML」存 `posts.content`；Zone 3 逐字段 Copy 或 Zone 5「Copy Full Record JSON」；
 4. 导入后务必重启 Astro dev server / 重新 build，静态预渲染页（首页、分类索引）才会读到新文章；
-5. 换图：下载转存自有 CDN 后，在 content 与 image_url 里**全文搜参考站域名**一次定位全部热链逐张替换
+5. 换图：默认已由流水线（第四条 P1–P5）在写文前上传 R2 并写入最终 URL，无需手工替换；
+   仅当交付页为回退热链形态时，才按 Zone 4 TODO 清单下载转存 R2 后全文搜参考站域名逐张替换
    （若已用 Zone 6 导入，则改库里记录的 content/image_url，或改交付页 SQL 后重新导入）。
 
 ## 提示词正文
@@ -116,7 +142,7 @@ FAQ 数等）无法用**真实、优质、不自相矛盾**的内容填满时，
 【评估清单表】同对比表格令牌，但列结构固定为：Evaluation Area / Key Question / How to Verify。
 【figure】数量与插入位置对齐或超过参考文章（≥3 张）：
   <figure style="margin:32px 0;">
-    <img src="{参考站原图绝对 URL}" alt="{描述画面并含关键词}" loading="lazy"
+    <img src="{最终 R2 URL（默认）/ 参考站原图绝对 URL（回退）}" alt="{描述画面并含关键词}" loading="lazy"
          style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;display:block;" />
     <figcaption style="margin-top:10px;text-align:center;font-size:0.85rem;color:#6b7280;">{一句图注}</figcaption>
   </figure>
@@ -158,11 +184,51 @@ FAQ 数等）无法用**真实、优质、不自相矛盾**的内容填满时，
   </div>
   3–5 条真实来源；与文内 [N] 引用对应。
 
-═══ 四、图片规则（暂热链 · 用户后续自行替换）═══
-1. 正文 figure 的 src 直接用参考文章对应原图的绝对 URL（协议相对 // 开头补 https://），不用占位令牌。
-2. 头图（image_url 字段）取参考文章头图 / og:image 的干净基 URL（去掉 ?iopcmd=… 等水印参数）。
-3. 交付页 Zone 4 必须逐张列出：图片位置（头图 / 第几节第几张）+ 当前 URL（可点击链接），并注明：
-   "替换时在 Content HTML 与 image_url 中全文搜参考站域名，可一次定位全部热链逐张替换"。
+═══ 四、图片规则（R2 流水线优先 · 不可用时回退热链）═══
+【图片资产流水线（默认路径，写文之前执行；可直接跑的实现见附录 B / docs/r2-image-pipeline.py）】
+P0 环境自检（每次开工前一次）：① Python 3.9+ 存在？② `import boto3` 成功（否则 pip install boto3，
+   或改用 aws cli 备用命令，见 docs/r2-setup.md §1）？③ 密钥可读（环境变量 R2_ACCESS_KEY_ID /
+   R2_SECRET_ACCESS_KEY，或项目根 `.env`，或 `docs/r2-credentials.env`）？④ 桶可达（list_objects_v2 MaxKeys=1）？
+   一键自检：`python docs/r2-image-pipeline.py --check`。**任一失败 → 不阻塞写作**，直接转
+   下方【回退】热链路径，并告知用户缺什么、怎么补（docs/r2-setup.md）。
+P1 下载：抓取参考文章每张正文图与头图（请求带浏览器 User-Agent；被反爬拦截按本条 4 回退）。
+   单张图下载失败 / 404 → 省略该图位（宁缺毋滥），不用 stock 顶替、不编造 URL，并在 Zone 4 记录原因。
+P2 vision 核对：逐张实际查看图片内容后再写 alt / figcaption（对齐本条 6 真实性红线）。
+P3 命名：blog/<主题>/<语义名>-<sha1前6位>.jpg
+   - 主题 = 有界文件夹（恒定不增长）：acoustic-ceiling / metal-ceiling / other-ceiling /
+     facade-cladding / metal-panel / wall-panel / ceiling-grid-baffle / projects / general；
+   - 语义名 = 2~5 个连字符关键词、全小写、含本节关键词；
+   - 竞品品牌词（prance / lifisher / autopartsfirst，可追加）从语义名中删除或替换为 meiyu；
+   - sha1 前 6 位由文件内容计算 → 并发 / 跨 AI / 重写均不撞名，无需任何登记表。
+   - 【v5.7.3 主题判定顺序（确定性，跨 AI 一致）】① 材质/产品族（铝吊顶族→metal-ceiling；幕墙/外立面/soffit→
+     facade-cladding；墙板→metal-panel 或 wall-panel；格栅/挡板/龙骨→ceiling-grid-baffle）→
+     ② 功能修饰（穿孔/吸音功能优先→acoustic-ceiling；非铝天花→other-ceiling）→
+     ③ 项目语境（工地/安装中/项目渲染→projects）→ ④ 不在九类内则选最接近的一类 →
+     ⑤ 仍无匹配→general 兜底。**禁止自创文件夹**。
+   - 【v5.7.3 general 治理】general 为候选池：其中反复出现同一语义名前缀且成规模时，由**用户升版本**
+     新增主题（AI 不得自行新增）；旧图不强制迁移（URL 不变不坏）；可定期汇报 general 高频语义前缀
+     供用户决策。文件夹名不影响 SEO（关键词信号在文件名 / alt / 正文，不在路径）。
+P4 去重上传：上传到 Cloudflare R2（桶 meiyu，公开域 https://file.meiyualuminum.com/）前先 HEAD 同 key：
+   存在 → 直接复用该 URL 不重传；不存在 → 上传（ContentType 按扩展名）。同字节覆盖无害，绝不破坏性覆盖。
+   密钥安全：R2 AK/SK 仅从环境变量、项目根 `.env` 或 `docs/r2-credentials.env` 读取（三者均已
+   gitignore），**禁止写入交付页 HTML / 提示词正文 / 仓库被跟踪文件 / SQL / 日志 / 聊天回复**
+   （AK/SK 值本身也不得回显）。
+   清理：每张图上传并公开 URL 校验 200 后**立即删除本地临时副本**（`.tmp-img/`），批次结束再清
+   空的临时目录（脚本默认行为；需留档用 `--keep-tmp`）。
+P5 写文（默认路径）：figure src 与 image_url 用最终 R2 URL（https://file.meiyualuminum.com/blog/…）；
+   回退时按下方【回退】条款用参考站原图热链。
+【交付形态】完整可执行脚本：`docs/r2-image-pipeline.py`（--check / --plan / --stage download|upload /
+   --stats / --cleanup）；配置与令牌获取、故障排查、general 治理：`docs/r2-setup.md`。
+   `--stats` 用于定期汇报 general 高频语义前缀，供用户决定是否新增主题。
+【回退（R2 / 密钥 / 网络不可用）】figure src 用参考文章对应原图的绝对 URL（协议相对 // 开头补 https://），
+   不用占位令牌；并在 Zone 4 列「待替换 TODO 清单」（位置 + 源 URL + 建议 R2 命名），供后续一次替换 pass。
+【写前查重（v5.7.2）】动笔前查 posts 表是否已有同 slug / 同标题 / 同主题文章：已存在 → 走重写更新
+   （沿用 slug）或换 slug 写变体，不盲目新建；唯一索引 posts_slug_lang_uq 兜底。
+1. （回退路径）正文 figure 的 src 用参考文章对应原图的绝对 URL（协议相对 // 开头补 https://），不用占位令牌；
+   默认路径下 src 用 P5 的最终 R2 URL。
+2. 头图（image_url 字段）默认取流水线上传后的头图 R2 URL；回退时取参考文章头图 / og:image 的干净基 URL（去掉 ?iopcmd=… 等水印参数）。
+3. 交付页 Zone 4 必须逐张列出：图片位置（头图 / 第几节第几张）+ 最终 URL（可点击）+ R2 key + vision 观察一句；
+   回退热链时改列源 URL 并注明："替换时在 Content HTML 与 image_url 中全文搜参考站域名，可一次定位全部热链逐张替换"。
 4. 反爬回退：若直接抓取参考页被反爬拦截（403/503、验证码页、空正文），
    改用浏览器代理（Browser 子代理 / 无头浏览器）打开该 URL，从渲染后的页面提取：
    正文、标题结构、正文图片 URL、头图 / og:image，再继续正常流程；
@@ -171,6 +237,10 @@ FAQ 数等）无法用**真实、优质、不自相矛盾**的内容填满时，
 5. 图片前置策略：第一张 figure 必须出现在正文前 1/3（推荐位置：Introduction 末段之后、
    或第一个 H2 节内），作视觉钩子先抓住读者；其余 figure 均匀分布在后续章节，
    避免连续 2 个以上 H2 节无图；参考文章图片位置偏后时按本规则前移（张数不减）。
+6. 图片内容真实性（v5.7.1，与案例 v5.8.5 对齐）：alt / figcaption 里的**具体视觉描述**必须基于
+   **实际看过图内容**（vision 核对）或用户确认；当只能拿到文件名 / 分区上下文时，alt 退到
+   主题级描述（如 "acoustic ceiling tiles installed in a humid atrium"），**不得编造画面细节**。
+7. 画面水印：图片画面若带竞品水印 / LOGO，流水线不负责去除，由用户后期自行处理（不因此弃用该图）。
 
 ═══ 五、数据库字段与 SEO 提取规则（posts 表）═══
 字段清单：title ≤60 字符含主关键词；slug kebab-case 且不与现有文章重复；description ≤160 字符列表页摘要；
@@ -233,7 +303,7 @@ SEO 提取规则（先写成稿，再提取字段；禁止摘抄参考文章的 
 Zone 1 Article Preview：<div class="preview"> 直接渲染正文（800px 容器模拟站点正文宽度），图片即见真图；
 Zone 2 Content HTML：<textarea readonly> 装完整正文（含内联样式），右上 "Copy Content HTML" 一键复制；
 Zone 3 Database Fields：第五条字段逐行 input readonly + 右侧 Copy 按钮（tags/keywords 显示为 JSON 数组字符串）；
-Zone 4 Image Sources：按第四条 3 列出每张图位置 + URL，附替换操作说明；
+Zone 4 Image Sources：按第四条 3 列出每张图位置 + 最终 URL + R2 key + vision 观察；回退热链时附替换操作说明与待替换 TODO；
 Zone 5 通栏大按钮 "Copy Full Record JSON"：点击实时拼装含 content 的完整记录
   （tags/keywords 解析为真数组），可直接 INSERT。
 Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条可直接跑完整导入的 SQL（见第九条），
@@ -300,10 +370,108 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
 【内容红线】不点名/不直接对比具体竞品或贸易公司；质保/MOQ/交期数字必带"标准 offer，
   项目具体以报价/合同为准"限定；客户名/照片/评价须书面授权（否则 Illustrative testimonial 标注）；
   认证宣称限"标准名 + 合规状态"，证书/报告编号不公开。
+
+═══ 附录 B · R2 上传最小实现（pipeline-core v1.1，与 docs/r2-image-pipeline.py 同源）═══
+以下代码可直接跑；只依赖 boto3。完整批量 CLI（--check / --plan / --stage / --stats / --cleanup）
+见 docs/r2-image-pipeline.py，配置与令牌获取见 docs/r2-setup.md。修改时三处保持同版本。
+
+import hashlib, os, re, time, urllib.request
+ENDPOINT = "https://c58d6530184ba13658bd5a73cf611ff6.r2.cloudflarestorage.com"
+BUCKET, PUBLIC, PREFIX = "meiyu", "https://file.meiyualuminum.com/", "blog"
+TOPICS = {"acoustic-ceiling","metal-ceiling","other-ceiling","facade-cladding","metal-panel",
+          "wall-panel","ceiling-grid-baffle","projects","general"}
+BRANDS = ("prance", "lifisher", "autopartsfirst")
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"}
+
+def creds():                      # 密钥：环境变量 → .env → docs/r2-credentials.env（均已 gitignore）；绝不回显
+    ak = os.environ.get("R2_ACCESS_KEY_ID"); sk = os.environ.get("R2_SECRET_ACCESS_KEY")
+    if ak and sk: return ak, sk
+    for path in (".env", ".env.local", "docs/r2-credentials.env"):   # 相对路径 → 在项目根执行；第三项让 docs/ 拷走即自带密钥
+        if not os.path.exists(path): continue
+        for line in open(path, encoding="utf-8"):
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line: continue
+            k, v = line.split("=", 1); v = v.strip().strip('"').strip("'")
+            if k.strip() == "R2_ACCESS_KEY_ID" and not ak: ak = v
+            elif k.strip() == "R2_SECRET_ACCESS_KEY" and not sk: sk = v
+        if ak and sk: break
+    return ak, sk
+
+def client():
+    import boto3; ak, sk = creds()
+    if not (ak and sk): raise SystemExit("缺 R2 密钥 → 见 docs/r2-setup.md（或改走回退热链）")
+    return boto3.client("s3", endpoint_url=ENDPOINT, aws_access_key_id=ak,
+                        aws_secret_access_key=sk, region_name="auto")
+
+def semantic(s):                  # 清洗：小写 / 连字符 / 删竞品品牌词 / ≤ 5 段
+    s = re.sub(r"[^a-z0-9]+", "-", (s or "").lower()).strip("-")
+    for b in BRANDS: s = s.replace(b, "")
+    return "-".join(re.sub(r"-{2,}", "-", s).strip("-").split("-")[:5])[:60] or "image"
+
+def key_of(topic, name, data):    # blog/<主题>/<语义名>-<sha1前6位>.<ext>
+    ext = "png" if data[:8] == b"\x89PNG\r\n\x1a\n" else "jpg"
+    t = (topic or "").strip().lower(); t = t if t in TOPICS else "general"
+    return f"{PREFIX}/{t}/{semantic(name)}-{hashlib.sha1(data).hexdigest()[:6]}.{ext}"
+
+def fetch(url, tries=3):          # 带浏览器 UA + 重试（默认 UA 会被参考站 403）
+    err = None
+    if url.startswith("//"): url = "https:" + url
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=45) as r:
+                d = r.read()
+            if len(d) > 1024: return d
+            err = RuntimeError(f"响应过小 {len(d)}B")
+        except Exception as e:
+            err = e
+        time.sleep(1.5 * (i + 1))
+    raise RuntimeError(f"下载失败 {url} → {err}")
+
+def push(cli, key, data):         # HEAD 去重 → 上传 → 公开 URL 校验
+    from botocore.exceptions import ClientError
+    try:
+        cli.head_object(Bucket=BUCKET, Key=key); status = "reused"
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") not in ("404", "NoSuchKey", "NotFound"): raise
+        cli.put_object(Bucket=BUCKET, Key=key, Body=data,
+                       ContentType="image/png" if key.endswith(".png") else "image/jpeg")
+        status = "uploaded"
+    url = PUBLIC + key
+    req = urllib.request.Request(url, method="HEAD", headers=UA)
+    code = urllib.request.urlopen(req, timeout=30).status
+    return {"key": key, "url": url, "status": status, "http": code}   # http==200 才算成功
+
+# 用法（P1→P5）：data = fetch(源URL) → key = key_of(主题, 语义名, data) → r = push(client(), key, data)
+# r["url"] 即填入 figure src 与 image_url；r["http"]==200 后删除 .tmp-img/ 里的本地副本（清理）。
+# 主题判定按第四条 P3 顺序；单图失败则省略图位（不用 stock）并在 Zone 4 记录。
 ```
 
 ## 变更记录
 
+- **v5.7.6（2026-10-06）**：密钥随 docs/ 迁移——新增第三密钥来源 `docs/r2-credentials.env`
+  （已 gitignore：拷 `docs/` 文件夹会跟着走、提交仓库不会走 → 换电脑/换 IDE 零配置）；
+  读取优先级：环境变量 > 项目根 .env/.env.local > 该文件；附录 B `creds()` 同步为三来源
+  （pipeline-core v1.1，70 行，与案例提示词逐行一致）；P0 自检③、P4 密钥安全、「怎么调用·
+  首次使用」同步；密钥红线补「禁入提示词正文」。
+- **v5.7.5（2026-10-06）**：流水线可执行化 + 跳机可复现——新增 P0 环境自检（失败自动转回退）；
+  新增附录 B 自包含上传实现（与 docs/r2-image-pipeline.py 同源 pipeline-core v1.0）；P4 补密钥可走
+  项目根 .env（已 gitignore）与临时文件清理（公开校验 200 后立即删）；新增【交付形态】指向
+  docs/r2-image-pipeline.py 与 docs/r2-setup.md（--check/--plan/--stage/--stats/--cleanup）；
+  「怎么调用」补首次使用三步与「迁移只需拷 docs/ 文件夹」。
+- **v5.7.4（2026-10-06）**：全文审计修复——第三条 figure 令牌 src 改为「最终 R2 URL（默认）/ 参考站
+  原图（回退）」；P1 反爬回退引用号 2→4；P1 补单图下载失败则省略图位（不用 stock）；P4 补密钥
+  安全（仅环境变量，禁写入交付页/仓库/SQL）；P5 标明为默认路径并指向回退条款。
+- **v5.7.3（2026-10-06）**：第四条 P3 补【主题判定顺序】（材质/产品族→功能修饰→项目语境→九类内
+  最接近→general 兜底，禁止自创文件夹）与【general 治理】（候选池、新主题须用户升版本、旧图不强制
+  迁移、定期汇报高频前缀）；明确文件夹名不影响 SEO。
+- **v5.7.2（2026-10-06）**：第四条新增【图片资产流水线】默认路径——写文前下载→vision 核对→
+  语义+内容哈希(sha1前6位)命名→HEAD 去重上传 R2（桶 meiyu / 域 file.meiyualuminum.com / 有界主题文件夹）→
+  正文与 image_url 用最终 URL；并发/跨 AI/重写靠内容哈希不撞名；R2 不可用回退热链+Zone4 TODO；
+  新增写前查重（posts 同 slug/主题）与竞品品牌词清洗（prance/lifisher/autopartsfirst→删除或 meiyu）；
+  画面水印归用户后期处理；Zone 4 增列 R2 key 与 vision 观察。
+- **v5.7.1（2026-10-05）**：第四条新增图片内容真实性红线（与案例 v5.8.5 对齐）——alt / figcaption 的
+  具体视觉描述必须基于 vision 核对或用户确认；仅文件名/上下文可得时退到主题级描述，不编造画面细节。
 - **v5.7（2026-10-05）**：新增【宁缺毋滥】最高原则（第一条开头）——真实性与内部一致性
   永远高于任何数量门槛；无法用真实·优质·不矛盾内容填满时宁可减少，绝不注水/编造/自相矛盾；
   第六条所有硬性数量指标加此豁免；新增全文内部一致性（数值/论断/范围不自相矛盾）自检项。
