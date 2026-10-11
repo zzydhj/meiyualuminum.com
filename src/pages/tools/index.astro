@@ -1,0 +1,373 @@
+---
+export const prerender = true;
+
+/**
+ * tools/index.astro — 免费工具索引
+ *
+ * 目的：给三个纯计算工具一个可收录的父页，并从页眉 Resource 下拉获得全站内链。
+ * 红线：只放纯数学/物理的工具。任何依赖我方未公开工程数据（龙骨间距、包装尺寸、
+ * 截面惯性矩）的估算一律不上线——算错比没有更糟，见每个工具页的 Assumptions 区。
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/PageHero.astro";
+
+const pageTitle = "Free Aluminium Ceiling & Panel Calculators";
+const pageDescription =
+    "Free online tools for specifying aluminium ceilings and panels: panel take-off and cut widths, aluminium sheet weight per m² and per shipment, and perforation open area for round-hole patterns.";
+
+const tools = [
+    {
+        href: "/tools/ceiling-take-off/",
+        tag: "Take-off",
+        name: "Ceiling Panel Take-off",
+        desc: "Room dimensions plus a module size gives panel count, balanced perimeter cut widths, total m², perimeter trim length and an order quantity with wastage.",
+        io: "Type a room size and a module → get panel count, cut widths and order area",
+        icon: "M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18",
+    },
+    {
+        href: "/tools/aluminum-weight/",
+        tag: "Material",
+        name: "Aluminium Weight Calculator",
+        desc: "Thickness, size and quantity against published alloy densities — weight per panel, per square metre and for the whole shipment, for freight and structural checks.",
+        io: "Type thickness, size and qty → get kg per panel and per shipment",
+        icon: "M12 3a3 3 0 0 1 3 3h3.2l2 13H3.8l2-13H9a3 3 0 0 1 3-3zM9 6h6",
+    },
+    {
+        href: "/tools/perforation-open-area/",
+        tag: "Perforation",
+        name: "Perforation Open Area",
+        desc: "Hole diameter, pitch and layout (staggered or straight) gives open area percentage and ligament width — and the reverse check, what pitch hits a target open area.",
+        io: "Type hole Ø and pitch → get open area % and ligament width",
+        icon: "M4 5h.01M12 5h.01M20 5h.01M4 12h.01M12 12h.01M20 12h.01M4 19h.01M12 19h.01M20 19h.01",
+    },
+];
+
+const faq = [
+    {
+        q: "Why are these free?",
+        a: "Because a buyer who can size a job themselves is a buyer who can actually order. These tools exist to remove the arithmetic between an enquiry and a real quotation — and to give you numbers you can check.",
+    },
+    {
+        q: "Can I rely on the output for an order?",
+        a: "Treat every result as indicative and verify before ordering. Each tool shows its own formula and the assumptions behind it, so your engineer can check the arithmetic rather than trust us. Anything that would need our proprietary engineering data — carrier and hanger counts, deflection between supports, container loading — is deliberately not calculated here.",
+    },
+];
+---
+
+<BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
+    <script
+        type="application/ld+json"
+        set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faq.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+        })}
+    />
+
+    <PageHero
+        imageAlt="Free specification calculators"
+        titleWhite="Free Tools"
+        titleGold="& Calculators"
+        subtitle="Specification arithmetic for aluminium ceilings and panels — the numbers a take-off, a freight estimate or a perforation schedule actually needs. Every tool shows its formula and its assumptions, so you can check the maths instead of trusting a supplier."
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Free Tools", url: "/tools/" },
+            ],
+        }}
+    />
+
+    <div class="tlx-main">
+        <div class="tlx-head">
+            <span class="tlx-eyebrow">No Sign-Up</span>
+            <h2 class="tlx-h2">
+                Three Calculators, <span class="tlx-hl"
+                    >Every Result Checkable</span
+                >
+            </h2>
+            <p class="tlx-sub">
+                Each tool prints the formula next to the number it produced,
+                lists the assumptions behind it, and says plainly what it will
+                not calculate. Use them on a competitor's quotation too — the
+                arithmetic is the same either way.
+            </p>
+        </div>
+
+        <ul class="tlx-grid">
+            {
+                tools.map((t) => (
+                    <li>
+                        <a class="tlx-card" href={t.href}>
+                            <span class="tlx-top">
+                                <span class="tlx-ico" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d={t.icon} />
+                                    </svg>
+                                </span>
+                                <span class="tlx-tag">{t.tag}</span>
+                            </span>
+
+                            <strong>{t.name}</strong>
+                            <p>{t.desc}</p>
+
+                            <span class="tlx-io">
+                                <b>How it works</b>
+                                {t.io}
+                            </span>
+
+                            <span class="tlx-btn">
+                                Open calculator
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5 12h14M13 6l6 6-6 6" />
+                                </svg>
+                            </span>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+
+        <div class="tlx-note">
+            <p style="margin:0 0 10px;">
+                <strong>What we deliberately do not calculate here.</strong>{
+                    " "
+                }
+                Carrier, hanger and perimeter-piece counts depend on our suspension
+                system and on the span you are working to; deflection between supports
+                depends on tested section properties; container loading depends on
+                how a specific order is crated. A generic figure for any of those
+                would look authoritative and be wrong, so those numbers come back
+                on your quotation instead — itemised, so you can price the whole system
+                rather than the panels alone.
+            </p>
+            {
+                faq.map((f) => (
+                    <p style="margin:0 0 8px;">
+                        <strong>{f.q}</strong> {f.a}
+                    </p>
+                ))
+            }
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    /* 本页专用（scoped）：本文件不引用 ToolLayout，所以样式必须自己带着 */
+    .tlx-main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: clamp(36px, 5vw, 60px) clamp(16px, 4vw, 32px)
+            clamp(52px, 6vw, 80px);
+    }
+    .tlx-head {
+        max-width: 760px;
+        margin: 0 0 clamp(26px, 3.6vw, 38px);
+    }
+    .tlx-eyebrow {
+        display: inline-block;
+        margin-bottom: 0.6rem;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #c09020;
+    }
+    .tlx-h2 {
+        margin: 0 0 0.9rem;
+        font-size: clamp(1.5rem, 3.2vw, 2.15rem);
+        line-height: 1.28;
+        color: #1e293b;
+    }
+    .tlx-hl {
+        color: #69574a;
+    }
+    .tlx-sub {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.85;
+        color: #475569;
+    }
+    .tlx-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(16px, 2.2vw, 22px);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .tlx-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        height: 100%;
+        padding: 1.7rem 1.5rem 1.5rem;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-top: 3px solid #c0a882;
+        border-radius: 12px;
+        text-decoration: none;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-top-color 0.2s ease;
+    }
+    .tlx-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(105, 87, 74, 0.1);
+        border-top-color: #c09020;
+    }
+    .tlx-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 2px;
+    }
+    .tlx-ico {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: #f5f0eb;
+        border: 1px solid #e2d6c8;
+        color: #69574a;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
+    }
+    .tlx-ico svg {
+        width: 23px;
+        height: 23px;
+    }
+    .tlx-card:hover .tlx-ico {
+        background: #69574a;
+        border-color: #69574a;
+        color: #f0c96a;
+    }
+    .tlx-tag {
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: #f5f0eb;
+        border: 1px solid #e2d6c8;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #69574a;
+    }
+    .tlx-card strong {
+        margin-top: 4px;
+        font-size: 1.14rem;
+        line-height: 1.35;
+        color: #1e293b;
+    }
+    .tlx-card p {
+        margin: 0;
+        flex: 1;
+        font-size: 0.89rem;
+        line-height: 1.7;
+        color: #475569;
+    }
+    /* 输入→输出提示条：让人一眼看出这是个可操作的工具，同时是关键词位 */
+    .tlx-io {
+        display: block;
+        padding: 9px 12px;
+        border: 1px dashed #ddcfba;
+        border-radius: 9px;
+        background: #faf8f6;
+        font-size: 0.8rem;
+        line-height: 1.55;
+        color: #69574a;
+    }
+    .tlx-io b {
+        display: block;
+        margin-bottom: 2px;
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #a08a76;
+    }
+    /* 真按钮：实心胶囊 + 箭头，hover 整卡时变金 */
+    .tlx-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        align-self: flex-start;
+        margin-top: 2px;
+        padding: 10px 20px;
+        border-radius: 999px;
+        background: #69574a;
+        color: #fff;
+        font-size: 0.86rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        box-shadow: 0 2px 10px rgba(105, 87, 74, 0.26);
+        transition:
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.15s ease;
+    }
+    .tlx-btn svg {
+        width: 15px;
+        height: 15px;
+    }
+    .tlx-card:hover .tlx-btn {
+        background: #c09020;
+        box-shadow: 0 6px 18px rgba(192, 144, 32, 0.34);
+        transform: translateX(2px);
+    }
+    .tlx-note {
+        margin: clamp(28px, 3.8vw, 40px) 0 0;
+        padding: 1.2rem 1.35rem;
+        background: #faf8f6;
+        border-left: 4px solid #c09020;
+        border-radius: 0 10px 10px 0;
+    }
+    .tlx-note p {
+        margin: 0 0 10px;
+        font-size: 0.89rem;
+        line-height: 1.75;
+        color: #475569;
+    }
+    .tlx-note p:last-child {
+        margin-bottom: 0;
+    }
+    .tlx-note strong {
+        color: #334155;
+    }
+
+    @media (max-width: 980px) {
+        .tlx-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    @media (max-width: 620px) {
+        .tlx-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+</style>

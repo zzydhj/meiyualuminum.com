@@ -1,5 +1,5 @@
 ---
-import Breadcrumb from "../../components/Breadcrumb.astro";
+import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 import { getChildCategoryIds, type CategoryNode } from "../../lib/categoryPath";
@@ -33,52 +33,67 @@ function getProductCount(categoryId: number): number {
   return products.filter((p) => {
     if (!p.category_ids) return false;
     // category_ids may be string[] or number[] from Supabase JSON column
-    return (p.category_ids as (string | number)[]).some(
-      (id) => allIds.includes(Number(id))
+    return (p.category_ids as (string | number)[]).some((id) =>
+      allIds.includes(Number(id)),
     );
   }).length;
 }
 
 const pageTitle = "Categories";
-const pageDescription = "Browse our product categories including brake systems, engine parts, filters and more.";
+const pageDescription =
+  "Browse our product categories including brake systems, engine parts, filters and more.";
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription}>
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Categories", url: "/categories/" },
+<BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
+  <PageHero
+    imageAlt={pageTitle}
+    titleWhite="Product"
+    titleGold="Categories"
+    subtitle="Browse our aluminum ceiling, wall panel and facade cladding systems by application family. Every family links to its full product list with specifications, finishes and installation guidance."
+    stats={[
+      { value: String(rootCategories.length), label: "Product Families" },
+      { value: String(products.length), label: "Products Listed" },
     ]}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Categories", url: "/categories/" },
+      ],
+    }}
   />
 
-  {rootCategories.length === 0 ? (
-    <p>No categories available at the moment.</p>
-  ) : (
-    <div class="category-tree">
-      {rootCategories.map((root) => {
-        const children = childCategories.filter((c) => c.parent_id === root.id);
-        return (
-          <div class="category-group">
-            <a href={`/categories/${root.slug}/`} class="category-root">
-              <h2>{root.name}</h2>
-              {root.description && <p>{root.description}</p>}
-              <span class="count">{getProductCount(root.id)} products</span>
-            </a>
-            {children.length > 0 && (
-              <div class="subcategories">
-                {children.map((child) => (
-                  <a href={`/categories/${child.slug}/`} class="subcategory">
-                    {child.name}
-                    <span class="count">{getProductCount(child.id)}</span>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  )}
+  {
+    rootCategories.length === 0 ? (
+      <p>No categories available at the moment.</p>
+    ) : (
+      <div class="category-tree">
+        {rootCategories.map((root) => {
+          const children = childCategories.filter(
+            (c) => c.parent_id === root.id,
+          );
+          return (
+            <div class="category-group">
+              <a href={`/categories/${root.slug}/`} class="category-root">
+                <h2>{root.name}</h2>
+                {root.description && <p>{root.description}</p>}
+                <span class="count">{getProductCount(root.id)} products</span>
+              </a>
+              {children.length > 0 && (
+                <div class="subcategories">
+                  {children.map((child) => (
+                    <a href={`/categories/${child.slug}/`} class="subcategory">
+                      {child.name}
+                      <span class="count">{getProductCount(child.id)}</span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    )
+  }
 </BaseLayout>
 
 <style>

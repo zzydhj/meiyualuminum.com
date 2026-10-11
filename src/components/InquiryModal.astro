@@ -28,7 +28,9 @@ import InquiryForm from "./InquiryForm.astro";
       <div class="inquiry-modal-titles">
         <h2 id="inquiry-modal-title">Request a Quote</h2>
         <p class="inquiry-modal-subtitle">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+            ><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path></svg
+          >
           We reply within 1 hour
         </p>
       </div>
@@ -38,19 +40,36 @@ import InquiryForm from "./InquiryForm.astro";
         data-close-inquiry-modal
         aria-label="Close inquiry form"
       >
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M18 6L6 18M6 6l12 12" />
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M18 6L6 18M6 6l12 12"></path>
         </svg>
       </button>
     </div>
 
     <!-- Download gate banner — shown only when opened via [data-download-file] -->
     <div class="download-banner" id="download-banner" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <path d="M14 2v6h6"/>
-        <path d="M12 18v-6"/>
-        <path d="M9 15l3 3 3-3"/>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+        ></path>
+        <path d="M14 2v6h6"></path>
+        <path d="M12 18v-6"></path>
+        <path d="M9 15l3 3 3-3"></path>
       </svg>
       <div class="download-banner-text">
         <strong>Fill in the form below to download:</strong>
@@ -66,18 +85,53 @@ import InquiryForm from "./InquiryForm.astro";
 
 <script>
   (function () {
-    const dialog = document.getElementById("inquiry-modal") as HTMLDialogElement | null;
+    const dialog = document.getElementById(
+      "inquiry-modal",
+    ) as HTMLDialogElement | null;
     const openButtons = document.querySelectorAll("[data-open-inquiry-modal]");
     const closeButton = dialog?.querySelector("[data-close-inquiry-modal]");
 
+    /* 预填上下文：带 data-inquiry-message 的触发按钮，打开时把这段话填进 Message。
+       只覆盖「空着」或「上次也是自动填的且客户没改过」的内容 —— 绝不冲掉客户自己打的字。 */
+    const messageEl = dialog?.querySelector(
+      'textarea[name="message"]',
+    ) as HTMLTextAreaElement | null;
+    let lastAuto = "";
+
+    function prefill(btn: Element) {
+      if (!messageEl) return;
+      const want = btn.getAttribute("data-inquiry-message") || "";
+      if (!want) {
+        if (lastAuto && messageEl.value === lastAuto) messageEl.value = "";
+        lastAuto = "";
+        return;
+      }
+      if (messageEl.value === "" || messageEl.value === lastAuto)
+        messageEl.value = want;
+      lastAuto = want;
+    }
+
     openButtons.forEach((btn) =>
-      btn.addEventListener("click", () => dialog?.showModal())
+      btn.addEventListener("click", () => {
+        prefill(btn);
+        dialog?.showModal();
+      }),
     );
 
     closeButton?.addEventListener("click", () => dialog?.close());
 
     // Expose global helpers so other scripts can trigger the modal
-    (window as any).openInquiryModal = () => dialog?.showModal();
+    (window as any).openInquiryModal = (text?: string) => {
+      if (
+        text &&
+        messageEl &&
+        (messageEl.value === "" || messageEl.value === lastAuto)
+      ) {
+        messageEl.value = text;
+        lastAuto = text;
+      }
+      dialog?.showModal();
+    };
     (window as any).closeInquiryModal = () => dialog?.close();
   })();
 
@@ -85,10 +139,13 @@ import InquiryForm from "./InquiryForm.astro";
      任何带 data-download-file 的按钮：打开询盘弹窗，提交时自动下载文件，
      并在询盘邮件中记录客户请求的文档名（hidden 字段 requested_document）。 */
   (function () {
-    const dialog = document.getElementById("inquiry-modal") as HTMLDialogElement | null;
+    const dialog = document.getElementById(
+      "inquiry-modal",
+    ) as HTMLDialogElement | null;
     const banner = document.getElementById("download-banner");
     const docNameEl = document.getElementById("download-doc-name");
-    const form = dialog?.querySelector("form") as HTMLFormElement | null | undefined;
+    const form = dialog?.querySelector("form") as
+      HTMLFormElement | null | undefined;
     if (!dialog || !form || !banner || !docNameEl) return;
 
     let pendingFile: string | null = null;
@@ -104,7 +161,9 @@ import InquiryForm from "./InquiryForm.astro";
       const doc = pendingDoc;
 
       // 在询盘邮件中记录客户请求的文档名
-      let hidden = form.querySelector<HTMLInputElement>('input[name="requested_document"]');
+      let hidden = form.querySelector<HTMLInputElement>(
+        'input[name="requested_document"]',
+      );
       if (!hidden) {
         hidden = document.createElement("input");
         hidden.type = "hidden";
@@ -113,7 +172,9 @@ import InquiryForm from "./InquiryForm.astro";
       }
       hidden.value = doc || file;
 
-      const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]");
+      const submitBtn = form.querySelector<HTMLButtonElement>(
+        "button[type=submit]",
+      );
       const originalLabel = submitBtn?.textContent || "";
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -132,7 +193,8 @@ import InquiryForm from "./InquiryForm.astro";
 
       const showSuccess = () => {
         const strong = banner.querySelector("strong");
-        if (strong) strong.textContent = "✓ Submitted — your download is starting";
+        if (strong)
+          strong.textContent = "✓ Submitted — your download is starting";
         docNameEl.textContent = "";
       };
 
@@ -168,15 +230,17 @@ import InquiryForm from "./InquiryForm.astro";
       if (strong) strong.textContent = "Fill in the form below to download:";
     });
 
-    document.querySelectorAll<HTMLElement>("[data-download-file]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        pendingFile = btn.getAttribute("data-download-file") || null;
-        pendingDoc = btn.getAttribute("data-doc-name") || "";
-        docNameEl.textContent = pendingDoc;
-        banner.hidden = false;
-        dialog.showModal();
+    document
+      .querySelectorAll<HTMLElement>("[data-download-file]")
+      .forEach((btn) => {
+        btn.addEventListener("click", () => {
+          pendingFile = btn.getAttribute("data-download-file") || null;
+          pendingDoc = btn.getAttribute("data-doc-name") || "";
+          docNameEl.textContent = pendingDoc;
+          banner.hidden = false;
+          dialog.showModal();
+        });
       });
-    });
   })();
 </script>
 
@@ -312,7 +376,9 @@ import InquiryForm from "./InquiryForm.astro";
     line-height: 1;
     cursor: pointer;
     border-radius: 50%;
-    transition: color 0.15s, background-color 0.15s;
+    transition:
+      color 0.15s,
+      background-color 0.15s;
   }
 
   .inquiry-modal-close:hover,
@@ -341,7 +407,7 @@ import InquiryForm from "./InquiryForm.astro";
     line-height: 1.45;
   }
 
-    /* display:flex 会覆盖 hidden 属性的默认 display:none，必须显式补回 */
+  /* display:flex 会覆盖 hidden 属性的默认 display:none，必须显式补回 */
   .download-banner[hidden] {
     display: none;
   }

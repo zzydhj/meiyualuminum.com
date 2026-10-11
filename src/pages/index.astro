@@ -26,6 +26,61 @@ const heroTitle = "Aluminum Building Materials You Can Trust";
 const heroSubtitle =
   "Professional supplier of aluminum ceiling systems, facade panels & wall cladding";
 
+/**
+ * 首页产品展示的 8 个品类，与 MegaMenu 同源。
+ * 增删品类只改这一个数组，卡片模板自动渲染（每行 4 个，扁平卡）。
+ */
+const PRODUCT_LINES = [
+  {
+    href: "/categories/aluminum-veneer/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp",
+    title: "Aluminum Veneer",
+    alt: "Aluminum Veneer — curved and flat facade cladding panels",
+  },
+  {
+    href: "/categories/aluminum-strip-panel/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-strip-panel.webp",
+    title: "Aluminum Strip Panel",
+    alt: "Aluminum Strip Panel — linear facade and soffit cladding",
+  },
+  {
+    href: "/categories/u-shaped-aluminum-square-tube/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/u-shaped-aluminum-square-tube.webp",
+    title: "U-Shaped Aluminum Square Tube",
+    alt: "U-Shaped Aluminum Square Tube — open baffle ceiling system",
+  },
+  {
+    href: "/categories/aluminum-honeycomb-core-panel/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp",
+    title: "Aluminum Honeycomb Core Panel",
+    alt: "Aluminum Honeycomb Core Panel — lightweight high-strength cladding",
+  },
+  {
+    href: "/categories/aluminum-ceiling-tile/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-ceiling-tile.webp",
+    title: "Aluminum Ceiling Tile",
+    alt: "Aluminum Ceiling Tile — modular lay-in and clip-in panels",
+  },
+  {
+    href: "/categories/aluminum-square-tube/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp",
+    title: "Aluminum Square Tube",
+    alt: "Aluminum Square Tube — linear ceiling and wall baffle system",
+  },
+  {
+    href: "/categories/fluted-aluminum-panel/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp",
+    title: "Fluted Aluminum Panel",
+    alt: "Fluted Aluminum Panel — decorative wall and ceiling cladding",
+  },
+  {
+    href: "/categories/aluminum-skirting-board/",
+    img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp",
+    title: "Aluminum Skirting Board",
+    alt: "Aluminum Skirting Board — decorative wall base trim",
+  },
+];
+
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -50,16 +105,9 @@ const websiteJsonLd = {
 
   <!-- ===== Full-screen Video Hero Banner ===== -->
   <section class="video-hero">
-    <video
-      class="video-hero-bg"
-      muted
-      loop
-      playsinline
-      preload="none"
-      poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-    >
+    <video class="video-hero-bg" muted loop playsinline preload="metadata">
       <source
-        src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
+        src="https://file.meiyualuminum.com/meiyu-video-3.mp4#t=0.1"
         type="video/mp4"
       />
     </video>
@@ -72,6 +120,203 @@ const websiteJsonLd = {
           >Get a Free Quote</button
         >
         <a href="/products/" class="hero-cta-outline">View All Products</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Video Gallery Section (scroll-triggered autoplay) ===== -->
+  <section class="video-gallery-section" id="videoGallery">
+    <div class="vg-container">
+      <div class="vg-header">
+        <span class="vg-eyebrow">Factory & Projects</span>
+        <div class="vg-gold-line"></div>
+        <h2>See MEIYU<sup>&reg;</sup> in <span>Action</span></h2>
+        <p>
+          From production lines to finished facades — watch our craftsmanship
+          come alive.
+        </p>
+      </div>
+      <div class="vg-grid">
+        <div class="vg-item">
+          <div class="vg-cell">
+            <video muted loop playsinline preload="metadata">
+              <source
+                src="https://file.meiyualuminum.com/video-project/xiamen-205e2-project.mp4#t=0.1"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+          <button type="button" class="vg-play" data-vg-play>
+            <svg
+              class="vg-ic-play"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M8 5v14l11-7z" fill="currentColor"></path></svg
+            >
+            <svg
+              class="vg-ic-pause"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"
+              ></path></svg
+            >
+            <span class="vg-play-text">Play</span>
+          </button>
+        </div>
+        <div class="vg-item">
+          <div class="vg-cell">
+            <video muted loop playsinline preload="metadata">
+              <source
+                src="https://file.meiyualuminum.com/video-project/liangjiang-hub-project.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+          <button type="button" class="vg-play" data-vg-play>
+            <svg
+              class="vg-ic-play"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M8 5v14l11-7z" fill="currentColor"></path></svg
+            >
+            <svg
+              class="vg-ic-pause"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"
+              ></path></svg
+            >
+            <span class="vg-play-text">Play</span>
+          </button>
+        </div>
+        <div class="vg-item">
+          <div class="vg-cell">
+            <video muted loop playsinline preload="metadata">
+              <source
+                src="https://file.meiyualuminum.com/video-project/wuhan-gateway-trade-center.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+          <button type="button" class="vg-play" data-vg-play>
+            <svg
+              class="vg-ic-play"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M8 5v14l11-7z" fill="currentColor"></path></svg
+            >
+            <svg
+              class="vg-ic-pause"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"
+              ></path></svg
+            >
+            <span class="vg-play-text">Play</span>
+          </button>
+        </div>
+        <div class="vg-item">
+          <div class="vg-cell">
+            <video muted loop playsinline preload="metadata">
+              <source
+                src="https://file.meiyualuminum.com/video-project/chengdu-cloud-plaza-canopy-project.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+          <button type="button" class="vg-play" data-vg-play>
+            <svg
+              class="vg-ic-play"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M8 5v14l11-7z" fill="currentColor"></path></svg
+            >
+            <svg
+              class="vg-ic-pause"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"
+              ></path></svg
+            >
+            <span class="vg-play-text">Play</span>
+          </button>
+        </div>
+        <div class="vg-item">
+          <div class="vg-cell">
+            <video muted loop playsinline preload="metadata">
+              <source
+                src="https://file.meiyualuminum.com/video-project/hangzhou-gateway-tower-garage.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+          <button type="button" class="vg-play" data-vg-play>
+            <svg
+              class="vg-ic-play"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M8 5v14l11-7z" fill="currentColor"></path></svg
+            >
+            <svg
+              class="vg-ic-pause"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"
+              ></path></svg
+            >
+            <span class="vg-play-text">Play</span>
+          </button>
+        </div>
+        <div class="vg-item">
+          <div class="vg-cell">
+            <video muted loop playsinline preload="metadata">
+              <source
+                src="https://file.meiyualuminum.com/video-project/suzhou-starlight-gateway-project.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+          <button type="button" class="vg-play" data-vg-play>
+            <svg
+              class="vg-ic-play"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M8 5v14l11-7z" fill="currentColor"></path></svg
+            >
+            <svg
+              class="vg-ic-pause"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              aria-hidden="true"
+              ><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"
+              ></path></svg
+            >
+            <span class="vg-play-text">Play</span>
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -187,151 +432,6 @@ const websiteJsonLd = {
     </div>
   </section>
 
-  <!-- ===== Video Gallery Section (scroll-triggered autoplay) ===== -->
-  <section class="video-gallery-section" id="videoGallery">
-    <div class="vg-container">
-      <div class="vg-header">
-        <span class="vg-eyebrow">Factory & Projects</span>
-        <div class="vg-gold-line"></div>
-        <h2>See MEIYU<sup>&reg;</sup> in <span>Action</span></h2>
-        <p>
-          From production lines to finished facades — watch our craftsmanship
-          come alive.
-        </p>
-      </div>
-      <div class="vg-grid">
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">CNC Cutting Line</span>
-        </div>
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">Powder Coating</span>
-        </div>
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">Panel Assembly</span>
-        </div>
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">Quality Inspection</span>
-        </div>
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">Facade Installation</span>
-        </div>
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">Ceiling System</span>
-        </div>
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">Warehouse & Shipping</span>
-        </div>
-        <div class="vg-cell">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
-          >
-            <source
-              src="https://file.meiyualuminum.com/meiyu-video-3.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <span class="vg-badge">LIVE</span>
-          <span class="vg-label">Project Showcase</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ===== Gallery Tabs Section ===== -->
   <section class="gallery-tabs-section">
     <div class="section-header-bronze">
@@ -365,10 +465,7 @@ const websiteJsonLd = {
     <!-- Panel 1: Aluminum Façade -->
     <div class="gallery-panel active" data-panel="facade">
       <div class="acp-gallery">
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-pudong-financial-tower/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/avant-garde-skyscraper-dark-fins-gold-trim-under-construction.webp"
@@ -381,10 +478,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Curved Aluminum Facade Cladding</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-hangzhou-olympic-stadium-facade/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/modern-stadium-white-canopy-colonnade-exterior-architecture.webp"
@@ -396,10 +490,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">White Aluminum Canopy Structure</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-chengdu-riverside-residences/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/organic-wave-balcony-apartment-building-streetview.webp"
@@ -410,7 +501,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Layered Aluminum Balcony Facade</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/modern-skyscraper-perforated-facade-low-angle.webp"
@@ -422,7 +513,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Vertical Aluminum Strip Tower</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/mizuho-building-metallic-lattice-facade-wave-base-low-angle.webp"
@@ -434,10 +525,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Perforated Aluminum Wall Panels</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-guangzhou-medical-center-cladding/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/modern-building-corner-perforated-metal-panel-louvers-detail.webp"
@@ -449,10 +537,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Angular Aluminum Corner Cladding</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-chengdu-riverside-residences/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/white-wave-balcony-residential-tower-facade.webp"
@@ -464,10 +549,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Wave Aluminum Residential Facade</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-pudong-financial-tower/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-facade/parametric-tower-undulating-metal-fins-aerial.webp"
@@ -485,10 +567,7 @@ const websiteJsonLd = {
     <!-- Panel 2: Aluminum Ceiling Project -->
     <div class="gallery-panel" data-panel="ceiling">
       <div class="acp-gallery">
-        <a
-          class="acp-gallery-item"
-          href="/project-beijing-daxing-airport-ceiling/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/beijing-daxing-airport-terminal-tree-column-curved-aluminum-ceiling-interior.webp"
@@ -500,7 +579,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Curved Aluminum Ceiling Design</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-bay-mall-atrium/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/modular-aluminum-strip-ceiling-diamond-steel-node-commercial-arcade.webp"
@@ -512,10 +591,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Linear Aluminum Strip Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/black-perforated-aluminum-ceiling-circular-holes-backlit-office-lobby.webp"
@@ -527,7 +603,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Perforated Aluminum Ceiling Panel</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/hexagonal-honeycomb-aluminum-ceiling-large-span-public-space.webp"
@@ -539,10 +615,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Hexagonal Aluminum Ceiling Grid</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-pudong-financial-tower/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/perforated-metal-ceiling-backlit-triangular-pattern-building-entrance.webp"
@@ -554,7 +627,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Decorative Perforated Wall Panels</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-bay-mall-atrium/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/gradient-perforated-aluminum-ceiling-panels-linear-led-library-office.webp"
@@ -566,10 +639,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Modern Aluminum Baffle Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-beijing-daxing-airport-ceiling/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/white-curved-aluminum-panel-ceiling-tree-column-airport-transit-hub.webp"
@@ -581,10 +651,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Sculptural Aluminum Ceiling System</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-ceiling-project/wood-finish-aluminum-strip-ceiling-steel-frame-office-lobby-8-bishopsgate.webp"
@@ -602,7 +669,7 @@ const websiteJsonLd = {
     <!-- Panel 3: Aluminum Acoustic Ceiling -->
     <div class="gallery-panel" data-panel="acoustic">
       <div class="acp-gallery">
-        <a class="acp-gallery-item" href="/project-shenzhen-bay-mall-atrium/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/circular-ring-aluminum-baffle-ceiling-led-strip-shopping-mall-corridor.webp"
@@ -614,10 +681,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Circular Aluminum Baffle Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-beijing-daxing-airport-ceiling/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/curved-wood-grain-aluminum-baffle-ceiling-linear-led-public-building-corridor.webp"
@@ -629,10 +693,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Wood-Tone Curved Baffle Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/curved-wood-grain-aluminum-baffle-ceiling-warm-led-cove-lighting-hotel-lobby.webp"
@@ -644,7 +705,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Wave Aluminum Tube Ceiling</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/dark-gray-aluminum-baffle-ceiling-linear-led-marble-staircase-interior.webp"
@@ -656,10 +717,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Staircase Linear Aluminum Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/u-baffle-wood-grain-aluminum-square-tube-ceiling-commercial-interior.webp"
@@ -671,7 +729,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Linear Wood Baffle Wall System</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-bay-mall-atrium/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/wave-wood-grain-aluminum-baffle-ceiling-shopping-mall.webp"
@@ -683,7 +741,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Undulating Aluminum Baffle Ceiling</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-bay-mall-atrium/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/white-wave-aluminum-baffle-ceiling-atrium-large-columns-shopping-complex.webp"
@@ -695,10 +753,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Curved Aluminum Atrium Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-beijing-daxing-airport-ceiling/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-square-tube/airport-terminal-curved-white-aluminum-baffle-ceiling-mushroom-columns.webp"
@@ -716,10 +771,7 @@ const websiteJsonLd = {
     <!-- Panel 4: Interior Decorative Panel -->
     <div class="gallery-panel" data-panel="interior">
       <div class="acp-gallery">
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/commercial-interior-aluminium-strip-ceiling-grid-recessed-warm-lights.webp"
@@ -731,7 +783,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Outdoor Wood-Tone Strip Ceiling</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/indoor-aluminium-strip-ceiling-glass-curtain-wall-interior.webp"
@@ -743,7 +795,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Sloped Wood Aluminum Strip Ceiling</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-bay-mall-atrium/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/large-span-outdoor-aluminium-strip-ceiling-steel-structure-canopy.webp"
@@ -755,10 +807,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Indoor Warm Wood Strip Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-chengdu-riverside-residences/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/luxury-interior-aluminium-strip-ceiling-living-room-design.webp"
@@ -770,10 +819,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Patio Wood-Finish Strip Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-chengdu-riverside-residences/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/modern-exterior-aluminium-strip-ceiling-black-steel-frame-glass-facade.webp"
@@ -785,10 +831,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Villa Balcony Strip Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-chengdu-riverside-residences/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/outdoor-aluminium-strip-ceiling-balcony-overhang-spotlight.webp"
@@ -800,10 +843,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Flat Wood Aluminum Strip Ceiling</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/semi-outdoor-aluminium-strip-ceiling-recessed-lights-open-air-space.webp"
@@ -815,10 +855,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Angled Strip Ceiling With Lighting</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-beijing-daxing-airport-ceiling/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-strip-ceiling/wide-plank-aluminium-strip-ceiling-outdoor-corridor-wood-grain-texture.webp"
@@ -836,10 +873,7 @@ const websiteJsonLd = {
     <!-- Panel 5: ACP Panel -->
     <div class="gallery-panel" data-panel="acp">
       <div class="acp-gallery">
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-corridor-doorway-cladding-integrated-linear-lighting.webp"
@@ -851,7 +885,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Corridor Fluted Panel Wall Design</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-feature-wall-backlit-landscape-projection-interior.webp"
@@ -863,7 +897,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Wave Fluted Panel Feature Wall</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-partition-wall-moss-green-wall-biophilic-office-interior.webp"
@@ -875,10 +909,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Lobby Vertical Fluted Panel Wall</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-wall-ceiling-continuous-cladding-led-strip-public-corridor.webp"
@@ -890,10 +921,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Reception Warm-Tone Fluted Panels</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/black-aluminium-batten-wall-wave-woven-accent-luxury-corridor.webp"
@@ -905,10 +933,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Dark Wave Fluted Wall Panels</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-shanghai-bund-hotel-interior/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/curved-aluminium-batten-ceiling-wall-luxury-restaurant-interior.webp"
@@ -920,7 +945,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Restaurant Curved Fluted Panel Decor</div>
         </a>
-        <a class="acp-gallery-item" href="/project-shenzhen-tech-hq-office/">
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/exterior-aluminium-batten-facade-cladding-commercial-building.webp"
@@ -932,10 +957,7 @@ const websiteJsonLd = {
           </div>
           <div class="caption">Exterior Gray Fluted Wall Panels</div>
         </a>
-        <a
-          class="acp-gallery-item"
-          href="/project-guangzhou-medical-center-cladding/"
-        >
+        <a class="acp-gallery-item" href="/project-gallery/">
           <div class="img-wrap">
             <img
               src="https://file.meiyualuminum.com/home/aluminum-fluted-panel/large-scale-aluminium-batten-wall-ceiling-corridor-white-linear-lights.webp"
@@ -965,228 +987,38 @@ const websiteJsonLd = {
         </p>
       </div>
       <div class="products-grid">
-        <a href="/categories/aluminum-veneer/" class="product-card">
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp"
-              alt="Aluminum Veneer — curved and flat facade cladding panels"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>Aluminum Veneer</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
-        <a href="/categories/aluminum-strip-panel/" class="product-card">
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/aluminum-strip-panel.webp"
-              alt="Aluminum Strip Panel — linear facade and soffit cladding"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>Aluminum Strip Panel</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
-        <a
-          href="/categories/u-shaped-aluminum-square-tube/"
-          class="product-card"
-        >
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/u-shaped-aluminum-square-tube.webp"
-              alt="U-Shaped Aluminum Square Tube — open baffle ceiling system"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>U-Shaped Aluminum Square Tube</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
-        <a
-          href="/categories/aluminum-honeycomb-core-panel/"
-          class="product-card"
-        >
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp"
-              alt="Aluminum Honeycomb Core Panel — lightweight high-strength cladding"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>Aluminum Honeycomb Core Panel</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
-        <a href="/categories/aluminum-ceiling-tile/" class="product-card">
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/aluminum-ceiling-tile.webp"
-              alt="Aluminum Ceiling Tile — modular lay-in and clip-in panels"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>Aluminum Ceiling Tile</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
-        <a href="/categories/aluminum-square-tube/" class="product-card">
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp"
-              alt="Aluminum Square Tube — linear ceiling and wall baffle system"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>Aluminum Square Tube</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
-        <a href="/categories/fluted-aluminum-panel/" class="product-card">
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp"
-              alt="Fluted Aluminum Panel — decorative wall and ceiling cladding"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>Fluted Aluminum Panel</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
-        <a href="/categories/aluminum-skirting-board/" class="product-card">
-          <div class="product-card-img">
-            <img
-              src="https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp"
-              alt="Aluminum Skirting Board — decorative wall base trim"
-              loading="lazy"
-              width="480"
-              height="300"
-            />
-          </div>
-          <div class="product-card-body">
-            <h3>Aluminum Skirting Board</h3>
-            <span class="product-card-arrow"
-              ><svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              ></span
-            >
-          </div>
-        </a>
+        {
+          PRODUCT_LINES.map((p) => (
+            <a href={p.href} class="product-card">
+              <div class="product-card-img">
+                <img
+                  src={p.img}
+                  alt={p.alt}
+                  loading="lazy"
+                  width="480"
+                  height="300"
+                />
+              </div>
+              <div class="product-card-body">
+                <h3>{p.title}</h3>
+                <span class="product-card-arrow">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </div>
+            </a>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -1388,67 +1220,78 @@ const websiteJsonLd = {
         </p>
       </div>
       <div class="certificates-grid">
+        <!-- 证书扫描件不在 CDN 上（旧 home/certificates/* 已全部 404），
+             改用具名标准卡：只写可核实的标准，不编造编号与图。 -->
         <div class="cert-card">
-          <img
-            src="https://file.meiyualuminum.com/home/certificates/cert-icr-1.webp"
-            alt="ICR Verification of Conformity Certificate"
-            data-no-watermark
-            loading="lazy"
-            width="400"
-            height="560"
-          />
+          <span class="cert-seal">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg
+            >
+          </span>
+          <strong>ISO 9001</strong>
+          <small>Quality Management System</small>
         </div>
         <div class="cert-card">
-          <img
-            src="https://file.meiyualuminum.com/home/certificates/cert-icr-2.webp"
-            alt="ICR Verification of Conformity Certificate"
-            data-no-watermark
-            loading="lazy"
-            width="400"
-            height="560"
-          />
+          <span class="cert-seal">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path></svg
+            >
+          </span>
+          <strong>CE Marking</strong>
+          <small>EU conformity under the Construction Products Regulation</small
+          >
         </div>
         <div class="cert-card">
-          <img
-            src="https://file.meiyualuminum.com/home/certificates/cert-sgs.webp"
-            alt="SGS Verification of Conformity Certificate"
-            data-no-watermark
-            loading="lazy"
-            width="400"
-            height="560"
-          />
+          <span class="cert-seal">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              ><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v8M8 12h8"
+              ></path></svg
+            >
+          </span>
+          <strong>ASTM E84 Class A</strong>
+          <small>Flame spread index 0–25, Steiner tunnel method</small>
         </div>
         <div class="cert-card">
-          <img
-            src="https://file.meiyualuminum.com/home/certificates/cert-udem-1.webp"
-            alt="UDEM Attestation Certificate"
-            data-no-watermark
-            loading="lazy"
-            width="400"
-            height="560"
-          />
-        </div>
-        <div class="cert-card">
-          <img
-            src="https://file.meiyualuminum.com/home/certificates/cert-udem-2.webp"
-            alt="UDEM Attestation Certificate"
-            data-no-watermark
-            loading="lazy"
-            width="400"
-            height="560"
-          />
-        </div>
-        <div class="cert-card">
-          <img
-            src="https://file.meiyualuminum.com/home/certificates/cert-udem-3.webp"
-            alt="UDEM Attestation of Conformity Certificate"
-            data-no-watermark
-            loading="lazy"
-            width="400"
-            height="560"
-          />
+          <span class="cert-seal">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              ><path d="M12 2s6 5.4 6 10a6 6 0 0 1-12 0c0-4.6 6-10 6-10z"
+              ></path></svg
+            >
+          </span>
+          <strong>EN 13501-1 B-s1,d0</strong>
+          <small>Reaction to fire: low smoke, no flaming droplets</small>
         </div>
       </div>
+      <p class="certificates-note">
+        Certificate copies and test reports are issued on request at the
+        quotation stage.
+      </p>
     </div>
   </section>
 
@@ -1515,8 +1358,8 @@ const websiteJsonLd = {
       height: calc(100svh - 72px);
     }
   }
-  /* ≥1400px: header 为 fixed 透明覆盖，hero 占满整个视口 */
-  @media (min-width: 1400px) {
+  /* ≥1280px（与页眉桌面断点同步）: header 为 fixed 透明覆盖，hero 占满整个视口 */
+  @media (min-width: 1280px) {
     .video-hero {
       margin-top: -1rem;
       height: 100vh;
@@ -1917,7 +1760,8 @@ const websiteJsonLd = {
 
   .vg-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /* 共 6 张竖屏卡：桌面 6 个一行排满，无横向滚动 */
+    grid-template-columns: repeat(6, 1fr);
     gap: 16px;
   }
 
@@ -1925,7 +1769,8 @@ const websiteJsonLd = {
     position: relative;
     border-radius: 10px;
     overflow: hidden;
-    aspect-ratio: 16 / 10;
+    /* 竖屏比例：匹配手机竖拍视频(9:16)；横屏视频由 object-fit:cover 居中裁切填满 */
+    aspect-ratio: 9 / 16;
     background: #1c1712;
     border: 1px solid rgba(192, 168, 130, 0.12);
     transition:
@@ -1946,69 +1791,57 @@ const websiteJsonLd = {
     display: block;
   }
 
-  /* LIVE badge — hidden until video plays */
-  .vg-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    color: #ff4d4d;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition:
-      opacity 0.4s,
-      transform 0.4s;
-  }
-  .vg-badge::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #ff4d4d;
-    animation: vg-blink 1.2s ease-in-out infinite;
-  }
-  .vg-cell.playing .vg-badge {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  @keyframes vg-blink {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.25;
-    }
+  /* 每列 = 海报 + 下方 Play 控制条（Play 不遮封面） */
+  .vg-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  /* Bottom label */
-  .vg-label {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    padding: 28px 14px 12px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
-    font-size: 12.5px;
+  /* Play 按钮：位于海报正下方，封面保持零遮挡 */
+  .vg-play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(192, 168, 130, 0.35);
+    background: rgba(192, 168, 130, 0.1);
+    color: #c0a882;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      color 0.2s;
+  }
+  .vg-play:hover {
+    background: rgba(192, 168, 130, 0.22);
+    border-color: rgba(192, 168, 130, 0.6);
+    color: #e0c9a0;
+  }
+  .vg-ic-pause {
+    display: none;
+  }
+  .vg-item.playing .vg-ic-play {
+    display: none;
+  }
+  .vg-item.playing .vg-ic-pause {
+    display: inline;
+  }
+  .vg-item.playing .vg-play {
+    background: rgba(255, 77, 77, 0.12);
+    border-color: rgba(255, 77, 77, 0.45);
+    color: #ff6b6b;
   }
 
   @media (max-width: 1100px) {
     .vg-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
     }
     .vg-container {
@@ -2017,7 +1850,7 @@ const websiteJsonLd = {
   }
   @media (max-width: 520px) {
     .vg-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
     .video-gallery-section {
@@ -2158,30 +1991,30 @@ const websiteJsonLd = {
   }
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
   }
   .product-card {
     display: flex;
     flex-direction: column;
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
     background: #fff;
     text-decoration: none;
     color: inherit;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e8e4df;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ece8e3;
     transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
   }
   .product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 36px rgba(105, 87, 74, 0.14);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(105, 87, 74, 0.1);
   }
   .product-card-img {
     overflow: hidden;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 16 / 9;
   }
   .product-card-img img {
     width: 100%;
@@ -2191,18 +2024,18 @@ const websiteJsonLd = {
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   .product-card:hover .product-card-img img {
-    transform: scale(1.06);
+    transform: scale(1.04);
   }
   .product-card-body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 20px;
-    gap: 12px;
+    padding: 12px 14px;
+    gap: 10px;
   }
   .product-card-body h3 {
     margin: 0;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: #242424;
     line-height: 1.3;
@@ -2211,8 +2044,8 @@ const websiteJsonLd = {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: rgba(192, 168, 130, 0.1);
     color: #c0a882;
@@ -2227,58 +2060,21 @@ const websiteJsonLd = {
     color: #fff;
     transform: translateX(3px);
   }
-  /* "View All" card */
-  .product-card-more {
-    border: 2px dashed #d4c9bb;
-    background: transparent;
-    box-shadow: none;
-    justify-content: center;
-  }
-  .product-card-more:hover {
-    border-color: #c0a882;
-    box-shadow: 0 8px 24px rgba(105, 87, 74, 0.1);
-  }
-  .product-card-body-center {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    flex: 1;
-    gap: 8px;
-  }
-  .product-card-body-center h3 {
-    font-size: 16px;
-    color: #69574a;
-  }
-  .product-card-body-center p {
-    margin: 0;
-    font-size: 13px;
-    color: #9ca3af;
-  }
-  .product-card-more-icon {
-    color: #c0a882;
-    margin-bottom: 4px;
-    transition: transform 0.3s;
-  }
-  .product-card-more:hover .product-card-more-icon {
-    transform: scale(1.1);
-  }
-  @media (max-width: 1200px) {
+  /* 响应式：4 → 3 → 2 → 1 列 */
+  @media (max-width: 1024px) {
     .products-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
+      grid-template-columns: repeat(3, 1fr);
     }
   }
   @media (max-width: 768px) {
     .products-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
   }
   @media (max-width: 480px) {
     .products-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      grid-template-columns: 1fr;
     }
     .products-section {
       padding: 50px 0;
@@ -2299,10 +2095,16 @@ const websiteJsonLd = {
   }
   .certificates-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
   .cert-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 26px 18px 28px;
+    text-align: center;
     border: 1px solid #e8e4df;
     border-radius: 8px;
     overflow: hidden;
@@ -2315,22 +2117,47 @@ const websiteJsonLd = {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(105, 87, 74, 0.12);
   }
-  .cert-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    padding: 12px;
+  .cert-seal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: #f5f0eb;
+    border: 1px solid #e2d6c8;
+    color: #69574a;
+  }
+  .cert-seal svg {
+    width: 21px;
+    height: 21px;
+  }
+  .cert-card strong {
+    font-size: 0.98rem;
+    color: #1e293b;
+    line-height: 1.35;
+  }
+  .cert-card small {
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: #64748b;
+  }
+  .certificates-note {
+    margin: 22px 0 0;
+    text-align: center;
+    font-size: 0.86rem;
+    color: #94a3b8;
   }
   @media (max-width: 900px) {
     .certificates-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
   }
   @media (max-width: 480px) {
     .certificates-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 10px;
     }
     .certificates-section {
@@ -2456,10 +2283,16 @@ const websiteJsonLd = {
   }
   .certificates-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
   .cert-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 26px 18px 28px;
+    text-align: center;
     border: 1px solid #e8e4df;
     border-radius: 8px;
     overflow: hidden;
@@ -2472,22 +2305,47 @@ const websiteJsonLd = {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(105, 87, 74, 0.12);
   }
-  .cert-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    padding: 12px;
+  .cert-seal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: #f5f0eb;
+    border: 1px solid #e2d6c8;
+    color: #69574a;
+  }
+  .cert-seal svg {
+    width: 21px;
+    height: 21px;
+  }
+  .cert-card strong {
+    font-size: 0.98rem;
+    color: #1e293b;
+    line-height: 1.35;
+  }
+  .cert-card small {
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: #64748b;
+  }
+  .certificates-note {
+    margin: 22px 0 0;
+    text-align: center;
+    font-size: 0.86rem;
+    color: #94a3b8;
   }
   @media (max-width: 900px) {
     .certificates-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
   }
   @media (max-width: 480px) {
     .certificates-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 10px;
     }
     .certificates-section {
@@ -3009,7 +2867,7 @@ const websiteJsonLd = {
 
 <script>
   /* ===== Video Hero: 3-stage deferred loading =====
-     1. 首次加载：只显示 poster 封面图，不下载视频
+     1. 首次加载：preload=metadata 只取第一帧做封面（不下载整片）
      2. 页面加载完成：开始下载视频
      3. 边下边播：canplay 后立即播放
      移动端兼容：play() 被拒绝时监听首次用户交互再播放 */
@@ -3114,70 +2972,72 @@ const websiteJsonLd = {
     });
   });
 
-  /* ===== Video Gallery: scroll-triggered simultaneous autoplay =====
-     - 滚动到该区域时 8 个视频同时播放（交错 80ms 启动，瀑布式点亮）
-     - 滚离时暂停，节省带宽和 CPU
-     - 移动端兼容：muted + playsinline，play() 被拒则等首次交互 */
+  /* ===== Video Gallery: 吸引力封面 + 下方 Play 按钮，点击才播放 =====
+     - 默认静态封面（第一帧海报）；仅首格进入视口自动播放，其余点击才播
+     - 每列海报下方一个 Play 按钮：点击播放（静音循环），再点暂停
+     - 播放时按钮图标/文字切换为 Pause */
   const vgSection = document.getElementById("videoGallery");
   if (vgSection) {
-    const cells = Array.from(
-      vgSection.querySelectorAll<HTMLElement>(".vg-cell"),
-    );
-    const videos = cells.map((c) => c.querySelector("video")!);
-    let vgStarted = false;
+    vgSection.querySelectorAll<HTMLElement>(".vg-item").forEach((item) => {
+      const video = item.querySelector("video");
+      const btn = item.querySelector<HTMLButtonElement>("[data-vg-play]");
+      const label = btn?.querySelector(".vg-play-text");
+      if (!video || !btn) return;
 
-    const startAll = () => {
-      videos.forEach((v, i) => {
-        // 每个视频交错 80ms 启动，形成“瀑布式点亮”效果
-        setTimeout(() => {
-          if (v.preload === "none") {
-            v.preload = "auto";
-            v.load();
+      const sync = (playing: boolean) => {
+        item.classList.toggle("playing", playing);
+        if (label) label.textContent = playing ? "Pause" : "Play";
+      };
+
+      btn.addEventListener("click", () => {
+        if (video.paused) {
+          // 首次点击才下载整片（此前仅 metadata 封面）
+          if (video.preload === "metadata" || video.preload === "none") {
+            video.preload = "auto";
+            video.load();
           }
-          const p = v.play();
-          if (p) {
-            p.then(() => {
-              cells[i].classList.add("playing");
-            }).catch(() => {
-              // autoplay 被拦截（移动端），等用户交互后重试
-              const retry = () => {
-                v.play()
-                  .then(() => cells[i].classList.add("playing"))
-                  .catch(() => {});
-              };
-              document.addEventListener("touchstart", retry, {
-                once: true,
-                passive: true,
-              });
-              document.addEventListener("click", retry, { once: true });
-            });
-          }
-        }, i * 80);
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
       });
-      vgStarted = true;
-    };
 
-    const stopAll = () => {
-      videos.forEach((v, i) => {
-        v.pause();
-        cells[i].classList.remove("playing");
-      });
-      vgStarted = false;
-    };
+      video.addEventListener("play", () => sync(true));
+      video.addEventListener("pause", () => sync(false));
+    });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !vgStarted) {
-            startAll();
-          } else if (!entry.isIntersecting && vgStarted) {
-            stopAll();
-          }
-        });
-      },
-      { threshold: 0.2 },
-    );
-    observer.observe(vgSection);
+    // 首格默认自动播放：进入视口即播、离开即暂停；
+    // 用户手动点过该格按钮后交还手动控制；偏好减少动态时不自动播
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const featured = vgSection.querySelector<HTMLElement>(".vg-item");
+    const fVideo = featured?.querySelector("video");
+    const fBtn = featured?.querySelector<HTMLButtonElement>("[data-vg-play]");
+    let manual = false;
+    fBtn?.addEventListener("click", () => {
+      manual = true;
+    });
+    if (featured && fVideo && !reduceMotion) {
+      const featuredObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (manual) return;
+            if (entry.isIntersecting) {
+              if (fVideo.preload === "metadata" || fVideo.preload === "none") {
+                fVideo.preload = "auto";
+                fVideo.load();
+              }
+              fVideo.play().catch(() => {});
+            } else {
+              fVideo.pause();
+            }
+          });
+        },
+        { threshold: 0.35 },
+      );
+      featuredObserver.observe(featured);
+    }
   }
 
   /* ===== Global Map Section ===== */

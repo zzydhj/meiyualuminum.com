@@ -1,0 +1,412 @@
+---
+/**
+ * ToolLayout.astro — 免费工具页的共享外壳
+ *
+ * 为什么存在：三个计算器共用同一套「输入 → 结果 → 公式 → 假设 → 免责 → 询盘」骨架，
+ * 抽出来避免每页各写一份样式与免责文案（免责文字必须全站一致才有意义）。
+ *
+ * 关键约定：
+ * - 表单与结果区的样式必须放 <style is:global>：slot 内容来自子页面，拿不到本组件的
+ *   scoped 属性（与产品页 .pk-db-content 同一个坑）。统一 tl- 前缀避免污染。
+ * - 每个工具页都必须填 assumptions / limits / basis：算错的工具比没有工具更糟，
+ *   所以假设和不算什么必须常驻可见，而不是藏在折叠里。
+ * - 结果区永远显示公式本身，让工程师能当场验算。
+ */
+import BaseLayout from "./BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import InquiryButton from "../components/InquiryButton.astro";
+
+interface Props {
+    /** 页眉双色标题的前段（白）与后段（金） */
+    titleWhite: string;
+    titleGold: string;
+    subtitle: string;
+    /** 面包屑最后一段用的工具名 */
+    toolName: string;
+    /** SEO */
+    pageTitle: string;
+    description: string;
+    /** 计算假设：每条一句，说明这个数字在什么前提下成立 */
+    assumptions: string[];
+    /** 这个工具明确不算什么 */
+    limits: string;
+    /** 计算依据（引用什么公式/标准物性值）+ 最后校验日期 */
+    basis: string;
+}
+
+const {
+    titleWhite,
+    titleGold,
+    subtitle,
+    toolName,
+    pageTitle,
+    description,
+    assumptions,
+    limits,
+    basis,
+} = Astro.props;
+
+/* 结构化数据：让 Google 把这页识别为“可用的在线工具”而非普通文章页。
+   只写真实存在的字段：免费、无需注册、浏览器内计算、不传数据。 */
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebApplication",
+            name: toolName,
+            applicationCategory: "UtilitiesApplication",
+            applicationSubCategory: "Calculator",
+            operatingSystem: "Any (web-based)",
+            browserRequirements: "Requires JavaScript",
+            url: new URL(
+                Astro.url.pathname,
+                Astro.site ?? Astro.url.origin,
+            ).toString(),
+            description,
+            isAccessibleForFree: true,
+            offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+                availability: "https://schema.org/InStock",
+            },
+            featureList: [
+                "Runs entirely in the browser",
+                "Shows the formula alongside every result",
+                "Lists its own assumptions and what it will not calculate",
+                "No sign-up, no data sent to a server",
+            ],
+        },
+        {
+            "@type": "BreadcrumbList",
+            itemListElement: [
+                {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Home",
+                    item: new URL(
+                        "/",
+                        Astro.site ?? Astro.url.origin,
+                    ).toString(),
+                },
+                {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: "Free Tools",
+                    item: new URL(
+                        "/tools/",
+                        Astro.site ?? Astro.url.origin,
+                    ).toString(),
+                },
+                {
+                    "@type": "ListItem",
+                    position: 3,
+                    name: toolName,
+                    item: new URL(
+                        Astro.url.pathname,
+                        Astro.site ?? Astro.url.origin,
+                    ).toString(),
+                },
+            ],
+        },
+    ],
+};
+---
+
+<BaseLayout pageTitle={pageTitle} description={description} hideTitle>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <PageHero
+        imageAlt={toolName}
+        titleWhite={titleWhite}
+        titleGold={titleGold}
+        subtitle={subtitle}
+        slim={true}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Free Tools", url: "/tools/" },
+                { name: toolName, url: Astro.url.pathname },
+            ],
+        }}
+    />
+
+    <div class="tl-main">
+        <div class="tl-grid">
+            <!-- 左：计算器本体（子页面注入） -->
+            <div class="tl-tool">
+                <slot />
+            </div>
+
+            <!-- 右：假设、边界、依据、下一步 -->
+            <aside class="tl-side">
+                <section class="tl-card">
+                    <h2 class="tl-h">Assumptions</h2>
+                    <ul class="tl-list">
+                        {assumptions.map((a) => <li>{a}</li>)}
+                    </ul>
+                </section>
+
+                <section class="tl-card">
+                    <h2 class="tl-h">What this does not calculate</h2>
+                    <p class="tl-p">{limits}</p>
+                </section>
+
+                <section class="tl-card">
+                    <h2 class="tl-h">Basis &amp; review</h2>
+                    <p class="tl-p">{basis}</p>
+                </section>
+
+                <section class="tl-card tl-card--cta">
+                    <h2 class="tl-h">Turn this into a quotation</h2>
+                    <p class="tl-p">
+                        Send the numbers with your drawings and we will price
+                        the full system — panels, carriers, perimeter trim and
+                        fixings itemised, so nothing arrives missing on site.
+                    </p>
+                    <!-- id 供工具脚本在运行时刷新 data-inquiry-message，把计算结果带进询盘正文 -->
+                    <InquiryButton
+                        id="tool-inquiry"
+                        label="Send These Figures"
+                        message="I used one of your online calculators and would like a quotation."
+                    />
+                </section>
+
+                <nav class="tl-back">
+                    <a href="/tools/">← All free tools</a>
+                </nav>
+            </aside>
+        </div>
+    </div>
+</BaseLayout>
+
+<style is:global>
+    /* ============================================================
+       工具页共用样式。必须 is:global：slot 内容来自子页面，
+       拿不到 ToolLayout 的 scoped 属性。全部 tl- 前缀，不外泄。
+       色值取自站内既有品牌色（#c09020 金 / #69574a 棕 / #f8f6f3 底）。
+       ============================================================ */
+    .tl-main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: clamp(28px, 4vw, 52px) clamp(16px, 4vw, 32px)
+            clamp(48px, 6vw, 72px);
+    }
+    .tl-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+        gap: clamp(20px, 3vw, 32px);
+        align-items: start;
+    }
+    .tl-tool {
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 14px;
+        padding: clamp(20px, 3vw, 30px);
+        box-shadow: 0 8px 28px rgba(105, 87, 74, 0.06);
+    }
+    .tl-side {
+        display: grid;
+        gap: 14px;
+        position: sticky;
+        top: 96px;
+    }
+    .tl-card {
+        background: #faf8f6;
+        border: 1px solid #ece6de;
+        border-radius: 12px;
+        padding: 1.1rem 1.25rem;
+    }
+    .tl-card--cta {
+        background: #f5f0eb;
+        border-color: #e2d6c8;
+    }
+    .tl-h {
+        margin: 0 0 0.6rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #69574a;
+    }
+    .tl-list {
+        margin: 0;
+        padding-left: 1.1rem;
+    }
+    .tl-list li {
+        margin-bottom: 6px;
+        font-size: 0.86rem;
+        line-height: 1.65;
+        color: #475569;
+    }
+    .tl-list li::marker {
+        color: #c09020;
+    }
+    .tl-p {
+        margin: 0;
+        font-size: 0.88rem;
+        line-height: 1.75;
+        color: #475569;
+    }
+    .tl-card--cta .inquiry-btn {
+        margin-top: 0.9rem;
+    }
+    .tl-back {
+        text-align: center;
+    }
+    .tl-back a {
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: #c09020;
+        text-decoration: none;
+    }
+    .tl-back a:hover {
+        text-decoration: underline;
+    }
+
+    /* 表单区（各工具页共用结构） */
+    .tl-form {
+        display: grid;
+        gap: clamp(14px, 2vw, 18px);
+    }
+    .tl-field {
+        display: grid;
+        gap: 5px;
+    }
+    .tl-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(12px, 1.8vw, 16px);
+    }
+    .tl-field label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        color: #69574a;
+    }
+    .tl-field .tl-hint {
+        font-size: 0.76rem;
+        line-height: 1.5;
+        color: #8a94a6;
+    }
+    .tl-input,
+    .tl-select {
+        width: 100%;
+        padding: 0.62rem 0.8rem;
+        font-size: 0.95rem;
+        font-family: inherit;
+        color: #1e293b;
+        background: #fff;
+        border: 1px solid #ddd6cd;
+        border-radius: 8px;
+        transition:
+            border-color 0.18s,
+            box-shadow 0.18s;
+    }
+    .tl-input:focus,
+    .tl-select:focus {
+        outline: none;
+        border-color: #c09020;
+        box-shadow: 0 0 0 3px rgba(192, 144, 32, 0.14);
+    }
+    .tl-input:invalid {
+        border-color: #e0a8a8;
+    }
+
+    /* 结果区 */
+    .tl-out {
+        margin-top: clamp(20px, 3vw, 26px);
+        padding-top: clamp(18px, 2.6vw, 22px);
+        border-top: 1px dashed #e2d6c8;
+    }
+    .tl-out-h {
+        margin: 0 0 0.9rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #69574a;
+    }
+    .tl-figs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 0 0 14px;
+        padding: 0;
+        list-style: none;
+    }
+    .tl-fig {
+        padding: 0.85rem 1rem;
+        background: #faf8f6;
+        border: 1px solid #ece6de;
+        border-radius: 10px;
+    }
+    .tl-fig b {
+        display: block;
+        font-size: 1.45rem;
+        line-height: 1.2;
+        font-weight: 800;
+        color: #69574a;
+        font-variant-numeric: tabular-nums;
+    }
+    .tl-fig span {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        color: #64748b;
+    }
+    /* 公式必须显示出来：让工程师能当场验算，这是"算错"的唯一防线 */
+    .tl-formula {
+        margin: 0 0 12px;
+        padding: 0.8rem 1rem;
+        background: #14161d;
+        border-radius: 8px;
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        font-size: 0.8rem;
+        line-height: 1.7;
+        color: #e6d9bd;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .tl-flag {
+        margin: 0;
+        padding: 0.7rem 0.9rem;
+        border-left: 3px solid #c09020;
+        background: #fdf9ef;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.82rem;
+        line-height: 1.65;
+        color: #6b5638;
+    }
+    .tl-flag--err {
+        border-left-color: #c05656;
+        background: #fdf3f3;
+        color: #8a3b3b;
+    }
+    .tl-disclaimer {
+        margin: clamp(18px, 2.6vw, 24px) 0 0;
+        font-size: 0.8rem;
+        line-height: 1.7;
+        color: #8a94a6;
+        font-style: italic;
+    }
+
+    /* 工具索引页的 tlx-* 样式不在这里：tools/index.astro 不引用本布局，
+       写在此处的话它根本不会被注入 —— 那套样式归索引页自己维护。 */
+
+    @media (max-width: 980px) {
+        .tl-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .tl-side {
+            position: static;
+        }
+    }
+    @media (max-width: 620px) {
+        .tl-row,
+        .tl-figs {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+</style>

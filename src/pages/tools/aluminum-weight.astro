@@ -1,0 +1,274 @@
+---
+export const prerender = true;
+
+/**
+ * tools/aluminum-weight.astro — 铝材重量计算器
+ *
+ * 只用公开物性值（各合金密度）+ 纯几何体积，无任何厂商经验系数。
+ * 涂层与吸音背衬不计入（会在页面上明说），穿孔按开孔率线性折减——这是准确的算术。
+ */
+import ToolLayout from "../../layouts/ToolLayout.astro";
+
+const toolName = "Aluminium Weight Calculator";
+const pageTitle =
+    "Aluminium Sheet & Panel Weight Calculator | kg per m² and Total";
+const description =
+    "Free aluminium weight calculator using published alloy densities: weight per panel, per square metre and for a whole shipment, with an optional perforation deduction for perforated ceiling panels.";
+---
+
+<ToolLayout
+    titleWhite="Aluminium Weight"
+    titleGold="Calculator"
+    subtitle="Thickness, size and quantity against published alloy densities. Gives weight per panel, per square metre and for the whole shipment — the number freight, floor loading and a lift capacity all depend on."
+    toolName={toolName}
+    pageTitle={pageTitle}
+    description={description}
+    assumptions={[
+        "Density is the published value for the alloy you pick, in g/cm³ (numerically equal to Mg/m³). It is a material property, not a supplier figure.",
+        "The panel is treated as a flat rectangle of solid metal. Forming, folding and stiffeners add a little; coating is not counted.",
+        "Coating weight is excluded. A powder or PVDF film is thin relative to the sheet, but if you need an exact shipping weight, ask us — we weigh packed pallets.",
+        "Perforation is deducted as exactly the open area you enter, which is correct: punched metal leaves the sheet.",
+        "Any acoustic backing (tissue, mineral wool blanket) is NOT included — it can add more than the coating does. Say so on your enquiry if the panels are lined.",
+    ]}
+    limits="It does not calculate the weight of carriers, hangers, perimeter trim or packaging, and it does not estimate container loading — those depend on the suspension system and on how a specific order is crated, so they come back on your quotation."
+    basis="mass = volume × density, with density from standard published alloy property tables. The shortcut kg/m² = thickness(mm) × density(g/cm³) is exact, not an approximation. Reviewed 2026-10-10."
+>
+    <div class="wh-head">
+        <h2 class="wh-h">1. The panel</h2>
+        <p class="wh-p">
+            Millimetres throughout, the way a shop drawing is dimensioned.
+        </p>
+    </div>
+
+    <form class="tl-form" id="weigh" novalidate>
+        <div class="tl-field">
+            <label for="alloy">Alloy</label>
+            <select class="tl-select" id="alloy">
+                <option value="2.71">1100 — 2.71 g/cm³</option>
+                <option value="2.73" selected
+                    >3003 — 2.73 g/cm³ (most ceiling tile)</option
+                >
+                <option value="2.68">5005 — 2.68 g/cm³</option>
+                <option value="2.68">5052 — 2.68 g/cm³</option>
+                <option value="2.66">5754 — 2.66 g/cm³</option>
+                <option value="2.70">6061 — 2.70 g/cm³ (extrusions)</option>
+            </select>
+        </div>
+
+        <div class="tl-row">
+            <div class="tl-field">
+                <label for="thk">Thickness (mm)</label>
+                <input
+                    class="tl-input"
+                    id="thk"
+                    type="number"
+                    min="0.2"
+                    max="20"
+                    step="0.01"
+                    value="0.6"
+                    inputmode="decimal"
+                    required
+                />
+                <span class="tl-hint"
+                    >Ceiling tile stock is usually 0.5–0.8 mm; veneer and facade
+                    1.5–3 mm.</span
+                >
+            </div>
+            <div class="tl-field">
+                <label for="qty">Quantity (panels)</label>
+                <input
+                    class="tl-input"
+                    id="qty"
+                    type="number"
+                    min="1"
+                    max="200000"
+                    step="1"
+                    value="200"
+                    inputmode="numeric"
+                    required
+                />
+            </div>
+        </div>
+
+        <div class="tl-row">
+            <div class="tl-field">
+                <label for="plen">Panel length (mm)</label>
+                <input
+                    class="tl-input"
+                    id="plen"
+                    type="number"
+                    min="10"
+                    max="12000"
+                    step="1"
+                    value="600"
+                    inputmode="numeric"
+                    required
+                />
+            </div>
+            <div class="tl-field">
+                <label for="pwid">Panel width (mm)</label>
+                <input
+                    class="tl-input"
+                    id="pwid"
+                    type="number"
+                    min="10"
+                    max="3000"
+                    step="1"
+                    value="600"
+                    inputmode="numeric"
+                    required
+                />
+            </div>
+        </div>
+
+        <div class="tl-field">
+            <label for="open">Perforation open area (%) — 0 for solid</label>
+            <input
+                class="tl-input"
+                id="open"
+                type="number"
+                min="0"
+                max="60"
+                step="0.5"
+                value="0"
+                inputmode="decimal"
+            />
+            <span class="tl-hint">
+                Not sure? Work it out from hole size and pitch with the
+                <a href="/tools/perforation-open-area/">open area calculator</a
+                >.
+            </span>
+        </div>
+    </form>
+
+    <section class="tl-out" aria-live="polite">
+        <h2 class="tl-out-h">Result</h2>
+        <ul class="tl-figs" id="figs"></ul>
+        <pre class="tl-formula" id="formula"></pre>
+        <div id="flags"></div>
+        <p class="tl-disclaimer">
+            Bare-metal weight. Coating, acoustic backing, suspension and
+            packaging are excluded — verify the shipping weight against our
+            packing list.
+        </p>
+    </section>
+</ToolLayout>
+
+<script>
+    const el = (id: string): HTMLElement =>
+        document.getElementById(id) as HTMLElement;
+    const val = (id: string): string =>
+        (document.getElementById(id) as HTMLInputElement | HTMLSelectElement)
+            .value;
+    const num = (id: string, fallback: number): number => {
+        const v = parseFloat(val(id));
+        return Number.isFinite(v) && v >= 0 ? v : fallback;
+    };
+    const fmt = (n: number, d = 0): string =>
+        n.toLocaleString("en-US", {
+            minimumFractionDigits: d,
+            maximumFractionDigits: d,
+        });
+
+    function render() {
+        const rho = num("alloy", 2.73);
+        const t = num("thk", 0);
+        const L = num("plen", 0);
+        const W = num("pwid", 0);
+        const qty = Math.round(num("qty", 0));
+        const open = Math.min(60, Math.max(0, num("open", 0)));
+
+        if (!t || !L || !W || !qty) {
+            el("figs").innerHTML = "";
+            el("formula").textContent = "";
+            el("flags").innerHTML =
+                '<p class="tl-flag tl-flag--err">Thickness, both panel dimensions and a quantity are all required.</p>';
+            return;
+        }
+
+        const areaM2 = (L / 1000) * (W / 1000);
+        const kgPerM2Solid = t * rho; /* 精确恒等式，不是近似 */
+        const kgPerM2 = kgPerM2Solid * (1 - open / 100);
+        const kgPanel = kgPerM2 * areaM2;
+        const totalKg = kgPanel * qty;
+        const totalM2 = areaM2 * qty;
+
+        const figs: [string, string][] = [
+            [fmt(kgPanel, 3) + " kg", "Weight per panel"],
+            [fmt(kgPerM2, 2) + " kg/m²", "Weight per square metre"],
+            [fmt(totalKg, 1) + " kg", `Total for ${fmt(qty)} panels`],
+            [
+                totalKg >= 1000 ? fmt(totalKg / 1000, 2) + " t" : "—",
+                totalKg >= 1000 ? "Total in tonnes" : "Under a tonne",
+            ],
+            [fmt(totalM2, 1) + " m²", "Total panel area"],
+            [
+                open > 0 ? `−${fmt(open, 1)} %` : "solid",
+                "Perforation deduction",
+            ],
+        ];
+        el("figs").innerHTML = figs
+            .map(
+                ([v, l]) =>
+                    `<li class="tl-fig"><b>${v}</b><span>${l}</span></li>`,
+            )
+            .join("");
+
+        el("formula").textContent =
+            `kg per m² (solid) = t(mm) × ρ(g/cm³)          = ${fmt(t, 2)} × ${fmt(rho, 2)} = ${fmt(kgPerM2Solid, 3)}
+kg per m² (perforated) = × (1 − open area)     = ${fmt(kgPerM2Solid, 3)} × (1 − ${fmt(open, 1)}%) = ${fmt(kgPerM2, 3)}
+panel area             = (${L}/1000) × (${W}/1000)          = ${fmt(areaM2, 4)} m²
+weight per panel       = ${fmt(kgPerM2, 3)} × ${fmt(areaM2, 4)}      = ${fmt(kgPanel, 3)} kg
+total weight           = ${fmt(kgPanel, 3)} × ${fmt(qty)}       = ${fmt(totalKg, 1)} kg`;
+
+        const flags: string[] = [];
+        if (t < 0.4) {
+            flags.push(
+                `<p class="tl-flag">At ${fmt(t, 2)} mm this is thin enough that flatness depends entirely on the support grid — expect the panel to follow anything uneven behind it.</p>`,
+            );
+        }
+        if (open > 0 && open >= 40) {
+            flags.push(
+                `<p class="tl-flag">An open area of ${fmt(open, 1)} % removes a lot of metal; handling stiffness drops faster than weight does. Confirm the panel can still be lifted without oil-canning.</p>`,
+            );
+        }
+        el("flags").innerHTML = flags.join("");
+        /* 把算量结果带进询盘正文（InquiryModal 读取 data-inquiry-message） */
+        document
+            .getElementById("tool-inquiry")
+            ?.setAttribute(
+                "data-inquiry-message",
+                `Panel weight from your online calculator:\n` +
+                    `• ${fmt(t, 2)} mm × ${fmt(L)} × ${fmt(W)} mm, ${fmt(qty)} panels, ${fmt(open, 1)}% perforated\n` +
+                    `• ${fmt(kgPanel, 3)} kg per panel · ${fmt(kgPerM2, 2)} kg/m² · ${fmt(totalKg, 1)} kg total (${fmt(totalM2, 1)} m²)\n` +
+                    `Please quote the panels and confirm the packed shipping weight with carriers, hangers and perimeter trim.`,
+            );
+    }
+
+    document.querySelectorAll("#weigh input, #weigh select").forEach((node) => {
+        node.addEventListener("input", render);
+        node.addEventListener("change", render);
+    });
+    render();
+</script>
+
+<style>
+    .wh-head {
+        margin: 0 0 1.1rem;
+    }
+    .wh-h {
+        margin: 0 0 0.3rem;
+        font-size: 1.12rem;
+        color: #1e293b;
+    }
+    .wh-p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: #64748b;
+    }
+    .tl-hint a {
+        color: #c09020;
+        font-weight: 600;
+    }
+</style>

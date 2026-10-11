@@ -1,0 +1,52 @@
+---
+/**
+ * project-gallery/[category].astro — 项目画廊分类列表第 1 页
+ *
+ * - 第 2~N 页由 project-gallery/[category]/page/[page].astro 生成
+ * - 药丸为链接式筛选（A 方案）：服务端过滤 + 分页正确，取代旧版页内 JS 隐藏
+ * - 只为「有案例且在 CATEGORY_MAP 内」的分类生成路由，未知分类 404
+ */
+import PageHero from "../../components/PageHero.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectGallery from "../../components/ProjectGallery.astro";
+import {
+    CATEGORY_MAP,
+    fetchAllProjects,
+    groupProjectsByCategory,
+} from "../../lib/projectGallery";
+
+export async function getStaticPaths() {
+    const byCategory = groupProjectsByCategory(await fetchAllProjects());
+
+    return [...byCategory.keys()]
+        .filter((category) => CATEGORY_MAP[category])
+        .map((category) => ({ params: { category } }));
+}
+
+const { category } = Astro.params;
+const label = CATEGORY_MAP[category ?? ""]?.label ?? category ?? "";
+const categoryPath = encodeURIComponent(category ?? "");
+const pageDescription = `Browse our ${label} project cases: aluminum building material installations worldwide.`;
+---
+
+<BaseLayout
+    pageTitle={`${label} Projects`}
+    description={pageDescription}
+    hideTitle
+>
+    <PageHero
+        slim
+        imageAlt={label}
+        titleWhite={label}
+        titleGold="Projects"
+        subtitle={pageDescription}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Project Gallery", url: "/project-gallery/" },
+                { name: label, url: `/project-gallery/${categoryPath}/` },
+            ],
+        }}
+    />
+    <ProjectGallery category={category} />
+</BaseLayout>

@@ -32,6 +32,19 @@ docs/r2-credentials.env
 __pycache__/
 *.pyc
 
+# 临时工作区（验收脚本与中间产物，不入库）
+.tmp-work/
+
+# 交接笔记：含大量竞品与第三方素材取材记录（公司名、报告编号、哪张图是占位）。
+# 本仓库是公开仓库，这些内容不该对外，所以只留本地。确要入库请先把仓库改为私有。
+docs/handoff/
+
+# seo-audit 的输出件（每次跑都会重写，不入库；工具本身 docs/seo-audit.py 要入库）
+docs/seo-audit.csv
+
+# 产品图中转目录：含第三方素材（别家 SGS 报告、色卡、CAD 型录），负权风险，绝不上仓库
+产品图片临时中转/
+
 # macOS-specific files
 .DS_Store
 

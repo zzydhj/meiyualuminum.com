@@ -37,10 +37,28 @@ export interface InstallationStep {
     description: string;
 }
 
-export interface DownloadFile {
-    name: string;
-    format: string;
-    url: string;
+/**
+ * products.enriched_specs（JSONB）—— 产品级数据覆盖层。
+ *
+ * 详情页按「产品级优先、品类级回退」取值：同一品类下的不同产品
+ * （如 lay-in 与 clip-in 两种铝扣板）安装方式与规格不同，靠本结构覆盖，
+ * 不必为每个产品拆一个品类知识条目。所有字段可选，缺失即回退 ProductKnowledge。
+ */
+export interface ProductEnrichedSpecs {
+    /** 产品专属概述（Overview 顶部高亮段） */
+    summary?: string;
+    /** 覆盖 technicalSpecs */
+    specs?: SpecRow[];
+    /** 覆盖 keyFeatures */
+    features?: string[];
+    /** 产品专属推荐场景标签（Applications Tab 顶部胶囊） */
+    applications?: string[];
+    /** 覆盖 standardSizes */
+    standardSizes?: SpecRow[];
+    /** 覆盖 installationSteps */
+    installationSteps?: InstallationStep[];
+    /** 覆盖 installationTips */
+    installationTips?: string[];
 }
 
 export interface ProductKnowledge {
@@ -55,9 +73,6 @@ export interface ProductKnowledge {
     installationTips: string[];
     applications: ApplicationScenario[];
     certifications: string[];
-    cadFiles: DownloadFile[];
-    bimFiles: DownloadFile[];
-    specSheetUrl: string;
 }
 
 // ─── 产品知识库数据 ─────────────────────────────────────────
@@ -81,7 +96,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             "Compatible with concealed fix and face-fix subframe systems"
         ],
         technicalSpecs: [
-            { label: "Base Material", value: "AA1100 / AA3003 / AA5005 Aluminum Alloy" },
+            { label: "Material", value: "AA1100 / AA3003 / AA5005 Aluminum Alloy" },
             { label: "Panel Thickness", value: "1.5mm / 2.0mm / 2.5mm / 3.0mm" },
             { label: "Standard Width", value: "1000mm / 1220mm / 1500mm (max 2000mm)" },
             { label: "Standard Length", value: "Up to 6000mm (custom cut to project size)" },
@@ -129,9 +144,6 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Hospitals & Healthcare", whyUse: "Smooth, non-porous surface is easy to clean and maintain.", recommendedProducts: ["2.0mm powder-coated (interior)", "PVDF panels (exterior)"], keyBenefit: "Hygienic, low maintenance, fire-rated" },
         ],
         certifications: ["ISO 9001:2015", "CE Marking (EN 13830)", "SGS Test Report", "AAMA 2605", "ASTM E84 Class A"],
-        cadFiles: [{ name: "Standard Fixing Detail", format: "DWG", url: "#" }, { name: "Concealed Bracket System", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "Aluminum Veneer Facade System", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
     },
 
     // ═══════════════════════════════════════════════════════════
@@ -140,61 +152,68 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
     "aluminum-strip-panel": {
         categorySlug: "aluminum-strip-panel",
         categoryName: "Aluminum Strip Panel",
-        overview: "Aluminum strip panels are long, narrow panels designed for ceiling and soffit applications. Available in C-shape, G-shape, and S-shape profiles, they create clean linear aesthetics with concealed fixing systems. Ideal for large-span commercial interiors, corridors, and transit spaces.",
+        overview: "An aluminium strip ceiling — sold variously as a linear, batten, slat or strip-panel ceiling — is a run of narrow metal strips hung side by side on a suspended carrier grid, either butted so the surface reads as one continuous plane (closed or concealed joint) or held apart so a shadow line or an open cavity shows between them (open joint). Each strip is a shallow formed section: a flat face with both edges turned down at right angles, and it is carried by those turned-down legs — clipped, hooked or screwed — never through the visible face, which is why a finished ceiling shows no fixings at all. Lengths run to 6 m without a joint, so corridors, platforms and storefront soffits keep one unbroken line, and the open-joint version doubles as a soffit or low facade cladding that screens the structure without sealing it. One warning worth stating plainly: the trade's own listings cannot tell you which joint you are buying. The same strip is photographed and sold as 'conceal', 'open' and 'S-strip' by different sellers, so the section drawing — not the product title or the attribute field — is the only document to trust.",
         keyFeatures: [
-            "Continuous linear appearance with concealed clip fixing",
-            "C-shape, G-shape, and S-shape profiles available",
-            "Widths from 50mm to 300mm — mix widths for visual rhythm",
-            "Perforated options for acoustic performance (NRC up to 0.75)",
-            "Individual panels demountable for ceiling access",
-            "Compatible with standard T-bar and concealed carrier systems"
+            "Two genuinely different ceilings share one name — a closed, near-seamless plane or an open linear screen with a shadow gap; the choice changes the section, the carrier and the price, so settle it before quoting",
+            "Invisible fixing: the strip hangs by its turned-down legs, so nothing screws through the face and the visible surface stays uninterrupted",
+            "Every strip is independently demountable, which is why the system is specified over plenums full of ducts, valves and sprinklers that will have to be opened again",
+            "Runs to 6 000 mm without an intermediate joint, keeping a single line along corridors, platforms and shopfront soffits",
+            "Face widths from 50 to 400 mm can be mixed within one run — alternating widths is the standard way to break up a long ceiling or to draw a route across it",
+            "Perforated strip plus fleece backing is the acoustic version of the same part; a solid strip is a finish and a reflector, not an absorber",
         ],
         technicalSpecs: [
-            { label: "Base Material", value: "AA3003 / AA5005 Aluminum Alloy" },
-            { label: "Panel Thickness", value: "0.5mm / 0.6mm / 0.7mm / 0.8mm / 1.0mm" },
-            { label: "Panel Width", value: "50 / 75 / 100 / 150 / 200 / 300mm" },
-            { label: "Panel Length", value: "Up to 6000mm" },
-            { label: "Weight", value: "1.5–3.0 kg/m²" },
-            { label: "Profile Types", value: "C-shape / G-shape / S-shape" },
-            { label: "Fire Rating", value: "A2-s1,d0 (EN 13501-1)" },
-            { label: "Acoustic NRC", value: "0.55 (perforated) / 0.75 (perforated + mineral wool)" },
-            { label: "Light Reflectance", value: "≥ 80% (white)" },
-            { label: "Humidity Resistance", value: "Up to 95% RH" },
+            { label: "Material", value: "AA1100 / AA1100-H24 and AA3003 where the strip is roll-formed from pre-finished coil; AA6063-T5 where it is an extruded section. Aluminium throughout [industry typical]" },
+            { label: "Forming Route", value: "Roll-formed from coil (the common route, cheapest, and genuinely flat on shallow sections) or extruded (crisper arris, stiffer leg, better straightness on wide faces). The two behave differently over a long run, so state which is required" },
+            { label: "Face Width", value: "100 / 150 / 200 / 300 mm is what the trade actually stocks; 50 and 400 mm to order. Mixed widths in one ceiling are normal, not an upcharge exception [industry typical]" },
+            { label: "Section Height", value: "Two distinct families: a shallow strip about 14–16 mm deep, and a deeper baffle-type strip from 30 to 80 mm. Height is what buys the shadow line and the rigidity — it is the variable that changes the look most [industry typical]" },
+            { label: "Sheet / Wall Gauge", value: "0.5–1.2 mm across the trade, with 0.6–1.0 mm the usual specification. Wider faces and longer unsupported spans belong at the thicker end [industry typical]" },
+            { label: "Strip Length", value: "Cut to the run; 6 000 mm is the practical maximum before a joint [industry typical]" },
+            { label: "Edge & Joint Type", value: "Bevel (chamfered) edge closes up to a near-invisible joint; a square or L-angle edge, or a deliberate gap, makes a shadow line. The trade also distinguishes C-type and G-type strip edges, which differ in how the strip is retained and whether it slides in or hooks up — confirm on the section, because listings apply these labels inconsistently" },
+            { label: "Carrier & Suspension", value: "Threaded hanger rod off the slab to a main carrier, a strip carrier clipped or hooked below it, and a perimeter angle at the wall; the assembly is completed with carrier splices, panel/end splices, retaining (fixing) clips and a joint profile at the seam. Wind-resistant carriers and extra clips are used on soffits and exposed elevations. Carrier profile and spacing are published by no supplier and are set per project on span, gauge and wind exposure [industry typical]" },
+            { label: "Metal Per Square Metre", value: "≈ (developed width ÷ cover width) × gauge × 2.7. A 100 mm face with 15 mm legs at 0.6 mm lands near 2.1 kg/m² of ceiling — light, but not weightless, and the carrier grid has to carry it [derived]" },
+            { label: "Openness & Joint Width", value: "No supplier publishes a standard joint width or openness ratio, because both follow from the section and the carrier chosen. Specify the gap on the drawing; anything quoted back as a catalogue figure is a guess" },
+            { label: "Fire Reaction", value: "Bare or anodised aluminium is A1 to EN 13501-1; a coated assembly is graded on that build-up, not on the metal. AS 1530.1 non-combustibility is the test Australian specifications ask for. Third-party certificates are issued per project on request" },
+            { label: "Acoustic Behaviour", value: "Perforation with a geotextile or fleece backing is the only route to absorption; a solid strip reflects. Hole diameter, pattern and open area are project choices quoted from the drawing — an NRC or αw figure requires an EN ISO 354 test on that exact assembly, and none is claimed here" },
+            { label: "Finish Route", value: "Powder, PE or PVDF coil coating, wood-grain transfer or applied film, anodised, brushed or PVD. Coil-coated stock is finished before forming and leaves bare metal at the cut edge and leg; post-form powder coats the whole section" },
+            { label: "Standard / Test Basis", value: "EN 13964 (factory-made suspended ceilings, incl. humidity and corrosion classes) · EN 13501-1 · AS 1530.1 · EN ISO 354 / EN ISO 11654 · ASTM E84 · ASTM E3090/E3090M (suspension load testing)" },
         ],
         surfaceOptions: [
-            { name: "Powder Coating", description: "Standard polyester powder in RAL colors.", thickness: "60–80 μm", warranty: "10–15 year", suitableFor: ["Interior ceilings", "Corridors", "Retail"] },
-            { name: "Roller Coating (PE/PVDF)", description: "Continuous coil coating for consistent color.", thickness: "18–25 μm (PE) / 25–40 μm (PVDF)", warranty: "15–25 year", suitableFor: ["Large commercial ceilings", "Transit stations"] },
-            { name: "Wood Grain Transfer", description: "Realistic wood patterns on aluminum.", thickness: "Film transfer layer", warranty: "10 year", suitableFor: ["Hospitality", "Feature ceilings", "Restaurants"] },
+            { name: "Powder Coating (post-form)", description: "The default interior finish and the safest one: the formed strip is coated after bending, so the legs and the return are covered as well as the face. Matte or satin flatters a long run, because gloss turns every strip into a bright line and repeats any deviation.", thickness: "60–80 µm typical", warranty: "Standard offer — confirm at quotation", suitableFor: ["Interior ceilings", "Offices", "Retail", "Corridors"] },
+            { name: "Coil / Roller Coating (PE)", description: "Pre-finished aluminium coil, rolled and cut, so colour is perfectly even and the price is the lowest on the page. The catch is real: coating stops where the strip is cut or folded, so the leg and the end are bare metal.", thickness: "18–25 µm polyester", warranty: "Standard offer — confirm at quotation", suitableFor: ["Large interior areas", "Budget schemes", "Concealed-leg details"] },
+            { name: "PVDF (Fluorocarbon)", description: "The exterior grade, on coil or post-form. Specify it wherever the ceiling sees sun, rain or salt air — an entrance soffit will fail early on interior polyester.", thickness: "25–35 µm, 70 %+ PVDF resin", warranty: "15 years (standard offer)", suitableFor: ["Entrance soffits", "Canopies", "Coastal sites", "Low facade"] },
+            { name: "Wood-Grain Transfer or Film", description: "Timber appearance on aluminium, either sublimation-printed into the coating or bonded as a laminate film. The species names on every supplier's chart — oak, teak, walnut, cedar — are marketing labels, not a botanical or grade specification, so approve a physical sample.", thickness: "Film / transfer system over base coat", warranty: "Standard offer — confirm at quotation", suitableFor: ["Hotels", "Restaurants", "Retail feature", "Lobbies"] },
+            { name: "Anodised, Brushed or PVD", description: "Integral oxide, optionally with a brushed grain or a PVD metallic tone. Genuine metal depth, no film to break at the fold, and the only finish that reads correctly under raking light along a long run.", thickness: "10–25 µm oxide layer", warranty: "Standard offer — confirm at quotation", suitableFor: ["Feature ceilings", "Lobbies", "Exhibition", "Boutique retail"] },
         ],
         standardSizes: [
-            { label: "C-85 (Narrow)", value: "85mm face × 0.5–0.6mm, closed joint" },
-            { label: "C-135 (Medium)", value: "135mm face × 0.6–0.7mm" },
-            { label: "C-185 (Wide)", value: "185mm face × 0.7–0.8mm" },
-            { label: "G-200 (Gap Joint)", value: "200mm face × 0.7mm, 10–15mm gap" },
-            { label: "Box Baffle", value: "50×100 / 50×150 / 100×200mm" },
+            { label: "Shallow Closed-Joint Strip", value: "100 / 150 / 200 mm face × 14–16 mm height at 0.6–0.8 mm — the near-seamless plane, most specified for offices" },
+            { label: "Deep Linear Strip", value: "100 / 150 / 200 / 300 mm face × 30–80 mm height at 0.8–1.2 mm — reads as a baffle line and stays stiff over a long span" },
+            { label: "Narrow Feature Widths", value: "50 and 75 mm, used for perimeter bands, cornices and the odd width in a mixed-width layout" },
+            { label: "Lengths", value: "Cut to the run, up to 6 000 mm; beyond that the run is jointed deliberately rather than butted and hoped for" },
+            { label: "Custom", value: "Perforated with fleece backing, mixed-width setting-out, curved to radius, shadow-line carriers, special RAL colours and wood-grain" },
         ],
         installationSteps: [
-            { step: 1, title: "Carrier Installation", description: "Install carrier rails perpendicular to panel direction. Spacing: 800–1200mm." },
-            { step: 2, title: "Level & Align", description: "Laser-level all carriers. Tolerance: ±1mm over entire area." },
-            { step: 3, title: "Panel Clip-In", description: "Clip panels into carriers — push up and click, no tools required." },
-            { step: 4, title: "Edge Trim", description: "Install perimeter L-angle or shadow-line trim at wall junctions." },
-            { step: 5, title: "Services Integration", description: "Cut openings for fixtures and diffusers, support with additional clips." },
+            { step: 1, title: "Datum and Run Direction", description: "Mark the finished ceiling level on the wall all round, then fix the run direction from the main sight line — the entry axis or the long dimension of the room. On a linear ceiling the direction decision is far more visible than the level, and it also decides where the joint profiles and cut ends fall." },
+            { step: 2, title: "Anchor and Hang the Main Carrier", description: "Fix hanger rods to the slab on expansion or chemical anchors at the spacing the structure allows, and hang the main carrier level. Level it properly before anything else goes near it: strips will not correct a carrier that is out of plane, they will repeat its error along every metre of the run." },
+            { step: 3, title: "Set Out the Strip Carriers", description: "Clip or screw the strip carriers below the main carrier at the centres on the setting-out drawing, perpendicular to the run. This is the step where closed-joint and open-joint ceilings part company — the carrier decides the joint — so confirm which one is being built before the first carrier is fixed. There is no default pitch to fall back on." },
+            { step: 4, title: "Install the Strips", description: "Slide or hook each strip into the carrier, working from one end of the room to the other. Strips are independent, so a wrong one lifts straight back out; do not drag a strip along the carrier, which marks the finish. Check the joint width with a feeler at intervals rather than by eye." },
+            { step: 5, title: "Perimeter, Splices and Movement Joints", description: "Close the perimeter with the angle or shadow-line trim the detail calls for, join carrier and strip runs with the matching splices, and place movement joints where the drawing shows them. On long or externally exposed runs, agree the joint positions with us before manufacture rather than finding them on site." },
+            { step: 6, title: "Sight, Level, then Cut in Services", description: "Look along the ceiling from the end of the run and from the entry — that is where a wandering line, an uneven gap or a bowed strip shows; adjust hanger nuts until the face reads straight. Only then cut in luminaires, diffusers and sprinkler collars, and re-seal any cut edge whose coating was broken." },
         ],
         installationTips: [
-            "Install in one consistent direction — check arrow markings",
-            "Plan expansion joints every 6–8m for long runs",
-            "Perforated panels: install acoustic fleece backing above",
-            "Do not walk on installed panels — use access hatches",
+            "Agree the joint type and the edge profile in writing before manufacture — 'conceal', 'open', 'C-type' and 'G-type' are used inconsistently across the trade, so the section drawing is the only thing both sides are actually building to",
+            "On an open-joint ceiling, paint the slab, ducts and cable tray above one dark tone before the strips go up; the gaps are windows and bright services will read as clutter for the life of the building",
+            "Wear clean gloves throughout. A strip's turned-down leg is often left exposed at the joint, so a mark is not hidden the way it is behind a board edge",
+            "On coil-coated stock the cut end and the folded leg are bare metal — specify post-form coating where the section shows, or plan to touch up every cut",
+            "Nothing hangs from the strips: luminaires, signage, projectors and sprinkler backings are independent of the ceiling, and each strip must still lift out for the access the services team will need",
         ],
         applications: [
-            { type: "Office Interiors", whyUse: "Linear panels create visual order with integrated acoustic control.", recommendedProducts: ["C-135 white RAL 9010", "Perforated above workstations"], keyBenefit: "NRC 0.75, clean linear aesthetic" },
-            { type: "Airport & Metro Stations", whyUse: "Long-span panels for large areas, demountable for maintenance.", recommendedProducts: ["C-185 metallic silver", "PVDF roller-coated"], keyBenefit: "Fast installation, maintenance access" },
-            { type: "Shopping Malls", whyUse: "Mixing widths creates visual rhythm and wayfinding cues.", recommendedProducts: ["Mixed widths 100+150+200mm", "Wood grain finish"], keyBenefit: "Design flexibility" },
+            { type: "Offices and Open-Plan Ceilings", whyUse: "A closed-joint shallow strip gives the calm, near-seamless plane that open-plan lighting wants, while every strip still lifts for the ductwork and data runs above.", recommendedProducts: ["150 × 15 mm at 0.6–0.7 mm, white or light-grey post-form powder"], keyBenefit: "Seamless look with full plenum access" },
+            { type: "Metro, Rail and Airport Concourses", whyUse: "Long unbroken runs across very wide halls, and an open build that does not fight smoke extraction, sprinkler discharge or the services mess of a terminal plenum.", recommendedProducts: ["200 × 40 mm strips, 6 m lengths, dark matte powder above and colour on the face"], keyBenefit: "Joint-free long runs, unobstructed fire and air systems" },
+            { type: "Retail Storefront Soffits and Malls", whyUse: "Mixed widths let a soffit read as a designed edge rather than a bulkhead, and wood-grain on a narrow strip gives the warm shopfront look without timber's maintenance.", recommendedProducts: ["Mixed 100 + 150 + 200 mm widths, wood-grain transfer or satin metallic"], keyBenefit: "Design rhythm and wayfinding from one part family" },
+            { type: "Swimming Pools, Kitchens and Healthcare", whyUse: "Aluminium does not rot, swell or support mould, and a solid or wiped-clean strip has no ledge to collect dust — but pool air is chemically aggressive, so the coating and the corrosion class are what decide the build-up.", recommendedProducts: ["Post-form powder or anodised, sealed folded edges, EN 13964 humidity and corrosion class stated"], keyBenefit: "Durable and cleanable in continuous humidity" },
+            { type: "Entrance Soffits, Canopies and Low Facade", whyUse: "An open-joint strip passes wind instead of loading it like a sealed panel, cannot oil-can, and screens the structure overhead — provided the finish and the carrier are specified for exposure.", recommendedProducts: ["Thicker-gauge extruded strip, PVDF finish, wind-resistant carriers and retaining clips"], keyBenefit: "Weather-tolerant linear soffit with no wind-loaded plane" },
         ],
-        certifications: ["ISO 9001:2015", "CE Marking", "SGS Test Report", "ASTM E84 Class A"],
-        cadFiles: [{ name: "C-Shape Section Detail", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "Strip Ceiling System", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
+        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 bare / A2-s1,d0 coated"],
     },
 
     // ═══════════════════════════════════════════════════════════
@@ -240,9 +259,6 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Exhibition Halls", whyUse: "Deep baffles conceal overhead services.", recommendedProducts: ["80×200mm matte black"], keyBenefit: "Service concealment" },
         ],
         certifications: ["ISO 9001:2015", "CE Marking", "SGS", "ASTM E84 Class A"],
-        cadFiles: [{ name: "U-Baffle Section", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "U-Baffle System", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
     },
 
     "aluminum-honeycomb-core-panel": {
@@ -282,9 +298,6 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Interior Feature Walls", whyUse: "Maximum flatness for premium finishes.", recommendedProducts: ["10mm powder coated or stone veneer"], keyBenefit: "Ultra-flat, luxury materials" },
         ],
         certifications: ["ISO 9001:2015", "CE (EN 13830)", "SGS", "AAMA 2605", "ASTM E84 Class A"],
-        cadFiles: [{ name: "Honeycomb Section", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "Honeycomb System", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
     },
 
     "aluminum-ceiling-tile": {
@@ -298,8 +311,8 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Sizes", value: "300×300 / 300×600 / 600×600 / 600×1200mm" },
             { label: "Edge Profile", value: "Lay-in / Tegular / Clip-in" },
             { label: "Weight", value: "1.5–2.8 kg/m²" },
-            { label: "Fire Rating", value: "A2-s1,d0" },
-            { label: "NRC", value: "0.50 (perforated) / 0.70 (+ acoustic pad)" },
+            { label: "Fire Rating", value: "A1 (bare metal) / B-s1,d0 (coated + acoustic fleece) per EN 13501-1" },
+            { label: "NRC", value: "0.50–0.75 (perforated + fleece, cavity-dependent)" },
             { label: "Humidity", value: "Up to 100% RH" },
         ],
         surfaceOptions: [
@@ -324,10 +337,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Hospitals", whyUse: "Non-porous, resists bacteria and mold.", recommendedProducts: ["600×600 clip-in, solid"], keyBenefit: "Hygienic, cleanable" },
             { type: "Swimming Pools", whyUse: "100% moisture-proof.", recommendedProducts: ["600×600 powder coated"], keyBenefit: "Zero moisture damage" },
         ],
-        certifications: ["ISO 9001:2015", "CE", "SGS", "ASTM E84 Class A", "EN 13964"],
-        cadFiles: [{ name: "Grid Detail", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "Ceiling Tile System", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
+        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 B-s1,d0"],
     },
 
     "aluminum-square-tube": {
@@ -365,9 +375,6 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Decorative Screens", whyUse: "Semi-transparent privacy.", recommendedProducts: ["25×25 anodized"], keyBenefit: "Privacy + ventilation" },
         ],
         certifications: ["ISO 9001:2015", "CE", "SGS", "ASTM B221"],
-        cadFiles: [{ name: "Section Library", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "Square Tube Family", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
     },
 
     "fluted-aluminum-panel": {
@@ -407,9 +414,6 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Interior Feature Walls", whyUse: "Subtle texture without overwhelming.", recommendedProducts: ["Micro-flute 18/5 matte white"], keyBenefit: "Premium feel" },
         ],
         certifications: ["ISO 9001:2015", "CE", "SGS", "ASTM E84", "AAMA 2605"],
-        cadFiles: [{ name: "Profile Library", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "Fluted Panel System", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
     },
 
     "aluminum-skirting-board": {
@@ -451,9 +455,350 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Hospitals", whyUse: "Hygienic, cleanable, impact resistant.", recommendedProducts: ["Flat 70mm powder coated"], keyBenefit: "Infection control, durability" },
         ],
         certifications: ["ISO 9001:2015", "CE", "SGS", "ASTM B221"],
-        cadFiles: [{ name: "Skirting Profiles", format: "DWG", url: "#" }],
-        bimFiles: [{ name: "Skirting Family", format: "RVT", url: "#" }],
-        specSheetUrl: "#",
+    },
+
+    // ═══════════════════════════════════════════════════════
+    // 10. OPEN CELL CEILING（开放 cell 网格吊顶）
+    //     数值来源标注：[标准] = 条文要求；[行业典型] = 多家制造商公开资料交叉印证的范围，
+    //     不是本公司实测数据；[推算] = 由几何尺寸算出的示例值。
+    //     不写任何未经 EN ISO 354 实测的吸声系数。
+    // ═══════════════════════════════════════════════════════
+    "open-cell-ceiling": {
+        categorySlug: "open-cell-ceiling",
+        categoryName: "Open Cell Ceiling",
+        overview: "Open cell ceilings are an exposed grid of intersecting aluminium channels that forms square or rectangular cells, with the plenum left open to view. The grid is the finish: there is no tile or panel closing the plane, so air, light and sprinkler discharge pass through and every service above stays accessible. Cell size, web width and section depth set both the look and the stiffness, and acoustic absorption has to be designed in above the grid rather than expected from the grid itself.",
+        keyFeatures: [
+            "Open square grid — plenum, services and structure stay visible and reachable",
+            "No tiles to lift: the whole ceiling area acts as access",
+            "Air, sprinkler water and smoke pass through instead of being trapped above",
+            "High rigidity for its weight — the two-way grid works as a structural lattice",
+            "Demountable and reusable; sections are cut to length and replaced individually",
+            "Cell size, web width and depth are modular — mix them to change scale and openness",
+        ],
+        technicalSpecs: [
+            { label: "Material", value: "AA3003-H24 / AA5005-H24 aluminium strip; AA5052 where a harder web is specified" },
+            { label: "Cell Sizes (clear opening)", value: "50×50 / 75×75 / 100×100 / 150×150 / 200×200 mm; other pitches to shop drawing [industry typical]" },
+            { label: "Web Width (W)", value: "10 mm or 15 mm standard; 20 mm+ on request [industry typical]" },
+            { label: "Section Depth (H)", value: "35 / 40 / 45 / 50 / 60 / 80 mm — depth governs stiffness and shadow line [industry typical]" },
+            { label: "Sheet Thickness", value: "0.4–0.6 mm for standard grids; 0.35–0.8 mm available [industry typical]" },
+            { label: "Section Length", value: "Grid members cut to module multiples, typically up to 2 000 mm per piece [industry typical]" },
+            { label: "Free (Open) Area", value: "Calculated from geometry — e.g. a 100 mm cell with 15 mm webs leaves ≈72 % open; a 50 mm cell with 10 mm webs ≈64 % [derived]" },
+            { label: "Suspension", value: "Adjustable hangers to the structure; perimeter angle at the finished level; hanger spacing set by the span and any imposed load" },
+            { label: "Deflection Limit", value: "EN 13964 requires the ceiling to be declared for load class and tested; project specifications commonly cap deflection between two hangers at L/200 to L/500 [standard]" },
+            { label: "Acoustic Performance", value: "An open grid is not an absorber by itself — sound passes through it. Absorption comes from acoustic mesh, fabric-wrapped infill or treated plenum above, and must be tested to EN ISO 354 for the exact build-up before any NRC or αw figure is quoted" },
+            { label: "Fire Reaction", value: "Bare aluminium A1 (EN 13501-1). Where acoustic fleece or mesh is added, that material's class governs the assembly claim [standard]" },
+            { label: "Corrosion Resistance", value: "Declared by class to EN 13964 (Tables 8–9); specify the class for the service environment [standard]" },
+            { label: "Standard / Test Basis", value: "EN 13964 (suspended ceilings); ASTM E84 for North American flame-spread classification; ASTM C635 / E3090 for suspension-system load testing" },
+        ],
+        surfaceOptions: [
+            { name: "Powder Coating", description: "Even matte or satin film on all four web faces; the workhorse finish for interiors.", thickness: "60–80 µm typical", warranty: "Standard offer — confirm at quotation", suitableFor: ["Offices", "Retail", "Airports", "Underground stations"] },
+            { name: "PE Coil Coating", description: "Factory-applied on the strip before forming, so the coating is uniform on every cut edge.", thickness: "18–25 µm", warranty: "10 years (standard offer)", suitableFor: ["Large uniform areas", "Repeat module grids"] },
+            { name: "PVDF (Fluorocarbon)", description: "Higher resistance to UV, pollution and colour fade where the ceiling sees daylight or harsh air.", thickness: "25–35 µm, 70 %+ PVDF resin", warranty: "15 years (standard offer)", suitableFor: ["Atriums with daylight", "Coastal and high-pollution sites", "Semi-external canopies"] },
+            { name: "Wood-Grain Sublimation", description: "Timber effect transferred onto the webs; reads as a slatted timber grid from below.", thickness: "Coated film system", warranty: "Standard offer — confirm at quotation", suitableFor: ["Hotels", "Restaurant rows", "Lobby features"] },
+        ],
+        standardSizes: [
+            { label: "Small Cell", value: "50×50 mm, W10, H35–50 mm — dense, high openness count" },
+            { label: "Medium Cell", value: "100×100 mm, W10–15, H40–60 mm — the most specified size" },
+            { label: "Large Cell", value: "150×150 / 200×200 mm, W15, H50–80 mm — bold, lightweight look" },
+            { label: "Rectangular", value: "75×150 / 100×200 mm — directional grid, laid to the room axis" },
+            { label: "Custom", value: "Any cell on shop drawing; deeper sections and heavier webs for long unbroken spans" },
+        ],
+        installationSteps: [
+            { step: 1, title: "Set the Datum", description: "Mark the finished ceiling level on the perimeter with a laser or water line and fix the perimeter angle. The datum controls everything — an open grid shows every deviation." },
+            { step: 2, title: "Fix the Hangers", description: "Anchor adjustable hangers to the slab or structure at the designed spacing, keeping them clear of services. Each hanger must land where the grid can carry it." },
+            { step: 3, title: "Install the Main Carriers", description: "Hang and level the first layer of channels, squaring the first line to the main sight axis of the room. Check level along the full run, not just at the hanger." },
+            { step: 4, title: "Slot the Cross Members", description: "Interlock the second layer into the main carriers at the cell pitch. The two layers lock at the same depth so the webs meet flush." },
+            { step: 5, title: "Cut In at Perimeters", description: "Cut edge cells to the line and support the cut ends. Keep the cut edge coated — bare cut faces are the first place a ceiling looks cheap." },
+            { step: 6, title: "Align and Commission", description: "Sight the grid from the entry point, adjust hanger nuts until the lines run true, then confirm that sections lift out cleanly for service access." },
+        ],
+        installationTips: [
+            "Set out from the room's main sight line, not from the wall — walls are rarely square to the grid",
+            "Keep the plenum above an open grid clean and painted: it is permanently visible, so ductwork, cable trays and slab finish all become part of the design",
+            "Specify hanger spacing and section depth together for long spans; deflection shows visually on a grid before it fails anything",
+            "Confirm sprinkler, detector and luminaire positions with the fire engineer — an open ceiling changes how those devices are located and accepted",
+            "Any acoustic figure must come from a test of the actual build-up (grid plus infill plus plenum), not from the grid alone",
+        ],
+        applications: [
+            { type: "Transit Concourses and Stations", whyUse: "High ceilings full of services; the grid hides nothing but organises it, and air, water and smoke move through rather than accumulate above.", recommendedProducts: ["100×100 mm, W15, H50 mm, powder coated"], keyBenefit: "Service access plus sprinkler and smoke compatibility" },
+            { type: "Shopping Malls and Food Courts", whyUse: "Open plane absorbs the visual mess above while reading as a strong geometric ceiling; extraction and make-up air pass through.", recommendedProducts: ["150×150 mm, W15, H60 mm"], keyBenefit: "Design impact with real ventilation behaviour" },
+            { type: "Office Lobbies and Corridors", whyUse: "Conceals the slab while keeping luminaires and diffusers in the sight line; integrates with linear lighting.", recommendedProducts: ["75×75 mm, W10, H40 mm, white"], keyBenefit: "Clean lines, easy reconfiguration" },
+            { type: "Gyms and Leisure Halls", whyUse: "High air movement and impact resistance; nothing to trap humidity above the ceiling.", recommendedProducts: ["100×100 mm, W15, H50 mm, PVDF"], keyBenefit: "Airflow and durability in humid halls" },
+            { type: "Exhibition Halls and Airports", whyUse: "Long unbroken areas where rigging points and re-routing happen every season.", recommendedProducts: ["200×200 mm, W15, H80 mm, deeper section"], keyBenefit: "Full demountable access to the plenum" },
+        ],
+        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 (bare metal)"],
+    },
+
+    // ═══════════════════════════════════════════════════════
+    // 11. ALUMINUM MESH CEILING（金属网吊顶：拉伸网 / 编织网）
+    //     数值来源标注同 open-cell-ceiling：[标准] / [industry typical] / [derived]。
+    //     不写未经 EN ISO 354 实测的吸声系数。
+    // ═══════════════════════════════════════════════════════
+    "aluminum-mesh-ceiling": {
+        categorySlug: "aluminum-mesh-ceiling",
+        categoryName: "Aluminum Mesh Ceiling",
+        overview: "Aluminium mesh ceilings are suspended panels or rolls of open metal fabric — either expanded metal, cut and stretched from a single sheet so the diamond openings have no welds or joints, or woven and crimped wire mesh. The result is a ceiling that filters the plenum instead of hiding it: light, air and sprinkler discharge pass through, services above stay partly visible, and the surface reads as a soft metallic texture rather than a hard plane. Panel size, aperture, strand or wire diameter and the supporting edge detail are what control both the look and how flat it hangs.",
+        keyFeatures: [
+            "Expanded mesh is cut and stretched from one sheet — no joints, nothing can unravel",
+            "High open area: light, air and sprinkler water pass straight through",
+            "Softens and partially screens the services above without fully concealing them",
+            "Very light for its coverage — mesh is one of the lowest kg/m² ceiling options [industry typical]",
+            "Supplied as fixed or demountable panels, or as continuous rolls in a perimeter profile",
+            "Non-combustible base metal; anodised and PVDF options for humid and coastal air",
+        ],
+        technicalSpecs: [
+            { label: "Material", value: "All-aluminium construction: AA1100 / AA3003 for expanded and woven mesh, AA5052 where a harder strand or more spring-back is needed. No steel or stainless mesh is supplied — where a brighter or harder-looking mesh is specified, the answer is a brighter anodised finish on aluminium, not a different metal" },
+            { label: "Mesh Type", value: "Expanded metal (slit and stretched, diamond or rectangular openings) or woven / crimped wire mesh — the two behave differently and are quoted separately" },
+            { label: "Base Sheet Thickness (expanded)", value: "1.5–3.0 mm for architectural ceiling mesh; 0.3–1.0 mm foil mesh for feature and stretch applications [industry typical]" },
+            { label: "Strand Width SW (expanded)", value: "10–30 mm commonly; the strand is the load-bearing rib of the mesh [industry typical]" },
+            { label: "Aperture SWD × LWD (expanded)", value: "short way 25–100 mm × long way 60–200 mm — aperture sets openness and how much of the plenum reads through [industry typical]" },
+            { label: "Wire Ø × Aperture (woven)", value: "wire 1.0–3.0 mm with apertures from about 10 mm upward; specified as mesh count, wire diameter and opening size [industry typical]" },
+            { label: "Open Area", value: "Roughly 30–70 % for typical ceiling meshes — a geometric consequence of aperture and strand, not a measured performance figure [derived]" },
+            { label: "Panel Sizes", value: "600×600 / 600×1200 / 1200×1200 mm into a carrier grid, or cut to size from sheet formats up to 1220×2440 mm and larger; width up to 3 m [industry typical]" },
+            { label: "Support System", value: "Lay-in or clip-in on a carrier grid, bolted rigid frames for long spans, or a perimeter tension profile for continuous roll mesh" },
+            { label: "Edge Detail", value: "Folded and stiffened frame edge on panel mesh; hemmed or clamped edge on roll mesh — the edge decides whether the sheet hangs flat" },
+            { label: "Fire Reaction", value: "Bare aluminium classifies A1 to EN 13501-1; coated mesh is normally declared EN 13501-1 B-s1,d0, with ASTM E84 Class A for North American projects [standard]" },
+            { label: "Acoustic Performance", value: "Mesh is acoustically transparent — it absorbs almost nothing on its own. Perforated mesh backed with acoustic tissue (commonly around 0.2 mm glass-fibre non-woven) or an absorber laid above is what produces a result; any NRC or αw must be tested to EN ISO 354 for that build-up" },
+            { label: "Corrosion & Contact", value: "Aluminium does not rust, but where it contacts carbon steel in damp air, specify isolation — galvanic couples are a real failure mode in humid spaces [standard practice]" },
+            { label: "Standard / Test Basis", value: "EN 13964 (suspended ceilings: dimensions, tolerances, declared load classes); EN 13501-1 (reaction to fire); EN ISO 354 / 11654 (sound absorption); ASTM E84" },
+        ],
+        surfaceOptions: [
+            { name: "Powder Coating", description: "Colour on the mesh strands; most often white, grey or black to control how visible the plenum is.", thickness: "60–80 µm typical", warranty: "Standard offer — confirm at quotation", suitableFor: ["Retail", "Offices", "Lobbies"] },
+            { name: "PVDF (Fluorocarbon)", description: "For daylight, coastal or polluted air, indoors or under canopies.", thickness: "25–35 µm, 70 %+ PVDF resin", warranty: "15 years (standard offer)", suitableFor: ["Semi-external canopies", "Coastal sites", "Atria with daylight"] },
+            { name: "Anodised", description: "Integral oxide, metallic look, no film to chip; the natural choice for bare-mesh aesthetics.", thickness: "10–25 µm coating layer", warranty: "Standard offer — confirm at quotation", suitableFor: ["Feature ceilings", "Exhibition and retail"] },
+            { name: "Bare / Mill Finish", description: "Uncoated aluminium, often under a clear protective film; used where the mesh is meant to read as metal.", thickness: "—", warranty: "Not a warranty system — handle to avoid marking", suitableFor: ["Industrial look", "Backlit features"] },
+        ],
+        standardSizes: [
+            { label: "Carrier Grid Panels", value: "600×600 / 600×1200 / 1200×1200 mm, demountable" },
+            { label: "Cut From Sheet", value: "Sheet formats up to 1220×2440 mm and larger; width up to 3 m" },
+            { label: "Continuous Roll", value: "Roll mesh cut to length in a perimeter tension profile for unbroken runs" },
+            { label: "Common Apertures", value: "SWD 55 / 70 mm with SW 15–22 mm for a readable diamond; finer mesh for a softer texture" },
+            { label: "Custom", value: "Aperture, strand, panel geometry, edge and finish to shop drawing" },
+        ],
+        installationSteps: [
+            { step: 1, title: "Set Level and Perimeter", description: "Mark the finished level and fix the perimeter profile or angle. Mesh shows sag more honestly than any other ceiling, so the datum has to be right." },
+            { step: 2, title: "Hang the Support Grid", description: "Install carriers or suspension wires at the spacing the panel size demands, and check the grid is square to the room axis, not to the wall." },
+            { step: 3, title: "Stiffen the Panels", description: "Fit folded or clamped edge frames to each panel before it goes up. An unframed mesh sheet will take the shape of whatever touched it." },
+            { step: 4, title: "Place the Mesh", description: "Lay or clip panels into the grid working from the centre out, or feed roll mesh into the tension profile and clamp it under even load." },
+            { step: 5, title: "Tension and True", description: "On roll mesh, tension evenly along the long edge and release any diagonal pull before the clamps close — residual tension is what causes visible oil-canning." },
+            { step: 6, title: "Reveal and Inspect", description: "Step back to the main sight line and check the pattern reads continuously across joints; confirm panels lift cleanly for service access." },
+        ],
+        installationTips: [
+            "Do not layer mesh directly over a regular grid of similar pitch — the two patterns beat against each other and produce visible moiré",
+            "Specify strand direction: expanded mesh is stiffer along the long way of the opening, so rotate panels deliberately and consistently",
+            "Keep a light gap above the mesh: backlit installations only work if the plenum finish and cable management are tidy enough to be seen",
+            "Isolate aluminium mesh from carbon steel channels and clips in humid or coastal spaces to avoid galvanic attack",
+            "In kitchens and food areas, plan a degreasing cycle — mesh strands collect grease and dust far faster than a closed panel does",
+        ],
+        applications: [
+            { type: "Retail and Showrooms", whyUse: "Mesh filters the services and track lighting above without sealing them off, and it reads as texture rather than a hard ceiling.", recommendedProducts: ["Fine woven mesh, anodised, in 1200×1200 demountable panels"], keyBenefit: "Open look with full access to lighting changes" },
+            { type: "Station Concourses and Airports", whyUse: "High ceilings with heavy services; the open area lets sprinkler water and smoke pass and keeps everything above reachable.", recommendedProducts: ["Expanded mesh SWD 55 mm, powder coated dark grey"], keyBenefit: "Fire-engineer-friendly openness with service access" },
+            { type: "Office Lobbies and Cafeterias", whyUse: "Softens the acoustic glare of a hard, open lobby while keeping the volume reading as one space.", recommendedProducts: ["Perforated mesh with acoustic tissue backing"], keyBenefit: "Visual softness with a real absorption route" },
+            { type: "Exhibition and Cultural Spaces", whyUse: "Backlit and draped mesh gives depth and lets rigging points stay usable between shows.", recommendedProducts: ["Roll mesh in a perimeter tension profile"], keyBenefit: "Continuous unbroken surface, re-tensionable" },
+            { type: "Semi-External Canopies", whyUse: "Aluminium mesh tolerates weather, passes wind pressure and stays non-combustible at ground level.", recommendedProducts: ["PVDF-finished expanded mesh, framed panels"], keyBenefit: "Durability with a 15-year coating warranty (standard offer)" },
+        ],
+        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 (bare metal)"],
+    },
+
+    // ═══════════════════════════════════════════════════════
+    // 12. ALUMINUM HONEYCOMB CEILING（铝蜂窝板吊顶系统）
+    //     与上面第 4 条 aluminum-honeycomb-core-panel（幕墙/墙面用蜂窝板）区分：
+    //     本条是吊顶系统 —— 大板无缝、勾搭/暗架安装、面向室内大空间。
+    //     数值同前两款用 [标准] / [industry typical] / [derived] 标注来源类型，
+    //     不写未经实测的吸声/隔声数值。
+    // ═══════════════════════════════════════════════════════
+    "aluminum-honeycomb-ceiling": {
+        categorySlug: "aluminum-honeycomb-ceiling",
+        categoryName: "Aluminum Honeycomb Ceiling",
+        overview: "Aluminium honeycomb ceiling panels are sandwich boards: two thin aluminium skins bonded to a hexagonal aluminium honeycomb core. The core works as thousands of tiny I-beams distributed across the panel, so a 15–25 mm board stays flatter than any single sheet of the same weight and can be made in lengths no tile system reaches — up to 6 m with no intermediate joint. The ceiling reads as one continuous, dead-flat plane, hung on concealed carriers, with hanger loads far below a solid panel of the same size.",
+        keyFeatures: [
+            "Continuous large boards — panels up to 6 m long, so long ceilings run joint-free",
+            "Flatness a tile system cannot match: the core holds the skin flat between supports",
+            "Very light for its stiffness — bending is carried by the sandwich, not the skin alone",
+            "Dimensionally stable; wide boards hang without visible oil-canning or drumming",
+            "Concealed hook-on or cassette suspension — no visible grid",
+            "Perforated versions turn the core cells into an acoustic resonator with fleece backing",
+        ],
+        technicalSpecs: [
+            { label: "Panel Build-Up", value: "Face sheet + aluminium honeycomb core + back sheet, bonded under heat and pressure; a typical ceiling build is 1.0 mm face + 13 mm core + 0.7 mm back = 15 mm total [industry typical]" },
+            { label: "Face / Back Sheet", value: "AA3003 / AA5005 / AA1100 aluminium; face 0.8–1.0 mm with a back skin of the same or a slightly lighter gauge (0.5–0.7 mm) for standard ceiling boards — equal-gauge skins on both sides are common and are not a defect, and heavier faces are used for long spans [industry typical]" },
+            { label: "Honeycomb Core", value: "AA3003 / AA5052 hexagonal core; cell side length 3 / 4 / 5 / 6 mm (≈1/8\"–1/4\") with foil 0.04–0.08 mm [industry typical]" },
+            { label: "Total Thickness", value: "10 / 15 / 20 / 25 mm standard for suspended ceilings; other thicknesses to order [industry typical]" },
+            { label: "Weight", value: "Roughly 3.5–7 kg/m² over the 10–25 mm range — a 15 mm board with 1.0 mm faces is about 6 kg/m², well under an equivalent solid panel [industry typical]" },
+            { label: "Panel Size", value: "Folded-edge boards commonly up to 1 190 mm wide × 6 000 mm long; wider flats to special arrangement [industry typical]" },
+            { label: "Flatness & Tolerances", value: "Face flatness to about ±0.2 mm and edge straightness within a few millimetres on a production board; the tolerance must be declared on the submittal, because flatness is the reason this product is chosen [industry typical]" },
+            { label: "Edge Detail", value: "Four-side folded edge forming a cassette that hooks onto concealed carriers; open or sealed joints to the design" },
+            { label: "Suspension", value: "Aluminium carriers with concealed hook-on clips, or an aluminium channel sub-frame on adjustable hangers; spacing set by board span and imposed load" },
+            { label: "Fire Reaction", value: "Aluminium skins and core are non-combustible; the laminated board is normally declared A2-s1,d0 to EN 13501-1, with the adhesive system and any backing material forming part of the claim [standard]" },
+            { label: "Acoustic Performance", value: "A solid honeycomb board reflects sound — it is a barrier, not an absorber. Perforated-face acoustic boards use the core cells as a resonator behind the perforated skin, but any NRC or αw figure must be tested to EN ISO 354 on the exact build-up before it is quoted" },
+            { label: "Thermal Behaviour", value: "The sealed core cells restrict air movement inside the panel, giving a honeycomb board more thermal resistance than a single metal sheet — useful where a soffit sees sun [industry typical]" },
+            { label: "Standard / Test Basis", value: "EN 13964 (suspended ceiling systems); EN 13501-1 (reaction to fire); EN ISO 354 / 11654 (sound absorption); ASTM E84; ASTM E3090/E3090M for suspension-system load testing" },
+        ],
+        surfaceOptions: [
+            { name: "Powder Coating", description: "Even matte finish on the face skin; the default interior finish, single or two-colour.", thickness: "60–80 µm typical", warranty: "Standard offer — confirm at quotation", suitableFor: ["Airport terminals", "Malls", "Hotel lobbies"] },
+            { name: "PVDF (Fluorocarbon)", description: "For canopies, semi-external soffits and daylight exposure where colour must hold.", thickness: "25–35 µm, 70 %+ PVDF resin", warranty: "15 years (standard offer)", suitableFor: ["Canopies", "Semi-external soffits", "Coastal sites"] },
+            { name: "Wood-Grain Sublimation", description: "Timber effect on a dead-flat board — warm look with none of the movement of real timber.", thickness: "Coated film system", warranty: "Standard offer — confirm at quotation", suitableFor: ["Ballrooms", "Retail", "Feature ceilings"] },
+            { name: "Anodised", description: "Integral oxide with a metallic read; no film to chip at the folded edge.", thickness: "10–25 µm coating layer", warranty: "Standard offer — confirm at quotation", suitableFor: ["Feature ceilings", "Exhibition halls"] },
+        ],
+        standardSizes: [
+            { label: "Module Cassettes", value: "600×1200 / 600×2400 mm folded-edge boards on concealed carriers" },
+            { label: "Wide Boards", value: "1 200×2 400 mm for larger modules" },
+            { label: "Long Runs", value: "Up to ~1 190×6 000 mm — a full corridor or concourse in one board, no intermediate joint" },
+            { label: "Large Flats", value: "Formats beyond 1 200 mm wide to special arrangement" },
+            { label: "Custom", value: "Size, curvature, cut-outs and edge detail to shop drawing" },
+        ],
+        installationSteps: [
+            { step: 1, title: "Set Datum and Perimeter", description: "Mark the finished level and fix the perimeter trim. A joint-free ceiling has no grid lines to hide deviations, so the datum and the perimeter carry the whole read of the surface." },
+            { step: 2, title: "Install Carriers", description: "Fix concealed carriers or the channel sub-frame on adjustable hangers at the spacing the board span dictates, and level the system before any board goes up." },
+            { step: 3, title: "Hang Boards Centre-Out", description: "Lift boards with suction cups and hook them onto the carriers working from the room centre outward, so accumulated tolerance exits at the perimeter, not mid-field." },
+            { step: 4, title: "True the Joints", description: "Adjust hooks and hanger nuts until joints run dead straight along the main sight line; check flatness with a straight edge across board junctions, not just along them." },
+            { step: 5, title: "Cut and Fit Services", description: "Set luminaires, diffusers and sprinklers into factory or site cut-outs, and re-seal every cut edge — an open honeycomb edge is the one place moisture reaches the core." },
+            { step: 6, title: "Inspect and Hand Over", description: "Sight the full surface under raking light, confirm no board drums or springs when pressed at the hook, and verify boards lift individually for the plenum access the services need." },
+        ],
+        installationTips: [
+            "Nothing hangs from the boards: luminaires, signage and projection equipment must be rigged to the structure independently of the ceiling",
+            "Plan openings in the factory where possible; site cut-outs must use straight-edged tools and be re-sealed along the exposed core",
+            "Carry large boards with suction lifters — pinching or twisting a cassette at the folded edge dents the skin in a way that shows under light",
+            "For humid or semi-external soffits, specify PVDF and verify that every folded edge and joint is sealed",
+            "Where acoustics matter, order the perforated version with fleece backing and require an EN ISO 354 test report for that exact assembly",
+        ],
+        applications: [
+            { type: "Airport & Transit Terminals", whyUse: "Very long, uninterrupted ceiling runs at height — the joint-free board removes every line that would normally catch light and show tolerance build-up.", recommendedProducts: ["15 mm boards, powder coated, cassette suspension"], keyBenefit: "6 m joint-free boards with concealed fixing" },
+            { type: "Hotel Lobbies & Ballrooms", whyUse: "A dead-flat continuous plane gives the calm, high-end backdrop that fixings and service penetrations would otherwise break up.", recommendedProducts: ["15–20 mm, wood-grain or matte powder finish"], keyBenefit: "Flatness and finish quality across wide spans" },
+            { type: "Shopping Malls & Showrooms", whyUse: "Wide boards span over shops without a grid to fight the lighting design; demount access stays available behind every board.", recommendedProducts: ["10–15 mm boards, bright or dark powder finish"], keyBenefit: "Lighting-friendly with full plenum access" },
+            { type: "Hospitals & Clean Spaces", whyUse: "A true flat plane does not collect dust on ledges and wipes down; no open grid or fine mesh to harbour it either.", recommendedProducts: ["15 mm, scrub-resistance powder finish"], keyBenefit: "Cleanable, joint-minimal surface" },
+            { type: "Canopies & Semi-External Soffits", whyUse: "The sandwich insulates and stays dimensionally stable outdoors, and PVDF holds colour under sun and rain.", recommendedProducts: ["20 mm PVDF boards, sealed folded edges"], keyBenefit: "Weather-stable large soffit in one plane" },
+        ],
+        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A2-s1,d0"],
+    },
+    "round-tube-baffle-ceiling": {
+        categorySlug: "round-tube-baffle-ceiling",
+        categoryName: "Round Tube Baffle Ceiling",
+        overview: "A round tube ceiling is a run of near-circular aluminium tubes hung side by side at a regular pitch. Each tube is rolled from sheet with one longitudinal opening, and the two edges of that opening are folded — either inward into spring tabs, or upward into short mounting ears — so that they clip or bolt to a carrier bar running above the slit. The carrier therefore sits on top of the tubes rather than inside them, and it is the tubes themselves that hide it from the occupied side: the ceiling reads as a field of clean, soft-edged lines with nothing holding them visible. Every tube is independent: it can be lifted out and put back, and the pitch, diameter and length are all set by the design rather than by a module.",
+        keyFeatures: [
+            "Soft continuous line — a rolled tube catches light along a curve, so the run reads as gentle parallel stripes instead of hard edges",
+            "Truly open system: services, sprinklers, ducts and cable tray sit above and stay visually dissolved, while the tubes still screen them from the normal sight line — including the carrier itself",
+            "Every tube is independently demountable by hand — no tools, no cutting, no damaged neighbours when something in the plenum needs access",
+            "Runs to 6 m without an intermediate joint, so long corridors and concourses keep one unbroken line",
+            "Pitch, diameter and height are design variables, not catalogue constraints — the same tube can be spaced tight as a screen or wide as a rhythm",
+            "Air, smoke and light pass through, which is why the system suits transit halls, storefront soffits and any space where a sealed ceiling would be a problem",
+        ],
+        technicalSpecs: [
+            { label: "Material", value: "AA1100 / AA3003 / AA3005 / AA3105 rolled stock; AA6061 / AA6063 where an extruded profile tube is used. Aluminium throughout — no steel or stainless tubes are supplied [industry typical]" },
+            { label: "Section Type", value: "Two types share the name: roll-formed open tube (sheet curled, one slit, folded tabs) or extruded profile tube (thicker wall, truer circle, integral mounting ears)" },
+            { label: "Nominal Diameter", value: "Ø50 / 60 / 70 mm catalogue sizes; rolled range about Ø30–200 mm; oval and elliptical sections to order [industry typical]" },
+            { label: "Sheet / Wall Gauge", value: "0.8–1.2 mm mainstream on rolled tubes, 0.5–0.7 mm on light stock; extruded walls are materially thicker [industry typical]" },
+            { label: "Overall Height vs Diameter", value: "Taller than the nominal diameter — the mounting ears stand 7–9 mm proud, so a Ø50 tube finishes near 57–59 mm. Set out on overall height [industry typical]" },
+            { label: "Tube Pitch", value: "No fixed module; 100 and 120 mm are most often quoted. Pitch sets the metal per m², the weight and the price, so specify it [industry typical]" },
+            { label: "Tube Length", value: "1 000–6 000 mm; 6 m is the usual maximum without a joint. Ends butted with a deliberate 10 or 20 mm gap [industry typical]" },
+            { label: "Carrier & Suspension", value: "The carrier runs above the tubes at the slit line and is hidden by the tubes themselves: folded tabs slot into it, or the ears are bolted to a C-channel or hat carrier" },
+            { label: "Metal Per Square Metre", value: "≈ (π·D ÷ pitch) × gauge × 2 700. A Ø60 tube at 100 mm pitch and 0.8 mm is about 3.7 kg/m² — an open ceiling is not automatically light [derived]" },
+            { label: "Straightness", value: "The governing tolerance: coil camber must be stretcher-levelled out, a limit declared on the submittal, and the run checked with a taut line rather than by eye" },
+            { label: "Fire Reaction", value: "Bare or anodised aluminium is A1 to EN 13501-1; coated assemblies normally A2-s1,d0 on test of that build-up. ASTM E84 Class A (FSI 0–25)" },
+            { label: "Acoustic Behaviour", value: "An open tube ceiling is a screen, not an absorber — sound passes through it. Perforated tube plus fleece is the only real route, and needs an EN ISO 354 test on that assembly" },
+            { label: "Finish Route", value: "Powder, PVDF, wood-grain or stone transfer, anodised. Coating before forming leaves bare metal at the slit edges; coating after forming hides it" },
+            { label: "Standard / Test Basis", value: "EN 13964 · EN 13501-1 · EN ISO 354 / EN ISO 11654 · ASTM E84 · ASTM E3090/E3090M (suspension load testing)" },
+        ],
+        surfaceOptions: [
+            { name: "Powder Coating", description: "The default interior finish. Even colour on the curved face; matte or satin reads better than high gloss, because gloss turns every straight line into a running highlight.", thickness: "60–80 µm typical", warranty: "Standard offer — confirm at quotation", suitableFor: ["Transit halls", "Malls", "Offices", "Corridors"] },
+            { name: "PVDF (Fluorocarbon)", description: "For canopies, storefront soffits and any outdoor or semi-exposed position where the colour has to survive sun and rain.", thickness: "25–35 µm, 70 %+ PVDF resin", warranty: "15 years (standard offer)", suitableFor: ["Outdoor soffits", "Canopies", "Coastal sites"] },
+            { name: "Wood-Grain Transfer", description: "Timber look on a metal tube. Works particularly well here because the curved face gradates the grain naturally, which is harder to fake on a flat panel.", thickness: "Coated film system", warranty: "Standard offer — confirm at quotation", suitableFor: ["Hotels", "Restaurants", "Feature ceilings"] },
+            { name: "Anodised", description: "Integral oxide with a genuine metallic read. Strongest choice where the round highlight is the design intent, and it has no film to break at the folded tab.", thickness: "10–25 µm coating layer", warranty: "Standard offer — confirm at quotation", suitableFor: ["Feature ceilings", "Lobbies", "Exhibition"] },
+        ],
+        standardSizes: [
+            { label: "Standard Diameters", value: "50 / 60 / 70 mm, with the rolled range extendable from about 30 mm to 200 mm" },
+            { label: "Standard Pitch", value: "100 mm or 120 mm is most often quoted; any other pitch is a design decision and must be drawn" },
+            { label: "Lengths", value: "1 000–6 000 mm, cut to the run; 6 m is the usual maximum without a joint" },
+            { label: "Gauges", value: "0.8 / 1.0 / 1.2 mm rolled, with lighter stock at 0.5–0.7 mm; extruded sections are materially thicker in the wall" },
+            { label: "Custom", value: "Oval and elliptical sections, tapered or fanned layouts, perforated acoustic tubes, special colours and finishes" },
+        ],
+        installationSteps: [
+            { step: 1, title: "Establish the Datum", description: "Mark the finished ceiling level on the wall all round and set the direction of the run from the main sight line — the entry point or the long axis of the room. On a linear system the direction decision matters more than the level." },
+            { step: 2, title: "Hang the Main Carrier", description: "Fix hanger rods to the slab at the spacing the structure allows and suspend the main carrier level. Level the carrier before anything else goes near it; tubes will not correct a carrier that is out, they will broadcast it." },
+            { step: 3, title: "Set the Cross Carriers", description: "Install the carrier bars across the tube direction at the designed centres, and confirm the pitch on the drawing before the first tube is cut — there is no standard module to fall back on, so a carrier drilled for 120 mm cannot take a 100 mm layout." },
+            { step: 4, title: "Fix the Tubes In", description: "Either slot the inward-folded tabs into the bottom mouth of the carrier, or pass the fastener through the upward-projecting ears, working from one end of the room to the other. Each tube is independent, so a mistake lifts straight off — do not force a tube sideways along the carrier, it will mark the finish." },
+            { step: 5, title: "Butt and Gap the Ends", description: "Join tube ends with the deliberate gap the design calls for (10 or 20 mm is typical) and keep that gap identical along the whole run. An inconsistent end gap is the most common visible defect on this product." },
+            { step: 6, title: "Sight, Level and Fit Services", description: "Check straightness with a taut line along several runs, adjust hanger nuts, then cut in luminaires, diffusers and sprinkler collars. Step back and sight the ceiling from the entry — that is where a bow shows." },
+        ],
+        installationTips: [
+            "Wear clean gloves throughout: finger grease on a curved tube is visible under raking light and each tube is a mirror-ish cylinder, so it shows twice as clearly as on a flat panel",
+            "Store tubes flat and supported along their length, never leaning or stacked on the end — a bent tube cannot be straightened enough to disappear into a run",
+            "Run the ceiling direction over the longest dimension of the room; joints along a long run are far more visible than joints across a short one",
+            "Nothing hangs from the tubes: luminaires, signage and projectors must be independently rigged to the structure — a tube carries only itself",
+            "Where the design intent is to hide the plenum, paint the slab and services above black or a dark tone; the gaps work as windows onto whatever colour is behind them",
+        ],
+        applications: [
+            { type: "Metro Stations & Transit Concourses", whyUse: "Open construction lets smoke, air and sprinkler discharge pass unobstructed, while the tubes screen the services overhead and every tube lifts out for maintenance.", recommendedProducts: ["60 mm rolled tubes at 100 mm pitch, dark powder finish above and colour on the face"], keyBenefit: "Access without tools, no obstruction to ventilation or fire systems" },
+            { type: "Shopping Malls & Storefront Soffits", whyUse: "A linear tube soffit reads as a designed ceiling edge rather than a bulkhead, and it hides the steel and ductwork behind it without sealing the space.", recommendedProducts: ["50 mm tubes, tight pitch, matte white or wood-grain"], keyBenefit: "Soft continuous line that hides services and survives impact" },
+            { type: "Airport & Rail Terminals", whyUse: "Long 6 m runs keep the line unbroken across very wide halls, and the open system absorbs the height and services mess of a terminal plenum.", recommendedProducts: ["70 mm tubes, 6 m lengths, PVDF where the rooflight or apron side is exposed"], keyBenefit: "Joint-free long runs at height" },
+            { type: "Offices, Lobbies & Restaurants", whyUse: "The curved face gives a warmer, less industrial linear look than a rectangular baffle, and acoustics can be added by perforating the tube.", recommendedProducts: ["Perforated 50–60 mm tubes with fleece lining, wood-grain or anodised"], keyBenefit: "Feature line with an optional acoustic route" },
+            { type: "Outdoor Canopies & Building Entrances", whyUse: "An open ceiling does not trap wind or moisture and cannot oil-can the way a soffit panel does; with the right gauge and anti-wind clips it works as an entrance canopy.", recommendedProducts: ["Thicker gauge extruded tube on a bolted C-channel carrier, PVDF finish, anti-wind clips"], keyBenefit: "Weather-tolerant linear soffit with no wind-trapped plane" },
+        ],
+        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 bare / A2-s1,d0 coated"],
+    },
+    "teardrop-shape-baffle-ceiling": {
+        categorySlug: "teardrop-shape-baffle-ceiling",
+        categoryName: "Teardrop-Shape Baffle Ceiling",
+        overview: "A teardrop — also sold as droplet or water-drop — baffle ceiling is a row of narrow vertical aluminium blades hung close together below the ceiling plane. Each blade is a flat vertical face whose top edge is rolled shut into a continuous rounded bulb, and it is that bulb which gives the section its teardrop outline in end view. The result reads as a dense, soft-valanced linear surface with the plenum above partly visible between the blades, and every blade hangs on its own, so the ceiling stays open to services and can be set out straight, radial or spiralled from the same part.",
+        keyFeatures: [
+            "Dense linear rhythm — narrow blades at tight centres read almost as a solid ribbed surface from a distance, but stay physically open",
+            "The rolled droplet head gives a soft rounded top to every blade, so the ceiling catches light as a line of highlights rather than a row of hard edges",
+            "Each blade hangs independently — lift one out for plenum access without disturbing its neighbours",
+            "Shares the same hanger and carrier family as round tube, square tube, U-baffle and open cell ceilings, so one scheme can mix section shapes on one grid",
+            "Radial, spiral and feature layouts are made from the same blade, which is why the system is used over atria and curved lobbies",
+            "Wood-grain transfer on a narrow blade reads convincingly as timber slats, at metal durability and fire behaviour",
+        ],
+        technicalSpecs: [
+            { label: "Material", value: "AA6063 / AA6063-T5 where the blade is extruded; AA1100 / AA3003 where it is roll-formed from sheet. Aluminium throughout — the trade also sells galvanised steel blades, and those are not this product [industry typical]" },
+            { label: "Section Shape", value: "A flat vertical blade with its top edge rolled closed into a continuous rounded bulb; end view reads as a teardrop, not as a plate with a separate hanging ring [industry typical]" },
+            { label: "Blade Height (Depth)", value: "100 / 150 / 200 mm is the mainstream drop below the ceiling plane; the wider trade range runs 30–300 mm [industry typical]" },
+            { label: "Blade Width", value: "Droplet sections commonly 35 / 50 / 70 mm across the face; general baffle blades run 30–200 mm [industry typical]" },
+            { label: "Wall Gauge", value: "0.6–1.5 mm, with 1.0 mm the most specified. Taller blades and longer unsupported lengths need the thicker end of that band [industry typical]" },
+            { label: "Length", value: "Cut to the run; 6 000 mm is the usual practical maximum before a joint [industry typical]" },
+            { label: "Blade Spacing", value: "There is no standard pitch — centres are set on the reflected ceiling plan and are fully adjustable. Ask for the setting-out drawing rather than a catalogue number; no supplier publishes a fixed spacing" },
+            { label: "Suspension", value: "Threaded hanger rod to a main carrier, a spring or triangular carrier bar that the blades clip into, and edge hangers at the perimeter. Each blade is retained individually [industry typical]" },
+            { label: "Openness", value: "An open linear system: whatever is above stays visible between the blades, so the slab, ducts and tray should be painted one dark tone or the finish will read as clutter" },
+            { label: "Fire Reaction", value: "Bare or anodised aluminium is A1 to EN 13501-1; coated assemblies are normally A2-s1,d0 on test of that build-up, since the coating is the only combustible element. ASTM E84 Class A (FSI 0–25)" },
+            { label: "Acoustic Behaviour", value: "A blade ceiling is a screen, not an absorber — sound passes between the blades and reflects off what is above. Perforated blade plus fleece is the only route to a figure, and it must be measured to EN ISO 354 on that assembly" },
+            { label: "Curved and Radial Work", value: "Radial, spiral and arched ceilings are shown throughout the trade, but whether a given layout is achieved by fanning straight blades or by bent blades is a shop decision — confirm which one the drawing requires" },
+            { label: "System Compatibility", value: "Runs on the same carrier and hanger family as round tube, square tube, U-baffle and open cell ceilings, so mixed-section schemes are normal [industry typical]" },
+            { label: "Standard / Test Basis", value: "EN 13964 (factory-made suspended ceilings) · EN 13501-1 (reaction to fire) · EN ISO 354 / EN ISO 11654 (sound absorption) · ASTM E84 · ASTM E3090/E3090M (suspension load testing)" },
+        ],
+        surfaceOptions: [
+            { name: "Powder Coating", description: "The standard interior finish. Matte or satin is strongly preferred on a blade, because a gloss finish turns every blade into a bright line and amplifies any deviation in the run.", thickness: "60–80 µm typical", warranty: "Standard offer — confirm at quotation", suitableFor: ["Lobbies", "Malls", "Offices", "Transit"] },
+            { name: "Wood-Grain Transfer", description: "The reason this section is specified so often: a narrow blade with a timber film reads as a timber slat ceiling with none of timber's movement, fire behaviour or maintenance.", thickness: "Coated film system", warranty: "Standard offer — confirm at quotation", suitableFor: ["Hotels", "Restaurants", "Retail", "Feature ceilings"] },
+            { name: "PVDF (Fluorocarbon)", description: "For canopies, entrance soffits and any semi-external position where colour has to survive sun and rain.", thickness: "25–35 µm, 70 %+ PVDF resin", warranty: "15 years (standard offer)", suitableFor: ["Canopies", "Entrance soffits", "Coastal sites"] },
+            { name: "Anodised", description: "Integral oxide with a true metallic read; no film to break at the rolled head, which is where a coating is thinnest.", thickness: "10–25 µm coating layer", warranty: "Standard offer — confirm at quotation", suitableFor: ["Feature ceilings", "Exhibition", "Lobbies"] },
+        ],
+        standardSizes: [
+            { label: "Common Sections", value: "35 × 100 / 50 × 150 / 70 × 200 mm (width × depth), blade to blade" },
+            { label: "Depths", value: "100 / 150 / 200 mm standard; 30–300 mm to order" },
+            { label: "Gauges", value: "0.6 / 0.8 / 1.0 / 1.2 / 1.5 mm" },
+            { label: "Lengths", value: "Cut to the run, up to 6 000 mm" },
+            { label: "Custom", value: "Perforated blades, tapered or fanned layouts, mixed-section schemes, special colours" },
+        ],
+        installationSteps: [
+            { step: 1, title: "Set Datum and Direction", description: "Mark the finished level all round and decide the blade direction from the main sight line — usually along the long axis of the room, or square to the entry. On a linear ceiling the direction decision is more visible than the level." },
+            { step: 2, title: "Hang the Main Carrier", description: "Fix adjustable hanger rods to the slab and suspend the main carrier level. Level it properly now: blades will not correct a carrier that is out of plane, they will repeat its error along every metre of the run." },
+            { step: 3, title: "Install the Carrier Bar and Edge Trim", description: "Clip the spring or triangular carrier bar to the main carrier at the centres on the setting-out drawing, and fix the perimeter angle. Confirm the spacing against the drawing before the first blade goes in — there is no default pitch to fall back on." },
+            { step: 4, title: "Hang the Blades", description: "Clip each blade into the carrier bar working along the run. Blades are independent, so a wrong one lifts straight back out; do not drag a blade along the carrier, which marks the finish." },
+            { step: 5, title: "Sight the Face of the Run", description: "Look along the ceiling from the end of the run and from the entry, not down at it. That is where a wandering line, an uneven gap or a bowed blade shows. Adjust hanger nuts until the face is straight." },
+            { step: 6, title: "Fit Services and Hand Over", description: "Set luminaires, diffusers and sprinklers into the plane between blades, keep cut edges re-sealed, then confirm blades lift out individually for the access the services team will need." },
+        ],
+        installationTips: [
+            "Paint everything above the ceiling one dark colour before the blades go up — the gaps are windows, and bright services will read as clutter",
+            "Wear clean gloves: a blade is a narrow vertical face at eye-level height in a corridor, so scuffs and fingerprints show for the life of the building",
+            "Store blades flat and supported along their length, never leaning on the rolled head — a crushed head cannot be pressed back round",
+            "Nothing hangs from the blades: luminaires, signage and projectors are rigged to the structure independently",
+            "Where a radial or spiral layout is drawn, agree on the setting-out before manufacture, because the blade count and carrier drilling follow from it",
+        ],
+        applications: [
+            { type: "Mall Atria and Feature Ceilings", whyUse: "Narrow blades at tight centres give a ribbed, warm surface that can fan radially across an atrium without changing part numbers.", recommendedProducts: ["50 × 150 mm blades, wood-grain transfer, radial setting-out"], keyBenefit: "Timber-slat look with metal fire behaviour" },
+            { type: "Transit Concourses and Stations", whyUse: "The open build lets smoke, sprinkler discharge and air pass through, and every blade lifts for access to the services above.", recommendedProducts: ["70 × 200 mm blades at 100 mm centres, matte dark powder"], keyBenefit: "Unobstructed services with full plenum access" },
+            { type: "Hotel Lobbies and Restaurants", whyUse: "A dense blade run reads as a designed ceiling surface rather than a grid, and the rounded head keeps the light soft along the whole length.", recommendedProducts: ["35 × 100 mm blades, tight pitch, anodised or matte powder"], keyBenefit: "Soft linear surface, no visible carrier" },
+            { type: "Offices and Showrooms", whyUse: "It hides the slab while leaving the services where they are, so a fit-out can keep its ductwork and still look resolved.", recommendedProducts: ["50 × 150 mm blades, white or grey powder"], keyBenefit: "Screened services, cheap access, no sealed ceiling" },
+            { type: "Entrance Canopies and Soffits", whyUse: "An open ceiling cannot trap wind pressure or condensation the way a sealed soffit panel does; with PVDF and a bolted carrier it works outdoors.", recommendedProducts: ["Thicker-gauge blades, PVDF finish, bolted carrier with anti-wind fixings"], keyBenefit: "Weather-tolerant linear soffit with no wind-loaded plane" },
+        ],
+        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 bare / A2-s1,d0 coated"],
     },
 };
 

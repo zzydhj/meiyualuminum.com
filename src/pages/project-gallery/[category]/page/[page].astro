@@ -1,0 +1,70 @@
+---
+/**
+ * project-gallery/[category]/page/[page].astro — 项目画廊分类列表第 2~N 页（静态分页）
+ *
+ * - 第 1 页由 project-gallery/[category].astro 渲染（/project-gallery/{category}/ 为规范地址）
+ * - 构建流程：取全部项目案例 → 按分类分组 → 为每个分类生成 2~totalPages 页路由
+ * - 某分类案例数 ≤ PAGE_SIZE 时不生成该分类的分页（避免空页）
+ */
+import PageHero from "../../../../components/PageHero.astro";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import ProjectGallery from "../../../../components/ProjectGallery.astro";
+import { PAGE_SIZE } from "../../../../lib/pagination";
+import {
+    CATEGORY_MAP,
+    fetchAllProjects,
+    groupProjectsByCategory,
+} from "../../../../lib/projectGallery";
+
+export async function getStaticPaths() {
+    const byCategory = groupProjectsByCategory(await fetchAllProjects());
+
+    const paths: {
+        params: { category: string; page: string };
+        props: { currentPage: number };
+    }[] = [];
+
+    for (const [category, items] of byCategory) {
+        if (!CATEGORY_MAP[category]) continue;
+        const totalPages = Math.ceil(items.length / PAGE_SIZE);
+        for (let page = 2; page <= totalPages; page++) {
+            paths.push({
+                params: { category, page: String(page) },
+                props: { currentPage: page },
+            });
+        }
+    }
+    return paths;
+}
+
+const { category, page } = Astro.params;
+const currentPage = Number(page);
+const label = CATEGORY_MAP[category ?? ""]?.label ?? category ?? "";
+const categoryPath = encodeURIComponent(category ?? "");
+const pageDescription = `Browse our ${label} project cases: aluminum building material installations worldwide - page ${currentPage}.`;
+---
+
+<BaseLayout
+    pageTitle={`${label} Projects - Page ${currentPage}`}
+    description={pageDescription}
+    hideTitle
+>
+    <PageHero
+        slim
+        imageAlt={label}
+        titleWhite={label}
+        titleGold={`Page ${currentPage}`}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Project Gallery", url: "/project-gallery/" },
+                { name: label, url: `/project-gallery/${categoryPath}/` },
+                {
+                    name: `Page ${currentPage}`,
+                    url: `/project-gallery/${categoryPath}/page/${currentPage}/`,
+                },
+            ],
+        }}
+    />
+    <ProjectGallery category={category} currentPage={currentPage} />
+</BaseLayout>

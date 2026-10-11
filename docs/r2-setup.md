@@ -1,6 +1,6 @@
 # R2 图片流水线 · 配置与使用（跨设备可复现）
 
-> 配套脚本：[`docs/r2-image-pipeline.py`](./r2-image-pipeline.py)（pipeline-core v1.1）、
+> 配套脚本：[`docs/r2-image-pipeline.py`](./r2-image-pipeline.py)（pipeline-core v1.2）、
 > [`docs/migrate-hotlinks-to-r2.py`](./migrate-hotlinks-to-r2.py)（hotlink-migrator v1.0，见 §9）
 > 配套提示词：[`docs/blog-prompt-v5.md`](./blog-prompt-v5.md) 附录 B、
 > [`docs/Project-Promotion-V5.8.md`](./Project-Promotion-V5.8.md) 附录 B
@@ -169,6 +169,25 @@ python docs/r2-image-pipeline.py --url https://ref/a.jpg --topic acoustic-ceilin
 python docs/r2-image-pipeline.py --file .tmp-img\a.jpg --topic projects --semantic site-install
 python docs/r2-image-pipeline.py --plan plan.json --keep-tmp            # 保留临时文件
 ```
+
+### 4.3 非 blog 资产（产品图 / 站点素材）—— 用 `--prefix`（v1.2 新增）
+
+博客图走 `blog/<主题>/` 九主题闭集；产品详情页配图不属于博客命名空间，用 `--prefix` 直接指定目录：
+
+```powershell
+# 单图
+python docs/r2-image-pipeline.py --file prep.webp --prefix products/clip-in-aluminum-ceiling --semantic clip-in-edge-profile
+```
+
+```json
+// plan.json 里写 prefix 字段即可（与 topic 互斥，prefix 优先）
+[{"local": ".tmp-img-prep/x.webp", "prefix": "products/clip-in-aluminum-ceiling", "semantic": "ral-color-finish-options"}]
+```
+
+生成 key：`products/<slug>/<语义名>-<sha6>.webp` → `https://file.meiyualuminum.com/products/<slug>/...`。
+命名、内容哈希、HEAD 去重、公开 200 校验、校验后删本地副本等行为完全一致；不传 `--prefix` 时与 v1.1 行为一致。
+建议先本地限幅 1200px 转 webp（q82）再上传，避免把 2MB+ 原图直接上架。
+提示词【附录 B】内嵌副本（blog / case 写作用）不含 `--prefix`，仍为 v1.1 blog-only。
 
 ---
 

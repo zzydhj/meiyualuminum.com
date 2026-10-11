@@ -1,5 +1,5 @@
 ---
-import Breadcrumb from "../../components/Breadcrumb.astro";
+import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 import {
@@ -67,15 +67,19 @@ const keywords = category.keywords ?? [];
   headingTitle={category.name}
   description={pageDescription}
   keywords={keywords}
+  hideTitle
 >
-  <Breadcrumb
-    root={{ name: "Categories", url: "/categories/" }}
-    middleItems={middleItems}
-    current={category.name}
-    currentUrl={`/categories/${category.slug}/`}
+  <PageHero
+    imageAlt={category.name}
+    titleWhite={category.name}
+    subtitle={category.description || ""}
+    crumb={{
+      root: { name: "Categories", url: "/categories/" },
+      middleItems,
+      current: category.name,
+      currentUrl: `/categories/${category.slug}/`,
+    }}
   />
-
-  {category.description && <p>{category.description}</p>}
 
   <!-- Subcategories -->
   {

@@ -5,9 +5,10 @@
  * - 第 2~N 页由 videos/page/[page].astro 生成（/videos/page/N/）
  * - 每页 PAGE_SIZE 条，与博客列表共用分页配置与导航组件
  */
-import Breadcrumb from "../components/Breadcrumb.astro";
+import PageHero from "../components/PageHero.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import VideoGrid from "../components/VideoGrid.astro";
+import VideoFilterBar from "../components/VideoFilterBar.astro";
 import PaginationNav from "../components/PaginationNav.astro";
 import { supabase } from "../lib/supabase";
 import { PAGE_SIZE } from "../lib/pagination";
@@ -24,7 +25,9 @@ const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
 // 次级排序 slug：保证 pub_date 相同时跨页顺序稳定，不重不漏
 const result = await supabase
   .from("videos")
-  .select("slug, title, video_url, thumbnail_url, description, duration, pub_date, author, primary_tag")
+  .select(
+    "slug, title, video_url, thumbnail_url, description, duration, pub_date, author, primary_tag",
+  )
   .eq("status", "published")
   .order("pub_date", { ascending: false })
   .order("slug", { ascending: true })
@@ -36,16 +39,24 @@ if (result.error) {
 
 const videos = result.data ?? [];
 const pageTitle = "Videos";
-const pageDescription = "Watch our factory tours, project cases, installation guides and more.";
+const pageDescription =
+  "Watch our factory tours, project cases, installation guides and more.";
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription}>
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Videos", url: "/videos/" },
-    ]}
+<BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
+  <PageHero
+    imageAlt={pageTitle}
+    titleWhite="Our"
+    titleGold="Videos"
+    subtitle={pageDescription}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Videos", url: "/videos/" },
+      ],
+    }}
   />
+  <VideoFilterBar />
   <VideoGrid videos={videos} />
   <PaginationNav
     currentPage={1}

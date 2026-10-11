@@ -44,6 +44,11 @@ export const GET: APIRoute = async ({ site }) => {
         "/contact/",
         "/thank-you/",
         "/installation-guides/",
+        "/procurement-guide/",
+        "/tools/",
+        "/tools/ceiling-take-off/",
+        "/tools/aluminum-weight/",
+        "/tools/perforation-open-area/",
         "/surface-treatment-comparison/",
     ];
 

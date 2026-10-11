@@ -6,12 +6,17 @@
  * - 构建流程：取全部已发布视频 → 按标签分组 → 为每个标签生成 2~totalPages 页路由
  * - 某标签视频数 ≤ PAGE_SIZE 时不生成该标签的分页（避免空页）
  */
-import Breadcrumb from "../../../../components/Breadcrumb.astro";
+import PageHero from "../../../../components/PageHero.astro";
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import VideoGrid from "../../../../components/VideoGrid.astro";
+import VideoFilterBar from "../../../../components/VideoFilterBar.astro";
 import PaginationNav from "../../../../components/PaginationNav.astro";
 import { PAGE_SIZE } from "../../../../lib/pagination";
-import { fetchAllVideos, groupVideosByTag, type VideoItem } from "../../../../lib/videoTags";
+import {
+  fetchAllVideos,
+  groupVideosByTag,
+  type VideoItem,
+} from "../../../../lib/videoTags";
 
 export async function getStaticPaths() {
   const byTag = groupVideosByTag(await fetchAllVideos());
@@ -44,16 +49,30 @@ const pageDescription = `Browse all videos tagged with "${tag}" - page ${current
 const tagPath = encodeURIComponent(tag);
 ---
 
-<BaseLayout pageTitle={`${tag} - Page ${currentPage}`} description={pageDescription}>
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Video Tags", url: "/video-tags/" },
-      { name: tag, url: `/video-tags/${tagPath}/` },
-      { name: `Page ${currentPage}`, url: `/video-tags/${tagPath}/page/${page}/` },
-    ]}
+<BaseLayout
+  pageTitle={`${tag} - Page ${currentPage}`}
+  description={pageDescription}
+  hideTitle
+>
+  <PageHero
+    slim
+    imageAlt={tag}
+    titleWhite="Tag"
+    titleGold={tag}
+    subtitle={`Videos tagged with "${tag}" — Page ${currentPage}`}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Video Tags", url: "/video-tags/" },
+        { name: tag, url: `/video-tags/${tagPath}/` },
+        {
+          name: `Page ${currentPage}`,
+          url: `/video-tags/${tagPath}/page/${currentPage}/`,
+        },
+      ],
+    }}
   />
-  <p>Videos tagged with "{tag}" — Page {currentPage}</p>
+  <VideoFilterBar currentTag={tag} />
   <VideoGrid videos={videos} />
   <PaginationNav
     currentPage={currentPage}

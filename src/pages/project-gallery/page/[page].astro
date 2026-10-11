@@ -1,0 +1,53 @@
+---
+/**
+ * project-gallery/page/[page].astro — 项目画廊总列表第 2~N 页（静态分页）
+ *
+ * - 第 1 页由 [page].astro 渲染（SSR，/project-gallery/ 为规范地址），本路由只生成 /project-gallery/page/2/ 起
+ * - 构建流程：取全部项目案例算总页数 → 生成页码路由 → 组件内按页切片
+ * - 项目总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
+ */
+import PageHero from "../../../components/PageHero.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ProjectGallery from "../../../components/ProjectGallery.astro";
+import { PAGE_SIZE } from "../../../lib/pagination";
+import { fetchAllProjects } from "../../../lib/projectGallery";
+
+export async function getStaticPaths() {
+    const total = (await fetchAllProjects()).length;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+
+    // 生成第 2 ~ totalPages 页的路由（第 1 页 = /project-gallery/）
+    return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+        params: { page: String(i + 2) },
+        props: { currentPage: i + 2 },
+    }));
+}
+
+const { currentPage } = Astro.props;
+const pageDescription =
+    "Browse our portfolio of aluminum building material installations across sectors and multiple continents.";
+---
+
+<BaseLayout
+    pageTitle={`Project Gallery - Page ${currentPage}`}
+    description={pageDescription}
+    hideTitle
+>
+    <PageHero
+        slim
+        imageAlt={`Project Gallery - Page ${currentPage}`}
+        titleWhite="Project Gallery"
+        titleGold={`Page ${currentPage}`}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Project Gallery", url: "/project-gallery/" },
+                {
+                    name: `Page ${currentPage}`,
+                    url: `/project-gallery/page/${currentPage}/`,
+                },
+            ],
+        }}
+    />
+    <ProjectGallery currentPage={currentPage} />
+</BaseLayout>

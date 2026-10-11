@@ -2,14 +2,20 @@
 /**
  * Reusable button that opens the inquiry modal.
  * Place it anywhere: header, product page, category page, etc.
+ *
+ * message：可选的预填正文。带此属性时，InquiryModal 打开会把它填进 Message 字段，
+ *          让线索自带上下文（产品 / 规格 / 算量结果），不必客户重打一遍。
+ * id：    供页面脚本在运行时更新 data-inquiry-message（工具页就是这么用的）。
  */
-const { label = "Get Quote", class: className = "" } = Astro.props;
+const { label = "Get Quote", class: className = "", id, message } = Astro.props;
 ---
 
 <button
   type="button"
   class={`inquiry-btn ${className}`}
+  id={id}
   data-open-inquiry-modal
+  data-inquiry-message={message}
 >
   {label}
 </button>
@@ -30,7 +36,10 @@ const { label = "Get Quote", class: className = "" } = Astro.props;
     cursor: pointer;
     white-space: nowrap;
     box-shadow: 0 2px 8px rgba(105, 87, 74, 0.3);
-    transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    transition:
+      background-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.15s;
   }
 
   .inquiry-btn:hover {

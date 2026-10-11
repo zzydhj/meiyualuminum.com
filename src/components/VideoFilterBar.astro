@@ -1,0 +1,193 @@
+---
+/**
+ * VideoFilterBar.astro — 视频列表的统计条 + 分类药丸（自包含组件）
+ *
+ * - 视觉语言与 ProjectGallery 一致：棕色统计条 + 金色药丸，两个内容枢纽观感统一
+ * - 关键差异：药丸是**链接**而非 JS 按钮 —— 跳转 /video-tags/{tag}/ 分类页做服务端过滤，
+ *   分页正确（JS 页内过滤只能过滤当前页，会漏掉第 2 页以后的视频）
+ * - 复用于：/videos/、/videos/page/N/、/video-tags/{tag}/、/video-tags/{tag}/page/N/，
+ *   当前所在分类的药丸高亮（currentTag）
+ */
+import { supabase } from "../lib/supabase";
+
+interface Props {
+    /** 当前选中的标签；列表页不传 = All Videos 高亮 */
+    currentTag?: string | null;
+}
+
+const { currentTag = null } = Astro.props;
+
+// 已发布视频总数（轻量 count 查询，不拉取行数据）
+const { count } = await supabase
+    .from("videos")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+
+// 只查 tags 列，聚合分类 + 计数（与 /video-tags/ 页聚合口径一致）
+const { data: tagRows } = await supabase
+    .from("videos")
+    .select("tags")
+    .eq("status", "published");
+
+const tagCounts = new Map<string, number>();
+for (const row of tagRows ?? []) {
+    for (const t of (row.tags as string[] | null) ?? []) {
+        tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+    }
+}
+
+// 已知分类的图标；移动端药丸只留图标，故每个药丸都必须有图标（未知分类兜底 🎬）
+const iconMap: Record<string, string> = {
+    "Factory Tour": "🏭",
+    "Project Cases": "🏗",
+    "Installation Guide": "🛠",
+    "Quality & Certifications": "🏅",
+    "Product Showcase": "📦",
+    "How It's Made": "⚙",
+    "Client Testimonial": "💬",
+    "Sample & Custom Service": "🎁",
+};
+
+// 按视频数倒序排（并列按名称），内容多的分类靠前
+const categories = [...tagCounts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([tag]) => ({ tag, icon: iconMap[tag] ?? "🎬" }));
+---
+
+<!-- Stats Strip（与 ProjectGallery 的 pg-stats 同款棕色条） -->
+<section class="vf-stats">
+    <div class="vf-stats-inner">
+        <div class="vf-stat">
+            <span class="vf-stat-num">{count ?? 0}</span>
+            <span class="vf-stat-label">Videos</span>
+        </div>
+        <div class="vf-stat">
+            <span class="vf-stat-num">{categories.length}</span>
+            <span class="vf-stat-label">Categories</span>
+        </div>
+        <div class="vf-stat">
+            <span class="vf-stat-num">15+</span>
+            <span class="vf-stat-label">Years Experience</span>
+        </div>
+    </div>
+</section>
+
+<!-- Category Pills：链接式筛选（服务端过滤 + 分页正确），当前分类高亮 -->
+<nav class="vf-filters" aria-label="Video categories">
+    <a href="/videos/" class:list={["vf-filter-btn", { active: !currentTag }]}>
+        <span class="vf-filter-icon">🎬</span>
+        <span class="vf-filter-label">All Videos</span>
+    </a>
+    {
+        categories.map((cat) => (
+            <a
+                href={`/video-tags/${encodeURIComponent(cat.tag)}/`}
+                class:list={[
+                    "vf-filter-btn",
+                    { active: currentTag === cat.tag },
+                ]}
+            >
+                <span class="vf-filter-icon">{cat.icon}</span>
+                <span class="vf-filter-label">{cat.tag}</span>
+            </a>
+        ))
+    }
+</nav>
+
+<style>
+    /* ===== Stats Strip（样式对齐 ProjectGallery 的 pg-stats） ===== */
+    .vf-stats {
+        background: linear-gradient(135deg, #69574a 0%, #4a3d32 100%);
+        padding: 32px 0;
+    }
+    .vf-stats-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .vf-stat {
+        text-align: center;
+        min-width: 120px;
+    }
+    .vf-stat-num {
+        display: block;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #c09020;
+        line-height: 1.1;
+    }
+    .vf-stat-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 600;
+    }
+
+    /* ===== Category Pills（样式对齐 pg-filters，但元素是 <a>） ===== */
+    .vf-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        padding: 40px 0 32px;
+        border-bottom: 1px solid #e8e4df;
+        margin-bottom: 48px;
+    }
+    .vf-filter-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
+        border: 2px solid #e8e4df;
+        border-radius: 50px;
+        background: #fff;
+        color: #69574a;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+    }
+    .vf-filter-btn:hover {
+        border-color: #c09020;
+        color: #c09020;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(192, 144, 32, 0.15);
+    }
+    .vf-filter-btn.active {
+        background: #c09020;
+        border-color: #c09020;
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(192, 144, 32, 0.3);
+    }
+    .vf-filter-icon {
+        font-size: 1rem;
+    }
+
+    @media (max-width: 640px) {
+        .vf-filters {
+            gap: 8px;
+            padding-top: 28px;
+            margin-bottom: 32px;
+        }
+        .vf-filter-btn {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+        }
+        /* 窄屏只留图标，与 PG 药丸的移动端行为一致 */
+        .vf-filter-label {
+            display: none;
+        }
+        .vf-filter-icon {
+            font-size: 1.2rem;
+        }
+        .vf-stat-num {
+            font-size: 1.6rem;
+        }
+    }
+</style>

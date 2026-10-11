@@ -4,6 +4,7 @@ import Navigation from "../components/Navigation.astro";
 import MobileMenu from "../components/MobileMenu.astro";
 import InquiryButton from "../components/InquiryButton.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
+import { MULTILINGUAL_ENABLED } from "../lib/i18n";
 
 /** transparent: 首页传入 true，桌面端 header 初始透明覆盖在 hero 上，滚动后变白 */
 const { transparent = false } = Astro.props;
@@ -18,11 +19,14 @@ const { transparent = false } = Astro.props;
         </a>
         <Navigation />
         <InquiryButton label="Get Quote" class="header-cta" />
-        <LanguageSwitcher />
+        <!-- 多语言暂处于停放态（lib/i18n 的 MULTILINGUAL_ENABLED = false，/zh/ 等语言路由全 404），
+             所以切换器跟着隐。组件、样式、下拉逻辑全部保留未动，
+             以后把那个开关打开即可自动恢复，不需改这里。 -->
+        {MULTILINGUAL_ENABLED && <LanguageSwitcher />}
     </nav>
 </header>
 
-<!-- 移动端全屏手风琴菜单（< 1400px），独立于桌面端 Navigation -->
+<!-- 移动端全屏手风琴菜单（< 1280px），独立于桌面端 Navigation -->
 <MobileMenu />
 
 {transparent && (
@@ -74,7 +78,10 @@ const { transparent = false } = Astro.props;
   }
 
   /* Desktop: fixed 72px height, logo on the left, nav on the right */
-  @media screen and (min-width: 1400px) {
+  /* 桌面/移动断点定在 1280px：实测桌面导航内在需求 1236px（字体回退到 Arial 时 1262px），
+     原 1400px 白白把 160px 余量当成了移动端。与 Menu / Navigation / MegaMenu /
+     MobileMenu / LanguageSwitcher / 首页 hero 同步，改一处必改全部。 */
+  @media screen and (min-width: 1280px) {
     header {
       height: 72px;
     }
@@ -158,7 +165,7 @@ const { transparent = false } = Astro.props;
 
   /* Mobile: hamburger top-left, logo truly centered.
      Header CTA is hidden — the floating inquiry FAB covers this on mobile. */
-  @media screen and (max-width: 1399px) {
+  @media screen and (max-width: 1279px) {
     nav :global(.menu) {
       position: absolute;
       left: 1rem;

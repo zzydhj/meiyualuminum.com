@@ -1,0 +1,330 @@
+---
+export const prerender = true;
+
+/**
+ * tools/perforation-open-area.astro — 穿孔板开孔率计算器
+ *
+ * 纯几何：圆孔面积 / 单位重复胞面积。60° 错排的胞面积是 p²·sin60°，直排是 p²。
+ * 附带反算（给目标开孔率求孔距）与孔筋宽度校核 —— 后者是可制造性的真实约束。
+ * 只给几何结果，绝不把开孔率换算成吸声系数：那必须按 EN ISO 354 对具体构造实测。
+ */
+import ToolLayout from "../../layouts/ToolLayout.astro";
+
+const toolName = "Perforation Open Area";
+const pageTitle = "Perforated Metal Open Area Calculator | Round Hole Pattern";
+const description =
+    "Free open area calculator for perforated metal: enter hole diameter, pitch and layout (60° staggered or square) to get open area percentage, ligament width and holes per m² — plus a reverse check for a target open area.";
+---
+
+<ToolLayout
+    titleWhite="Perforation"
+    titleGold="Open Area"
+    subtitle="Hole diameter, pitch and layout give you the open area a perforated panel really has — the figure that governs sound entry, sprinkler passage and light transmission, and the one a drawing usually leaves out."
+    toolName={toolName}
+    pageTitle={pageTitle}
+    description={description}
+    assumptions={[
+        "Holes are clean round circles. Square, slot and decorative patterns have different geometry and are not covered here.",
+        "Staggered means the common 60° arrangement, where every hole has six equidistant neighbours; straight means a square grid.",
+        "The sheet is flat and the pattern continuous — the result is a percentage of an unlimited field, not of one cut panel.",
+        "Ligament is the shortest distance between two adjacent hole edges: pitch minus hole diameter.",
+        "The ligament-versus-thickness check is a widely used fabrication rule of thumb (keep the web at least as wide as the sheet is thick), not a clause from a standard.",
+    ]}
+    limits="It does NOT convert open area into a sound absorption figure. Absorption depends on the whole build-up — panel thickness, cavity depth, backing tissue, what sits above — and has to be measured to EN ISO 354 for that exact assembly. Anyone quoting you an NRC from a hole pattern alone is guessing."
+    basis="Open area = hole area ÷ unit cell area, with cell area p² for a square grid and p²·sin 60° for a 60° staggered grid. Standard geometry; reviewed 2026-10-10."
+>
+    <div class="pa-head">
+        <h2 class="pa-h">
+            1. Forward — what open area does this pattern give?
+        </h2>
+    </div>
+
+    <form class="tl-form" id="fwd" novalidate>
+        <div class="tl-row">
+            <div class="tl-field">
+                <label for="dia">Hole diameter Ø (mm)</label>
+                <input
+                    class="tl-input"
+                    id="dia"
+                    type="number"
+                    min="0.3"
+                    max="50"
+                    step="0.1"
+                    value="2.5"
+                    inputmode="decimal"
+                    required
+                />
+                <span class="tl-hint">Ceiling tile commonly runs 1.5–6 mm.</span
+                >
+            </div>
+            <div class="tl-field">
+                <label for="pitch">Pitch (mm, centre to centre)</label>
+                <input
+                    class="tl-input"
+                    id="pitch"
+                    type="number"
+                    min="0.5"
+                    max="120"
+                    step="0.1"
+                    value="6"
+                    inputmode="decimal"
+                    required
+                />
+            </div>
+        </div>
+
+        <div class="tl-row">
+            <div class="tl-field">
+                <label for="pat">Layout</label>
+                <select class="tl-select" id="pat">
+                    <option value="staggered" selected>60° staggered</option>
+                    <option value="square">Square / straight</option>
+                </select>
+            </div>
+            <div class="tl-field">
+                <label for="stk"
+                    >Sheet thickness (mm) — for the ligament check</label
+                >
+                <input
+                    class="tl-input"
+                    id="stk"
+                    type="number"
+                    min="0.2"
+                    max="6"
+                    step="0.05"
+                    value="0.6"
+                    inputmode="decimal"
+                />
+            </div>
+        </div>
+    </form>
+
+    <section class="tl-out" aria-live="polite">
+        <h2 class="tl-out-h">Result</h2>
+        <ul class="tl-figs" id="figs"></ul>
+        <pre class="tl-formula" id="formula"></pre>
+        <div id="flags"></div>
+    </section>
+
+    <div class="pa-head pa-head--rev">
+        <h2 class="pa-h">2. Reverse — what pitch hits a target open area?</h2>
+        <p class="pa-p">
+            Acoustic specifications are often written the other way round: the
+            consultant states an open area and leaves the pattern to the
+            manufacturer.
+        </p>
+        <form class="tl-form" id="rev" novalidate>
+            <div class="tl-row">
+                <div class="tl-field">
+                    <label for="target">Target open area (%)</label>
+                    <input
+                        class="tl-input"
+                        id="target"
+                        type="number"
+                        min="0.5"
+                        max="60"
+                        step="0.5"
+                        value="20"
+                        inputmode="decimal"
+                    />
+                </div>
+                <div class="tl-field">
+                    <label for="rdia">Hole diameter Ø (mm)</label>
+                    <input
+                        class="tl-input"
+                        id="rdia"
+                        type="number"
+                        min="0.3"
+                        max="50"
+                        step="0.1"
+                        value="2.5"
+                        inputmode="decimal"
+                    />
+                </div>
+            </div>
+        </form>
+        <ul class="tl-figs" id="revfigs"></ul>
+        <pre class="tl-formula" id="revformula"></pre>
+    </div>
+
+    <p class="tl-disclaimer">
+        Geometric open area only. It is not an acoustic rating, and sprinkler or
+        smoke acceptance depends on the jurisdiction and the device layout —
+        confirm with the project fire engineer rather than with a percentage.
+    </p>
+</ToolLayout>
+
+<script>
+    const SIN60 = Math.sin(Math.PI / 3); // 0.8660254…
+
+    const el = (id: string): HTMLElement =>
+        document.getElementById(id) as HTMLElement;
+    const val = (id: string): string =>
+        (document.getElementById(id) as HTMLInputElement | HTMLSelectElement)
+            .value;
+    const num = (id: string, fallback: number): number => {
+        const v = parseFloat(val(id));
+        return Number.isFinite(v) && v > 0 ? v : fallback;
+    };
+    const fmt = (n: number, d = 0): string =>
+        n.toLocaleString("en-US", {
+            minimumFractionDigits: d,
+            maximumFractionDigits: d,
+        });
+
+    /** 单位胞面积（mm²）：直排 p²，60° 错排 p²·sin60 */
+    const cellArea = (p: number, staggered: boolean): number =>
+        staggered ? p * p * SIN60 : p * p;
+
+    function forward() {
+        const d = num("dia", 0);
+        const p = num("pitch", 0);
+        const t = num("stk", 0);
+        const staggered = val("pat") === "staggered";
+
+        if (!d || !p) {
+            el("figs").innerHTML = "";
+            el("formula").textContent = "";
+            el("flags").innerHTML =
+                '<p class="tl-flag tl-flag--err">Hole diameter and pitch are both required.</p>';
+            return;
+        }
+        if (d >= p) {
+            el("figs").innerHTML = "";
+            el("formula").textContent = "";
+            el("flags").innerHTML =
+                `<p class="tl-flag tl-flag--err">Hole Ø ${fmt(d, 1)} mm is not smaller than pitch ${fmt(p, 1)} mm — the holes would overlap, so this pattern cannot exist. Increase the pitch.</p>`;
+            return;
+        }
+
+        const hole = (Math.PI * d * d) / 4;
+        const cell = cellArea(p, staggered);
+        const oa = (hole / cell) * 100;
+        const lig = p - d;
+        const holesM2 = 1e6 / cell;
+
+        el("figs").innerHTML = (
+            [
+                [fmt(oa, 2) + " %", "Geometric open area"],
+                [fmt(lig, 2) + " mm", "Ligament (web between holes)"],
+                [fmt(holesM2) + " /m²", "Holes per square metre"],
+                [staggered ? "60° staggered" : "Square", "Layout assumed"],
+            ] as [string, string][]
+        )
+            .map(
+                ([v, l]) =>
+                    `<li class="tl-fig"><b>${v}</b><span>${l}</span></li>`,
+            )
+            .join("");
+
+        el("formula").textContent =
+            `hole area   = π × Ø² / 4 = π × ${fmt(d, 1)}² / 4 = ${fmt(hole, 3)} mm²
+cell area   = ${staggered ? `p² × sin60 = ${fmt(p, 1)}² × 0.8660 = ${fmt(cell, 3)} mm²` : `p² = ${fmt(p, 1)}² = ${fmt(cell, 3)} mm²`}
+open area   = ${fmt(hole, 3)} / ${fmt(cell, 3)} = ${fmt(oa / 100, 4)} = ${fmt(oa, 2)} %
+ligament    = p − Ø = ${fmt(p, 1)} − ${fmt(d, 1)} = ${fmt(lig, 2)} mm
+holes per m²= 1,000,000 / ${fmt(cell, 3)} = ${fmt(holesM2)}`;
+
+        const flags: string[] = [];
+        if (lig < 1) {
+            flags.push(
+                `<p class="tl-flag tl-flag--err">Ligament is only ${fmt(lig, 2)} mm. Below about 1 mm the punch shears through the web instead of forming a clean hole — this pattern is not manufacturable. Widen the pitch or drop the diameter.</p>`,
+            );
+        }
+        if (t && lig < t) {
+            flags.push(
+                `<p class="tl-flag">Ligament ${fmt(lig, 2)} mm is narrower than the ${fmt(t, 2)} mm sheet thickness. The usual fabrication rule of thumb is web ≥ thickness; below that the panel distorts around the holes and can oil-can. Consider a smaller hole at tighter pitch for a similar open area.</p>`,
+            );
+        }
+        if (oa > 35) {
+            flags.push(
+                `<p class="tl-flag">At ${fmt(oa, 1)} % open area the sheet is more hole than metal. It is still stiff enough to hang as a panel, but handle it carefully and expect the punch press to want a larger tooling allowance.</p>`,
+            );
+        }
+        el("flags").innerHTML = flags.join("");
+        /* 把算量结果带进询盘正文（InquiryModal 读取 data-inquiry-message） */
+        document
+            .getElementById("tool-inquiry")
+            ?.setAttribute(
+                "data-inquiry-message",
+                `Perforation pattern from your online calculator:\n` +
+                    `• Ø ${fmt(d, 1)} mm at ${fmt(p, 1)} mm pitch, ${staggered ? "60° staggered" : "square"} layout\n` +
+                    `• Geometric open area ${fmt(oa, 2)} %; ligament ${fmt(lig, 2)} mm; ${fmt(holesM2)} holes/m²\n` +
+                    `Please quote perforated panels to this pattern, and tell me what acoustic build-up you would test it to.`,
+            );
+    }
+
+    function reverse() {
+        const target = num("target", 0);
+        const d = num("rdia", 0);
+        if (!target || !d || target > 90) {
+            el("revfigs").innerHTML = "";
+            el("revformula").textContent = "";
+            return;
+        }
+        const hole = (Math.PI * d * d) / 4;
+        /* p = sqrt(hole / (OA × k))，直排 k=1，错排 k=sin60 */
+        const pSq = cellArea(1, false);
+        const pSquare = Math.sqrt((hole / (target / 100)) * pSq);
+        const pStag = Math.sqrt((hole / (target / 100)) * (pSq / SIN60));
+        const lig = pStag - d;
+
+        el("revfigs").innerHTML = (
+            [
+                [fmt(pStag, 1) + " mm", "Pitch needed, 60° staggered"],
+                [fmt(pSquare, 1) + " mm", "Pitch needed, square grid"],
+                [fmt(lig, 2) + " mm", "Resulting ligament (staggered)"],
+            ] as [string, string][]
+        )
+            .map(
+                ([v, l]) =>
+                    `<li class="tl-fig"><b>${v}</b><span>${l}</span></li>`,
+            )
+            .join("");
+
+        el("revformula").textContent =
+            `p = sqrt( hole / (OA × k) )      hole = π × ${fmt(d, 1)}² / 4 = ${fmt(hole, 3)} mm²
+60° staggered (k = 0.8660)  p = ${fmt(pStag, 2)} mm
+square grid     (k = 1)     p = ${fmt(pSquare, 2)} mm`;
+    }
+
+    function render() {
+        forward();
+        reverse();
+    }
+
+    document
+        .querySelectorAll("#fwd input, #fwd select, #rev input")
+        .forEach((node) => {
+            node.addEventListener("input", render);
+            node.addEventListener("change", render);
+        });
+    render();
+</script>
+
+<style>
+    .pa-head {
+        margin: 0 0 1.1rem;
+    }
+    .pa-head--rev {
+        margin: clamp(30px, 4vw, 44px) 0 1.1rem;
+        padding-top: clamp(22px, 3vw, 30px);
+        border-top: 1px dashed #e2d6c8;
+    }
+    .pa-h {
+        margin: 0 0 0.3rem;
+        font-size: 1.12rem;
+        color: #1e293b;
+    }
+    .pa-p {
+        margin: 0 0 1rem;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: #64748b;
+    }
+    #revfigs {
+        margin-top: clamp(16px, 2.4vw, 22px);
+    }
+    #revformula {
+        margin-top: 12px;
+    }
+</style>

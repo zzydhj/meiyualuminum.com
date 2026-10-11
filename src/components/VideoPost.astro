@@ -4,10 +4,12 @@
  *
  * - 只负责单张卡片的渲染与样式，布局（宫格）由 VideoGrid.astro 控制
  * - 卡片结构：缩略图（含播放按钮 + 时长角标）→ 标签 → 标题 → 摘要 → 日期/作者
- * - 封面：优先 thumbnail_url，未填时自动取 YouTube 封面（永远有图）
+ * - 封面：自托管视频默认取第一帧（video 预览）；外部视频优先 thumbnail_url，
+ *   未填时自动取 YouTube 封面（永远有图）
  */
-import Tag from './Tag.astro';
-import { parseYouTubeId, youTubeThumb } from '../lib/youtube';
+import Tag from "./Tag.astro";
+import { parseYouTubeId, youTubeThumb } from "../lib/youtube";
+import { firstFrameSrc, isSelfHostedVideo } from "../lib/videoSource";
 
 interface Props {
   video: {
@@ -33,16 +35,26 @@ const dateStr = video.pub_date
     })
   : "";
 
-// 封面：自定义优先，否则自动取 YouTube 封面
+// 封面：自托管视频默认第一帧；外部视频自定义优先，否则自动取 YouTube 封面
+const selfHosted = isSelfHostedVideo(video.video_url);
 const videoId = parseYouTubeId(video.video_url);
-const thumbSrc = video.thumbnail_url || (videoId ? youTubeThumb(videoId) : null);
+const thumbSrc =
+  video.thumbnail_url || (videoId ? youTubeThumb(videoId) : null);
 ---
 
 <li class="video-card">
   <a href={`/videos/${video.slug}/`} class="video-card-link">
     <div class="video-thumb">
       {
-        thumbSrc ? (
+        selfHosted ? (
+          <video
+            src={firstFrameSrc(video.video_url)}
+            muted
+            playsinline
+            preload="metadata"
+            aria-hidden="true"
+          />
+        ) : thumbSrc ? (
           <img
             src={thumbSrc}
             alt={video.title}
@@ -51,7 +63,14 @@ const thumbSrc = video.thumbnail_url || (videoId ? youTubeThumb(videoId) : null)
           />
         ) : (
           <div class="video-thumb-fallback" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <svg
+              viewBox="0 0 24 24"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
               <rect x="2" y="4" width="20" height="16" rx="2" />
               <path d="M10 9l5 3-5 3V9z" fill="currentColor" stroke="none" />
             </svg>
@@ -61,18 +80,20 @@ const thumbSrc = video.thumbnail_url || (videoId ? youTubeThumb(videoId) : null)
       <!-- 播放按钮覆盖层（视频卡片标志性元素） -->
       <span class="play-overlay" aria-hidden="true">
         <svg viewBox="0 0 48 48" width="48" height="48">
-          <circle cx="24" cy="24" r="23" fill="rgba(0,0,0,0.55)" />
-          <path d="M19 15l14 9-14 9V15z" fill="#fff" />
+          <circle cx="24" cy="24" r="23" fill="rgba(0,0,0,0.55)"></circle>
+          <path d="M19 15l14 9-14 9V15z" fill="#fff"></path>
         </svg>
       </span>
       {video.duration && <span class="duration-badge">{video.duration}</span>}
     </div>
     <div class="video-body">
-      {video.primary_tag && (
-        <div class="video-tag-row">
-          <Tag tag={video.primary_tag} />
-        </div>
-      )}
+      {
+        video.primary_tag && (
+          <div class="video-tag-row">
+            <Tag tag={video.primary_tag} />
+          </div>
+        )
+      }
       <h2 class="video-title">{video.title}</h2>
       {video.description && <p class="video-excerpt">{video.description}</p>}
       <div class="video-meta">
@@ -113,14 +134,16 @@ const thumbSrc = video.thumbnail_url || (videoId ? youTubeThumb(videoId) : null)
     overflow: hidden;
     background: #f0ede9;
   }
-  .video-thumb img {
+  .video-thumb img,
+  .video-thumb video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
     transition: transform 0.35s ease;
   }
-  .video-card-link:hover .video-thumb img {
+  .video-card-link:hover .video-thumb img,
+  .video-card-link:hover .video-thumb video {
     transform: scale(1.05);
   }
   .video-thumb-fallback {

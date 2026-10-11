@@ -5,7 +5,8 @@ import InquiryButton from "../../components/InquiryButton.astro";
 import InquiryFormSection from "../../components/InquiryFormSection.astro";
 import { supabase } from "../../lib/supabase";
 import { getCategoryChain } from "../../lib/categoryPath";
-import { productKnowledge, type ProductKnowledge } from "../../lib/productKnowledge";
+import { productKnowledge, type ProductEnrichedSpecs, type ProductKnowledge } from "../../lib/productKnowledge";
+import { standardTerms, termsNote } from "../../lib/companyProfile";
 import { currentLang } from "../../lib/i18n";
 
 // SSR 按需渲染
@@ -29,6 +30,21 @@ if (error || !product) {
 const primaryCategoryId = product.primary_category_id ?? null;
 const categoryChain = await getCategoryChain(primaryCategoryId);
 
+/**
+ * 同一品类下的其他已发布产品（不含自己）。
+ * Docs & Guides 面板用它做站内内链：超级链接策略下，一个产品页要承接整个品类的搜索意图。
+ */
+const { data: siblingRows } = await supabase
+  .from("products")
+  .select("slug,title")
+  .eq("primary_category_id", primaryCategoryId ?? -1)
+  .eq("lang", lang)
+  .eq("status", "published")
+  .neq("slug", slug)
+  .order("title", { ascending: true })
+  .limit(6);
+const siblings = siblingRows ?? [];
+
 const pageTitle = product.seo_title || product.title;
 const pageDescription = product.seo_description || product.description;
 const keywords = product.keywords ?? [];
@@ -39,12 +55,17 @@ const knowledge: ProductKnowledge | undefined = categorySlug ? productKnowledge[
 
 // ── enriched_specs 合并逻辑 ──
 // 优先使用产品专属的 enriched_specs，没有则回退到品类级 knowledge
-const es = product.enriched_specs ?? null;
+const es: ProductEnrichedSpecs | null = (product.enriched_specs as ProductEnrichedSpecs | null) ?? null;
 const displaySpecs = (es?.specs && es.specs.length > 0) ? es.specs : (knowledge?.technicalSpecs ?? []);
 const displayFeatures = (es?.features && es.features.length > 0) ? es.features : (knowledge?.keyFeatures ?? []);
 const displaySummary = es?.summary || null; // 产品专属概述（可选）
 const displayApps = (es?.applications && es.applications.length > 0) ? es.applications : null; // 产品专属适用场景标签（可选）
+const displaySizes = (es?.standardSizes && es.standardSizes.length > 0) ? es.standardSizes : (knowledge?.standardSizes ?? []);
+const displayInstallSteps = (es?.installationSteps && es.installationSteps.length > 0) ? es.installationSteps : (knowledge?.installationSteps ?? []);
+const displayInstallTips = (es?.installationTips && es.installationTips.length > 0) ? es.installationTips : (knowledge?.installationTips ?? []);
 const hasProductSpecificData = !!es; // 标记：当前产品有专属数据
+/** 是否有图集：决定画廊是否预留左侧缩略图槽位 */
+const hasThumbs = !!(product.gallery && product.gallery.length > 0);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -79,21 +100,30 @@ const jsonLd = {
 
   <!-- ══════ PRODUCT HERO ══════ -->
   <div class="pk-hero">
-    <div class="pk-hero-gallery">
+    <div class:list={["pk-hero-gallery", { "with-thumbs": hasThumbs }]}>
       {product.image_url && (
         <div class="img-watermark">
           <img id="main-image" src={product.image_url} alt={product.image_alt || product.title} width="600" height="400" />
         </div>
       )}
       {(product.gallery && product.gallery.length > 0) && (
-        <div class="pk-thumbs">
-          {product.image_url && (
-            <img src={product.image_url} alt={product.image_alt || product.title} class="pk-thumb active" data-full={product.image_url} width="80" height="60" />
-          )}
-          {product.gallery.map((url: string, i: number) => (
-            <img src={url} alt={`${product.title} - image ${i + 2}`} class="pk-thumb" data-full={url} width="80" height="60" loading="lazy" />
-          ))}
-        </div>
+        <>
+          <div class="pk-thumbs" id="pk-thumbs">
+            {product.image_url && (
+              <img src={product.image_url} alt={product.image_alt || product.title} class="pk-thumb active" data-full={product.image_url} width="80" height="60" />
+            )}
+            {product.gallery.map((url: string, i: number) => (
+              <img src={url} alt={`${product.title} - image ${i + 2}`} class="pk-thumb" data-full={url} width="80" height="60" loading="lazy" />
+            ))}
+          </div>
+          <!-- 缩略图列上下箭头：列高 = 大图高，装不下的靠箭头滚 -->
+          <button type="button" class="pk-thumb-nav pk-thumb-up" id="pk-thumb-up" aria-label="Scroll to previous images" aria-controls="pk-thumbs" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6" /></svg>
+          </button>
+          <button type="button" class="pk-thumb-nav pk-thumb-down" id="pk-thumb-down" aria-label="Scroll to more images" aria-controls="pk-thumbs" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+          </button>
+        </>
       )}
     </div>
 
@@ -101,25 +131,7 @@ const jsonLd = {
       {product.part_code && <p class="pk-part-code">Part No: {product.part_code}</p>}
       <p class="pk-desc"><em>{product.description}</em></p>
 
-      <!-- Quick Specs: enriched_specs 优先，回退品类通用 -->
-      {displaySpecs.length > 0 && (
-        <>
-          {hasProductSpecificData && <p class="pk-specs-label">This Product's Specs</p>}
-          <table class="pk-quick-specs">
-            {displaySpecs.slice(0, 5).map((s: { label: string; value: string }) => (
-              <tr><th>{s.label}</th><td>{s.value}</td></tr>
-            ))}
-          </table>
-        </>
-      )}
-
-      <!-- CTA Buttons -->
-      <div class="pk-cta-row">
-        <InquiryButton label="Get a Free Quote" class="pk-cta-primary" />
-        <InquiryButton label="Request Sample" class="pk-cta-secondary" />
-      </div>
-
-      <!-- Certifications badges -->
+      <!-- Certifications badges：先给信任，紧接下面就是行动按钮 -->
       {knowledge && knowledge.certifications.length > 0 && (
         <div class="pk-certs">
           {knowledge.certifications.slice(0, 4).map((cert) => (
@@ -127,6 +139,46 @@ const jsonLd = {
           ))}
         </div>
       )}
+
+      <!-- CTA Buttons：放在右栏顶部（首屏必现）。
+           不能靠后：hero 从文档 ~217px 起，右栏内容高 ~800px，按钮若排在规格表之后
+           会落在文档 y≈950，在 845 高（及更矮的笔记本）视口里首屏完全看不到。 -->
+      <div class="pk-cta-row">
+        <InquiryButton label="Get a Free Quote" class="pk-cta-primary" />
+        <InquiryButton label="Request Sample" class="pk-cta-secondary" />
+      </div>
+
+      {/* 规格表不放在首屏：左栏画廊只有 ~584px（列宽 668 扣掉 84 缩略图槽，1:1 即高），
+           而一张表格每行要 ~54px，任何摘要表都会把右栏撑到 +37~48%。完整表格在下方
+           Technical Specs Tab（全宽，读长值更舒服），这里只留一行入口。
+           预告用 label 而不是 value：label 永远是短词，value 才是撑高度的元凶。 */}
+      {displaySpecs.length > 0 && (
+        <a class="pk-specs-jump" href="#product-specs" data-tab="specs">
+          <span class="pk-specs-jump-lead">Technical specification</span>
+          <span class="pk-specs-jump-list">
+            {displaySpecs.slice(0, 3).map((s: { label: string }) => s.label).join(" · ")}
+            {displaySpecs.length > 3 ? ` · +${displaySpecs.length - 3} more` : ""}
+          </span>
+          <span class="pk-specs-jump-arrow" aria-hidden="true">→</span>
+        </a>
+      )}
+
+      <!-- 公司级标准条款：只列影响报价的 3 行（MOQ / 交期 / 质保）；
+           standardTerms 第 4 条 Samples 不在此展示，因为紧邻的 Request Sample 按钮就是它的入口，重复写反而多占一行 -->
+      <div class="pk-terms">
+        <p class="pk-specs-label">Ordering &amp; Terms</p>
+        <table class="pk-terms-table">
+          {
+            standardTerms.slice(0, 3).map((t) => (
+              <tr>
+                <th>{t.label}</th>
+                <td>{t.value}</td>
+              </tr>
+            ))
+          }
+        </table>
+        <p class="pk-terms-note">{termsNote}</p>
+      </div>
     </div>
   </div>
 
@@ -147,25 +199,25 @@ const jsonLd = {
 
   <!-- ══════ TABBED CONTENT ══════ -->
   {(knowledge || displaySpecs.length > 0) && (
-    <section class="pk-tabs">
+    <section class="pk-tabs" id="product-specs">
       <div class="pk-tab-nav" role="tablist">
         <button class="pk-tab-btn active" data-tab="overview" role="tab" aria-selected="true">Overview</button>
         <button class="pk-tab-btn" data-tab="specs" role="tab" aria-selected="false">Technical Specs</button>
         <button class="pk-tab-btn" data-tab="surface" role="tab" aria-selected="false">Surface Options</button>
         <button class="pk-tab-btn" data-tab="install" role="tab" aria-selected="false">Installation</button>
         <button class="pk-tab-btn" data-tab="applications" role="tab" aria-selected="false">Applications</button>
-        <button class="pk-tab-btn" data-tab="downloads" role="tab" aria-selected="false">Downloads</button>
+        <button class="pk-tab-btn" data-tab="docs" role="tab" aria-selected="false">Docs &amp; Guides</button>
       </div>
 
       <!-- Tab: Overview -->
       <div class="pk-tab-panel active" data-panel="overview" role="tabpanel">
         {displaySummary && <p class="pk-overview pk-overview-product"><strong>Product Overview:</strong> {displaySummary}</p>}
         {knowledge && <p class="pk-overview">{knowledge.overview}</p>}
-        {knowledge && knowledge.standardSizes.length > 0 && (
+        {displaySizes.length > 0 && (
           <>
             <h3>Standard Sizes &amp; Profiles</h3>
             <table class="pk-spec-table">
-              {knowledge.standardSizes.map((s) => (
+              {displaySizes.map((s) => (
                 <tr><th>{s.label}</th><td>{s.value}</td></tr>
               ))}
             </table>
@@ -212,9 +264,8 @@ const jsonLd = {
       <!-- Tab: Installation -->
       <div class="pk-tab-panel" data-panel="install" role="tabpanel">
         <h3>Installation Guide</h3>
-        {knowledge?.installationSteps && (
         <div class="pk-steps">
-          {knowledge.installationSteps.map((s) => (
+          {displayInstallSteps.map((s) => (
             <div class="pk-step">
               <span class="pk-step-num">{s.step}</span>
               <div class="pk-step-body">
@@ -224,12 +275,11 @@ const jsonLd = {
             </div>
           ))}
         </div>
-        )}
-        {knowledge?.installationTips && knowledge.installationTips.length > 0 && (
+        {displayInstallTips.length > 0 && (
           <div class="pk-tips">
             <h4>Installation Tips</h4>
             <ul>
-              {knowledge.installationTips.map((tip) => (<li>{tip}</li>))}
+              {displayInstallTips.map((tip) => (<li>{tip}</li>))}
             </ul>
           </div>
         )}
@@ -261,44 +311,83 @@ const jsonLd = {
         )}
       </div>
 
-      <!-- Tab: Downloads -->
-      <div class="pk-tab-panel" data-panel="downloads" role="tabpanel">
-        <h3>Technical Downloads</h3>
-        {knowledge ? (
-        <div class="pk-downloads">
-          <div class="pk-dl-group">
-            <h4>Specification Sheet</h4>
-            <a href={knowledge.specSheetUrl} class="pk-dl-btn">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              Download PDF Spec Sheet
-            </a>
+      <!-- Tab: Docs & Guides —— 只链站内真实存在的资料；没有的文件不挂链接（原 Spec/CAD/BIM 三组均为 href="#" 占位，已删）-->
+      <div class="pk-tab-panel" data-panel="docs" role="tabpanel">
+        <h3>Documents &amp; Guides</h3>
+        <div class="pk-docs">
+          <a class="pk-doc-item" href="/installation-guides/">
+            <span class="pk-doc-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </span>
+            <span class="pk-doc-body">
+              <strong>Installation &amp; Suspension Guides</strong>
+              <small>Step-by-step setting-out, carrier fixing, expansion allowance and levelling by product category.</small>
+            </span>
+            <span class="pk-doc-meta">On-site guide</span>
+          </a>
+
+          <a class="pk-doc-item" href="/surface-treatment-comparison/">
+            <span class="pk-doc-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s6 5.4 6 10a6 6 0 0 1-12 0c0-4.6 6-10 6-10z"/></svg>
+            </span>
+            <span class="pk-doc-body">
+              <strong>Surface Treatment Comparison</strong>
+              <small>PVDF, powder, anodised, PE and wood-grain: durability, weathering, warranty and cost trade-offs side by side.</small>
+            </span>
+            <span class="pk-doc-meta">5 systems</span>
+          </a>
+
+          <a class="pk-doc-item" href="/procurement-guide/">
+            <span class="pk-doc-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6a1 1 0 0 1 1 1v2H8V3a1 1 0 0 1 1-1zM4 6h16v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zM8 11h8M8 15h5"/></svg>
+            </span>
+            <span class="pk-doc-body">
+              <strong>Procurement Guide</strong>
+              <small>MOQ counting basis, lead-time milestones, what a quotation includes and excludes, packing data, trade terms and the claim route.</small>
+            </span>
+            <span class="pk-doc-meta">Terms &amp; claims</span>
+          </a>
+
+          <a class="pk-doc-item" href="/tools/">
+            <span class="pk-doc-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.7 2.7-2-2z"/></svg>
+            </span>
+            <span class="pk-doc-body">
+              <strong>Free Calculators</strong>
+              <small>Size a room, weigh a shipment or work out perforation open area — every result shows its own formula so you can check it.</small>
+            </span>
+            <span class="pk-doc-meta">3 tools</span>
+          </a>
+
+          {
+            siblings.length > 0 && (
+              <div class="pk-doc-group">
+                <h4>Other Products in This System Family</h4>
+                <div class="pk-doc-links">
+                  {siblings.map((s: { slug: string; title: string }) => (
+                    <a class="pk-doc-link" href={`/products/${s.slug}/`}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                      {s.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+
+          <div class="pk-doc-request">
+            <strong>Need a data sheet, edge detail or test report?</strong>
+            <p>
+              Specification summaries, carrier and edge details, plus fire and acoustic test
+              reports are prepared per project and issued with your quotation — send the
+              drawings or a room size and we will put the pack together.
+            </p>
+            <button type="button" class="pk-dl-btn" data-open-inquiry-modal>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
+              Request Documents with an Enquiry
+            </button>
           </div>
-          {knowledge.cadFiles.length > 0 && (
-            <div class="pk-dl-group">
-              <h4>CAD Drawings</h4>
-              {knowledge.cadFiles.map((f) => (
-                <a href={f.url} class="pk-dl-btn">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                  {f.name} <span class="pk-dl-fmt">({f.format})</span>
-                </a>
-              ))}
-            </div>
-          )}
-          {knowledge.bimFiles.length > 0 && (
-            <div class="pk-dl-group">
-              <h4>BIM Models</h4>
-              {knowledge.bimFiles.map((f) => (
-                <a href={f.url} class="pk-dl-btn">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                  {f.name} <span class="pk-dl-fmt">({f.format})</span>
-                </a>
-              ))}
-            </div>
-          )}
         </div>
-        ) : (
-          <p class="pk-no-data">Technical downloads coming soon. <a href="/contact/">Contact us</a> for immediate access to spec sheets and CAD files.</p>
-        )}
       </div>
     </section>
   )}
@@ -330,46 +419,157 @@ const jsonLd = {
     });
   });
 
-  // Tab switching
-  document.querySelectorAll<HTMLButtonElement>('.pk-tab-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const tabId = btn.dataset.tab;
-      document.querySelectorAll('.pk-tab-btn').forEach((b) => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-      document.querySelectorAll('.pk-tab-panel').forEach((p) => p.classList.remove('active'));
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      document.querySelector(`.pk-tab-panel[data-panel="${tabId}"]`)?.classList.add('active');
+  // Tab switching：.pk-tab-btn 与右栏「See all specifications」链接共用 data-tab
+  function activateTab(tabId: string) {
+    document.querySelectorAll<HTMLElement>(".pk-tab-btn").forEach((b) => {
+      const on = b.dataset.tab === tabId;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
     });
+    document.querySelectorAll<HTMLElement>(".pk-tab-panel").forEach((p) => {
+      p.classList.toggle("active", p.dataset.panel === tabId);
+    });
+  }
+  document.querySelectorAll<HTMLElement>("[data-tab]").forEach((el) => {
+    el.addEventListener("click", () => activateTab(el.dataset.tab!));
   });
+
+  // 缩略图列上下箭头：列高 = 大图高，装不下的部分用箭头滚动；滚到顶/底自动隐藏对应箭头
+  const thumbs = document.getElementById("pk-thumbs") as HTMLElement | null;
+  const upBtn = document.getElementById("pk-thumb-up") as HTMLButtonElement | null;
+  const downBtn = document.getElementById("pk-thumb-down") as HTMLButtonElement | null;
+  if (thumbs && upBtn && downBtn) {
+    const STEP = 62; // 一张 54 + gap 8，一次滚 3 张
+    const syncNav = () => {
+      const max = thumbs.scrollHeight - thumbs.clientHeight;
+      const top = thumbs.scrollTop;
+      upBtn.hidden = top <= 1;
+      downBtn.hidden = top >= max - 1;
+    };
+    upBtn.addEventListener("click", () => thumbs.scrollBy({ top: -STEP * 3, behavior: "smooth" }));
+    downBtn.addEventListener("click", () => thumbs.scrollBy({ top: STEP * 3, behavior: "smooth" }));
+    thumbs.addEventListener("scroll", () => requestAnimationFrame(syncNav), { passive: true });
+    // 缩略图多为 lazy 加载，load 后 scrollHeight 会变，需重新同步（capture 捕获 img 的 load）
+    thumbs.addEventListener("load", syncNav, true);
+    window.addEventListener("resize", syncNav);
+    syncNav();
+  }
 </script>
 
 <style>
   /* ═══ HERO ═══ */
-  .pk-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem; }
+  /* minmax(0,1fr) 而非 1fr：1fr 的下限是 min-content，当右栏文字很长或左栏图片有 intrinsic 宽度时
+     两栏会被撑成不等宽（实测 lay-in 页 772 / 559）；锁 0 下限后永远对分。 */
+  .pk-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; margin-bottom: 2.5rem; }
   @media (max-width: 768px) { .pk-hero { grid-template-columns: 1fr; } }
+  /* 画廊内部：缩略图竖排在左 + 大图在右（对齐 Alibaba/Amazon 的商品图布局）。
+     1:1 大图单独占满整列时高度达 608px，会把缩略图整个顶到折叠线以下，
+     买家首屏看不出“还有很多张图”；改成左侧 72px 竖排后大图降到 ~516px，首屏能同时装下两者。
 
-  .pk-hero-gallery .img-watermark { border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
-  .pk-hero-gallery .img-watermark > img { width: 100%; height: auto; display: block; }
+     实现要点：缩略图列用 position:absolute 脱离文档流，只靠 padding-left 预留槽位。
+     若用 flex + align-items:stretch，14 张缩略图的固有高度（860px）会反过来把舞台拉高、
+     导致 aspect-ratio:1/1 失效（实测大图变 516×860、上下各 172px 白边）。
+     脱离流后：画廊高度 = 大图高度，缩略图列 top/bottom 钉到同一个 0 → 高度自然等于大图，
+     装不下的部分在列内滚动。 */
+  .pk-hero-gallery { position: relative; align-self: start; }
+  /* 有缩略图时才预留左侧槽位（无 gallery 的产品主图要占满整列） */
+  .pk-hero-gallery.with-thumbs { padding-left: 84px; } /* 72 列宽 + 12 间距 */
 
-  .pk-thumbs { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  /* 主图舞台固定 1:1：画廊里图片原始比例不一（方形细节图 / 1200×501 色卡条 / 竖幅实景图），
+     若用 height:auto 切换缩略图时容器高度会变，整页跟着跳。
+     固定比例 + object-fit:contain 保证既不拉伸变形、也不跳。
+     用子选择器 > 限定：watermark.js 会把每张缩略图也包一层 .img-watermark，不能误用舞台规则。 */
+  .pk-hero-gallery > .img-watermark { position: relative; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+  .pk-hero-gallery > .img-watermark > img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .pk-thumbs { position: absolute; left: 0; top: 0; bottom: 0; width: 72px;
+    display: flex; flex-direction: column; gap: 8px;
+    overflow-y: auto; overflow-x: hidden;
+    /* 隐藏原生 scrollbar：它占 10px 宽，会把 72px 缩略图裁成 62px、切掉 active 金边；
+       可滚动的提示改由下面的上下箭头承担 */
+    scrollbar-width: none; -ms-overflow-style: none; }
+  .pk-thumbs::-webkit-scrollbar { width: 0; height: 0; }
+  .pk-thumbs > * { flex: 0 0 auto; }
+
+  /* 缩略图列上下箭头（贴在列的两端，白底带阴影，滚到顶/底自动隐藏） */
+  .pk-thumb-nav { position: absolute; left: 0; width: 72px; height: 28px; z-index: 2;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+    background: #fff; border: 1px solid #e2e8f0; color: #69574a; cursor: pointer;
+    transition: background-color .2s, color .2s; }
+  .pk-thumb-nav[hidden] { display: none; }
+  .pk-thumb-nav svg { width: 16px; height: 16px; }
+  .pk-thumb-nav:hover { background: #f5f0eb; color: #c09020; }
+  /* 全站 reset 把 outline 关了，新加的按钮必须自带键盘焦点环，否则 Tab 上去看不见 */
+  .pk-thumb-nav:focus-visible { outline: 2px solid #c09020; outline-offset: -2px; }
+  .pk-thumb-up { top: 0; border-radius: 0 0 6px 6px; box-shadow: 0 2px 5px rgba(16, 19, 26, 0.08); }
+  .pk-thumb-down { bottom: 0; border-radius: 6px 6px 0 0; box-shadow: 0 -2px 5px rgba(16, 19, 26, 0.08); }
   .pk-thumb { width: 72px; height: 54px; object-fit: cover; border-radius: 4px; border: 2px solid transparent; cursor: pointer; transition: border-color .2s; }
   .pk-thumb.active { border-color: #c09020; }
   .pk-thumb:hover { border-color: #c09020; opacity: .85; }
 
+  /* 窄屏退回“大图在上、缩略图横排在下”：竖排列在单列布局下会吃掉宝贵的宽度 */
+  @media (max-width: 768px) {
+    .pk-hero-gallery.with-thumbs { padding-left: 0; }
+    .pk-thumb-nav { display: none; }
+    .pk-thumbs { position: static; width: auto; flex-direction: row; flex-wrap: wrap; gap: 8px; margin-top: 10px; overflow: visible; }
+  }
+
   .pk-part-code { font-size: .85rem; color: #64748b; margin: 0 0 .5rem; }
   .pk-desc { color: #475569; margin: 0 0 .75rem; line-height: 1.6; }
 
-  .pk-quick-specs { border-collapse: collapse; width: 100%; margin: 0 0 1.25rem; }
-  .pk-quick-specs th, .pk-quick-specs td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #f1f5f9; font-size: .85rem; }
-  .pk-quick-specs th { color: #64748b; font-weight: 500; width: 38%; }
+  /* 首屏规格入口：单行、不可换行，把“全宽表格里有什么”预告出来。
+     必须强制一行：多一行就把右栏推离左栏高度，这个入口的全部意义就是省高度。 */
+  .pk-specs-jump {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    max-width: 100%;
+    margin: 0 0 1.25rem;
+    padding: 8px 12px;
+    border: 1px solid #ece5dc;
+    border-left: 3px solid #c09020;
+    border-radius: 6px;
+    background: #faf7f3;
+    font-size: .8rem;
+    line-height: 1.35;
+    text-decoration: none;
+    overflow: hidden;
+  }
+  .pk-specs-jump:hover { background: #f5efe6; border-left-color: #a8781a; }
+  .pk-specs-jump-lead {
+    flex: none;
+    font-weight: 600;
+    color: #c09020;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    font-size: .72rem;
+  }
+  .pk-specs-jump-list {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pk-specs-jump-arrow { flex: none; color: #c09020; font-weight: 600; }
   .pk-specs-label { font-size: .78rem; font-weight: 600; color: #c09020; margin: 0 0 6px; text-transform: uppercase; letter-spacing: .5px; }
 
-  .pk-cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+  /* 公司级标准条款（MOQ / 交期 / 质保）：右栏最后一块，作为“规格→交易条件”的收尾；
+     padding/margin 比常规收紧 4px，目的是让右栏总高贴齐左栏画廊（零内容损失） */
+  .pk-terms { margin: 0; padding-top: 1rem; border-top: 1px solid #ece5dc; }
+  .pk-terms-table { border-collapse: collapse; width: 100%; }
+  .pk-terms-table th, .pk-terms-table td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #f1f5f9; font-size: .85rem; vertical-align: top; }
+  .pk-terms-table th { color: #64748b; font-weight: 500; width: 25%; white-space: nowrap; }
+  .pk-terms-table td { color: #334155; line-height: 1.55; }
+  .pk-terms-note { margin: .55rem 0 0; font-size: .76rem; line-height: 1.6; color: #94a3b8; }
+
+  .pk-cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 1.75rem; }
   .pk-cta-row :global(.pk-cta-primary) { background-color: #69574a !important; padding: .7rem 1.5rem !important; font-size: 1rem !important; }
   .pk-cta-row :global(.pk-cta-secondary) { background-color: transparent !important; color: #69574a !important; border: 2px solid #69574a !important; box-shadow: none !important; padding: .65rem 1.5rem !important; font-size: 1rem !important; }
   .pk-cta-row :global(.pk-cta-secondary:hover) { background-color: #69574a !important; color: #fff !important; }
 
-  .pk-certs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pk-certs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
   .pk-cert-badge { display: inline-block; font-size: .72rem; font-weight: 600; color: #69574a; background: #f5f0eb; border: 1px solid #e2d6c8; border-radius: 4px; padding: 3px 10px; }
 
   /* ═══ KEY FEATURES ═══ */
@@ -381,7 +581,7 @@ const jsonLd = {
   .pk-features-list svg { flex-shrink: 0; margin-top: 2px; }
 
   /* ═══ TABS ═══ */
-  .pk-tabs { margin-bottom: 2.5rem; }
+  .pk-tabs { margin-bottom: 2.5rem; scroll-margin-top: 90px; }
   /* 分段控件式 tab：整条灰色轨道把 6 个选项包成“一个控件”，
      明确传达“点击会切换下方内容”，而非散落的标签 chip；
      flex-wrap 换行取代横向滚动，无滚动条把手 */
@@ -447,14 +647,46 @@ const jsonLd = {
   .pk-app-products li { font-size: .85rem; color: #334155; margin-bottom: 2px; }
   .pk-app-benefit { font-size: .85rem; color: #334155; margin: 8px 0 0; }
 
-  /* Downloads */
-  .pk-downloads { display: flex; flex-direction: column; gap: 20px; }
-  .pk-dl-group h4 { margin: 0 0 10px; font-size: .95rem; color: #1e293b; }
-  .pk-dl-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; margin-bottom: 6px; border: 1px solid #e2e8f0; border-radius: 6px; text-decoration: none; color: #334155; font-size: .88rem; font-weight: 500; transition: border-color .2s, background .2s; }
+  /* Docs & Guides 面板：只链站内真实存在的资料 */
+  .pk-docs { display: flex; flex-direction: column; gap: 14px; }
+  .pk-doc-item { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px; padding: 14px 16px; background: #fbfaf8; border: 1px solid #ece5dc; border-radius: 10px; text-decoration: none; color: inherit; transition: border-color .2s, background .2s, transform .15s; }
+  .pk-doc-item:hover { border-color: #c0a882; background: #fff; transform: translateY(-2px); }
+  .pk-doc-ico { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #f5f0eb; border: 1px solid #e2d6c8; color: #69574a; }
+  .pk-doc-ico svg { width: 19px; height: 19px; }
+  .pk-doc-body { display: grid; gap: 3px; }
+  .pk-doc-body strong { font-size: .95rem; color: #1e293b; font-weight: 600; }
+  .pk-doc-body small { font-size: .84rem; line-height: 1.6; color: #64748b; }
+  .pk-doc-meta { font-size: .74rem; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; color: #c09020; white-space: nowrap; }
+  .pk-doc-group h4 { margin: 4px 0 8px; font-size: .95rem; color: #1e293b; }
+  .pk-doc-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pk-doc-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 999px; text-decoration: none; color: #334155; font-size: .86rem; font-weight: 500; transition: border-color .2s, color .2s, background .2s; }
+  .pk-doc-link svg { width: 14px; height: 14px; }
+  .pk-doc-link:hover { border-color: #c09020; color: #92400e; background: #fefce8; }
+  .pk-doc-request { padding: 16px; background: #f8f6f3; border: 1px dashed #c0a882; border-radius: 10px; }
+  .pk-doc-request strong { display: block; font-size: .95rem; color: #1e293b; margin-bottom: 6px; }
+  .pk-doc-request p { margin: 0 0 12px; font-size: .87rem; line-height: 1.7; color: #475569; }
+  .pk-dl-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; cursor: pointer; text-decoration: none; color: #334155; font-size: .88rem; font-weight: 500; transition: border-color .2s, background .2s, color .2s; }
   .pk-dl-btn:hover { border-color: #c09020; background: #fefce8; color: #92400e; }
-  .pk-dl-fmt { font-size: .75rem; color: #94a3b8; font-weight: 400; }
 
-  /* DB content (legacy) */
-  .pk-db-content { margin-top: 2rem; }
+  /* DB content 的排版不在此处：set:html 注入的正文元素拿不到 Astro scoped 属性，
+     相关规则统一放到下方 <style is:global> 块里 */
+</style>
 
+<style is:global>
+  /* products.content 存的语义 HTML（无 class、无内联样式），统一在此处定义样式。
+     必须用 is:global：Astro 的 scoped 选择器不会命中 set:html 注入的子元素。
+     全部以 .pk-db-content 前缀限定，避免泄露到其它区块。 */
+  .pk-db-content { margin-top: 2.5rem; }
+  .pk-db-content h2 { font-size: 1.5rem; color: #1e293b; margin: 2rem 0 0.9rem; }
+  .pk-db-content h3 { font-size: 1.15rem; color: #1e293b; margin: 1.5rem 0 0.6rem; }
+  .pk-db-content p { font-size: .93rem; line-height: 1.8; color: #475569; margin: 0 0 0.9rem; }
+  .pk-db-content ul, .pk-db-content ol { margin: 0 0 1rem; padding-left: 1.25rem; }
+  .pk-db-content li { font-size: .93rem; line-height: 1.75; color: #475569; margin-bottom: 4px; }
+  .pk-db-content strong { color: #334155; }
+  .pk-db-content a { color: #c09020; }
+  .pk-db-content table { border-collapse: collapse; width: 100%; margin: 0 0 1.25rem; }
+  .pk-db-content th, .pk-db-content td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: .88rem; }
+  .pk-db-content thead th { background: #f5f0eb; color: #69574a; font-weight: 600; border-bottom: 1px solid #e2d6c8; }
+  .pk-db-content tbody th { color: #64748b; font-weight: 500; width: 32%; background: #fafafa; }
+  .pk-db-content tbody td { color: #334155; }
 </style>

@@ -2,36 +2,38 @@
 export const prerender = true;
 
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Breadcrumb from "../components/Breadcrumb.astro";
+import PageHero from "../components/PageHero.astro";
 import InquiryButton from "../components/InquiryButton.astro";
 import { productKnowledge } from "../lib/productKnowledge";
 
 const pageTitle = "Installation Guides & Technical Resources";
 const pageDescription =
-    "Step-by-step installation guides for aluminum ceiling systems, facade panels, baffle ceilings, and skirting boards. Technical drawings, CAD files, and installation tips from MEIYU engineering team.";
+    "Step-by-step installation guides for aluminum ceiling systems, facade panels, baffle ceilings, and skirting boards — setting-out, carrier fixing and levelling details from the MEIYU engineering team.";
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription}>
-    <Breadcrumb
-        items={[
-            { name: "Home", url: "/" },
-            { name: "Resources", url: "#" },
-            { name: "Installation Guides", url: "/installation-guides/" },
+<BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
+    <PageHero
+        imageAlt={pageTitle}
+        titleWhite="Installation"
+        titleGold="Guides"
+        subtitle="Proper installation is essential for the long-term performance and appearance of aluminum building products. Our installation guides provide step-by-step instructions, best practices, and technical tips from our engineering team. Each guide covers the specific installation requirements for that product category."
+        stats={[
+            {
+                value: String(Object.values(productKnowledge).length),
+                label: "Product Categories Covered",
+            },
         ]}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Resources", url: "#" },
+                { name: "Installation Guides", url: "/installation-guides/" },
+            ],
+        }}
     />
 
-    <div class="ig-intro">
-        <p>
-            Proper installation is essential for the long-term performance and
-            appearance of aluminum building products. Our installation guides
-            provide step-by-step instructions, best practices, and technical
-            tips from our engineering team. Each guide covers the specific
-            installation requirements for that product category.
-        </p>
-    </div>
-
     <!-- ══════ PRODUCT CATEGORY CARDS ══════ -->
-    <section class="ig-categories">
+    <section class="ig-categories" id="categories">
         <h2>Installation Guides by Product Category</h2>
         <div class="ig-grid">
             {
@@ -164,9 +166,9 @@ const pageDescription =
         </div>
     </section>
 
-    <!-- ══════ DOWNLOADS ══════ -->
+    <!-- ══════ DOCUMENTS ══════只列真实给得出的东西（原 Manual/CAD/BIM 三张卡都是 href="#" 空链接，BIM 我们根本没有 → 已删）-->
     <section class="ig-downloads">
-        <h2>Technical Downloads</h2>
+        <h2>Documents &amp; Support Material</h2>
         <div class="ig-dl-grid">
             <div class="ig-dl-card">
                 <svg
@@ -176,15 +178,17 @@ const pageDescription =
                     fill="none"
                     stroke="#c09020"
                     stroke-width="1.5"
-                    ><rect x="3" y="3" width="18" height="18" rx="2"
-                    ></rect><path d="M9 9h6M9 13h6M9 17h4"></path></svg
+                    ><path
+                        d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"
+                    ></path></svg
                 >
-                <h4>Installation Manuals</h4>
+                <h4>On-Page Step Guides</h4>
                 <p>
-                    Comprehensive PDF installation manuals for each product
-                    category.
+                    Each product category above carries its own step-by-step
+                    fixing sequence and installation tips.
                 </p>
-                <a href="#" class="ig-dl-link">Request Manual →</a>
+                <a href="#categories" class="ig-dl-link">Jump to the guides →</a
+                >
             </div>
             <div class="ig-dl-card">
                 <svg
@@ -199,25 +203,14 @@ const pageDescription =
                     ></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"
                     ></path></svg
                 >
-                <h4>CAD Drawings (DWG)</h4>
-                <p>Standard installation detail drawings in AutoCAD format.</p>
-                <a href="#" class="ig-dl-link">Browse CAD Files →</a>
-            </div>
-            <div class="ig-dl-card">
-                <svg
-                    viewBox="0 0 24 24"
-                    width="32"
-                    height="32"
-                    fill="none"
-                    stroke="#c09020"
-                    stroke-width="1.5"
-                    ><path
-                        d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"
-                    ></path></svg
+                <h4>Shop Drawings &amp; Edge Details</h4>
+                <p>
+                    Carrier sections, perimeter and expansion details are drawn
+                    per project — send your drawings and we mark them up.
+                </p>
+                <button type="button" class="ig-dl-link" data-open-inquiry-modal
+                    >Request a Set →</button
                 >
-                <h4>BIM Models (Revit)</h4>
-                <p>Revit families for our ceiling and facade systems.</p>
-                <a href="#" class="ig-dl-link">Browse BIM Files →</a>
             </div>
             <div class="ig-dl-card">
                 <svg
@@ -235,12 +228,16 @@ const pageDescription =
                 >
                 <h4>Video Tutorials</h4>
                 <p>
-                    Step-by-step video installation guides on our YouTube
-                    channel.
+                    Installation and product walkthroughs from our video
+                    library.
                 </p>
                 <a href="/videos/" class="ig-dl-link">Watch Videos →</a>
             </div>
         </div>
+        <p class="ig-dl-note">
+            Print-ready PDF copies of any guide are issued together with your
+            quotation.
+        </p>
     </section>
 
     <!-- ══════ SUPPORT CTA ══════ -->
@@ -464,6 +461,23 @@ const pageDescription =
     }
     .ig-dl-link:hover {
         text-decoration: underline;
+    }
+    /* 同一个类也用于打开询盘弹窗的 <button>，重置默认按钮外观 */
+    button.ig-dl-link {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+    }
+    .ig-categories {
+        scroll-margin-top: 90px;
+    }
+    .ig-dl-note {
+        margin: 18px 0 0;
+        text-align: center;
+        font-size: 0.84rem;
+        color: #64748b;
     }
 
     /* Support CTA */

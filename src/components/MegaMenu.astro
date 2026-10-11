@@ -1,6 +1,6 @@
 ---
 /**
- * MegaMenu.astro — Products mega dropdown (desktop only, >= 1400px)
+ * MegaMenu.astro — Products mega dropdown (desktop only, >= 1280px)
  *
  * 双栏结构：左侧竖排菜单（悬停/点击切换）+ 右侧 4x2 大图卡面板。
  * 右侧卡片沿用原有风格：满幅图 + 渐变遮罩 + 标题（整卡可点，无额外 CTA）。
@@ -11,37 +11,288 @@
  * 面板开合仍由 Navigation.astro 的 .has-mega 悬停控制（纯 CSS）。
  */
 
-// 占位图（复用现有 CDN 图作为视觉占位，后续可换）
-const IMGS = [
-  "https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp",
-  "https://file.meiyualuminum.com/home/mega-menu/aluminum-strip-panel.webp",
-  "https://file.meiyualuminum.com/home/mega-menu/u-shaped-aluminum-square-tube.webp",
-  "https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp",
-  "https://file.meiyualuminum.com/home/mega-menu/aluminum-ceiling-tile.webp",
-  "https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp",
-  "https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp",
-  "https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp",
-];
+// ★ 占位内容（字面量，方便逐项替换）：
+//   每个子选项 label 对应右侧 8 张卡（4x2 网格）。
+//   每张卡的 img / title / href 都是真实写出的字符串，直接改对应行即可，
+//   不要改回 Array.from / 索引自动增序的写法。
+//   图片暂复用现有 8 张真实 CDN 图（各子选项重复使用，后续可换）。
+const MENU = [
+  {
+    label: "Metal Ceiling Systems",
+    cards: [
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-strip-ceiling/luxury-interior-aluminium-strip-ceiling-living-room-design.webp",
+        title: "Aluminum Strip Ceiling",
+        href: "/products/aluminum-strip-ceiling/",
+      },
+      //{
+      //  img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-strip-panel.webp",
+      //  title: "Aluminum Lay-in Ceiling",
+      //  href: "#",
+      //},
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-clip-in-ceiling.webp",
+        title: "Aluminum Clip-in Ceiling",
+        href: "/products/clip-in-aluminum-ceiling/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-open-cell-ceiling.webp",
+        title: "Open Cell Ceiling",
+        href: "/products/open-cell-ceiling/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-mesh-ceiling.webp",
+        title: "Aluminum Mesh Ceiling",
+        href: "/products/aluminum-mesh-ceiling/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/ceiling-aluminum-honeycomb.webp",
+        title: "Aluminum Honeycomb Ceiling",
+        href: "/products/aluminum-honeycomb-ceiling/",
+      },
+      //{
+      //  img: "https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp",
+      //  title: "Aluminum Hook-on Ceiling",
+      //  href: "#",
+      //},
+      //{
+      //  img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp",
+      //  title: "Special Alu Ceiling Panels",
+      //  href: "#",
+      //},
+    ],
+  },
+  {
+    label: "Baffle Ceiling Systems",
+    cards: [
+      {
+        img: "https://file.meiyualuminum.com/home/general/u-type-baffle-ceiling.webp",
+        title: "U Type Baffle Ceiling",
+        href: "/categories/u-shaped-aluminum-square-tube/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-square-tube/wave-wood-grain-aluminum-baffle-ceiling-shopping-mall.webp",
+        title: "Wave / Curved Baffle Ceiling",
+        href: "/products/wave-square-tube-ceiling/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-square-tube/dark-gray-aluminum-baffle-ceiling-linear-led-marble-staircase-interior.webp",
+        title: "Linear Blade Baffle Ceiling",
+        href: "/products/linear-square-tube-ceiling/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/v-shape-baffle-ceiling.webp",
+        title: "V-Shape Baffle Ceiling",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/round-tube-baffle-ceiling.webp",
+        title: "Round Tube Baffle Ceiling",
+        href: "/products/round-tube-baffle-ceiling/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/teardrop-shape-baffle-ceiling.webp",
+        title: "Teardrop-Shape Baffle Ceiling",
+        href: "/products/teardrop-shape-baffle-ceiling/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/c-shape-baffle-ceiling.webp",
+        title: "C-Shape Baffle Ceiling",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/square-tube-baffle-ceiling.webp",
+        title: "Square Tube Baffle Ceiling",
+        href: "/categories/aluminum-square-tube/",
+      },
+    ],
+  },
+  {
+    label: "Interior Aluminum Panels",
+    cards: [
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-ceiling-project/white-curved-aluminum-panel-ceiling-tree-column-airport-transit-hub.webp",
+        title: "Aluminum Veneer",
+        href: "/categories/aluminum-veneer/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-ceiling-project/beijing-daxing-airport-terminal-tree-column-curved-aluminum-ceiling-interior.webp",
+        title: "Curved Aluminum Ceiling",
+        href: "/products/curved-aluminum-veneer-panel/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-ceiling-project/perforated-metal-ceiling-backlit-triangular-pattern-building-entrance.webp",
+        title: "Perforated Aluminum Panels",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-honeycomb-panel.webp",
+        title: "Aluminum Honeycomb Panel",
+        href: "/categories/aluminum-honeycomb-core-panel/",
+      },
 
-// 左菜单名称（从上往下）；右侧卡片暂为占位，后续替换
-const LABELS = [
-  "Aluminum Ceiling Systems",
-  "Aluminum Soffit & Fascia",
-  "Interior Aluminum Wall Panels",
-  "Exterior Aluminum Facade & Cladding Panels",
-  "Aluminum Screens & Partitions",
-  "Aluminum Trim, Baseboard",
-  "Ceiling Accessories",
-];
+      //{
+      //  img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp",
+      //  title: "Aluminum Square Tube",
+      //  href: "#",
+      //},
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-fluted-panel/aluminium-batten-feature-wall-backlit-landscape-projection-interior.webp",
+        title: "Fluted Aluminum Panel",
+        href: "/categories/fluted-aluminum-panel/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/acoustic-aluminum-panels.webp",
+        title: "Acoustic Aluminum Panels",
+        href: "#",
+      },
+      //{
+      //  img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp",
+      //  title: "Aluminum Skirting Board",
+      //  href: "#",
+      //},
+    ],
+  },
+  {
+    label: "Aluminum Facade & Cladding",
+    cards: [
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-facade/modern-skyscraper-perforated-facade-low-angle.webp",
+        title: "Aluminum Veneer Panel",
+        href: "/categories/aluminum-veneer/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-fluted-panel/exterior-aluminium-batten-facade-cladding-commercial-building.webp",
+        title: "Fluted Aluminum Panel",
+        href: "/products/exterior-fluted-facade-panel/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-strip-panel.webp",
+        title: "Aluminum Strip Panel",
+        // 室外檐口/立面条板是另一套工程体系（风压吸力、防水、EN 13830），将来单起一页；
+        // 原 /products/exterior-aluminum-strip-panel/ 已转 draft，先回品类页避免死链。
+        href: "/categories/aluminum-strip-panel/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-facade/white-wave-balcony-residential-tower-facade.webp",
+        title: "U-Shaped Aluminum Square Tube",
+        href: "/categories/u-shaped-aluminum-square-tube/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp",
+        title: "Aluminum Honeycomb Core Panel",
+        href: "/categories/aluminum-honeycomb-core-panel/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-facade/white-wave-balcony-residential-tower-facade.webp",
+        title: "Aluminum Ceiling Tile",
+        href: "/categories/aluminum-ceiling-tile/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp",
+        title: "Aluminum Square Tube",
+        href: "/categories/aluminum-square-tube/",
+      },
 
-const MENU = LABELS.map((label, i) => ({
-  label,
-  cards: Array.from({ length: 8 }, (_, j) => ({
-    img: IMGS[j],
-    title: `${label} · Card 0${j + 1}`,
-    href: "#",
-  })),
-}));
+      {
+        img: "https://file.meiyualuminum.com/home/aluminum-facade/white-wave-balcony-residential-tower-facade.webp",
+        title: "Aluminum Skirting Board",
+        href: "/categories/aluminum-skirting-board/",
+      },
+    ],
+  },
+  {
+    label: "Aluminum Architectural Accessories",
+    cards: [
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-skirting-board.webp",
+        title: "Aluminum Skirting Board",
+        href: "/categories/aluminum-skirting-board/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/led-aluminum-skirting-board.webp",
+        title: "LED Aluminum Skirting Board",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-screen-partition.webp",
+        title: "Aluminum Screens",
+        href: "#",
+      },
+      /*{
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp",
+        title: "Aluminum Honeycomb Core Panel",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-ceiling-tile.webp",
+        title: "Aluminum Ceiling Tile",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp",
+        title: "Aluminum Square Tube",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp",
+        title: "Fluted Aluminum Panel",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-skirting-board.webp",
+        title: "Aluminum Skirting Board",
+        href: "#",
+      }, */
+    ],
+  },
+  {
+    label: "Ceiling Accessories",
+    cards: [
+      {
+        img: "https://file.meiyualuminum.com/home/general/metal-furring-channel.webp",
+        title: "Ceiling Furring Channel",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-edge-trim-strip.webp",
+        title: "Aluminum L-Shape Edge Trim",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/threaded-ceiling-hanger-rod.webp",
+        title: "Ceiling Drop Rod",
+        href: "#",
+      },
+      /*{
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp",
+        title: "Aluminum Honeycomb Core Panel",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-ceiling-tile.webp",
+        title: "Aluminum Ceiling Tile",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-square-tube.webp",
+        title: "Aluminum Square Tube",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/fluted-aluminum-panel.webp",
+        title: "Fluted Aluminum Panel",
+        href: "#",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-skirting-board.webp",
+        title: "Aluminum Skirting Board",
+        href: "#",
+      },
+      */
+    ],
+  },
+];
 ---
 
 <div class="mega-panel">
@@ -153,7 +404,7 @@ const MENU = LABELS.map((label, i) => ({
     box-sizing: inherit;
   }
 
-  @media screen and (min-width: 1400px) {
+  @media screen and (min-width: 1280px) {
     .mega-panel {
       display: flex;
       position: absolute;
@@ -165,9 +416,10 @@ const MENU = LABELS.map((label, i) => ({
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
+      /* 关闭：鼠标滑离立即隐藏浮窗（毫秒级），不留延迟宽限期；打开仍由 hover 态的 0.25s 淡入 */
       transition:
-        opacity 0.25s ease 0.15s,
-        visibility 0.25s ease 0.15s;
+        opacity 0s,
+        visibility 0s;
       z-index: 999;
     }
 
@@ -196,7 +448,7 @@ const MENU = LABELS.map((label, i) => ({
     padding-left: 4px;
   }
   .mega-header-label {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 2.5px;
     text-transform: uppercase;
@@ -214,7 +466,7 @@ const MENU = LABELS.map((label, i) => ({
 
   /* 左：竖排菜单 */
   .mega-nav {
-    width: 260px;
+    width: 280px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -234,7 +486,7 @@ const MENU = LABELS.map((label, i) => ({
     border: none;
     border-left: 3px solid transparent;
     color: #cfc8bd;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1.45;
     text-align: left;
@@ -289,7 +541,7 @@ const MENU = LABELS.map((label, i) => ({
     border-radius: 10px;
     overflow: hidden;
     text-decoration: none;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     opacity: 0;
     transform: translateY(8px) scale(0.97);
     transition:
@@ -310,7 +562,7 @@ const MENU = LABELS.map((label, i) => ({
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 32%;
+    object-position: center;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 

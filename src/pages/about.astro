@@ -1,0 +1,2008 @@
+---
+/**
+ * about.astro — About 页（静态预渲染 · 询盘转化导向）
+ *
+ * 架构借鉴自同类工厂站的 About 骨架，内容与配色全部换成 MEIYU 自有：
+ *   1 Hero（PageHero + 徽章 + CTA slot + 数据条）
+ *   2 Who We Are（左图右文 + 要点清单）
+ *   3 What You Can Verify（证据索引表 · 回应 B2B 采购评审缺口 1、2）
+ *   4 What Arrives With an Export Order（出口文档包 · 回应缺口 3、6）
+ *   5 Factory Tour（Supabase videos 表真实视频卡；无视频时回退 WhatsApp 索片钩子）
+ *   6 Team & Support（工程与下单支持）
+ *   7 How an Order Runs（下单到出货 5 步）
+ *   8 Quality & Certification（标准卡 + 自有 QC 试验）
+ *   9 Why Buy Direct（6 张理由卡）
+ *  10 What We Make（产品族卡片 → 分类页）
+ *  11 FAQ（含 FAQPage 结构化数据）
+ *  12 收尾 CTA
+ *
+ * 区块顺序的理由（勿随意改回）：本页承载的是信任信号，采购最关心的「能不能核实 /
+ * 能不能算成本 / 出问题谁负责」必须在前部出现；「What We Make」与首页产品展示区、
+ * Products Mega Menu 三重重复，作为导航它不该在 About 抢位置，故下移到 Why Buy Direct
+ * 之后。调整于 2026-10-10，依据用户要求：About 聚焦公司实力，不重复产品信息。
+ *
+ * 路由说明：静态 about.astro 的优先级高于 [page].astro，
+ *   因此 Supabase pages 表中 slug='about' 的行不再被读取（保留但不使用）。
+ * 事实红线：公司数据只引用 docs/blog-prompt-v5.md 附录 A；附录 A 没有的一律不写具体数字。
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import { supabase } from "../lib/supabase";
+import { isSelfHostedVideo, firstFrameSrc } from "../lib/videoSource";
+import { companyFacts, certBadges } from "../lib/companyProfile";
+
+const CDN = "https://file.meiyualuminum.com/";
+const IMG_STORY = `${CDN}home/custom-aluminum-single-panel-design-factory-installation-building-facade.webp`;
+const IMG_TEAM = `${CDN}home/meiyu-engineer-architectural-3d-modeling-laser-scanner-construction-site.webp`;
+
+/** WhatsApp 与 FloatingWhatsApp 同一号码；BaseLayout 已全局埋 whatsapp_click 事件 */
+const WHATSAPP_NUMBER = "8613509838008";
+const waUrl = (msg: string) =>
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+const pageTitle =
+    "About MEIYU Aluminum | Ceiling & Facade Panel Manufacturer in Dongguan";
+const pageDescription =
+    "MEIYU Aluminum Co., Ltd. — established 2015, 15,000 m² plant and 15 production lines in Dongguan, China. Architectural aluminium ceiling tiles, linear strip ceilings, wall panels and facade systems, made and tested in-house. Request a quote, samples or shop drawing review.";
+const keywords = [
+    "about meiyu aluminum",
+    "aluminum ceiling manufacturer",
+    "aluminum facade panel factory",
+    "metal ceiling manufacturer china",
+    "aluminum panel supplier dongguan",
+    "oem aluminum ceiling panels",
+];
+
+/* ── 公司数据统一取自 src/lib/companyProfile.ts（单一来源，对齐附录 A）── */
+const heroStats = [
+    { value: companyFacts.established, label: "Established" },
+    { value: companyFacts.plantArea, label: "Plant in Dongguan" },
+    { value: companyFacts.productionLines, label: "Production lines" },
+    { value: companyFacts.staff, label: "Staff incl. QC & engineering" },
+];
+
+const heroBadges = certBadges;
+
+const storyPoints = [
+    "Own plant and own lines — 15,000 m² and 15 production lines in Dongguan City, Guangdong",
+    "In-house engineering: shop drawing review, CAD layout, OEM & ODM development",
+    "Dedicated QC team testing coating adhesion, salt spray and sag resistance",
+    "Direct factory pricing — no distributor margin between you and the line",
+];
+
+/* ── 产品族（图与首页 MegaMenu 同源，链到分类页）── */
+const productCards = [
+    {
+        img: `${CDN}home/mega-menu/aluminum-ceiling-tile.webp`,
+        name: "Aluminum Ceiling Tile",
+        desc: "Clip-in and lay-in modules from 300×300 to 600×1200 mm, solid or perforated.",
+        href: "/categories/aluminum-ceiling-tile/",
+    },
+    {
+        img: `${CDN}home/mega-menu/aluminum-strip-panel.webp`,
+        name: "Strip & Linear Ceiling",
+        desc: "Continuous linear panels for lobbies, concourses and corridors.",
+        href: "/categories/aluminum-strip-panel/",
+    },
+    {
+        img: `${CDN}home/mega-menu/aluminum-square-tube.webp`,
+        name: "Baffle & Square Tube",
+        desc: "Open linear baffles and tube ceilings that conceal services above.",
+        href: "/categories/aluminum-square-tube/",
+    },
+    {
+        img: `${CDN}home/mega-menu/aluminum-veneer.webp`,
+        name: "Veneer & Facade Panel",
+        desc: "CNC-formed single-panel veneer for facades, soffits and feature walls.",
+        href: "/categories/aluminum-veneer/",
+    },
+    {
+        img: `${CDN}home/mega-menu/fluted-aluminum-panel.webp`,
+        name: "Fluted Wall Panel",
+        desc: "Ribbed aluminium cladding for interiors and exterior accents.",
+        href: "/categories/fluted-aluminum-panel/",
+    },
+    {
+        img: `${CDN}home/mega-menu/aluminum-honeycomb-core-panel.webp`,
+        name: "Honeycomb Panel",
+        desc: "Ultra-light flat panels for large spans and curtain-wall cladding.",
+        href: "/categories/aluminum-honeycomb-core-panel/",
+    },
+];
+
+/* ── 下单到出货 ── */
+const processSteps = [
+    {
+        n: "01",
+        t: "Enquiry & Drawings",
+        d: "Send architectural drawings, a BOQ or simply a room size. We come back with a specification recommendation and a quotation.",
+    },
+    {
+        n: "02",
+        t: "Sample & Approval",
+        d: "Colour, perforation and surface are confirmed on physical samples before tooling or mass production starts.",
+    },
+    {
+        n: "03",
+        t: "Production",
+        d: "Forming, perforation and coating run on our own 15 lines — standard items typically 20–25 working days.",
+    },
+    {
+        n: "04",
+        t: "QC & Packing",
+        d: "Each lot is inspected, then packed for export: panels flat in cartons on pallets, carriers and trim boxed separately.",
+    },
+    {
+        n: "05",
+        t: "Shipment & Support",
+        d: "Export documentation, container loading plan and installation guidance; custom perforation or special surfaces run 30–40 days.",
+    },
+];
+
+/* ── 认证与自有检测（附录 A 口径，不写证书编号）── */
+const certCards = [
+    { n: "ISO 9001", s: "Quality management system" },
+    { n: "CE", s: "EU conformity under the Construction Products Regulation" },
+    {
+        n: "ASTM E84 Class A",
+        s: "Flame spread index 0–25, Steiner tunnel method",
+    },
+    {
+        n: "EN 13501-1 B-s1,d0",
+        s: "Reaction to fire: low smoke, no flaming droplets",
+    },
+];
+
+const qcTests = [
+    {
+        t: "Coating adhesion",
+        d: "Cross-cut and pull-off checks on every coating batch.",
+    },
+    {
+        t: "Salt spray",
+        d: "Corrosion exposure testing for coastal and high-humidity specs.",
+    },
+    {
+        t: "Sag resistance",
+        d: "Film sag evaluated under standard simulated conditions.",
+    },
+];
+
+/* ── 证据索引（回应采购评审缺口 1、2：性能描述要有可核验的对应证据）──
+   只列附录 A 已有的真实认证与自有 QC 项目；没做过的不列、不编。
+   评审点名要求：ASTM E84 与 EN 13501-1 分属两套体系，不能互替，此处写明。 */
+const evidenceIndex = [
+    {
+        item: "ISO 9001",
+        asks: "Is quality held by a system, or by whoever is on shift?",
+        scope: "Company-wide quality management system.",
+        obtain: "Certificate copy issued at quotation stage.",
+    },
+    {
+        item: "CE marking + Declaration of Performance",
+        asks: "Can this be lawfully installed on an EU project?",
+        scope: "EU market access under the Construction Products Regulation, declared per product family and its applicable standard.",
+        obtain: "Supplied with the submittal pack.",
+    },
+    {
+        item: "ASTM E84 Class A",
+        asks: "What is the surface burning behaviour for a US or Gulf specification?",
+        scope: "Flame spread index 0–25 by the Steiner tunnel method. A North American result — it does not substitute for EN 13501-1.",
+        obtain: "Test report on request; report numbers are not published.",
+    },
+    {
+        item: "EN 13501-1 B-s1,d0",
+        asks: "What is the European reaction-to-fire class of the finished panel?",
+        scope: "European classification of the coated assembly. It does not substitute for an ASTM E84 result — we supply whichever your specification calls for, or both.",
+        obtain: "Report on request, naming the tested build-up.",
+    },
+    {
+        item: "EN 13964 declarations",
+        asks: "Are dimensions, tolerances, load class and corrosion class actually stated?",
+        scope: "Suspended ceiling system characteristics declared for your configuration — we do not quote generic figures for a specific project.",
+        obtain: "Written into the shop drawings and submittal.",
+    },
+    {
+        item: "Coating adhesion · salt spray · sag",
+        asks: "Will the finish hold in a coastal or humid building?",
+        scope: "Run in our own QC lab on site against standard exposure conditions, logged per coating batch.",
+        obtain: "Batch records shared on request.",
+    },
+    {
+        item: "Alloy and temper evidence",
+        asks: "Is it really the stated 3003 / 5052 at the stated gauge?",
+        scope: "Material traceability linked to the batch rolled into your order.",
+        obtain: "On request — confirm the exact document set at quotation.",
+    },
+    {
+        item: "Panel barcode → drawing position",
+        asks: "If a panel is wrong, can we find where it belongs and who signed it off?",
+        scope: "Each panel carries a code tied to its setting-out position, its production stage and its inspection record.",
+        obtain: "A sample traceability record is available before you commit.",
+    },
+];
+
+/* ── 出口交付文档包（回应评审缺口 3、6：海外能不能装、出问题找谁）──
+   评审给的诚实回退路径：暂无可核验海外项目记录时，改为展示完整英文文档与远程支持流程。
+   本块只写站内已真实存在的能力；差旅与现场服务写成“按项目书面约定”，不承诺到场。 */
+const exportPack = [
+    {
+        t: "English shop drawings",
+        d: "Setting-out layout, reflected-ceiling coordination and edge, joint and cut-out details — drawn and agreed with your team before a single panel is cut.",
+        icon: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5",
+    },
+    {
+        t: "Panel-by-panel packing list",
+        d: "Every crate and bundle listed against its drawing position, so your crew knows which box holds which panel before anything is opened.",
+        icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+    },
+    {
+        t: "English installation manual",
+        d: "Order of work, fixing details, tooling and the demount method for routine service access — written so a local crew can build from it without translating.",
+        icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",
+    },
+    {
+        t: "Remote support before and during installation",
+        d: "A live screen-share over the grid setting-out before your crew starts, then WhatsApp or email support while they build. First reply within 1 hour.",
+        icon: "M23 7l-7 5 7 5V7zM14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z",
+    },
+    {
+        t: "What we supply vs what you buy locally",
+        d: "Panels always. Carriers, hangers, perimeter trim and fixings are itemised line by line in the quotation, so nothing arrives missing and nothing gets double-ordered on site.",
+        icon: "M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5",
+    },
+    {
+        t: "Site attendance, stated not assumed",
+        d: "Where an installation genuinely needs factory supervision, the scope, duration and travel terms are agreed in writing per project rather than implied by marketing.",
+        icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+    },
+];
+
+/* ── 为什么直接找工厂 ── */
+const whyCards = [
+    {
+        t: "Factory-Direct Pricing",
+        d: "Your quote comes off the production line, not through a trader's margin.",
+        icon: "M3 21V10l6 4V10l6 4V6l6 3v12zM3 21h18",
+    },
+    {
+        t: "In-House Engineering",
+        d: "Shop drawing review, CAD layout and detail fixes before a single panel is cut.",
+        icon: "M10 2v7.5L4.7 19.5a2 2 0 0 0 1.8 3h11a2 2 0 0 0 1.8-3L14 9.5V2M8.5 2h7M7 16h10",
+    },
+    {
+        t: "OEM & ODM Ready",
+        d: "Your alloy, thickness, perforation, colour and packaging — developed on site.",
+        icon: "M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 17l9 5 9-5",
+    },
+    {
+        t: "Predictable Lead Time",
+        d: "20–25 working days for standard items, 30–40 for custom work, stated up front.",
+        icon: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+    },
+    {
+        t: "Export Documentation",
+        d: "Delivered across Southeast Asia, the Middle East, Africa and South America.",
+        icon: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
+    },
+    {
+        t: "Written Warranty",
+        d: "10 years on PE coating, 15 years on PVDF, 1 year on materials and workmanship.",
+        icon: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9 12l2 2 4-4",
+    },
+];
+
+/* ── FAQ（同一份数据渲染 + 输出 FAQPage 结构化数据）── */
+const faqs = [
+    {
+        q: "Where is your factory, and can I visit?",
+        a: "Dongguan City, Guangdong Province, China. In-person visits and live video walk-throughs both work — message us on WhatsApp and we will send directions plus a walk-through of the line before you book anything.",
+    },
+    {
+        q: "Are you a manufacturer or a trading company?",
+        a: "Manufacturer. We run 15 production lines in our own 15,000 m² plant; forming, perforation, coating and packing all happen on that site, which is why lead times and tolerances are ours to control.",
+    },
+    {
+        q: "Can I get samples before ordering?",
+        a: "Yes. Colour, perforation and surface finish can be confirmed on physical samples before production. Tell us the RAL reference or the texture you want and our team matches it in-house.",
+    },
+    {
+        q: "What is your minimum order quantity?",
+        a: "Our standard offer is 500 m² per item for standard products and 1,000 m² for custom perforation or special profiles. Smaller trial quantities can be discussed at quotation stage.",
+    },
+    {
+        q: "How long does production take?",
+        a: "Standard items typically run 20–25 working days; custom perforation or special surfaces 30–40 days, depending on order size and production schedule. Confirm the date against your quotation.",
+    },
+    {
+        q: "Do the panels meet fire regulations?",
+        a: "Aluminium is non-combustible. Finished panels are supplied and tested to EN 13501-1 Class B-s1,d0 and ASTM E84 Class A. Test reports and the Declaration of Performance are provided on request at the quotation stage.",
+    },
+    {
+        q: "Which fire standard applies to my project — ASTM or EN?",
+        a: "They answer different authorities and are not interchangeable. US and most Gulf specifications look for ASTM E84 surface-burning data; European specifications look for an EN 13501-1 reaction-to-fire class plus a Declaration of Performance under the Construction Products Regulation. Tell us which your project is being approved against and we supply that one — or both if your consultant wants a cross-check.",
+    },
+    {
+        q: "What exactly is included in a MEIYU quotation?",
+        a: "A line-by-line specification (alloy and temper, gauge, panel size, perforation and open area, finish system and colour reference), unit rate and quantity, MOQ per item, lead time, and packing data. Just as importantly it names what is excluded — carriers, hangers, perimeter trim and fixings are listed explicitly as supplied or not supplied, so you can price the whole system rather than guess at the gap. Trade terms, payment stages and port of loading are confirmed on the same document.",
+    },
+    {
+        q: "What happens if panels arrive damaged, short or off-colour?",
+        a: "Send photographs, the affected barcode positions and the quantity. Because each panel is traceable to its production and inspection record, we can separate a manufacturing deviation from transit damage without guessing. You get a first reply within 1 hour and a written proposal — replacement, repair or credit — with the freight and labour split stated in it rather than left to argue about later. The claim route and warranty limits are issued with your contract.",
+    },
+    {
+        q: "Do you have references outside China?",
+        a: "Our documented project references to date are domestic. For overseas orders we work from the documentation rather than a site-visit history: English shop drawings, a panel-by-panel packing list, an English installation manual and remote support during installation. We would rather show you that pack and a live run on the line than send photographs of a building you cannot verify.",
+    },
+];
+
+const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+};
+
+/* ── 工厂视频：About 只放自托管素材（R2 / 同源）——
+   当前 videos 表里的 YouTube 条目是别家工厂素材（帧上带中文解说与“XINENZE”水印），
+   放到自己 About 页就是假称自家车间，因此一律不展示；
+   用户上传自有 mp4 到 R2 后本节会自动出现。无自托管视频时回退成 WhatsApp 索片钩子。── */
+const { data: dbVideos } = await supabase
+    .from("videos")
+    .select("slug,title,video_url,thumbnail_url")
+    .eq("status", "published")
+    .order("pub_date", { ascending: false })
+    .limit(3);
+
+const videos = (dbVideos ?? [])
+    .filter((v) => isSelfHostedVideo(v.video_url))
+    .map((v) => ({
+        slug: v.slug,
+        title: v.title,
+        cover: v.thumbnail_url || firstFrameSrc(v.video_url!),
+    }));
+
+/** 索片钩子：没有自有视频时，把“缺视频”变成一次 WhatsApp 对话 */
+const tourHooks = [
+    {
+        label: "Coating line",
+        msg: "Hi, please send me a video of your aluminium coating line",
+    },
+    {
+        label: "Perforation & acoustic fleece",
+        msg: "Hi, please send me a video of your perforation line and acoustic fleece",
+    },
+    {
+        label: "Packing & container loading",
+        msg: "Hi, please send me a video of your packing and container loading",
+    },
+];
+---
+
+<BaseLayout
+    pageTitle={pageTitle}
+    description={pageDescription}
+    keywords={keywords}
+    image={IMG_STORY}
+    hideTitle
+>
+    <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+
+    <!-- ══════ 1. Hero ══════ -->
+    <PageHero
+        imageAlt="MEIYU aluminium facade and ceiling projects"
+        eyebrow={`About ${companyFacts.brand} · Est. ${companyFacts.established} · Dongguan, Guangdong`}
+        titleWhite="A Real Factory Behind"
+        titleGold="Every Panel"
+        subtitle="MEIYU Aluminum Co., Ltd. forms, perforates, coats and packs architectural aluminium ceiling and facade panels in our own plant — 15,000 m², 15 lines, and an engineering team that answers shop drawings, samples and quotations directly."
+        stats={heroStats}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "About Us", url: "/about/" },
+            ],
+        }}
+    >
+        <button
+            type="button"
+            class="ab-btn ab-btn--light"
+            data-open-inquiry-modal
+        >
+            Get a Free Quote
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg
+            >
+        </button>
+        <a
+            class="ab-btn ab-btn--outline-light"
+            href={waUrl("Hi, please send me your factory video tour")}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-wa-source="about_hero"
+        >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+                ><path d="M8 5.5v13l11-6.5-11-6.5z"></path></svg
+            >
+            Watch the Factory
+        </a>
+        <a class="ab-btn ab-btn--ghost-light" href="/products/"
+            >Browse Products</a
+        >
+    </PageHero>
+
+    <ul class="ab-badges">
+        {heroBadges.map((b) => <li>{b}</li>)}
+    </ul>
+
+    <!-- ══════ 2. Who We Are ══════ -->
+    <section class="ab-band">
+        <div class="ab-wrap">
+            <div class="ab-story-grid">
+                <figure class="ab-media">
+                    <img
+                        src={IMG_STORY}
+                        alt="Collage of MEIYU aluminium panel shop drawings, panels hanging on the coating line, container packing, an installer on a scissor lift and the finished facade"
+                        width="760"
+                        height="900"
+                        loading="lazy"
+                        data-no-watermark
+                    />
+                    <figcaption class="ab-media-flag">
+                        Drawings → coating line → packing → installation
+                    </figcaption>
+                </figure>
+                <div class="ab-copy">
+                    <span class="ab-eyebrow">Who We Are</span>
+                    <h2 class="ab-h2">
+                        Manufacturer First, <span class="ab-hl"
+                            >Trader Never</span
+                        >
+                    </h2>
+                    <p>
+                        MEIYU was founded in 2015 in Dongguan City, Guangdong
+                        Province, with 15,000 m² of plant and 15 production
+                        lines. Aluminium coil comes in at one end; formed,
+                        perforated, coated and packed panels leave at the other.
+                        Nothing is subcontracted, so the people who quote your
+                        project are talking about the same line that will run
+                        it.
+                    </p>
+                    <p>
+                        We supply ceiling and facade systems across Southeast
+                        Asia, the Middle East, and parts of Africa and South
+                        America. Shop drawing review, CAD layout and OEM/ODM
+                        development are done in-house — which is why a technical
+                        question usually comes back with a detail drawing rather
+                        than a forwarding email.
+                    </p>
+                    <ul class="ab-checks">
+                        {storyPoints.map((p) => <li>{p}</li>)}
+                    </ul>
+                    <div class="ab-btn-row">
+                        <button
+                            type="button"
+                            class="ab-btn ab-btn--primary"
+                            data-open-inquiry-modal
+                            >Talk to Our Engineers</button
+                        >
+                        <a
+                            class="ab-btn ab-btn--outline"
+                            href={waUrl(
+                                "Hi, I'd like to know more about MEIYU's factory and products",
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-wa-source="about_story">WhatsApp Us</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ 3. What You Can Verify（证据索引 · 回应采购评审缺口 1、2） ══════ -->
+    <section class="ab-band ab-band--alt">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">Evidence Index</span>
+                <h2 class="ab-h2">
+                    What You Can Verify <span class="ab-hl"
+                        >Before You Order</span
+                    >
+                </h2>
+                <p class="ab-sub">
+                    A brochure says what a supplier promises. This table says
+                    what you can actually ask for, what each document covers,
+                    and where its limits are — so your engineer, your fire
+                    consultant and your procurement team can approve it without
+                    phoning us first.
+                </p>
+            </div>
+            <div class="ab-evi-wrap">
+                <table class="ab-evi">
+                    <thead>
+                        <tr>
+                            <th scope="col">Evidence</th>
+                            <th scope="col">The question it answers</th>
+                            <th scope="col"
+                                >What it covers — and what it does not</th
+                            >
+                            <th scope="col">How to get it</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            evidenceIndex.map((e) => (
+                                <tr>
+                                    <th scope="row" data-label="Evidence">
+                                        {e.item}
+                                    </th>
+                                    <td data-label="Answers">{e.asks}</td>
+                                    <td data-label="Coverage">{e.scope}</td>
+                                    <td data-label="How to get it">
+                                        {e.obtain}
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p class="ab-note">
+                Where something has not been tested, we say so rather than infer
+                it from a similar product.
+            </p>
+            <div class="ab-btn-row">
+                <button
+                    type="button"
+                    class="ab-btn ab-btn--outline ab-btn--sm"
+                    data-open-inquiry-modal
+                    >Request the document list for my spec</button
+                >
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ 4. What Arrives With an Export Order（回应采购评审缺口 3、6） ══════ -->
+    <section class="ab-band">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">Export Delivery</span>
+                <h2 class="ab-h2">
+                    What Arrives With <span class="ab-hl">an Export Order</span>
+                </h2>
+                <p class="ab-sub">
+                    Ordering aluminium from another continent is not difficult.
+                    Ordering it so that a local crew can install it without
+                    calling China every afternoon is the part that decides
+                    whether a supplier is usable. This is what we send.
+                </p>
+            </div>
+            <ul class="ab-why-grid">
+                {
+                    exportPack.map((x) => (
+                        <li class="ab-why-card">
+                            <span class="ab-why-icon">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d={x.icon} />
+                                </svg>
+                            </span>
+                            <strong>{x.t}</strong>
+                            <span class="ab-why-desc">{x.d}</span>
+                        </li>
+                    ))
+                }
+            </ul>
+            <p class="ab-note">
+                Our documented project references to date are domestic — we
+                would rather say that plainly than send you a photograph of a
+                building you cannot verify. Judge us on the paperwork and a live
+                run on the line.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════ 5. Factory Tour ══════ -->
+    <section class="ab-band">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">Factory Tour</span>
+                <h2 class="ab-h2">
+                    See the Plant <span class="ab-hl">Before You Buy</span>
+                </h2>
+                <p class="ab-sub">
+                    Photos can be staged, so watch the line instead. Anything
+                    you need that is not in this list — a specific profile, a
+                    coating booth, a packing sequence — we will film it for you.
+                </p>
+            </div>
+
+            {
+                videos.length > 0 ? (
+                    <ul class="ab-video-grid">
+                        {videos.map((v) => (
+                            <li class="ab-video-card">
+                                <a href={`/videos/${v.slug}/`}>
+                                    <span class="ab-video-thumb">
+                                        <img
+                                            src={v.cover}
+                                            alt={`${v.title} — MEIYU factory video`}
+                                            width="480"
+                                            height="360"
+                                            loading="lazy"
+                                        />
+                                        <span
+                                            class="ab-play"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path d="M8 5.5v13l11-6.5-11-6.5z" />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    <strong class="ab-video-title">
+                                        {v.title}
+                                    </strong>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <div class="ab-tour-hook">
+                        <a
+                            class="ab-tour-hook-main"
+                            href={waUrl(
+                                "Hi, please send me a video tour of your factory",
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-wa-source="about_tour"
+                        >
+                            <img
+                                src={IMG_STORY}
+                                alt="Request a video tour of the MEIYU production line on WhatsApp"
+                                width="760"
+                                height="900"
+                                loading="lazy"
+                                data-no-watermark
+                            />
+                            <span class="ab-play" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5.5v13l11-6.5-11-6.5z" />
+                                </svg>
+                            </span>
+                            <span class="ab-tour-label">
+                                Factory video tour — request on WhatsApp
+                            </span>
+                        </a>
+                        <p class="ab-hook-label">
+                            Need to see one specific detail first? We film it on
+                            the line and send it straight to you:
+                        </p>
+                        <ul class="ab-hook-chips">
+                            {tourHooks.map((h) => (
+                                <li>
+                                    <a
+                                        href={waUrl(h.msg)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        data-wa-source="about_tour_hook"
+                                    >
+                                        {h.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
+
+            <p class="ab-note">
+                Want a live walk-through at your convenience?{" "}
+                <a
+                    href={waUrl(
+                        "Hi, can I book a live video walk-through of your factory",
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-wa-source="about_tour_note"
+                >
+                    Ask on WhatsApp</a
+                >{" "}— or browse the full{" "}
+                <a href="/videos/">video library</a>.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════ 6. Team & Support ══════ -->
+    <section class="ab-band ab-band--alt">
+        <div class="ab-wrap">
+            <div class="ab-team-grid">
+                <div class="ab-copy">
+                    <span class="ab-eyebrow">Team &amp; Support</span>
+                    <h2 class="ab-h2">
+                        Engineers Who Actually <span class="ab-hl"
+                            >Read Your Drawings</span
+                        >
+                    </h2>
+                    <p>
+                        Eighty people on site, including a dedicated engineering
+                        and QC team. Send a ceiling layout and the person
+                        replying checks the suspension grid, expansion allowance
+                        and module setting-out before a price is quoted — that
+                        is usually where a project saves money, not at the
+                        material stage.
+                    </p>
+                    <ul class="ab-checks">
+                        <li>
+                            Shop drawing review — we mark up what will not work
+                            before it reaches site
+                        </li>
+                        <li>
+                            CAD layout support for ceiling grids and module
+                            setting-out
+                        </li>
+                        <li>
+                            OEM &amp; ODM development: alloy, thickness,
+                            perforation, colour and packaging
+                        </li>
+                        <li>
+                            English-language documentation for export shipments
+                        </li>
+                    </ul>
+                    <div class="ab-btn-row">
+                        <button
+                            type="button"
+                            class="ab-btn ab-btn--primary"
+                            data-open-inquiry-modal
+                            >Send Us Your Drawings</button
+                        >
+                        <a
+                            class="ab-btn ab-btn--outline"
+                            href={waUrl(
+                                "Hi, I would like a shop drawing review for my ceiling project",
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-wa-source="about_team">Ask an Engineer</a
+                        >
+                    </div>
+                </div>
+                <figure class="ab-team-media">
+                    <img
+                        src={IMG_TEAM}
+                        alt="MEIYU engineer in a branded safety vest and hard hat reviewing a 3D building model on a laptop on site, with a laser scanner on a tripod and printed drawings"
+                        width="760"
+                        height="570"
+                        loading="lazy"
+                        data-no-watermark
+                    />
+                    <figcaption class="ab-team-flag">
+                        On site: 3D model, laser scan, shop drawings
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ 7. How an Order Runs ══════ -->
+    <section class="ab-band ab-band--dark">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow ab-eyebrow--gold"
+                    >How an Order Runs</span
+                >
+                <h2 class="ab-h2 ab-h2--light">
+                    From Drawing to <span class="ab-hl-gold"
+                        >Loaded Container</span
+                    >
+                </h2>
+            </div>
+            <ol class="ab-steps">
+                {
+                    processSteps.map((s) => (
+                        <li class="ab-step">
+                            <span class="ab-step-n">{s.n}</span>
+                            <strong>{s.t}</strong>
+                            <span class="ab-step-d">{s.d}</span>
+                        </li>
+                    ))
+                }
+            </ol>
+            <p class="ab-note ab-note--light">
+                Lead times and MOQ above are our standard offer; final figures
+                are confirmed against your project at quotation.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════ 8. Quality & Certification ══════ -->
+    <section class="ab-band">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">Quality Assurance</span>
+                <h2 class="ab-h2">
+                    Tested Standards, <span class="ab-hl"
+                        >Not Marketing Claims</span
+                    >
+                </h2>
+            </div>
+            <div class="ab-cert-wall">
+                {
+                    certCards.map((c) => (
+                        <div class="ab-cert-card">
+                            <span class="ab-cert-seal">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                            </span>
+                            <strong>{c.n}</strong>
+                            <small>{c.s}</small>
+                        </div>
+                    ))
+                }
+                <div class="ab-cert-cta">
+                    <span class="ab-cert-cta-text">
+                        <strong>Need copies?</strong>
+                        <small
+                            >Certificates and test reports are issued on request
+                            at the quotation stage.</small
+                        >
+                    </span>
+                    <button
+                        type="button"
+                        class="ab-btn ab-btn--primary ab-btn--sm"
+                        data-open-inquiry-modal>Request Copies</button
+                    >
+                </div>
+            </div>
+            <ul class="ab-qc-grid">
+                {
+                    qcTests.map((t) => (
+                        <li class="ab-qc-item">
+                            <strong>{t.t}</strong>
+                            <span>{t.d}</span>
+                        </li>
+                    ))
+                }
+            </ul>
+            <p class="ab-note">
+                In-house QC lab on site — report and certificate numbers are
+                shared with partners, not published.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════ 9. Why Buy Direct ══════ -->
+    <section class="ab-band ab-band--alt">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">Why Buy Direct</span>
+                <h2 class="ab-h2">
+                    Six Reasons Importers <span class="ab-hl"
+                        >Skip the Trader</span
+                    >
+                </h2>
+            </div>
+            <ul class="ab-why-grid">
+                {
+                    whyCards.map((w) => (
+                        <li class="ab-why-card">
+                            <span class="ab-why-icon">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d={w.icon} />
+                                </svg>
+                            </span>
+                            <strong>{w.t}</strong>
+                            <span class="ab-why-desc">{w.d}</span>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+    </section>
+
+    <!-- ══════ 10. What We Make ══════ -->
+    <section class="ab-band ab-band--alt">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">What We Make</span>
+                <h2 class="ab-h2">
+                    Six Aluminium Families, <span class="ab-hl"
+                        >One Standard of Finish</span
+                    >
+                </h2>
+                <p class="ab-sub">
+                    Every family below is formed, perforated and coated on the
+                    same lines — so a project can carry one finish from ceiling
+                    to wall to skirting.
+                </p>
+            </div>
+            <ul class="ab-product-grid">
+                {
+                    productCards.map((c) => (
+                        <li class="ab-product-card">
+                            <a href={c.href}>
+                                <span class="ab-product-img">
+                                    <img
+                                        src={c.img}
+                                        alt={`${c.name} manufactured by MEIYU`}
+                                        width="400"
+                                        height="300"
+                                        loading="lazy"
+                                    />
+                                </span>
+                                <strong>{c.name}</strong>
+                                <span class="ab-product-desc">{c.desc}</span>
+                                <span class="ab-product-link">
+                                    View range{" "}
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M5 12h14M13 6l6 6-6 6" />
+                                    </svg>
+                                </span>
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+    </section>
+
+    <!-- ══════ 11. FAQ ══════ -->
+    <section class="ab-band">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">FAQ</span>
+                <h2 class="ab-h2">
+                    Questions Buyers <span class="ab-hl">Ask Us First</span>
+                </h2>
+            </div>
+            <div class="ab-faq">
+                {
+                    faqs.map((f) => (
+                        <details class="ab-faq-item">
+                            <summary>{f.q}</summary>
+                            <p>{f.a}</p>
+                        </details>
+                    ))
+                }
+            </div>
+            <p class="ab-note">
+                Something else on your mind?{" "}
+                <a
+                    href={waUrl(
+                        "Hi, I have a question about MEIYU aluminum products",
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-wa-source="about_faq"
+                >
+                    Ask on WhatsApp</a
+                >{" "}or use the{" "}
+                <a href="/contact/">enquiry form</a>.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════ 12. Final CTA ══════ -->
+    <section class="ab-band ab-band--tight">
+        <div class="ab-wrap">
+            <div class="ab-cta">
+                <div class="ab-cta-inner">
+                    <h2>Ready to Price Your Ceiling or Facade?</h2>
+                    <p>
+                        Send drawings, a BOQ or a room size and we will come
+                        back with a specification recommendation, a quotation
+                        and the samples you need to sign it off.
+                    </p>
+                    <div class="ab-btn-row ab-btn-row--center">
+                        <button
+                            type="button"
+                            class="ab-btn ab-btn--light ab-btn--lg"
+                            data-open-inquiry-modal
+                        >
+                            Get a Free Quote
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                                ><path d="M5 12h14M13 6l6 6-6 6"></path></svg
+                            >
+                        </button>
+                        <a
+                            class="ab-btn ab-btn--outline-light ab-btn--lg"
+                            href={waUrl(
+                                "Hi, I'd like a free sample and a quote for my project",
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-wa-source="about_cta"
+                            >Free Sample on WhatsApp</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>
+
+<style>
+    /* ============================================================
+     About 页专用样式：全站没有全局 design tokens（各组件自带 scoped CSS），
+     因此本块自包含，统一 ab- 前缀，色值取自站内既有品牌色
+     （棕 #69574a / 金 #c09020 / 亮金 #f0c96a / 香槟 #c0a882 / 深色 #10131a）。
+     ============================================================ */
+
+    /* 全幅色带靠 100vw + calc(50% - 50vw) 冲出容器，而 100vw 含滚动条宽度，
+     会让 html 多出约 8px 可横向拖动（PageHero 同款 breakout 的全站既有副作用）。
+     沿用首页 index.astro 的既有做法，仅在本页把 html 横向裁掉。 */
+    :global(html) {
+        overflow-x: hidden;
+    }
+
+    /* ---------- 版式骨架 ---------- */
+    .ab-band {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        padding: clamp(56px, 7vw, 88px) clamp(16px, 4vw, 40px);
+    }
+    .ab-band--tight {
+        padding-bottom: clamp(64px, 8vw, 96px);
+    }
+    .ab-band--alt {
+        background: #f8f6f3;
+    }
+    .ab-band--dark {
+        background: #10131a;
+        color: #fff;
+    }
+    .ab-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .ab-head {
+        max-width: 760px;
+        margin: 0 auto clamp(28px, 4vw, 44px);
+        text-align: center;
+    }
+    .ab-eyebrow {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #c09020;
+        margin-bottom: 0.7rem;
+    }
+    .ab-eyebrow--gold {
+        color: #f0c96a;
+    }
+    .ab-h2 {
+        margin: 0 0 0.9rem;
+        font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+        line-height: 1.25;
+        letter-spacing: -0.4px;
+        color: #1e293b;
+    }
+    .ab-h2--light {
+        color: #fff;
+    }
+    .ab-hl {
+        color: #69574a;
+    }
+    .ab-hl-gold {
+        color: #f0c96a;
+    }
+    .ab-sub {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.85;
+        color: #475569;
+    }
+    .ab-band--dark .ab-sub {
+        color: rgba(255, 255, 255, 0.78);
+    }
+
+    /* ---------- 按钮 ---------- */
+    .ab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 999px;
+        padding: 0.72rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        line-height: 1.2;
+        cursor: pointer;
+        border: 2px solid transparent;
+        text-decoration: none;
+        transition:
+            background-color 0.2s,
+            color 0.2s,
+            border-color 0.2s,
+            transform 0.15s,
+            box-shadow 0.2s;
+    }
+    .ab-btn svg {
+        width: 17px;
+        height: 17px;
+    }
+    .ab-btn--sm {
+        padding: 0.5rem 1.05rem;
+        font-size: 0.85rem;
+    }
+    .ab-btn--lg {
+        padding: 0.85rem 1.8rem;
+        font-size: 1rem;
+    }
+    .ab-btn--primary {
+        background: #69574a;
+        color: #fff;
+        box-shadow: 0 2px 10px rgba(105, 87, 74, 0.28);
+    }
+    .ab-btn--primary:hover {
+        background: #5a4a3e;
+        transform: translateY(-1px);
+    }
+    .ab-btn--outline {
+        background: transparent;
+        color: #69574a;
+        border-color: #69574a;
+    }
+    .ab-btn--outline:hover {
+        background: #69574a;
+        color: #fff;
+    }
+    .ab-btn--light {
+        background: #fff;
+        color: #10131a;
+    }
+    .ab-btn--light:hover {
+        background: #f0c96a;
+        color: #10131a;
+    }
+    .ab-btn--outline-light {
+        background: transparent;
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.55);
+    }
+    .ab-btn--outline-light:hover {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: #fff;
+    }
+    .ab-btn--ghost-light {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.9);
+        border-color: rgba(255, 255, 255, 0.28);
+    }
+    .ab-btn--ghost-light:hover {
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    .ab-btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 1.6rem;
+    }
+    .ab-btn-row--center {
+        justify-content: center;
+        margin-top: 1.9rem;
+    }
+
+    /* ---------- Hero 下方徽章条 ---------- */
+    .ab-badges {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin: -0.5rem 0 0;
+        padding: 0;
+    }
+    .ab-badges li {
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: #69574a;
+        background: #f5f0eb;
+        border: 1px solid #e2d6c8;
+        border-radius: 4px;
+        padding: 5px 12px;
+    }
+
+    /* ---------- 图文两栏 ---------- */
+    .ab-story-grid,
+    .ab-team-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.05fr;
+        gap: clamp(28px, 4vw, 60px);
+        align-items: center;
+    }
+    .ab-media,
+    .ab-team-media {
+        position: relative;
+        margin: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 18px 44px rgba(16, 19, 26, 0.14);
+        aspect-ratio: 4 / 3;
+        background: #f5f0eb;
+    }
+    .ab-media img,
+    .ab-team-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+    }
+    .ab-media-flag,
+    .ab-team-flag {
+        position: absolute;
+        left: 14px;
+        bottom: 14px;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(16, 19, 26, 0.8);
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+    }
+    .ab-copy > p {
+        margin: 0 0 1rem;
+        color: #475569;
+        line-height: 1.85;
+        font-size: 0.97rem;
+    }
+    .ab-checks {
+        list-style: none;
+        margin: 1.4rem 0 0;
+        padding: 0;
+        display: grid;
+        gap: 0.65rem;
+    }
+    .ab-checks li {
+        position: relative;
+        padding-left: 1.85rem;
+        font-size: 0.93rem;
+        line-height: 1.55;
+        color: #334155;
+    }
+    .ab-checks li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.1rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #f5f0eb
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2369574a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E")
+            center / 11px no-repeat;
+        border: 1px solid #e2d6c8;
+    }
+
+    /* ---------- 产品族卡片 ---------- */
+    .ab-product-grid,
+    .ab-video-grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(16px, 2.2vw, 22px);
+    }
+    .ab-product-card a {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        gap: 0.5rem;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 10px;
+        overflow: hidden;
+        text-decoration: none;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+    .ab-product-card a:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(105, 87, 74, 0.12);
+        border-color: #c0a882;
+    }
+    .ab-product-img {
+        display: block;
+        aspect-ratio: 4 / 3;
+        background: #f8f6f3;
+    }
+    .ab-product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .ab-product-card strong {
+        display: block;
+        padding: 0 1.1rem;
+        font-size: 1rem;
+        color: #1e293b;
+    }
+    .ab-product-card a > strong {
+        margin-top: 1.1rem;
+    }
+    .ab-product-desc {
+        display: block;
+        padding: 0 1.1rem;
+        font-size: 0.87rem;
+        line-height: 1.6;
+        color: #64748b;
+    }
+    .ab-product-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: auto;
+        padding: 1rem 1.1rem 1.15rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #c09020;
+    }
+    .ab-product-link svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    /* ---------- 视频卡 ---------- */
+    .ab-video-card a {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 10px;
+        overflow: hidden;
+        text-decoration: none;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+    .ab-video-card a:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(16, 19, 26, 0.12);
+    }
+    .ab-video-thumb {
+        position: relative;
+        display: block;
+        aspect-ratio: 16 / 9;
+        background: #e8e4df;
+    }
+    .ab-video-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .ab-video-title {
+        display: block;
+        padding: 1rem 1.15rem 1.2rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #1e293b;
+    }
+    .ab-play {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+    .ab-play svg {
+        width: 58px;
+        height: 58px;
+        padding: 14px;
+        color: #fff;
+        border-radius: 50%;
+        background: rgba(16, 19, 26, 0.45);
+        filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+        transition:
+            transform 0.25s ease,
+            background-color 0.25s ease;
+    }
+    a:hover .ab-play svg {
+        transform: scale(1.12);
+        background: rgba(105, 87, 74, 0.72);
+    }
+
+    .ab-tour-hook {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .ab-tour-hook-main {
+        position: relative;
+        display: block;
+        border-radius: 12px;
+        overflow: hidden;
+        aspect-ratio: 16 / 9;
+        box-shadow: 0 18px 44px rgba(16, 19, 26, 0.14);
+    }
+    .ab-tour-hook-main img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .ab-tour-label {
+        position: absolute;
+        inset: auto 0 0 0;
+        padding: 2.4rem 1.2rem 1.1rem;
+        background: linear-gradient(
+            180deg,
+            transparent,
+            rgba(16, 19, 26, 0.85) 72%
+        );
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+    /* 索片钩子 chips（无自托管视频时显示） */
+    .ab-hook-label {
+        margin: clamp(18px, 2.6vw, 26px) 0 0;
+        text-align: center;
+        font-size: 0.92rem;
+        color: #64748b;
+    }
+    .ab-hook-chips {
+        list-style: none;
+        margin: 0.9rem 0 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    .ab-hook-chips a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0.5rem 1.05rem;
+        border-radius: 999px;
+        border: 1px solid #e2d6c8;
+        background: #fff;
+        color: #69574a;
+        font-size: 0.86rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition:
+            background-color 0.2s,
+            border-color 0.2s,
+            color 0.2s;
+    }
+    .ab-hook-chips a::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #25d366;
+    }
+    .ab-hook-chips a:hover {
+        background: #69574a;
+        border-color: #69574a;
+        color: #fff;
+    }
+    .ab-hook-chips a:hover::before {
+        background: #f0c96a;
+    }
+
+    /* ---------- 流程步骤（深色带）---------- */
+    .ab-steps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: clamp(14px, 2vw, 20px);
+    }
+    .ab-step {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1.4rem 1.2rem 1.5rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .ab-step-n {
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #f0c96a;
+        letter-spacing: 0.02em;
+    }
+    .ab-step strong {
+        font-size: 0.98rem;
+        color: #fff;
+    }
+    .ab-step-d {
+        font-size: 0.84rem;
+        line-height: 1.65;
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    /* ---------- 证书墙 + QC ---------- */
+    .ab-cert-wall {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: clamp(12px, 1.8vw, 18px);
+    }
+    .ab-cert-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 1.4rem 0.9rem 1.5rem;
+        text-align: center;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 10px;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+    .ab-cert-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(105, 87, 74, 0.1);
+        border-color: #c0a882;
+    }
+    .ab-cert-seal {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #f5f0eb;
+        border: 1px solid #e2d6c8;
+        color: #69574a;
+    }
+    .ab-cert-seal svg {
+        width: 21px;
+        height: 21px;
+    }
+    .ab-cert-card strong {
+        font-size: 0.95rem;
+        color: #1e293b;
+        line-height: 1.35;
+    }
+    .ab-cert-card small {
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: #64748b;
+    }
+    /* 证书卡下方的索取副本条：跨整行，不与标准卡抢同一节奏 */
+    .ab-cert-cta {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem 1.5rem;
+        flex-wrap: wrap;
+        margin-top: clamp(4px, 1vw, 8px);
+        padding: 1.1rem 1.4rem;
+        background: #f8f6f3;
+        border: 1px dashed #c0a882;
+        border-radius: 10px;
+    }
+    .ab-cert-cta-text {
+        display: grid;
+        gap: 0.2rem;
+    }
+    .ab-cert-cta strong {
+        font-size: 0.95rem;
+        color: #1e293b;
+    }
+    .ab-cert-cta small {
+        font-size: 0.84rem;
+        line-height: 1.55;
+        color: #64748b;
+    }
+
+    .ab-qc-grid {
+        list-style: none;
+        margin: clamp(20px, 3vw, 28px) 0 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(12px, 1.8vw, 18px);
+    }
+    .ab-qc-item {
+        display: grid;
+        gap: 0.3rem;
+        padding: 1rem 1.15rem;
+        background: #f8f6f3;
+        border-left: 3px solid #c09020;
+        border-radius: 0 8px 8px 0;
+    }
+    .ab-qc-item strong {
+        font-size: 0.9rem;
+        color: #69574a;
+    }
+    .ab-qc-item span {
+        font-size: 0.84rem;
+        line-height: 1.6;
+        color: #475569;
+    }
+
+    /* ---------- 证据索引表（7b）---------- */
+    .ab-evi-wrap {
+        margin: clamp(20px, 3vw, 30px) 0 0;
+        overflow-x: auto;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 12px;
+    }
+    .ab-evi {
+        width: 100%;
+        min-width: 860px;
+        border-collapse: collapse;
+        text-align: left;
+    }
+    .ab-evi thead th {
+        padding: 14px 16px;
+        background: #f5f0eb;
+        border-bottom: 1px solid #e2d6c8;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #69574a;
+        white-space: nowrap;
+    }
+    .ab-evi tbody th,
+    .ab-evi tbody td {
+        padding: 13px 16px;
+        border-bottom: 1px solid #f1ede8;
+        font-size: 0.88rem;
+        line-height: 1.65;
+        color: #475569;
+        font-weight: 400;
+        vertical-align: top;
+    }
+    .ab-evi tbody th {
+        width: 22%;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .ab-evi tbody tr:last-child th,
+    .ab-evi tbody tr:last-child td {
+        border-bottom: 0;
+    }
+    .ab-evi tbody tr:nth-child(even) {
+        background: #faf8f6;
+    }
+
+    /* 窄屏：表格转卡片，表头用 data-label 前缀重现 */
+    @media (max-width: 860px) {
+        .ab-evi-wrap {
+            overflow-x: visible;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            display: grid;
+            gap: 12px;
+        }
+        .ab-evi,
+        .ab-evi tbody,
+        .ab-evi tr,
+        .ab-evi tbody th,
+        .ab-evi tbody td {
+            display: block;
+            width: 100%;
+        }
+        .ab-evi {
+            min-width: 0;
+        }
+        .ab-evi thead {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip-path: inset(50%);
+        }
+        .ab-evi tr {
+            background: #fff;
+            border: 1px solid #e8e4df;
+            border-radius: 10px;
+            padding: 6px 0;
+        }
+        .ab-evi tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .ab-evi tbody th,
+        .ab-evi tbody td {
+            border-bottom: 0;
+            padding: 7px 16px;
+        }
+        .ab-evi tbody th {
+            font-size: 0.98rem;
+        }
+        .ab-evi tbody td::before {
+            content: attr(data-label);
+            display: block;
+            margin-bottom: 2px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #a08a76;
+        }
+    }
+
+    /* ---------- 6 个理由 ---------- */
+    .ab-why-grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(16px, 2.2vw, 22px);
+    }
+    .ab-why-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+        padding: 1.6rem 1.5rem;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 10px;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+    .ab-why-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(105, 87, 74, 0.1);
+        border-color: #c0a882;
+    }
+    .ab-why-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        margin-bottom: 0.5rem;
+        border-radius: 50%;
+        background: #f5f0eb;
+        border: 1px solid #e2d6c8;
+        color: #69574a;
+    }
+    .ab-why-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+    .ab-why-card strong {
+        font-size: 1.02rem;
+        color: #1e293b;
+    }
+    .ab-why-desc {
+        font-size: 0.88rem;
+        line-height: 1.65;
+        color: #475569;
+    }
+
+    /* ---------- FAQ ---------- */
+    .ab-faq {
+        max-width: 820px;
+        margin: 0 auto;
+        display: grid;
+        gap: 0.75rem;
+    }
+    .ab-faq-item {
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 10px;
+        overflow: hidden;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+    .ab-faq-item[open] {
+        border-color: #c0a882;
+        box-shadow: 0 6px 20px rgba(105, 87, 74, 0.08);
+    }
+    .ab-faq-item summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.05rem 1.25rem;
+        font-weight: 700;
+        font-size: 0.97rem;
+        color: #1e293b;
+    }
+    .ab-faq-item summary::-webkit-details-marker {
+        display: none;
+    }
+    .ab-faq-item summary::after {
+        content: "+";
+        flex-shrink: 0;
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: #69574a;
+        transition: transform 0.2s ease;
+    }
+    .ab-faq-item[open] summary::after {
+        transform: rotate(45deg);
+    }
+    .ab-faq-item p {
+        margin: 0;
+        padding: 0 1.25rem 1.2rem;
+        font-size: 0.92rem;
+        line-height: 1.8;
+        color: #475569;
+    }
+
+    /* ---------- 注释行 / 收尾 CTA ---------- */
+    .ab-note {
+        margin: clamp(18px, 2.6vw, 26px) 0 0;
+        text-align: center;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: #64748b;
+    }
+    .ab-note a {
+        color: #c09020;
+        font-weight: 600;
+    }
+    .ab-note--light {
+        color: rgba(255, 255, 255, 0.62);
+    }
+
+    .ab-cta {
+        border-radius: 14px;
+        overflow: hidden;
+        /* 两角暖金辉光 + 中间均匀过渡，避免左黑右棕在居中标题上出现明暗接缝 */
+        background:
+            radial-gradient(
+                720px 340px at 88% -12%,
+                rgba(240, 201, 106, 0.22),
+                transparent 62%
+            ),
+            radial-gradient(
+                680px 320px at 8% 112%,
+                rgba(192, 144, 32, 0.2),
+                transparent 60%
+            ),
+            linear-gradient(140deg, #14161d 0%, #2b241e 48%, #4a3a2c 100%);
+        box-shadow: 0 22px 50px rgba(16, 19, 26, 0.24);
+    }
+    .ab-cta-inner {
+        padding: clamp(36px, 6vw, 68px) clamp(24px, 5vw, 60px);
+        text-align: center;
+    }
+    .ab-cta-inner h2 {
+        margin: 0 0 0.8rem;
+        color: #fff;
+        font-size: clamp(1.5rem, 3.2vw, 2.2rem);
+        line-height: 1.3;
+    }
+    .ab-cta-inner p {
+        margin: 0 auto;
+        max-width: 42rem;
+        color: rgba(255, 255, 255, 0.84);
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    /* ---------- 响应式 ---------- */
+    @media (max-width: 980px) {
+        .ab-story-grid,
+        .ab-team-grid {
+            grid-template-columns: 1fr;
+        }
+        .ab-media,
+        .ab-team-media {
+            order: -1;
+            max-width: 620px;
+        }
+        .ab-product-grid,
+        .ab-video-grid,
+        .ab-why-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .ab-steps {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .ab-cert-wall {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .ab-qc-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 560px) {
+        .ab-band {
+            padding: clamp(44px, 9vw, 60px) clamp(14px, 4vw, 24px);
+        }
+        .ab-product-grid,
+        .ab-video-grid,
+        .ab-why-grid,
+        .ab-steps {
+            grid-template-columns: 1fr;
+        }
+        .ab-cert-wall {
+            grid-template-columns: 1fr;
+        }
+        .ab-cert-cta {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .ab-btn-row .ab-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        .ab-badges li {
+            font-size: 0.72rem;
+            padding: 4px 9px;
+        }
+    }
+</style>

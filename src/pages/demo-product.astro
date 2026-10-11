@@ -243,12 +243,6 @@ const product = {
                 role="tab"
                 aria-selected="false">Applications</button
             >
-            <button
-                class="pk-tab-btn"
-                data-tab="downloads"
-                role="tab"
-                aria-selected="false">Downloads</button
-            >
         </div>
 
         <!-- Tab: Overview -->
@@ -401,72 +395,6 @@ const product = {
                         </div>
                     ))
                 }
-            </div>
-        </div>
-
-        <!-- Tab: Downloads -->
-        <div class="pk-tab-panel" data-panel="downloads" role="tabpanel">
-            <h3>Technical Downloads</h3>
-            <div class="pk-downloads">
-                <div class="pk-dl-group">
-                    <h4>Specification Sheet</h4>
-                    <a href="#" class="pk-dl-btn">
-                        <svg
-                            viewBox="0 0 24 24"
-                            width="16"
-                            height="16"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            ><path
-                                d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"
-                            ></path></svg
-                        >
-                        Download PDF Spec Sheet
-                    </a>
-                </div>
-                <div class="pk-dl-group">
-                    <h4>CAD Drawings</h4>
-                    {
-                        knowledge.cadFiles.map((f) => (
-                            <a href="#" class="pk-dl-btn">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    width="16"
-                                    height="16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                                </svg>
-                                {f.name}{" "}
-                                <span class="pk-dl-fmt">({f.format})</span>
-                            </a>
-                        ))
-                    }
-                </div>
-                <div class="pk-dl-group">
-                    <h4>BIM Models</h4>
-                    {
-                        knowledge.bimFiles.map((f) => (
-                            <a href="#" class="pk-dl-btn">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    width="16"
-                                    height="16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                                </svg>
-                                {f.name}{" "}
-                                <span class="pk-dl-fmt">({f.format})</span>
-                            </a>
-                        ))
-                    }
-                </div>
             </div>
         </div>
     </section>

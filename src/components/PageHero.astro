@@ -1,0 +1,282 @@
+---
+/**
+ * PageHero.astro — 列表页 / 单页的全幅页头（页眉以下、内容以上）
+ *
+ * 结构：全幅背景图 + 暗色遮罩 + 居中内容栈
+ *   面包屑（居中深色）→ 双色 H1（白 + 品牌金）→ 副标题 → 数据行（可选）
+ *
+ * SEO / 结构约定（接入时必须遵守）：
+ * - 面包屑复用 Breadcrumb 组件 variant="hero"：JSON-LD 仍只出一份，链路与原来完全一致；
+ *   crumb prop 直接透传 Breadcrumb 的 props（items 或 root/middleItems/current/currentUrl）。
+ * - H1 由本组件输出 → 接入页面必须给 BaseLayout 传 hideTitle，保证全页仅一个 H1。
+ * - 全幅 breakout：main.container 限宽 1400px + 1rem padding，本组件用负 margin 冲出容器；
+ *   依赖 global.css 的 body{overflow-x:clip} 吸收 100vw 与滚动条宽度差。
+ * - slim=true：分页 / 长尾页用瘦身版（更矮、不渲染数据行），避免每页背大图+推下首屏。
+ * - eyebrow（可选）：标题上方的小胶囊徽章；default slot（可选）：副标题下方的 CTA 按钮行。
+ *   两者都不传时，输出与以前完全一致（列表页 / 分类页 / CMS 单页不受影响）。
+ */
+import Breadcrumb from "./Breadcrumb.astro";
+
+interface CrumbItem {
+    name: string;
+    url: string;
+}
+
+/** 与 Breadcrumb 的 props 对齐，原样透传 */
+interface CrumbProps {
+    items?: CrumbItem[];
+    root?: CrumbItem;
+    middleItems?: CrumbItem[];
+    current?: string;
+    currentUrl?: string;
+}
+
+interface Stat {
+    value: string;
+    label: string;
+}
+
+interface Props {
+    /** 背景图。不传则用全站统一页头背景 DEFAULT_HERO_BG */
+    image?: string;
+    imageAlt?: string;
+    titleWhite: string;
+    titleGold?: string;
+    /** 标题上方小胶囊徽章（如 “Est. 2015 · Dongguan, China”） */
+    eyebrow?: string;
+    subtitle?: string;
+    stats?: Stat[];
+    slim?: boolean;
+    crumb: CrumbProps;
+}
+
+/** 全站统一页头背景图（用户指定）；单页如需换图传 image 覆盖 */
+const DEFAULT_HERO_BG =
+    "https://file.meiyualuminum.com/home/general/Background.webp";
+
+const {
+    image = DEFAULT_HERO_BG,
+    imageAlt = "",
+    titleWhite,
+    titleGold = "",
+    eyebrow = "",
+    subtitle = "",
+    stats = [],
+    slim = false,
+    crumb,
+} = Astro.props;
+---
+
+<section class:list={["page-hero", { slim }]}>
+    <img
+        class="page-hero-bg"
+        src={image}
+        alt={imageAlt}
+        fetchpriority="high"
+        decoding="async"
+        data-no-watermark
+    />
+    <div class="page-hero-overlay" aria-hidden="true"></div>
+
+    <div class="page-hero-inner">
+        <Breadcrumb variant="hero" {...crumb} />
+
+        {
+            eyebrow && (
+                <span class="page-hero-eyebrow">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M3 21V10l6 4V10l6 4V6l6 3v12zM3 21h18" />
+                    </svg>
+                    {eyebrow}
+                </span>
+            )
+        }
+
+        <h1 class="page-hero-title">
+            {titleWhite}
+            {titleGold && <span class="gold"> {titleGold}</span>}
+        </h1>
+
+        {subtitle && <p class="page-hero-sub">{subtitle}</p>}
+
+        {
+            Astro.slots.has("default") && (
+                <div class="page-hero-cta">
+                    <slot />
+                </div>
+            )
+        }
+
+        {
+            !slim && stats.length > 0 && (
+                <div class="page-hero-stats">
+                    {stats.map((s) => (
+                        <div class="page-hero-stat">
+                            <span class="value">{s.value}</span>
+                            <span class="label">{s.label}</span>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    </div>
+</section>
+
+<style>
+    /* 冲出 main.container 实现全幅；-1rem 让页头紧贴页眉下沿，不留白缝 */
+    .page-hero {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        margin: -1rem calc(50% - 50vw) 2.5rem;
+        background: #10131a;
+        color: #fff;
+    }
+
+    .page-hero-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 38%;
+        z-index: -2;
+    }
+
+    /* 暗色遮罩：上下更暗、中段稍透，保证文字对比度又露出图片细节 */
+    .page-hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            180deg,
+            rgba(8, 10, 14, 0.66) 0%,
+            rgba(8, 10, 14, 0.55) 45%,
+            rgba(8, 10, 14, 0.74) 100%
+        );
+        z-index: -1;
+    }
+
+    /* 内容限宽居中，与页面 1400px 栅格对齐（背景仍全宽）。
+       min-height 保证页头有足够气场（对齐参考站约 600px 的比例），
+       内容垂直居中，文案多少都不塌陷。 */
+    .page-hero-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 72px 1rem 84px;
+        min-height: 560px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 20px;
+    }
+    .page-hero.slim .page-hero-inner {
+        min-height: 280px;
+        padding: 48px 1rem 56px;
+        gap: 12px;
+    }
+
+    .page-hero-title {
+        margin: 0;
+        font-size: clamp(2.4rem, 5vw, 3.9rem);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+    }
+    .page-hero.slim .page-hero-title {
+        font-size: clamp(1.7rem, 3vw, 2.4rem);
+    }
+    /* 品牌金（与 MegaMenu 的 --brand-gold-bright 同值） */
+    .page-hero-title .gold {
+        color: #f0c96a;
+    }
+
+    .page-hero-sub {
+        margin: 0;
+        max-width: 820px;
+        font-size: 1.05rem;
+        line-height: 1.9;
+        color: rgba(255, 255, 255, 0.82);
+    }
+
+    .page-hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.4rem 0.95rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: rgba(255, 255, 255, 0.94);
+    }
+    .page-hero-eyebrow svg {
+        width: 15px;
+        height: 15px;
+        color: #f0c96a;
+    }
+
+    /* CTA 按钮行（由页面通过 default slot 传入） */
+    .page-hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 6px;
+    }
+
+    .page-hero-stats {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px 64px;
+        margin-top: 18px;
+    }
+    .page-hero-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .page-hero-stat .value {
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: #f0c96a;
+    }
+    .page-hero-stat .label {
+        font-size: 0.72rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    @media (max-width: 640px) {
+        .page-hero-inner {
+            min-height: 440px;
+            padding: 56px 1rem 64px;
+        }
+
+        /* 窄屏数据条：不限定宽度的 flex-wrap 会按内容宽挤成 3+1（最后一格标签最长时尤其明显），
+           改为每项固定半宽（扣除列间距）后自然排成整齐的 2×2 或 2+1。 */
+        .page-hero-stats {
+            gap: 18px 14px;
+        }
+        .page-hero-stat {
+            flex: 0 1 calc(50% - 7px);
+            min-width: 0;
+        }
+        .page-hero-stat .value {
+            font-size: 1.8rem;
+        }
+    }
+</style>

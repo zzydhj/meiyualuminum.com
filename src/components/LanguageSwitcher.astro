@@ -258,8 +258,8 @@ function switchLangPath(targetLang: Lang): string {
         flex: 1;
     }
 
-    /* 移动端：隐藏语言标签文字，只留国旗图标 */
-    @media screen and (max-width: 1399px) {
+    /* 移动端：隐藏语言标签文字，只留国旗图标（1280px 与页眉桌面断点一致） */
+    @media screen and (max-width: 1279px) {
         .lang-toggle .lang-label {
             display: none;
         }

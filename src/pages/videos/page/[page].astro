@@ -6,9 +6,10 @@
  * - 构建流程：count 查询算总页数 → 生成页码路由 → 每页用 .range() 只取自己那 PAGE_SIZE 条
  * - 视频总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
  */
-import Breadcrumb from "../../../components/Breadcrumb.astro";
+import PageHero from "../../../components/PageHero.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import VideoGrid from "../../../components/VideoGrid.astro";
+import VideoFilterBar from "../../../components/VideoFilterBar.astro";
 import PaginationNav from "../../../components/PaginationNav.astro";
 import { supabase } from "../../../lib/supabase";
 import { PAGE_SIZE } from "../../../lib/pagination";
@@ -37,14 +38,19 @@ const to = from + PAGE_SIZE - 1;
 
 const result = await supabase
   .from("videos")
-  .select("slug, title, video_url, thumbnail_url, description, duration, pub_date, author, primary_tag")
+  .select(
+    "slug, title, video_url, thumbnail_url, description, duration, pub_date, author, primary_tag",
+  )
   .eq("status", "published")
   .order("pub_date", { ascending: false })
   .order("slug", { ascending: true })
   .range(from, to);
 
 if (result.error) {
-  console.error(`Failed to fetch videos for page ${currentPage}:`, result.error);
+  console.error(
+    `Failed to fetch videos for page ${currentPage}:`,
+    result.error,
+  );
 }
 
 const videos = result.data ?? [];
@@ -53,17 +59,25 @@ const videos = result.data ?? [];
 <BaseLayout
   pageTitle={`Videos - Page ${currentPage}`}
   description="Watch our factory tours, project cases, installation guides and more."
+  hideTitle
 >
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Videos", url: "/videos/" },
-      {
-        name: `Page ${currentPage}`,
-        url: `/videos/page/${currentPage}/`,
-      },
-    ]}
+  <PageHero
+    slim
+    imageAlt={`Videos - Page ${currentPage}`}
+    titleWhite="Videos"
+    titleGold={`Page ${currentPage}`}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Videos", url: "/videos/" },
+        {
+          name: `Page ${currentPage}`,
+          url: `/videos/page/${currentPage}/`,
+        },
+      ],
+    }}
   />
+  <VideoFilterBar />
   <VideoGrid videos={videos} />
   <PaginationNav
     currentPage={currentPage}

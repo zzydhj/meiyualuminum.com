@@ -1,6 +1,13 @@
 ---
+
 ---
-<button aria-expanded="false" aria-controls="mobile-menu" class="menu" aria-label="Open menu">
+
+<button
+  aria-expanded="false"
+  aria-controls="mobile-menu"
+  class="menu"
+  aria-label="Open menu"
+>
   <span class="menu-line"></span>
   <span class="menu-line"></span>
   <span class="menu-line"></span>
@@ -31,7 +38,8 @@
   }
 
   /* Desktop: hamburger button is hidden, nav shows inline */
-  @media screen and (min-width: 1400px) {
+  /* 断点与 Header / Navigation / MegaMenu / MobileMenu / 首页 hero 同步，改一处必改全部 */
+  @media screen and (min-width: 1280px) {
     .menu {
       display: none;
     }

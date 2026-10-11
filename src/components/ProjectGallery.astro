@@ -1,75 +1,57 @@
 ---
-import { supabase } from "../lib/supabase";
+/**
+ * ProjectGallery.astro — 项目画廊（统计条 + 分类药丸 + 卡片宫格 + 分页）
+ *
+ * - 数据源：posts 表 primary_tag='projects'（取数/分组逻辑在 lib/projectGallery.ts）
+ * - 筛选机制（A 方案）：药丸是**链接**而非 JS 按钮 —— 跳转 /project-gallery/{category}/
+ *   分类页做服务端过滤，分页正确（旧版 JS 页内隐藏只能过滤当前页内容）
+ * - 分页：每页 PAGE_SIZE 条，接 PaginationNav；主页第 1 页由 [page].astro SSR 挂载，
+ *   第 2~N 页与分类页由 project-gallery/ 下的静态路由挂载本组件
+ * - 复用于：/project-gallery/、/project-gallery/page/N/、
+ *   /project-gallery/{category}/、/project-gallery/{category}/page/N/，
+ *   当前所在分类的药丸高亮（category）
+ */
+import PaginationNav from "./PaginationNav.astro";
+import { PAGE_SIZE } from "../lib/pagination";
+import {
+    CATEGORY_MAP,
+    computeProjectStats,
+    fetchAllProjects,
+    groupProjectsByCategory,
+    projectCategory,
+    projectRegion,
+} from "../lib/projectGallery";
 
 interface Props {
-    pageTitle?: string;
+    /** 当前选中的分类；主页不传 = All Projects 高亮 */
+    category?: string | null;
+    /** 当前页码（分页页传 N，默认第 1 页） */
+    currentPage?: number;
 }
 
-const { pageTitle = "Project Gallery" } = Astro.props;
+const { category = null, currentPage = 1 } = Astro.props;
 
-// 从 posts 表查询项目案例（primary_tag = 'projects'）
-const { data: projectPosts } = await supabase
-    .from("posts")
-    .select("slug, title, description, image_url, image_alt, tags, pub_date")
-    .eq("status", "published")
-    .eq("primary_tag", "projects")
-    .order("pub_date", { ascending: false });
+// 一次取全部项目案例：统计条、药丸、本页切片同源（lib 内分批取数，无 1000 行截断）
+const allProjects = await fetchAllProjects();
+const stats = computeProjectStats(allProjects);
 
-const projects = projectPosts ?? [];
+// 药丸列表：CATEGORY_MAP 策展顺序，只保留有案例的分类
+const byCategory = groupProjectsByCategory(allProjects);
+const categories = Object.keys(CATEGORY_MAP).filter((c) => byCategory.has(c));
 
-// 从所有项目的 tags 中提取唯一分类
-const allTags = new Set<string>();
-projects.forEach((p) => {
-    (p.tags ?? []).forEach((t: string) => {
-        if (t !== "projects") allTags.add(t);
-    });
-});
+// 服务端过滤 + 当前页切片（顺序与取数顺序一致：时间倒序 + slug 次级排序）
+const filtered = category ? (byCategory.get(category) ?? []) : allProjects;
+const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+const page = Math.min(Math.max(1, currentPage), totalPages);
+const projects = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-const categoryMap: Record<string, { label: string; icon: string }> = {
-    airport: { label: "Airport", icon: "✈" },
-    hotel: { label: "Hotel & Resort", icon: "🏨" },
-    mall: { label: "Shopping Mall", icon: "🛍" },
-    office: { label: "Office Building", icon: "🏢" },
-    hospital: { label: "Hospital", icon: "🏥" },
-    school: { label: "School", icon: "🎓" },
-    station: { label: "Station", icon: "🚇" },
-    government: { label: "Government", icon: "🏛" },
-};
-
-// 构建分类列表（只保留有项目的分类）
-const categories = [
-    { id: "all", label: "All Projects", icon: "🏗" },
-    ...[...allTags]
-        .filter((t) => categoryMap[t])
-        .map((t) => ({ id: t, ...categoryMap[t] })),
-];
-
-// 统计
-const regionSet = new Set<string>();
-projects.forEach((p) => {
-    (p.tags ?? []).forEach((t: string) => {
-        if (
-            [
-                "china",
-                "asia",
-                "europe",
-                "north-america",
-                "south-america",
-                "africa",
-                "middle-east",
-                "oceania",
-            ].includes(t)
-        ) {
-            regionSet.add(t);
-        }
-    });
-});
-
-const stats = {
-    total: projects.length,
-    regions: regionSet.size,
-    sectors: categories.length - 1,
-};
+const categoryPath = category ? encodeURIComponent(category) : "";
+const basePath = category
+    ? `/project-gallery/${categoryPath}/page`
+    : "/project-gallery/page";
+const firstPageUrl = category
+    ? `/project-gallery/${categoryPath}/`
+    : "/project-gallery/";
 ---
 
 <!-- Stats Strip -->
@@ -97,41 +79,44 @@ const stats = {
 <!-- Gallery -->
 <section class="pg-gallery">
     <div class="pg-container">
-        <!-- Category Filters -->
-        <div class="pg-filters">
+        <!-- Category Filters：链接式筛选（服务端过滤 + 分页正确），当前分类高亮 -->
+        <nav class="pg-filters" aria-label="Project categories">
+            <a
+                href="/project-gallery/"
+                class:list={["pg-filter-btn", { active: !category }]}
+            >
+                <span class="pg-filter-icon">🏗</span>
+                <span class="pg-filter-label">All Projects</span>
+            </a>
             {
-                categories.map((cat) => (
-                    <button class="pg-filter-btn" data-filter={cat.id}>
-                        <span class="pg-filter-icon">{cat.icon}</span>
-                        <span class="pg-filter-label">{cat.label}</span>
-                    </button>
+                categories.map((c) => (
+                    <a
+                        href={`/project-gallery/${encodeURIComponent(c)}/`}
+                        class:list={[
+                            "pg-filter-btn",
+                            { active: category === c },
+                        ]}
+                    >
+                        <span class="pg-filter-icon">
+                            {CATEGORY_MAP[c].icon}
+                        </span>
+                        <span class="pg-filter-label">
+                            {CATEGORY_MAP[c].label}
+                        </span>
+                    </a>
                 ))
             }
-        </div>
+        </nav>
 
         <!-- Project Grid -->
         {
             projects.length > 0 ? (
-                <div class="pg-grid" id="pgGrid">
+                <div class="pg-grid">
                     {projects.map((post) => {
-                        const postTags = (post.tags ?? []) as string[];
-                        const categoryTag =
-                            postTags.find((t) => categoryMap[t]) ?? "";
-                        const regionTag =
-                            postTags.find((t) =>
-                                [
-                                    "china",
-                                    "asia",
-                                    "europe",
-                                    "north-america",
-                                    "south-america",
-                                    "africa",
-                                    "middle-east",
-                                    "oceania",
-                                ].includes(t),
-                            ) ?? "";
                         const catLabel =
-                            categoryMap[categoryTag]?.label ?? "Project";
+                            CATEGORY_MAP[projectCategory(post)]?.label ??
+                            "Project";
+                        const regionTag = projectRegion(post);
                         const regionLabel = regionTag
                             ? regionTag
                                   .replace(/-/g, " ")
@@ -139,11 +124,7 @@ const stats = {
                             : "";
 
                         return (
-                            <a
-                                href={`/blog/${post.slug}/`}
-                                class="pg-card"
-                                data-tags={postTags.join(",")}
-                            >
+                            <a href={`/blog/${post.slug}/`} class="pg-card">
                                 <div class="pg-card-img">
                                     <img
                                         src={post.image_url || ""}
@@ -180,6 +161,13 @@ const stats = {
                 </div>
             )
         }
+
+        <PaginationNav
+            currentPage={page}
+            totalPages={totalPages}
+            basePath={basePath}
+            firstPageUrl={firstPageUrl}
+        />
     </div>
 </section>
 
@@ -228,7 +216,7 @@ const stats = {
         padding: 0 24px;
     }
 
-    /* ===== Filters ===== */
+    /* ===== Filters（元素是 <a>：链接式筛选） ===== */
     .pg-filters {
         display: flex;
         flex-wrap: wrap;
@@ -249,7 +237,7 @@ const stats = {
         color: #69574a;
         font-size: 0.88rem;
         font-weight: 600;
-        cursor: pointer;
+        text-decoration: none;
         transition: all 0.25s ease;
         white-space: nowrap;
     }
@@ -293,9 +281,6 @@ const stats = {
         transform: translateY(-8px);
         box-shadow: 0 20px 48px rgba(105, 87, 74, 0.16);
         border-color: rgba(192, 144, 32, 0.3);
-    }
-    .pg-card.hidden {
-        display: none;
     }
 
     /* ===== Card Image ===== */
@@ -404,6 +389,7 @@ const stats = {
             padding: 8px 14px;
             font-size: 0.8rem;
         }
+        /* 窄屏只留图标 */
         .pg-filter-label {
             display: none;
         }
@@ -415,25 +401,3 @@ const stats = {
         }
     }
 </style>
-
-<script>
-    const btns = document.querySelectorAll<HTMLButtonElement>(".pg-filter-btn");
-    const cards = document.querySelectorAll<HTMLElement>(".pg-card");
-
-    if (btns.length > 0) btns[0].classList.add("active");
-
-    btns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            btns.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            const filter = btn.dataset.filter!;
-
-            cards.forEach((card) => {
-                const tags = (card.dataset.tags ?? "").split(",");
-                const show = filter === "all" || tags.includes(filter);
-                card.classList.toggle("hidden", !show);
-            });
-        });
-    });
-</script>

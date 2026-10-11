@@ -50,13 +50,9 @@ import MegaMenu from "./MegaMenu.astro";
     </a>
     <div class="dropdown">
       <a href="/video-tags/Project%20Cases/">Project Cases</a>
-      <a href="/video-tags/Client%20Testimonial/">Client Testimonial</a>
       <a href="/video-tags/Factory%20Tour/">Factory Tour</a>
       <a href="/video-tags/How%20It's%20Made/">How It's Made</a>
       <a href="/video-tags/Installation%20Guide/">Installation Guide</a>
-      <a href="/video-tags/Sample%20%26%20Custom%20Service/"
-        >Sample &amp; Custom Service</a
-      >
       <a href="/video-tags/Product%20Showcase/">Product Showcase</a>
       <a href="/video-tags/Quality%20%26%20Certifications/"
         >Quality &amp; Certifications</a
@@ -84,62 +80,47 @@ import MegaMenu from "./MegaMenu.astro";
       </svg>
     </a>
     <div class="dropdown">
+      <!-- 三级飞出：子工具挂在 Free Tools 右侧弹出，不平铺进 Resource 下拉 -->
+      <div class="has-flyout">
+        <a href="/tools/" class="flyout-trigger">
+          Free Tools &amp; Calculators
+          <svg
+            class="flyout-arrow"
+            viewBox="0 0 24 24"
+            width="12"
+            height="12"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg
+          >
+        </a>
+        <div class="flyout">
+          <a href="/tools/ceiling-take-off/">Ceiling Take-off</a>
+          <a href="/tools/aluminum-weight/">Aluminium Weight</a>
+          <a href="/tools/perforation-open-area/">Perforation Open Area</a>
+        </div>
+      </div>
       <a href="/blog/">Blog</a>
       <a href="/categories/">Categories</a>
       <a href="/tags/">Tags</a>
       <a href="/faq/">FAQ</a>
       <a href="/surface-treatment-comparison/">Surface Treatment Guide</a>
       <a href="/installation-guides/">Installation Guides</a>
+      <a href="/procurement-guide/">Procurement Guide</a>
       <a href="/technical-documentation/">Technical Documentation</a>
     </div>
   </div>
 
-  <div class="has-dropdown">
-    <a href="#">
-      Projects
-      <svg
-        class="nav-chevron"
-        width="11"
-        height="7"
-        viewBox="0 0 11 7"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M1.5 1.5L5.5 5.5L9.5 1.5"
-          stroke="currentColor"
-          stroke-width="1.6"
-          stroke-linecap="round"
-          stroke-linejoin="round"></path>
-      </svg>
-    </a>
-    <div class="dropdown">
-      <a href="/project-shanghai-pudong-financial-tower/"
-        >Shanghai Financial Tower</a
-      >
-      <a href="/project-beijing-daxing-airport-ceiling/"
-        >Beijing Daxing Airport</a
-      >
-      <a href="/project-hangzhou-olympic-stadium-facade/"
-        >Hangzhou Olympic Stadium</a
-      >
-      <a href="/project-shanghai-bund-hotel-interior/">Shanghai Bund Hotel</a>
-      <a href="/project-guangzhou-medical-center-cladding/"
-        >Guangzhou Medical Center</a
-      >
-      <a href="/project-shenzhen-bay-mall-atrium/">Shenzhen Bay Mall</a>
-      <a href="/project-shenzhen-tech-hq-office/">Shenzhen Tech HQ</a>
-      <a href="/project-chengdu-riverside-residences/"
-        >Chengdu Riverside Residences</a
-      >
-    </div>
-  </div>
+  <a href="/project-gallery/">Project Gallery</a>
 
   <a href="/contact/">Contact Us</a>
 </div>
 
 <style>
-  /* Mobile (< 1400px): desktop nav completely hidden.
+  /* Mobile (< 1280px): desktop nav completely hidden.
      Mobile users get the full-screen accordion menu (MobileMenu.astro). */
   .nav-links {
     display: none;
@@ -150,11 +131,11 @@ import MegaMenu from "./MegaMenu.astro";
     display: none;
   }
 
-  /* Desktop (>= 1400px): nav always visible, laid out horizontally.
+  /* Desktop (>= 1280px): nav always visible, laid out horizontally.
      The nav stretches to the full header height so the Mega Menu trigger
      (.has-mega) can span the whole header, leaving no hover gap between the
      "Products" link and the dropdown panel. */
-  @media screen and (min-width: 1400px) {
+  @media screen and (min-width: 1280px) {
     .nav-links {
       display: flex;
       align-items: center;
@@ -216,6 +197,11 @@ import MegaMenu from "./MegaMenu.astro";
     .has-dropdown:focus-within .nav-chevron {
       transform: rotate(180deg);
       transition: transform 0.25s ease 0s; /* flip up instantly on open */
+    }
+
+    /* Mega Menu 关闭为立即隐藏：箭头同步立即复位，与浮窗一致（不影响 has-dropdown 的关闭缓冲） */
+    .has-mega .nav-chevron {
+      transition: transform 0s;
     }
 
     /* Mega Menu trigger wrapper: full header height so hover is continuous
@@ -289,6 +275,51 @@ import MegaMenu from "./MegaMenu.astro";
     /* The top-level gold underline must not appear inside the dark dropdown. */
     .nav-links .dropdown a::after {
       content: none;
+    }
+
+    /* ===== Nested flyout inside a dropdown (Resource → Free Tools) =====
+       三级菜单：悬停或键盘聚焦时子面板从右侧弹出。
+       top 偏移 = 父下拉 padding 8px + border-top 3px，让两者顶边对齐；
+       与父下拉左边缘零间隙，避免鼠标横移时闪断。 */
+    .has-flyout {
+      position: relative;
+    }
+    .nav-links .dropdown a.flyout-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .flyout-arrow {
+      flex-shrink: 0;
+      opacity: 0.75;
+    }
+    .nav-links .flyout {
+      position: absolute;
+      top: -11px;
+      left: 100%;
+      min-width: 232px;
+      background: #3a2e26;
+      border-top: 3px solid #f0c96a;
+      box-shadow: 0 16px 48px rgba(44, 32, 24, 0.18);
+      padding: 8px 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      /* CLOSE: 同样给 0.18s 缓冲，与父下拉一致 */
+      transition:
+        opacity 0.2s ease 0.18s,
+        visibility 0.2s ease 0.18s;
+    }
+    .has-flyout:hover > .flyout,
+    .has-flyout:focus-within > .flyout {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      /* OPEN: 立即 */
+      transition:
+        opacity 0.2s ease 0s,
+        visibility 0.2s ease 0s;
     }
   }
 </style>

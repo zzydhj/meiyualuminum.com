@@ -344,6 +344,8 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
   Dongguan City, Guangdong Province, China；15,000 m² 厂房、15 条产线；80 名员工（含专职工程与质检团队）；
   官网 meiyualuminum.com。
 【联系（可公开）】Email: info@meiyualuminum.com；WhatsApp/电话: +86 135 0983 8008；工厂地址同【基础】。
+【响应时效（用户 2026-10-09 确认）】询盘（Email / WhatsApp / 站内表单）首次回复：1 小时内，
+  口径与站内询盘弹窗一致（We reply within 1 hour）；全站不得出现与此矛盾的“24 小时回复”类文案。
 【认证】ISO 9001；CE；防火：ASTM E84 Class A（Flame Spread Index 0–25，Steiner Tunnel 法）、
   EN 13501-1 Class B-s1。自有 QC 测试：涂层附着力、盐雾、抗 sag（标准环境模拟）；
   报告编号报价阶段应索提供，不公开。

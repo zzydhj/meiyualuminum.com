@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Breadcrumb from "../components/Breadcrumb.astro";
+import PageHero from "../components/PageHero.astro";
 import InquiryButton from "../components/InquiryButton.astro";
 
 const pageTitle = "Surface Treatment Comparison Guide";
@@ -10,27 +10,24 @@ const pageDescription =
     "Compare PVDF, powder coating, anodized, roller coating, and wood grain transfer finishes for aluminum building products. Find the right surface treatment for your project.";
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription}>
-    <Breadcrumb
-        items={[
-            { name: "Home", url: "/" },
-            { name: "Resources", url: "#" },
-            {
-                name: "Surface Treatment Guide",
-                url: "/surface-treatment-comparison/",
-            },
-        ]}
+<BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
+    <PageHero
+        imageAlt={pageTitle}
+        titleWhite="Surface Treatment"
+        titleGold="Comparison"
+        subtitle="Choosing the right surface treatment is one of the most important decisions for any aluminum building product. The coating determines color longevity, weather resistance, maintenance requirements, and overall project cost. This guide compares the five main finishing systems available for MEIYU aluminum products."
+        stats={[{ value: "5", label: "Finish Systems Compared" }]}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Resources", url: "#" },
+                {
+                    name: "Surface Treatment Guide",
+                    url: "/surface-treatment-comparison/",
+                },
+            ],
+        }}
     />
-
-    <div class="stg-intro">
-        <p>
-            Choosing the right surface treatment is one of the most important
-            decisions for any aluminum building product. The coating determines
-            color longevity, weather resistance, maintenance requirements, and
-            overall project cost. This guide compares the five main finishing
-            systems available for MEIYU aluminum products.
-        </p>
-    </div>
 
     <!-- ══════ COMPARISON TABLE ══════ -->
     <section class="stg-compare">

@@ -1,5 +1,5 @@
 ---
-import Breadcrumb from "../../components/Breadcrumb.astro";
+import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 
@@ -11,22 +11,24 @@ const { data: allPosts } = await supabase
 const posts = allPosts ?? [];
 
 // tags is an array type, flatten and deduplicate
-const tags = [...new Set(
-  posts
-    .map((post) => post.tags ?? [])
-    .flat()
-)];
+const tags = [...new Set(posts.map((post) => post.tags ?? []).flat())];
 
 const pageTitle = "Tags";
 const pageDescription = "Browse all blog post tags and topics.";
 ---
 
-<BaseLayout pageTitle={pageTitle} description={pageDescription}>
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Tags", url: "/tags/" },
-    ]}
+<BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
+  <PageHero
+    slim
+    imageAlt={pageTitle}
+    titleWhite="All"
+    titleGold="Tags"
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Tags", url: "/tags/" },
+      ],
+    }}
   />
   <div class="tags">
     {

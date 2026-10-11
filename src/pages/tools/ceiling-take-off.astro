@@ -1,0 +1,351 @@
+---
+export const prerender = true;
+
+/**
+ * tools/ceiling-take-off.astro — 吊顶算量工具
+ *
+ * 只算纯几何：整板数、平衡排布后的收边宽度、面积、收边线米、含损耗的订货面积。
+ * 刻意不算龙骨/吊件数量 —— 那依赖我方悬挂体系与项目跨度，通用值会看起来权威但是错的。
+ * 结果区必须打印公式：让工程师能当场验算，这是"算错比没有更糟"的唯一实际防线。
+ */
+import ToolLayout from "../../layouts/ToolLayout.astro";
+
+const toolName = "Ceiling Panel Take-off";
+const pageTitle = "Aluminium Ceiling Take-off Calculator | Panels & Cut Widths";
+const description =
+    "Free ceiling take-off calculator: enter room size and panel module to get panel count, balanced perimeter cut widths, total square metres, perimeter trim length and an order quantity with wastage.";
+---
+
+<ToolLayout
+    titleWhite="Ceiling Panel"
+    titleGold="Take-off"
+    subtitle="Room dimensions plus a module size gives you panel count, the width of the cut strips at each end, total area and an order quantity. The formula is printed with the result so you can check it."
+    toolName={toolName}
+    pageTitle={pageTitle}
+    description={description}
+    assumptions={[
+        "The ceiling is a plain rectangle with no bulkheads, columns, soffits or service zones taken out.",
+        "Layout is balanced: leftover slack is split equally between the two opposite sides so both edge strips match. This is normal good practice — an unbalanced layout pushes every cut onto one wall.",
+        "Panels are counted as whole modules. Edge strips are cut from those same panels, so the panel count already carries the cut surplus; the wastage figure on top covers site breakage.",
+        "Perimeter trim is given as a linear metre run, not a piece count — piece length depends on which trim profile is used.",
+        "Carrier, main runner, hanger and clip quantities are NOT calculated: they depend on the suspension system and the span your project is designed to. Those come back itemised on your quotation.",
+    ]}
+    limits="It does not calculate suspension components, deflection between supports, lighting cut-outs, or the effect of a non-rectangular plan. It also cannot see obstructions — deduct those from the area yourself before ordering."
+    basis="Ceil() rounding to whole modules, with split-slack balanced setting-out. Panel geometry comes from the module size you enter — no assumed site data. Reviewed 2026-10-10."
+>
+    <div class="th-head">
+        <h2 class="th-h">1. Enter the room</h2>
+        <p class="th-p">
+            Metres for the room, millimetres for the module — the units the
+            drawing is already in.
+        </p>
+    </div>
+
+    <form class="tl-form" id="takeoff" novalidate>
+        <div class="tl-row">
+            <div class="tl-field">
+                <label for="len">Room length (m)</label>
+                <input
+                    class="tl-input"
+                    id="len"
+                    type="number"
+                    min="0.5"
+                    max="200"
+                    step="0.01"
+                    value="12.5"
+                    inputmode="decimal"
+                    required
+                />
+            </div>
+            <div class="tl-field">
+                <label for="wid">Room width (m)</label>
+                <input
+                    class="tl-input"
+                    id="wid"
+                    type="number"
+                    min="0.5"
+                    max="200"
+                    step="0.01"
+                    value="6.2"
+                    inputmode="decimal"
+                    required
+                />
+            </div>
+        </div>
+
+        <div class="tl-field">
+            <label for="mod">Panel module</label>
+            <select class="tl-select" id="mod">
+                <option value="600x600">600 × 600 mm</option>
+                <option value="600x1200" selected>600 × 1200 mm</option>
+                <option value="300x1200">300 × 1200 mm</option>
+                <option value="300x300">300 × 300 mm</option>
+                <option value="400x1200">400 × 1200 mm</option>
+                <option value="1200x2400">1200 × 2400 mm (large format)</option>
+                <option value="custom">Custom — enter below</option>
+            </select>
+        </div>
+
+        <div class="tl-row" id="customRow" hidden>
+            <div class="tl-field">
+                <label for="ml">Module length (mm)</label>
+                <input
+                    class="tl-input"
+                    id="ml"
+                    type="number"
+                    min="50"
+                    max="6000"
+                    step="1"
+                    value="600"
+                    inputmode="numeric"
+                />
+            </div>
+            <div class="tl-field">
+                <label for="mw">Module width (mm)</label>
+                <input
+                    class="tl-input"
+                    id="mw"
+                    type="number"
+                    min="50"
+                    max="6000"
+                    step="1"
+                    value="1200"
+                    inputmode="numeric"
+                />
+            </div>
+        </div>
+
+        <div class="tl-row">
+            <div class="tl-field">
+                <label for="dir">Layout direction</label>
+                <select class="tl-select" id="dir">
+                    <option value="auto" selected
+                        >Auto — fewest whole panels</option
+                    >
+                    <option value="normal"
+                        >Module length along room length</option
+                    >
+                    <option value="rotated"
+                        >Module length across room length</option
+                    >
+                </select>
+            </div>
+            <div class="tl-field">
+                <label for="waste">Wastage allowance (%)</label>
+                <input
+                    class="tl-input"
+                    id="waste"
+                    type="number"
+                    min="0"
+                    max="25"
+                    step="0.5"
+                    value="5"
+                    inputmode="decimal"
+                />
+                <span class="tl-hint"
+                    >5 % is a common site allowance; complex ceilings run
+                    higher.</span
+                >
+            </div>
+        </div>
+    </form>
+
+    <section class="tl-out" aria-live="polite">
+        <h2 class="tl-out-h">Result</h2>
+        <ul class="tl-figs" id="figs"></ul>
+        <pre class="tl-formula" id="formula"></pre>
+        <div id="flags"></div>
+        <p class="tl-disclaimer">
+            Indicative take-off — verify against your drawings before ordering.
+            Obstructions, bulkheads and service zones are not deducted.
+        </p>
+    </section>
+</ToolLayout>
+
+<script>
+    interface Axis {
+        n: number; /* 该轴向的整板数 */
+        coverage: number; /* n × module，单位 mm */
+        slack: number; /* coverage − 房间长度，单位 mm */
+        edge: number; /* 平衡后每边的收边条宽度，单位 mm */
+    }
+    interface Opt {
+        len: Axis;
+        wid: Axis;
+        rot: boolean;
+    }
+
+    const MODS: Record<string, [number, number]> = {
+        "600x600": [600, 600],
+        "600x1200": [600, 1200],
+        "300x1200": [300, 1200],
+        "300x300": [300, 300],
+        "400x1200": [400, 1200],
+        "1200x2400": [1200, 2400],
+    };
+    /** 小于此宽度的收边条难拿、且在灯下明显，给出提醒 */
+    const SLIVER = 100;
+
+    const el = (id: string): HTMLElement =>
+        document.getElementById(id) as HTMLElement;
+    const val = (id: string): string =>
+        (document.getElementById(id) as HTMLInputElement | HTMLSelectElement)
+            .value;
+    const num = (id: string, fallback: number): number => {
+        const v = parseFloat(val(id));
+        return Number.isFinite(v) && v > 0 ? v : fallback;
+    };
+    const fmt = (n: number, d = 0): string =>
+        n.toLocaleString("en-US", {
+            minimumFractionDigits: d,
+            maximumFractionDigits: d,
+        });
+
+    /** 单轴排布：向上取整到整板，余量对半分给两侧 */
+    function axis(roomM: number, modMM: number): Axis {
+        const roomMM = roomM * 1000;
+        const n = Math.ceil(roomMM / modMM);
+        const coverage = n * modMM;
+        const slack = coverage - roomMM;
+        return { n, coverage, slack, edge: modMM - slack / 2 };
+    }
+
+    const panelsOf = (o: Opt): number => o.len.n * o.wid.n;
+    const minEdgeOf = (o: Opt): number => Math.min(o.len.edge, o.wid.edge);
+
+    /** 选预设时把两个自定义框同步成真正参与计算的值。
+     * 否则框里留着上一次的数字、又未禁用，会让人以为改它有用。 */
+    function syncPreset(mod: string): [number, number] {
+        const [a, b] = MODS[mod];
+        (el("ml") as HTMLInputElement).value = String(a);
+        (el("mw") as HTMLInputElement).value = String(b);
+        return [a, b];
+    }
+
+    function render() {
+        const L = num("len", 0);
+        const W = num("wid", 0);
+        const waste = Math.min(25, Math.max(0, num("waste", 0)));
+        const mod = val("mod");
+        el("customRow").hidden = mod !== "custom";
+        const [M1, M2] =
+            mod === "custom"
+                ? [num("ml", 600), num("mw", 1200)]
+                : syncPreset(mod);
+
+        if (!L || !W) {
+            el("figs").innerHTML = "";
+            el("formula").textContent = "";
+            el("flags").innerHTML =
+                '<p class="tl-flag tl-flag--err">Enter a room length and width above.</p>';
+            return;
+        }
+
+        /* 两种排布：模块第一边沿房间长边 vs 两轴交换（旋转 90°） */
+        const optA: Opt = { len: axis(L, M1), wid: axis(W, M2), rot: false };
+        const optB: Opt = { len: axis(L, M2), wid: axis(W, M1), rot: true };
+
+        const dir = val("dir");
+        let o: Opt;
+        if (dir === "normal") o = optA;
+        else if (dir === "rotated") o = optB;
+        /* auto：整板数少者优先；打平时选收边更宽的（避免窄条） */
+        else if (panelsOf(optA) !== panelsOf(optB))
+            o = panelsOf(optA) < panelsOf(optB) ? optA : optB;
+        else o = minEdgeOf(optA) >= minEdgeOf(optB) ? optA : optB;
+
+        const ML = o.rot ? M2 : M1;
+        const MW = o.rot ? M1 : M2;
+        const panels = panelsOf(o);
+        const area = L * W;
+        const orderArea = panels * (ML / 1000) * (MW / 1000);
+        const withWaste = orderArea * (1 + waste / 100);
+        const perimeter = 2 * (L + W);
+
+        const figs: [string, string][] = [
+            [fmt(panels), "Whole panels required"],
+            [
+                fmt(withWaste, 1) + " m²",
+                `Order area incl. ${fmt(waste)}% wastage`,
+            ],
+            [fmt(area, 1) + " m²", "Net ceiling area"],
+            [fmt(perimeter, 1) + " m", "Perimeter trim run"],
+            [
+                `${fmt(o.len.edge)} / ${fmt(o.wid.edge)} mm`,
+                "Balanced edge strip (length / width axis)",
+            ],
+            [`${fmt(ML)} × ${fmt(MW)} mm`, "Module orientation used"],
+        ];
+        el("figs").innerHTML = figs
+            .map(
+                ([v, l]) =>
+                    `<li class="tl-fig"><b>${v}</b><span>${l}</span></li>`,
+            )
+            .join("");
+
+        el("formula").textContent =
+            `panels along length = ceil(L×1000 / ML) = ceil(${fmt(L * 1000)} / ${fmt(ML)}) = ${o.len.n}
+panels along width  = ceil(W×1000 / MW) = ceil(${fmt(W * 1000)} / ${fmt(MW)}) = ${o.wid.n}
+total panels        = ${o.len.n} × ${o.wid.n} = ${fmt(panels)}
+slack (length axis) = ${o.len.n} × ${fmt(ML)} − ${fmt(L * 1000)} = ${fmt(o.len.slack)} mm
+balanced edge strip = ML − slack/2 = ${fmt(ML)} − ${fmt(o.len.slack / 2)} = ${fmt(o.len.edge)} mm
+order area          = ${fmt(panels)} × (${fmt(ML)}/1000 × ${fmt(MW)}/1000) = ${fmt(orderArea, 1)} m²
+incl. wastage       = ${fmt(orderArea, 1)} × (1 + ${fmt(waste)}%) = ${fmt(withWaste, 1)} m²
+perimeter trim      = 2 × (${fmt(L, 2)} + ${fmt(W, 2)}) = ${fmt(perimeter, 1)} m`;
+
+        const flags: string[] = [];
+        if (minEdgeOf(o) < SLIVER) {
+            const alt = o === optA ? optB : optA;
+            flags.push(
+                `<p class="tl-flag">Narrow edge strip — the smaller cut comes out at ${fmt(minEdgeOf(o))} mm. ` +
+                    `Strips under ${SLIVER} mm are awkward to hold and read badly under raking light. ` +
+                    (minEdgeOf(alt) >= SLIVER
+                        ? `Switching the layout direction gives ${fmt(minEdgeOf(alt))} mm as a minimum instead.`
+                        : `Consider a different module, or design the narrow strip in as a deliberate border detail.`) +
+                    `</p>`,
+            );
+        }
+        if (dir === "auto" && panelsOf(optA) !== panelsOf(optB)) {
+            flags.push(
+                `<p class="tl-flag">The two orientations are not equal: ${fmt(panelsOf(optA))} vs ${fmt(panelsOf(optB))} panels. Auto picked the lower count — change the layout direction to compare how each reads.</p>`,
+            );
+        }
+        el("flags").innerHTML = flags.join("");
+        /* 把算量结果带进询盘正文（InquiryModal 读取 data-inquiry-message） */
+        document
+            .getElementById("tool-inquiry")
+            ?.setAttribute(
+                "data-inquiry-message",
+                `Ceiling take-off from your online calculator:\n` +
+                    `• Room ${fmt(L, 2)} × ${fmt(W, 2)} m, module ${fmt(ML)} × ${fmt(MW)} mm\n` +
+                    `• ${fmt(panels)} whole panels = ${fmt(withWaste, 1)} m² including ${fmt(waste)}% wastage\n` +
+                    `• Perimeter trim ${fmt(perimeter, 1)} m; balanced edge strips ${fmt(o.len.edge)} / ${fmt(o.wid.edge)} mm\n` +
+                    `Please quote the panels plus carriers, hangers, perimeter trim and fixings.`,
+            );
+    }
+
+    document
+        .querySelectorAll("#takeoff input, #takeoff select")
+        .forEach((node) => {
+            node.addEventListener("input", render);
+            node.addEventListener("change", render);
+        });
+    render();
+</script>
+
+<style>
+    .th-head {
+        margin: 0 0 1.1rem;
+    }
+    .th-h {
+        margin: 0 0 0.3rem;
+        font-size: 1.12rem;
+        color: #1e293b;
+    }
+    .th-p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: #64748b;
+    }
+</style>

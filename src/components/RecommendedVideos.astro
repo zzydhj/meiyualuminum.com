@@ -7,8 +7,9 @@
  * - 排除当前视频（通过 excludeSlug）
  * - 样式完全作用域化，可放置于任何页面
  */
-import { supabase } from '../lib/supabase';
-import { parseYouTubeId, youTubeThumb } from '../lib/youtube';
+import { supabase } from "../lib/supabase";
+import { parseYouTubeId, youTubeThumb } from "../lib/youtube";
+import { firstFrameSrc, isSelfHostedVideo } from "../lib/videoSource";
 
 interface Props {
   /** 当前视频 slug，从推荐列表中排除 */
@@ -39,37 +40,50 @@ const recommended = [
   ...candidates.filter((v) => !primaryTag || v.primary_tag !== primaryTag),
 ].slice(0, limit);
 
-/** 封面：自定义优先，否则自动取 YouTube 封面 */
+/** 封面：自定义优先，否则自动取 YouTube 封面（仅外部视频用；自托管视频渲染第一帧） */
 const thumb = (v: (typeof candidates)[number]) => {
   const id = parseYouTubeId(v.video_url);
   return v.thumbnail_url || (id ? youTubeThumb(id) : null);
 };
 ---
 
-{recommended.length > 0 && (
-  <aside class="rec-sidebar">
-    <h2 class="rec-title">Recommended Videos</h2>
-    <ul class="rec-list">
-      {recommended.map((video) => (
-        <li class="rec-item">
-          <a href={`/videos/${video.slug}/`} class="rec-card">
-            {thumb(video) && (
-              <img
-                src={thumb(video)}
-                alt=""
-                width="80"
-                height="60"
-                loading="lazy"
-                class="rec-thumb"
-              />
-            )}
-            <span class="rec-card-title">{video.title}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </aside>
-)}
+{
+  recommended.length > 0 && (
+    <aside class="rec-sidebar">
+      <h2 class="rec-title">Recommended Videos</h2>
+      <ul class="rec-list">
+        {recommended.map((video) => (
+          <li class="rec-item">
+            <a href={`/videos/${video.slug}/`} class="rec-card">
+              {isSelfHostedVideo(video.video_url) ? (
+                <video
+                  src={firstFrameSrc(video.video_url)}
+                  muted
+                  playsinline
+                  preload="metadata"
+                  class="rec-thumb"
+                  aria-hidden="true"
+                />
+              ) : (
+                thumb(video) && (
+                  <img
+                    src={thumb(video)}
+                    alt=""
+                    width="80"
+                    height="60"
+                    loading="lazy"
+                    class="rec-thumb"
+                  />
+                )
+              )}
+              <span class="rec-card-title">{video.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )
+}
 
 <style>
   .rec-sidebar {
@@ -117,6 +131,7 @@ const thumb = (v: (typeof candidates)[number]) => {
     object-fit: cover;
     border-radius: 6px;
     flex-shrink: 0;
+    display: block;
   }
 
   .rec-card-title {

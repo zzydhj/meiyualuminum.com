@@ -17,8 +17,14 @@
     aria-label="Request free sample"
   >
     <!-- SVG 一笔画：左半圆 + 右半圆（被箭头打断）= 完美对称胶囊 + 尖角 -->
-    <svg class="bubble-shape" viewBox="0 0 148 40" preserveAspectRatio="none" aria-hidden="true">
-      <path d="
+    <svg
+      class="bubble-shape"
+      viewBox="0 0 148 40"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        d="
         M 20,0
         L 120,0
         A 20,20 0 0,1 137,12
@@ -29,7 +35,8 @@
         A 20,20 0 0,1 0,20
         A 20,20 0 0,1 20,0
         Z
-      " fill="#69574a" />
+      "
+        fill="#69574a"></path>
     </svg>
     <span class="bubble-label">
       <span class="bubble-icon">🎁</span>
@@ -39,11 +46,11 @@
 </div>
 
 <script>
-  const bubble = document.getElementById('sampleBubble')!;
+  const bubble = document.getElementById("sampleBubble")!;
   // 页面加载后短暂入场动画，之后常驻
   requestAnimationFrame(() => {
-    bubble.classList.add('visible');
-    bubble.setAttribute('aria-hidden', 'false');
+    bubble.classList.add("visible");
+    bubble.setAttribute("aria-hidden", "false");
   });
 </script>
 
@@ -55,8 +62,9 @@
     z-index: 899;
     opacity: 0;
     transform: translateX(10px) scale(0.9);
-    transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition:
+      opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: none;
     filter: drop-shadow(0 3px 10px rgba(105, 87, 74, 0.45));
   }
@@ -125,12 +133,20 @@
   }
 
   @keyframes bubble-bounce {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    25% { transform: translateY(-2px) rotate(-5deg); }
-    75% { transform: translateY(-1px) rotate(5deg); }
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-2px) rotate(-5deg);
+    }
+    75% {
+      transform: translateY(-1px) rotate(5deg);
+    }
   }
 
-  @media screen and (max-width: 1399px) {
+  /* 移动端阈值与页眉桌面断点（1280px）保持一致 */
+  @media screen and (max-width: 1279px) {
     .sample-bubble {
       display: none !important;
     }

@@ -5,9 +5,10 @@
  * - 第 2~N 页由 video-tags/[tag]/page/[page].astro 生成（/video-tags/{tag}/page/N/）
  * - 每页 PAGE_SIZE 条，与博客/视频列表共用分页配置与导航组件
  */
-import Breadcrumb from "../../components/Breadcrumb.astro";
+import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import VideoGrid from "../../components/VideoGrid.astro";
+import VideoFilterBar from "../../components/VideoFilterBar.astro";
 import PaginationNav from "../../components/PaginationNav.astro";
 import { PAGE_SIZE } from "../../lib/pagination";
 import { fetchAllVideos, groupVideosByTag } from "../../lib/videoTags";
@@ -31,15 +32,22 @@ const pageDescription = `Browse all videos tagged with "${tag}".`;
 const tagPath = encodeURIComponent(tag);
 ---
 
-<BaseLayout pageTitle={tag} description={pageDescription}>
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Video Tags", url: "/video-tags/" },
-      { name: tag, url: `/video-tags/${tagPath}/` },
-    ]}
+<BaseLayout pageTitle={tag} description={pageDescription} hideTitle>
+  <PageHero
+    slim
+    imageAlt={tag}
+    titleWhite="Tag"
+    titleGold={tag}
+    subtitle={`Videos tagged with "${tag}"`}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Video Tags", url: "/video-tags/" },
+        { name: tag, url: `/video-tags/${tagPath}/` },
+      ],
+    }}
   />
-  <p>Videos tagged with "{tag}"</p>
+  <VideoFilterBar currentTag={tag} />
   <VideoGrid videos={videos} />
   <PaginationNav
     currentPage={currentPage}

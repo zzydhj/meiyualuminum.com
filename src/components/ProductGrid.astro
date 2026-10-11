@@ -6,12 +6,12 @@
  * - 卡片结构：div.card-box（不可用 <a> 包裹，内部含分类链接/询盘按钮，嵌套 <a> 属非法 HTML）
  *   整卡可点靠标题链接的 stretched-link（::after inset:0）实现
  */
-import { loc } from "../lib/i18n";
+import { loc, type Lang } from "../lib/i18n";
 
 interface Props {
     products: Array<Record<string, any>>;
     categoryMap: Map<number, { name: string; slug: string }>;
-    lang: string;
+    lang: Lang;
 }
 
 const { products, categoryMap, lang } = Astro.props;

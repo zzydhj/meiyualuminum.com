@@ -5,7 +5,7 @@
  * - 第 2~N 页由 tags/[tag]/page/[page].astro 生成（/tags/{tag}/page/N/）
  * - 每页 PAGE_SIZE 篇，与博客列表共用分页配置与导航组件
  */
-import Breadcrumb from "../../components/Breadcrumb.astro";
+import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostGrid from "../../components/PostGrid.astro";
 import PaginationNav from "../../components/PaginationNav.astro";
@@ -31,15 +31,21 @@ const pageDescription = `Browse all blog posts tagged with "${tag}".`;
 const tagPath = encodeURIComponent(tag);
 ---
 
-<BaseLayout pageTitle={tag} description={pageDescription}>
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Tags", url: "/tags/" },
-      { name: tag, url: `/tags/${tagPath}/` },
-    ]}
+<BaseLayout pageTitle={tag} description={pageDescription} hideTitle>
+  <PageHero
+    slim
+    imageAlt={tag}
+    titleWhite="Tag"
+    titleGold={tag}
+    subtitle={`Posts tagged with "${tag}"`}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Tags", url: "/tags/" },
+        { name: tag, url: `/tags/${tagPath}/` },
+      ],
+    }}
   />
-  <p>Posts tagged with "{tag}"</p>
   <PostGrid posts={posts} />
   <PaginationNav
     currentPage={currentPage}

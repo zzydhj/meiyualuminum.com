@@ -6,12 +6,16 @@
  * - 构建流程：取全部已发布文章 → 按标签分组 → 为每个标签生成 2~totalPages 页路由
  * - 某标签文章数 ≤ PAGE_SIZE 时不生成该标签的分页（避免空页）
  */
-import Breadcrumb from "../../../../components/Breadcrumb.astro";
+import PageHero from "../../../../components/PageHero.astro";
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import PostGrid from "../../../../components/PostGrid.astro";
 import PaginationNav from "../../../../components/PaginationNav.astro";
 import { PAGE_SIZE } from "../../../../lib/pagination";
-import { fetchAllTagPosts, groupPostsByTag, type TagPost } from "../../../../lib/tagPosts";
+import {
+  fetchAllTagPosts,
+  groupPostsByTag,
+  type TagPost,
+} from "../../../../lib/tagPosts";
 
 export async function getStaticPaths() {
   const byTag = groupPostsByTag(await fetchAllTagPosts());
@@ -44,16 +48,29 @@ const pageDescription = `Browse all blog posts tagged with "${tag}" - page ${cur
 const tagPath = encodeURIComponent(tag);
 ---
 
-<BaseLayout pageTitle={`${tag} - Page ${currentPage}`} description={pageDescription}>
-  <Breadcrumb
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Tags", url: "/tags/" },
-      { name: tag, url: `/tags/${tagPath}/` },
-      { name: `Page ${currentPage}`, url: `/tags/${tagPath}/page/${page}/` },
-    ]}
+<BaseLayout
+  pageTitle={`${tag} - Page ${currentPage}`}
+  description={pageDescription}
+  hideTitle
+>
+  <PageHero
+    slim
+    imageAlt={tag}
+    titleWhite="Tag"
+    titleGold={tag}
+    subtitle={`Posts tagged with "${tag}" — Page ${currentPage}`}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: "Tags", url: "/tags/" },
+        { name: tag, url: `/tags/${tagPath}/` },
+        {
+          name: `Page ${currentPage}`,
+          url: `/tags/${tagPath}/page/${currentPage}/`,
+        },
+      ],
+    }}
   />
-  <p>Posts tagged with "{tag}" — Page {currentPage}</p>
   <PostGrid posts={posts} />
   <PaginationNav
     currentPage={currentPage}

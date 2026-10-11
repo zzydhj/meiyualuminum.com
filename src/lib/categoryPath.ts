@@ -5,6 +5,8 @@ export interface CategoryNode {
   name: string;
   slug: string;
   parent_id: number | null;
+  /** 分类描述（列表页展示用；部分查询不选该列，故可选） */
+  description?: string | null;
 }
 
 /**

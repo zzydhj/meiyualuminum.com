@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-MEIYU R2 图片资产流水线 · pipeline-core v1.1
+MEIYU R2 图片资产流水线 · pipeline-core v1.2
 ════════════════════════════════════════════════════════════════════
 用途：下载参考图 → 语义命名(+内容哈希) → 去重上传 Cloudflare R2 → 返回最终公开 URL，
       并在上传校验通过后自动清理本地临时文件。
+
+v1.2 变化：新增 --prefix（非 blog 资产目录，如产品图）。仅本脚本；提示词
+          【附录 B】内嵌副本仍为 v1.1 的 blog-only 行为，默认 key 规则两边一致。
 
 配套文档：docs/r2-setup.md（首次配置 / 令牌获取）
           docs/blog-prompt-v5.md 附录 B、docs/Project-Promotion-V5.8.md 附录 B（同源）
@@ -35,6 +38,9 @@ MEIYU R2 图片资产流水线 · pipeline-core v1.1
   python docs/r2-image-pipeline.py --file .tmp-img/a.jpg --topic projects --semantic site-install
       单图模式
 
+  python docs/r2-image-pipeline.py --file x.webp --prefix products/clip-in-aluminum-ceiling --semantic clip-in-edge-profile
+      非 blog 资产（产品图/站点素材）：用 --prefix 直接指定目录，命名与去重规则不变
+
   python docs/r2-image-pipeline.py --stats
       桶内统计：各主题文件夹对象数 + general 里高频语义名前缀（供决定是否新增主题）
 
@@ -49,7 +55,8 @@ MEIYU R2 图片资产流水线 · pipeline-core v1.1
 plan.json 格式（数组，topic 非法值自动落 general，semantic 会被自动清洗）：
   [
     {"src": "https://ref-site.com/a.jpg", "topic": "metal-ceiling", "semantic": "tree-of-life-hero"},
-    {"src": "https://ref-site.com/b.jpg", "topic": "projects",       "semantic": "trial-assembly"}
+    {"src": "https://ref-site.com/b.jpg", "topic": "projects",       "semantic": "trial-assembly"},
+    {"local": "d:/tmp/x.webp", "prefix": "products/clip-in-aluminum-ceiling", "semantic": "clip-in-edge-profile"}
   ]
 """
 
@@ -95,7 +102,7 @@ TMP_DIR = os.path.join(_ROOT, ".tmp-img")
 
 MIN_BYTES = 1024          # 小于此值视为下载失败（占位图/错误页）
 SEMANTIC_MAX_TOKENS = 5
-CORE_VERSION = "pipeline-core v1.1"
+CORE_VERSION = "pipeline-core v1.2"
 
 CT = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
       "gif": "image/gif", "webp": "image/webp", "svg": "image/svg+xml",
@@ -198,9 +205,13 @@ def topic_of(raw: str) -> str:
     return t if t in TOPICS else FALLBACK_TOPIC
 
 
-def build_key(topic: str, semantic: str, data: bytes) -> str:
+def build_key(topic: str, semantic: str, data: bytes, prefix: str = "") -> str:
+    """prefix 为空 → blog/<主题>/<语义名>-<哈希>.<ext>（提示词 P3 同源行为）；
+    prefix 非空 → <prefix>/<语义名>-<哈希>.<ext>，跳过主题闭集，
+    供产品图、站点素材等不属于 blog 命名空间的资产使用（如 products/clip-in-aluminum-ceiling）。"""
     digest = hashlib.sha1(data).hexdigest()[:6]
-    return f"{KEY_PREFIX}/{topic_of(topic)}/{sanitize_semantic(semantic)}-{digest}.{sniff_ext(data)}"
+    folder = prefix.strip("/") or f"{KEY_PREFIX}/{topic_of(topic)}"
+    return f"{folder}/{sanitize_semantic(semantic)}-{digest}.{sniff_ext(data)}"
 
 
 def public_url(key: str) -> str:
@@ -317,9 +328,10 @@ def process(cli, item: dict, keep_tmp: bool = False) -> dict:
     src = (item.get("src") or item.get("url") or "").strip()
     local = (item.get("local") or item.get("file") or "").strip()
     topic = topic_of(item.get("topic", ""))
+    prefix = (item.get("prefix") or "").strip("/")
     semantic = item.get("semantic") or item.get("name") or "image"
     out = {"src": src or local, "topic_requested": item.get("topic", ""),
-           "topic": topic, "semantic_raw": semantic}
+           "topic": topic, "prefix": prefix or KEY_PREFIX, "semantic_raw": semantic}
     try:
         data = None
         if local and os.path.exists(local):
@@ -338,7 +350,7 @@ def process(cli, item: dict, keep_tmp: bool = False) -> dict:
         else:
             raise RuntimeError("缺少 src / local")
 
-        key = build_key(topic, semantic, data)
+        key = build_key(topic, semantic, data, prefix)
         out.update({"key": key, "url": public_url(key), "bytes": len(data),
                     "sha1_6": hashlib.sha1(data).hexdigest()[:6]})
 
@@ -451,6 +463,7 @@ def main() -> int:
     ap.add_argument("--file", help="单图：本地文件路径")
     ap.add_argument("--topic", default="general", help="主题文件夹（九选一，非法落 general）")
     ap.add_argument("--semantic", default="image", help="语义名（2~5 连字符关键词）")
+    ap.add_argument("--prefix", default="", help="覆盖 key 目录（如 products/<slug>），用于非 blog 资产；默认为 blog/<topic>/")
     ap.add_argument("--keep-tmp", action="store_true", help="保留临时文件不清理")
     ap.add_argument("--out", help="把结果 JSON 另存到该路径")
     a = ap.parse_args()
@@ -470,7 +483,7 @@ def main() -> int:
         items = raw if isinstance(raw, list) else raw.get("items", [])
     if a.url or a.file:
         items.append({"src": a.url or "", "local": a.file or "",
-                      "topic": a.topic, "semantic": a.semantic})
+                      "topic": a.topic, "semantic": a.semantic, "prefix": a.prefix})
     if not items:
         ap.print_help()
         return 2

@@ -4,6 +4,8 @@
  * 通用页面顶部全宽背景横幅：背景视频/图片 + 半透明遮罩 + 白色标题与面包屑。
  *
  * 媒体策略（与首页 video hero 一致）：
+ * - 自托管视频（file.meiyualuminum.com / 同源路径）默认取第一帧做封面（#t=0.1），
+ *   不再依赖单独上传的 poster；外部视频保留 poster 逻辑；
  * - video 的 poster 属性先显示封面图，视频下载就绪后浏览器自动无缝切换播放；
  * - 视频加载失败时 JS 给 video 加 .banner-video-failed 将其隐藏，
  *   section 的 background-image（同一张封面图）兜底，页面不会开天窗；
@@ -15,6 +17,7 @@
  * - videoUrl / posterUrl: 背景媒体地址，均可选
  */
 import Breadcrumb from "./Breadcrumb.astro";
+import { firstFrameSrc, isSelfHostedVideo } from "../lib/videoSource";
 
 interface Props {
   title: string;
@@ -24,28 +27,42 @@ interface Props {
 }
 
 const { title, breadcrumbItems, videoUrl, posterUrl } = Astro.props;
+
+// 自托管视频默认取第一帧做封面（不再依赖单独上传的 poster）；外部视频保留 poster。
+// section 的 background-image 兜底仍用 posterUrl，视频加载失败时不开天窗。
+const selfHosted = isSelfHostedVideo(videoUrl);
+const bannerSrc = videoUrl
+  ? selfHosted
+    ? firstFrameSrc(videoUrl)
+    : videoUrl
+  : videoUrl;
+const bannerPoster = selfHosted ? undefined : posterUrl || undefined;
 ---
 
 <section
   class="page-banner"
   style={posterUrl ? `background-image: url('${posterUrl}')` : undefined}
 >
-  {videoUrl && (
-    <video
-      class="page-banner-bg"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-      poster={posterUrl || undefined}
-    >
-      <source src={videoUrl} type="video/mp4" />
-    </video>
-  )}
-  {!videoUrl && posterUrl && (
-    <img class="page-banner-bg" src={posterUrl} alt="" loading="eager" />
-  )}
+  {
+    videoUrl && (
+      <video
+        class="page-banner-bg"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster={bannerPoster}
+      >
+        <source src={bannerSrc} type="video/mp4" />
+      </video>
+    )
+  }
+  {
+    !videoUrl && posterUrl && (
+      <img class="page-banner-bg" src={posterUrl} alt="" loading="eager" />
+    )
+  }
   <div class="page-banner-overlay"></div>
   <div class="page-banner-content">
     <Breadcrumb items={breadcrumbItems} />
@@ -55,11 +72,14 @@ const { title, breadcrumbItems, videoUrl, posterUrl } = Astro.props;
 
 <script>
   // 视频加载失败降级：隐藏 video，露出 section 的 background-image 兜底
-  const bannerVideo = document.querySelector<HTMLVideoElement>(".page-banner-bg");
+  const bannerVideo =
+    document.querySelector<HTMLVideoElement>(".page-banner-bg");
   if (bannerVideo) {
     const showFallback = () => bannerVideo.classList.add("banner-video-failed");
     bannerVideo.addEventListener("error", showFallback);
-    bannerVideo.querySelectorAll("source").forEach((s) => s.addEventListener("error", showFallback));
+    bannerVideo
+      .querySelectorAll("source")
+      .forEach((s) => s.addEventListener("error", showFallback));
     // 安全网：6 秒后仍完全无数据，视为失败
     setTimeout(() => {
       if (bannerVideo.readyState === 0 && bannerVideo.networkState === 3) {
@@ -104,7 +124,11 @@ const { title, breadcrumbItems, videoUrl, posterUrl } = Astro.props;
   .page-banner-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(20, 12, 6, 0.25), rgba(20, 12, 6, 0.55));
+    background: linear-gradient(
+      to bottom,
+      rgba(20, 12, 6, 0.25),
+      rgba(20, 12, 6, 0.55)
+    );
   }
 
   .page-banner-content {

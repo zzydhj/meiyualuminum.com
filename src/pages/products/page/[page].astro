@@ -7,7 +7,7 @@
  * - 产品总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
  * - 卡片网格与第 1 页共用 ProductGrid 组件
  */
-import Breadcrumb from "../../../components/Breadcrumb.astro";
+import PageHero from "../../../components/PageHero.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ProductGrid from "../../../components/ProductGrid.astro";
 import PaginationNav from "../../../components/PaginationNav.astro";
@@ -69,16 +69,22 @@ for (const cat of allCategories ?? []) {
 }
 ---
 
-<BaseLayout pageTitle={`Products - Page ${currentPage}`} lang={lang}>
-    <Breadcrumb
-        items={[
-            { name: "Home", url: loc(lang, "/") },
-            { name: "Products", url: loc(lang, "/products/") },
-            {
-                name: `Page ${currentPage}`,
-                url: `/products/page/${currentPage}/`,
-            },
-        ]}
+<BaseLayout pageTitle={`Products - Page ${currentPage}`} lang={lang} hideTitle>
+    <PageHero
+        slim
+        imageAlt={`Products - Page ${currentPage}`}
+        titleWhite="Products"
+        titleGold={`Page ${currentPage}`}
+        crumb={{
+            items: [
+                { name: "Home", url: loc(lang, "/") },
+                { name: "Products", url: loc(lang, "/products/") },
+                {
+                    name: `Page ${currentPage}`,
+                    url: `/products/page/${currentPage}/`,
+                },
+            ],
+        }}
     />
     <ProductGrid products={products} categoryMap={categoryMap} lang={lang} />
     <PaginationNav

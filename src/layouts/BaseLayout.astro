@@ -35,7 +35,7 @@ interface Props {
 const {
   pageTitle,
   headingTitle,
-  description = "Professional automotive parts supplier - OEM quality brake pads, filters, and engine components",
+  description = "MEIYU Aluminum Co., Ltd. — direct factory of architectural aluminium ceiling tiles, linear strip ceilings, wall cladding and facade panels in Dongguan, China.",
   image,
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   type = "website",
@@ -56,11 +56,19 @@ const alternates = alternatesProp ?? buildAlternates(Astro.url.pathname);
 const siteName = "Meiyu Aluminum";
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
 
-// Only build absolute image URL if image is provided
-const ogImage = image ? new URL(image, Astro.site).href : undefined;
+// 站点级默认分享图：页面未传 image 时兜底，避免 twitter:card=summary_large_image
+// 声明了大图却没有 og:image（WhatsApp / LinkedIn / 微信转发时无预览图）。
+// 换图只改这一行；理想尺寸是 1200×630，当前这张是 800×533（3:2，可用）。
+const DEFAULT_OG_IMAGE =
+  "https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp";
 
-// Google Analytics tracking ID (set PUBLIC_GA_ID in .env)
-const gaId = import.meta.env.PUBLIC_GA_ID || '';
+// 未传图时回退到站点默认图，保证每页都有 og:image / twitter:image
+const ogImage = new URL(image || DEFAULT_OG_IMAGE, Astro.site).href;
+
+// Google Analytics tracking ID：默认值就是本站的正式 ID，PUBLIC_GA_ID 仅用于换属性时覆盖。
+// 以前 head 里一份硬编码、body 末尾一份 env 驱动，共两套；一旦真的设了 PUBLIC_GA_ID
+// 就会重复装载 gtag（pageview 计两遍），所以收成单一来源。
+const gaId = import.meta.env.PUBLIC_GA_ID || "G-DS2EV49TRD";
 
 // Organization JSON-LD (global, appears on every page)
 const orgJsonLd = {
@@ -84,14 +92,20 @@ const orgJsonLd = {
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/x-icon" href="https://file.meiyualuminum.com/home/favicon.ico" />
 
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DS2EV49TRD"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-DS2EV49TRD');
-    </script>
+    <!-- Google Analytics 4（单一来源：见上方 gaId） -->
+    {
+      gaId && (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+          <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{gaId}');
+          </script>
+        </>
+      )
+    }
 
     <!-- Inter font — 异步加载，不阻塞首屏渲染 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -113,10 +127,8 @@ const orgJsonLd = {
       <link rel="alternate" hreflang="x-default" href={new URL(alternates.find((a) => a.lang === DEFAULT_LANG)?.href ?? canonicalURL, Astro.site).href} />
     )}
 
-    <!-- ⚠️ TEMPORARY (pre-launch): keep every page out of search engine indexes.
-         noindex = don't index this page; nofollow = don't follow its links.
-         REMOVE this line when the site goes live. -->
-    <meta name="robots" content="noindex, nofollow" />
+    {/* 已上线：不再输出索引限制 meta 标签。日后若需临时退出索引，
+        改这里并同步 robots.txt。（用 JSX 注释，不随 HTML 下发） */}
 
     <!-- Open Graph -->
     <meta property="og:type" content={type} />
@@ -153,20 +165,8 @@ const orgJsonLd = {
     <script>
       import "../scripts/menu.js";
       import "../scripts/watermark.js";
+      import "../scripts/videoCover.js";
     </script>
-
-    <!-- Google Analytics -->
-    {gaId && (
-      <script is:inline>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '{gaId}');
-      </script>
-    )}
-    {gaId && (
-      <script is:inline src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
-    )}
 
     <!-- Per-page custom JS (from database, runs after DOM is ready) -->
     {customJs && <script is:inline set:html={customJs} />}
@@ -211,5 +211,21 @@ const orgJsonLd = {
 
     <!-- Global inquiry modal — triggered from any [data-open-inquiry-modal] button -->
     <InquiryModal />
+
+    <!--Start of Tawk.to Script-->
+    <!-- Tawk.to 在线客服聊天（第三方，全站生效）。
+         is:inline 确保脚本原样输出、按序执行，不被 Astro 打包处理。 -->
+    <script is:inline type="text/javascript">
+      var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+      (function () {
+        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/6ac7ad4579143d34c40cc4be/1k4dvpmq3';
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+      })();
+    </script>
+    <!--End of Tawk.to Script-->
   </body>
 </html>

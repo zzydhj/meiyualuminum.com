@@ -6,12 +6,12 @@
  * - 每页 PAGE_SIZE 个，与博客/视频列表共用分页配置与导航组件
  * - 卡片网格抽到 ProductGrid 组件，与分页页共用，避免 markup+CSS 复制
  */
-import Breadcrumb from "../../components/Breadcrumb.astro";
+import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProductGrid from "../../components/ProductGrid.astro";
 import PaginationNav from "../../components/PaginationNav.astro";
 import { supabase } from "../../lib/supabase";
-import { currentLang, loc } from "../../lib/i18n";
+import { currentLang, loc, SUPPORTED_LANGS } from "../../lib/i18n";
 import { PAGE_SIZE } from "../../lib/pagination";
 
 // 当前语言（[lang] 包装会写入 locals.lang；无前缀根路由为 'en'）
@@ -58,19 +58,48 @@ const UI = {
     products: "Products",
     home: "Home",
     empty: "No products available at the moment.",
+    heroWhite: "Our",
+    heroGold: "Products",
+    heroSub:
+      "Aluminum ceiling, wall panel and facade cladding systems engineered for commercial and architectural projects worldwide. Standard modules and fully custom fabrication, produced to project drawings and shipped worldwide.",
+    statProducts: "Products Listed",
+    statCategories: "Categories",
+    statLanguages: "Languages",
   },
-  zh: { products: "产品", home: "首页", empty: "暂无产品。" },
+  zh: {
+    products: "产品",
+    home: "首页",
+    empty: "暂无产品。",
+    heroWhite: "我们的",
+    heroGold: "产品",
+    heroSub:
+      "面向全球商业与建筑项目的铝天花、墙板与幕墙系统。标准模块与全定制加工，按项目图纸生产、全球发货。",
+    statProducts: "在售产品",
+    statCategories: "产品分类",
+    statLanguages: "种语言",
+  },
 } as const;
 const t = UI[lang as keyof typeof UI] ?? UI.en;
 const pageTitle = t.products;
 ---
 
-<BaseLayout pageTitle={pageTitle} lang={lang}>
-  <Breadcrumb
-    items={[
-      { name: t.home, url: loc(lang, "/") },
-      { name: t.products, url: loc(lang, "/products/") },
+<BaseLayout pageTitle={pageTitle} lang={lang} hideTitle>
+  <PageHero
+    imageAlt={t.products}
+    titleWhite={t.heroWhite}
+    titleGold={t.heroGold}
+    subtitle={t.heroSub}
+    stats={[
+      { value: String(count ?? 0), label: t.statProducts },
+      { value: String(categoryMap.size), label: t.statCategories },
+      { value: String(SUPPORTED_LANGS.length), label: t.statLanguages },
     ]}
+    crumb={{
+      items: [
+        { name: t.home, url: loc(lang, "/") },
+        { name: t.products, url: loc(lang, "/products/") },
+      ],
+    }}
   />
 
   {

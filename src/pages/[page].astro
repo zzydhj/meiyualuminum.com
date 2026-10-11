@@ -1,7 +1,6 @@
 ---
-import Breadcrumb from "../components/Breadcrumb.astro";
+import PageHero from "../components/PageHero.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageBanner from "../components/PageBanner.astro";
 import ProjectGallery from "../components/ProjectGallery.astro";
 import { supabase } from "../lib/supabase";
 import { currentLang } from "../lib/i18n";
@@ -33,53 +32,60 @@ const keywords = page.keywords ?? [];
 const customCss = page.custom_css ?? "";
 const customJs = page.custom_js ?? "";
 
-// Banner 背景媒体：banner_video_url / banner_poster_url 任一填写即启用横幅，
-// 两者皆空时回退原有布局（BaseLayout 黑标题 + 面包屑 + hero 区）
-const bannerVideoUrl = page.banner_video_url || null;
-const bannerPosterUrl = page.banner_poster_url || null;
-const hasBanner = !!(bannerVideoUrl || bannerPosterUrl);
-
 // 特殊页面类型检测
 const isProjectGallery = page.slug === "project-gallery";
+
+// 标题自动拆双色（供 PageHero）：优先按 "|" 拆；无则按空格把最后一个词染金；单词标题全白
+const splitHeroTitle = (t: string) => {
+  const s = (t || "").trim();
+  if (s.includes("|")) {
+    const i = s.indexOf("|");
+    return { white: s.slice(0, i).trim(), gold: s.slice(i + 1).trim() };
+  }
+  const parts = s.split(/\s+/);
+  if (parts.length > 1)
+    return {
+      white: parts.slice(0, -1).join(" "),
+      gold: parts[parts.length - 1],
+    };
+  return { white: s, gold: "" };
+};
+const heroTitleParts = splitHeroTitle(page.title);
+
+// 正文 HTML 若自带 <h1> 会与页头 H1 冲突（全页仅一个 H1），渲染时降级为 h2（不改数据库）
+const safeContent = (page.content || "")
+  .replace(/<h1(\s|>)/gi, "<h2$1")
+  .replace(/<\/h1>/gi, "</h2>");
 ---
 
 <BaseLayout
   pageTitle={pageTitle}
   headingTitle={page.title}
-  hideTitle={hasBanner}
+  hideTitle
   description={pageDescription}
   image={page.image_url || undefined}
   keywords={keywords}
   customCss={customCss}
   customJs={customJs}
 >
-  {
-    hasBanner ? (
-      <PageBanner
-        title={page.title}
-        breadcrumbItems={[
-          { name: "Home", url: "/" },
-          { name: page.title, url: `/${page.slug}/` },
-        ]}
-        videoUrl={bannerVideoUrl}
-        posterUrl={bannerPosterUrl}
-      />
-    ) : (
-      <Breadcrumb
-        items={[
-          { name: "Home", url: "/" },
-          { name: page.title, url: `/${page.slug}/` },
-        ]}
-      />
-    )
-  }
+  <PageHero
+    imageAlt={page.title}
+    titleWhite={heroTitleParts.white}
+    titleGold={heroTitleParts.gold}
+    subtitle={page.hero_subtitle || ""}
+    crumb={{
+      items: [
+        { name: "Home", url: "/" },
+        { name: page.title, url: `/${page.slug}/` },
+      ],
+    }}
+  />
 
-  <!-- Hero section -->
+  <!-- hero_title 作为正文引导标题（hero_subtitle 已并入 PageHero 副标题） -->
   {
-    (page.hero_title || page.hero_subtitle) && (
+    page.hero_title && (
       <section class="hero">
-        {page.hero_title && <h2>{page.hero_title}</h2>}
-        {page.hero_subtitle && <p class="subtitle">{page.hero_subtitle}</p>}
+        <h2>{page.hero_title}</h2>
       </section>
     )
   }
@@ -99,7 +105,7 @@ const isProjectGallery = page.slug === "project-gallery";
   }
 
   <!-- Page content (HTML from database) -->
-  {page.content && <div class="page-content" set:html={page.content} />}
+  {page.content && <div class="page-content" set:html={safeContent} />}
 
   <!-- Project Gallery (动态渲染 posts 表中 primary_tag='projects' 的文章) -->
   {isProjectGallery && <ProjectGallery />}

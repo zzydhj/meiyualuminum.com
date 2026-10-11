@@ -35,53 +35,74 @@ interface Props {
 
   // Usage 2: structured data, component auto-assembles the chain
   root?: BreadcrumbItem;
-  primaryTag?: BreadcrumbItem;    // legacy: single middle item
+  primaryTag?: BreadcrumbItem; // legacy: single middle item
   middleItems?: BreadcrumbItem[]; // new: multiple middle items (for category chains)
   current?: string;
   currentUrl?: string;
+
+  // Visual variant: "default" = light left-aligned; "hero" = centered light-on-dark
+  // (for PageHero). JSON-LD output is identical for both variants.
+  variant?: "default" | "hero";
 }
 
-const { items, root, primaryTag, middleItems, current, currentUrl } = Astro.props;
+const {
+  items,
+  root,
+  primaryTag,
+  middleItems,
+  current,
+  currentUrl,
+  variant = "default",
+} = Astro.props;
 
 // Usage 1: use the provided items array directly
 // Usage 2: auto-assemble: Home > root > middleItems (or primaryTag) > current
 const resolvedItems: BreadcrumbItem[] = items ?? [
   { name: "Home", url: "/" },
-  ...(root        ? [root]                                                       : []),
-  ...(middleItems ? middleItems                                                  : []),
-  ...(primaryTag  ? [primaryTag]                                                 : []),
-  ...(current && currentUrl ? [{ name: current, url: currentUrl }]               : []),
+  ...(root ? [root] : []),
+  ...(middleItems ? middleItems : []),
+  ...(primaryTag ? [primaryTag] : []),
+  ...(current && currentUrl ? [{ name: current, url: currentUrl }] : []),
 ];
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "itemListElement": resolvedItems.map((item, index) => ({
+  itemListElement: resolvedItems.map((item, index) => ({
     "@type": "ListItem",
-    "position": index + 1,
-    "name": item.name,
-    "item": new URL(item.url, Astro.site).href,
+    position: index + 1,
+    name: item.name,
+    item: new URL(item.url, Astro.site).href,
   })),
 };
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-<nav aria-label="Breadcrumb" class="breadcrumb">
+<nav
+  aria-label="Breadcrumb"
+  class:list={["breadcrumb", { hero: variant === "hero" }]}
+>
   <ol>
-    {resolvedItems.map((item, index) => {
-      const isLast = index === resolvedItems.length - 1;
-      return (
-        <li>
-          {isLast ? (
-            <span aria-current="page">{item.name}</span>
-          ) : (
-            <a href={item.url}>{item.name}</a>
-          )}
-          {!isLast && <span class="separator" aria-hidden="true">/</span>}
-        </li>
-      );
-    })}
+    {
+      resolvedItems.map((item, index) => {
+        const isLast = index === resolvedItems.length - 1;
+        return (
+          <li>
+            {isLast ? (
+              <span aria-current="page">{item.name}</span>
+            ) : (
+              <a href={item.url}>{item.name}</a>
+            )}
+            {!isLast && (
+              <span class="separator" aria-hidden="true">
+                /
+              </span>
+            )}
+          </li>
+        );
+      })
+    }
   </ol>
 </nav>
 
@@ -125,5 +146,35 @@ const jsonLd = {
   .breadcrumb .separator {
     color: #999;
     user-select: none;
+  }
+
+  /* hero 变体：置于 PageHero 暗色背景上，居中、浅色、金色链接。
+     仅视觉差异；JSON-LD 与 default 变体完全一致。 */
+  .breadcrumb.hero {
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .breadcrumb.hero ol {
+    justify-content: center;
+  }
+
+  .breadcrumb.hero a {
+    color: #f0c96a;
+  }
+
+  .breadcrumb.hero a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .breadcrumb.hero [aria-current="page"] {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+  }
+
+  .breadcrumb.hero .separator {
+    color: rgba(255, 255, 255, 0.45);
   }
 </style>

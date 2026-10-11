@@ -20,6 +20,9 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.5;
+  /* 吸收全幅组件（PageHero）100vw breakout 与滚动条宽度差，避免横向滚动条。
+     用 clip 而非 hidden：不产生滚动容器，不影响 sticky 页眉。 */
+  overflow-x: clip;
 }
 
 * {
