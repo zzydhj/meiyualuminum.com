@@ -8,7 +8,7 @@
  *   写了无依据的 “SGS Tested” 与 “15+ Years Experience”（2015 年成立，只有 ~11 年）。
  * 页脚出现在每一个页面上，这类错会直接砸信任，也会被采购合规审查抓到。
  */
-import { companyFacts, certBadges } from "../lib/companyProfile";
+import { companyFacts, certBadges, responseTime } from "../lib/companyProfile";
 
 // wa.me 只接受纯数字；从 companyFacts.phone 推，保证电话号码只有一个来源。
 const waNumber = companyFacts.phone.replace(/[^\d]/g, "");
@@ -164,8 +164,9 @@ const year = new Date().getFullYear();
       <div class="my-ft-cta-box">
         <strong>Contact MEIYU</strong>
         <p>
-          Leave us a message for a free quote or sample panels. We reply within
-          1 hour.
+          Leave us a message for a free quote or sample panels. We reply within {
+            responseTime
+          }.
         </p>
         <div class="my-ft-cta-btns">
           <a href="/contact/" class="my-ft-cta-btn primary">

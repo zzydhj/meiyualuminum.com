@@ -66,3 +66,15 @@ export const standardTerms: TermRow[] = [
 /** 条款限定语：附录 A 要求质保/MOQ/交期必须带此限定 */
 export const termsNote =
     "Figures above are our standard offer; final terms are confirmed with your quotation.";
+
+/**
+ * 询盘首次回复时效（附录 A【响应时效】，业主已确认属实）。
+ *
+ * 单独成字段而不是各处敲字：全站曾同时存在 “within 1 hour”（13 处）与
+ * “within 24 hours”（博客与视频详情页各 1 处）两种口径 —— 客户在同一个站上
+ * 看到两个承诺，等于两个都不信。改这一处即可全站同步。
+ *
+ * 注意：嵌在长句里的 “within 1 hour” 仍是文字形式（About / 采购指南的叙述段落），
+ * 改值时需与本文件、附录 A 三处同步核对。
+ */
+export const responseTime = "1 hour";

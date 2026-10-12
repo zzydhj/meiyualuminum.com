@@ -7,6 +7,7 @@ import Tag from "../../components/Tag.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 import { currentLang } from "../../lib/i18n";
+import { responseTime } from "../../lib/companyProfile";
 
 // SSR 按需渲染：不再预生成所有文章，请求时才查询并渲染
 export const prerender = false;
@@ -223,7 +224,7 @@ const articleContent = (post.content || "").replace(
     source={Astro.url.pathname}
     regarding={post.title}
     title="Questions About This Topic?"
-    desc="Need pricing, specifications or a recommendation for your project? Send us an inquiry and our team will get back to you within 24 hours."
+    desc={`Need pricing, specifications or a recommendation for your project? Send us an inquiry and our team will get back to you within ${responseTime}.`}
   />
 </BaseLayout>
 

@@ -14,7 +14,12 @@ export const prerender = true;
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import InquiryButton from "../components/InquiryButton.astro";
-import { companyFacts, standardTerms, termsNote } from "../lib/companyProfile";
+import {
+    companyFacts,
+    standardTerms,
+    termsNote,
+    responseTime,
+} from "../lib/companyProfile";
 
 const pageTitle = "Procurement Guide";
 const pageDescription =
@@ -168,7 +173,7 @@ const waUrl = (msg: string) =>
                 value: companyFacts.productionLines,
                 label: "Lines — we control the schedule",
             },
-            { value: "1 hour", label: "First reply, every enquiry" },
+            { value: responseTime, label: "First reply, every enquiry" },
         ]}
         crumb={{
             items: [
