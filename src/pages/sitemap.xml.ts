@@ -60,11 +60,16 @@ export const GET: APIRoute = async ({ site }) => {
         // 再列进清单就是自相矛盾。
         "/installation-guides/",
         "/procurement-guide/",
+        "/manufacturing/",
+        "/certifications/",
+        "/careers/",
         "/tools/",
         "/tools/ceiling-take-off/",
         "/tools/aluminum-weight/",
         "/tools/perforation-open-area/",
         "/surface-treatment-comparison/",
+        // /privacy-policy/ 与 /terms-of-use/ 故意不收：它们要能被抓到（页脚全页都有链），
+        // 但没人会搜索一个厂商的隐私条款，列进清单只是把抓取配额花在无竞争价值的页面上。
     ];
 
     for (const p of staticPaths) {

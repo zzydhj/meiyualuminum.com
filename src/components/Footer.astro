@@ -1,7 +1,18 @@
 ---
-// Footer component — dark themed, multi-column layout.
-// Replace the external logo URL below with a local file (e.g. /logo-light.png)
-// once you add it to the public/ folder.
+/**
+ * Footer.astro — 全站页脚
+ *
+ * 公司数据（地址 / 电话 / 邮箱 / 认证）一律从 lib/companyProfile.ts 取，
+ * 不在这里硬编码。以前本组件自己写了一套，而且写的还是错的：
+ *   城市填了 Foshan（实际是 Dongguan）、电话是模板占位号 +86 123 4567 8900、
+ *   写了无依据的 “SGS Tested” 与 “15+ Years Experience”（2015 年成立，只有 ~11 年）。
+ * 页脚出现在每一个页面上，这类错会直接砸信任，也会被采购合规审查抓到。
+ */
+import { companyFacts, certBadges } from "../lib/companyProfile";
+
+// wa.me 只接受纯数字；从 companyFacts.phone 推，保证电话号码只有一个来源。
+const waNumber = companyFacts.phone.replace(/[^\d]/g, "");
+const year = new Date().getFullYear();
 ---
 
 <footer class="my-ft">
@@ -15,50 +26,54 @@
         />
       </div>
 
+      <!-- 只保留已核实的真实账号。宁可不放，也不要留一排 href="#" 的空图标：
+           买家点半天没反应，读作“这个站没人维护”。加账号在下方添一个 <a> 即可。 -->
       <div class="my-ft-socials">
-        <a href="#" aria-label="Facebook"
-          ><svg viewBox="0 0 24 24"
-            ><path
-              d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"
-            ></path></svg
-          ></a
-        >
-        <a href="#" aria-label="YouTube"
+        <a
+          class="soc--yt"
+          href="https://www.youtube.com/@meiyualuminum"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="YouTube"
           ><svg viewBox="0 0 24 24"
             ><path
               d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"
             ></path></svg
           ></a
         >
-        <a href="#" aria-label="LinkedIn"
+        <!-- LinkedIn：当前给的是个人档案（/in/）。若以后建了公司主页（/company/），
+             只需换 href，图标不动。 -->
+        <a
+          class="soc--li"
+          href="https://www.linkedin.com/in/william-wei-meiyu-aluminum/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
           ><svg viewBox="0 0 24 24"
             ><path
               d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7H10V9h4v1.76A6 6 0 0 1 16 8zM2 9h4v12H2z"
             ></path><circle cx="4" cy="4" r="2"></circle></svg
           ></a
         >
-        <a href="#" aria-label="TikTok"
+        <!-- TikTok -->
+        <a
+          class="soc--tt"
+          href="https://www.tiktok.com/@meiyualuminum"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="TikTok"
           ><svg viewBox="0 0 24 24"
             ><path
               d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.13 6.33 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"
             ></path></svg
           ></a
         >
-        <a href="#" aria-label="Instagram"
-          ><svg viewBox="0 0 24 24"
-            ><path
-              d="M12 2.163c3.204 0 3.584.012 4.85.072 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.072 4.849-.149 3.225-1.688 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.997 3.997 0 110-7.995 3.997 3.997 0 010 7.995zm6.406-10.845a1.44 1.44 0 11-2.881 0 1.44 1.44 0 012.881 0z"
-            ></path></svg
-          ></a
-        >
-        <a href="#" aria-label="Pinterest"
-          ><svg viewBox="0 0 24 24"
-            ><path
-              d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.77 1.22-5.17 1.22-5.17s-.31-.62-.31-1.54c0-1.45.84-2.53 1.88-2.53.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.88 1.54 1.88 1.85 0 3.27-1.95 3.27-4.76 0-2.49-1.79-4.23-4.34-4.23-2.96 0-4.69 2.22-4.69 4.51 0 .89.34 1.85.77 2.37.08.1.09.19.07.29l-.28 1.18c-.04.19-.14.23-.32.14-1.25-.58-2.03-2.42-2.03-3.89 0-3.15 2.29-6.05 6.61-6.05 3.47 0 6.16 2.47 6.16 5.77 0 3.45-2.17 6.22-5.19 6.22-1.01 0-1.97-.53-2.3-1.15l-.62 2.33c-.23.87-.84 1.96-1.25 2.62.94.29 1.94.45 2.97.45 5.52 0 10-4.48 10-10S17.52 2 12 2z"
-            ></path></svg
-          ></a
-        >
-        <a href="#" aria-label="WhatsApp"
+        <a
+          class="soc--wa"
+          href={`https://wa.me/${waNumber}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="WhatsApp"
           ><svg viewBox="0 0 24 24"
             ><path
               d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"
@@ -79,16 +94,32 @@
         </p>
       </div>
 
-      <!-- Products -->
+      <!-- Products：全部指向真实存在的分类页。以前六行文案不同但 href 全指 /products/，
+           对买家是误导（看着像六个入口，点进去是同一个页），对 Google 是六个重复链接。 -->
       <div class="my-ft-col">
         <h4>Products</h4>
         <ul>
-          <li><a href="/products/">Aluminum Facade Panel</a></li>
-          <li><a href="/products/">Suspended Ceiling</a></li>
-          <li><a href="/products/">Acoustic Ceiling</a></li>
-          <li><a href="/products/">Decorative Screen</a></li>
-          <li><a href="/products/">ACP Panel</a></li>
-          <li><a href="/products/">Curtain Wall System</a></li>
+          <li>
+            <a href="/categories/aluminum-veneer/">Aluminum Veneer Panel</a>
+          </li>
+          <li>
+            <a href="/categories/aluminum-wall-panels/">Aluminum Wall Panels</a>
+          </li>
+          <li>
+            <a href="/categories/aluminum-ceiling-tile/">Ceiling Tiles</a>
+          </li>
+          <li>
+            <a href="/categories/aluminum-strip-panel/">Strip Ceilings</a>
+          </li>
+          <li>
+            <a href="/categories/open-cell-ceiling/">Open Cell Ceilings</a>
+          </li>
+          <li>
+            <a href="/categories/aluminum-honeycomb-core-panel/"
+              >Honeycomb Panels</a
+            >
+          </li>
+          <li><a href="/categories/">All Categories</a></li>
         </ul>
       </div>
 
@@ -97,27 +128,34 @@
         <h4>Company</h4>
         <ul>
           <li><a href="/about/">About MEIYU</a></li>
-          <li><a href="#">Manufacturing</a></li>
-          <li><a href="#">Certifications</a></li>
-          <li><a href="/blog/">Case Studies</a></li>
+          <li><a href="/manufacturing/">Manufacturing</a></li>
+          <li><a href="/certifications/">Certifications</a></li>
+          <li><a href="/project-gallery/">Project Gallery</a></li>
           <li><a href="/blog/">Blog &amp; News</a></li>
-          <li><a href="#">Careers</a></li>
+          <li><a href="/careers/">Careers</a></li>
         </ul>
       </div>
 
-      <!-- Contact -->
+      <!-- Contact：公/私地址与电话均取自 companyFacts，不在这里敲字 -->
       <div class="my-ft-col">
         <h4>Contact Us</h4>
         <ul class="my-ft-contact">
           <li>
-            <span class="ic">📍</span><span
-              >No.88 Industrial Ave, Foshan, Guangdong, China</span>
+            <span class="ic" aria-hidden="true">📍</span><span
+              >{companyFacts.location}</span
+            >
           </li>
-          <li><span class="ic">📞</span><span>+86 123 4567 8900</span></li>
-          <li><span class="ic">📧</span><span>info@meiyualuminum.com</span></li>
           <li>
-            <span class="ic">🕐</span><span
-              >Mon – Fri: 9:00 AM – 6:00 PM (CST)</span>
+            <span class="ic" aria-hidden="true">📞</span><a
+              href={`tel:${companyFacts.phone.replace(/\s/g, "")}`}
+            >
+              {companyFacts.phone}
+            </a>
+          </li>
+          <li>
+            <span class="ic" aria-hidden="true">📧</span><a
+              href={`mailto:${companyFacts.email}`}>{companyFacts.email}</a
+            >
           </li>
         </ul>
       </div>
@@ -142,22 +180,20 @@
       </div>
     </div>
 
-    <!-- 认证 -->
+    <!-- 认证徽章：只渲染 companyProfile.certBadges（对齐附录 A）。
+         原先硬写的 “SGS Tested” 与 “15+ Years Experience” 已删：前者无报告依据、
+         后者与 2015 年成立不符。无依据的第三方认证声明是合规风险，不是营销修饰。 -->
     <div class="my-ft-certs">
-      <span class="my-ft-badge">✓ ISO 9001 Certified</span>
-      <span class="my-ft-badge">✓ SGS Tested</span>
-      <span class="my-ft-badge">✓ CE Certified</span>
-      <span class="my-ft-badge">✓ PVDF Coating</span>
-      <span class="my-ft-badge">✓ 15+ Years Experience</span>
+      {certBadges.map((badge) => <span class="my-ft-badge">✓ {badge}</span>)}
     </div>
 
-    <!-- 版权 -->
+    <!-- 版权：年份自算，不写死（写死于 2026 会在明年自动变成陈旧信息） -->
     <div class="my-ft-bottom">
-      <span>© 2026 MEIYU Aluminum Co., Ltd. All Rights Reserved.</span>
+      <span>© {year} {companyFacts.name}. All Rights Reserved.</span>
       <div>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Use</a>
-        <a href="#">Sitemap</a>
+        <a href="/privacy-policy/">Privacy Policy</a>
+        <a href="/terms-of-use/">Terms of Use</a>
+        <a href="/sitemap.xml">Sitemap</a>
       </div>
     </div>
   </div>
@@ -223,7 +259,7 @@
   }
   .my-ft-socials {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
   }
   .my-ft-socials a {
@@ -244,10 +280,48 @@
     height: 15px;
     fill: currentColor;
   }
-  .my-ft-socials a:hover {
-    background: #c8a96e;
-    border-color: #c8a96e;
+
+  /* 品牌色徽章：原来是四个单色线条圆，在深棕底上长得几乎一样，认不出谁是谁。
+     改成「品牌色实心 + 白色图形」—— 这既是各品牌自己的官方徽章样式（也是它们
+     要求的：logo 不应被改成单色），也一并解决了深底上的对比度问题。
+     颜色取各品牌公开发布的标志用色。 */
+  .my-ft-socials a.soc--yt {
+    background: #ff0033;
+    border-color: #ff0033;
     color: #fff;
+  }
+
+  .my-ft-socials a.soc--li {
+    background: #0a66c2;
+    border-color: #0a66c2;
+    color: #fff;
+  }
+
+  /* TikTok 官方图形是青+粉红双色。这里不用那支红（#fe2c55）而用青：
+     它与 YouTube 的 #ff0033 色相太近，在 36px 上看着像两个红圆，只能靠图形区分。
+     青底 + 近黑图形是 TikTok 在深色背景上的官方配色，且两个对比度都远过线。 */
+  .my-ft-socials a.soc--tt {
+    background: #25f4ee;
+    border-color: #25f4ee;
+    color: #010101;
+  }
+
+  /* WhatsApp：官方气泡绿 #25d366 配白图形自身对比只有 ~2:1，白色话筒发糊。
+     改用它品牌色里的深青 #128c7e：白图形对比 ~4.4:1，与深棕底 ~4.1:1，两边都过线。 */
+  .my-ft-socials a.soc--wa {
+    background: #128c7e;
+    border-color: #128c7e;
+    color: #fff;
+  }
+
+  /* 上浮 + 加深，代替原来整圈变金色的弱反馈。
+     注意：这里原先下面还有一条同选名的 .my-ft-socials a:hover{background:#c8a96e}，
+     会把品牌色 hover 覆盖成金色，已删 —— 同文件内重复选名是静默失效的常见成因。 */
+  .my-ft-socials a:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+    color: #fff;
+    opacity: 1;
   }
 
   /* ── Main Grid ── */

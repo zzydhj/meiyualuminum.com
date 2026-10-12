@@ -1,0 +1,149 @@
+---
+/**
+ * privacy-policy.astro — 隐私政策
+ *
+ * 内容按本站实际实现写，不套通用模板：
+ *   表单字段取自 components/InquiryForm.astro；分析取自 BaseLayout 的 GA4；
+ *   托管与日志取自 Cloudflare Workers；提交通道是 web3forms。
+ * 不声明「我们不出售数据」之外的额外承诺，也不虚构保留期限 —— 保留期取决于
+ * web3forms 账号设置，所以这里写成「在我们（及 web3forms）账号中留存」的口径。
+ *
+ * ⚠️ 本文件由代码事实整理而成，不构成法律意见；正式对外使用前应请法务/律师复核。
+ */
+import DocPage from "../layouts/DocPage.astro";
+import { companyFacts } from "../lib/companyProfile";
+---
+
+<DocPage
+    pageTitle="Privacy Policy"
+    description="How MEIYU Aluminum collects, uses and protects the personal data you submit through our enquiry form, and how to exercise your GDPR rights."
+    titleWhite="Privacy"
+    titleGold="Policy"
+    eyebrow="Legal"
+    subtitle="What we collect when you contact us, and what you can ask us to do with it."
+>
+    <h2>Who we are</h2>
+    <p>
+        {companyFacts.name} is an aluminium building materials manufacturer based
+        in
+        {companyFacts.location}. This policy covers the personal data we collect
+        through <strong>{Astro.site?.host}</strong> — primarily the enquiry and sample
+        request forms on this website.
+    </p>
+
+    <h2>Data we collect</h2>
+    <p>
+        We do not require accounts on this site, and we do not collect payment
+        data. The enquiry form asks for:
+    </p>
+    <ul>
+        <li>
+            <strong>Name</strong> and <strong>email address</strong> — required, so
+            we can reply.
+        </li>
+        <li>
+            <strong>Country</strong> — used for shipping, standards and lead-time
+            answers.
+        </li>
+        <li>
+            <strong>Phone number</strong> — optional; only if you want a call or WhatsApp
+            reply.
+        </li>
+        <li>
+            <strong>Project details</strong> in the message field — whatever you choose
+            to tell us.
+        </li>
+        <li>
+            <strong>Sample preference</strong> — an optional checkbox indicating you
+            would like sample panels.
+        </li>
+    </ul>
+    <p>
+        We also record two technical fields with each submission: the page you
+        sent the enquiry from, and the product the enquiry refers to, so the
+        right team answers with the right context.
+    </p>
+
+    <h2>How we use it</h2>
+    <ul>
+        <li>
+            To answer your enquiry and send quotations, samples or technical
+            documents.
+        </li>
+        <li>To keep a record of conversations we have had with you.</li>
+        <li>To understand which product lines buyers ask about most.</li>
+    </ul>
+    <p>
+        We do not sell your data, and we do not add you to marketing lists you
+        have not asked for.
+    </p>
+
+    <h2>Third parties that process data</h2>
+    <p>Three services are involved, and they are the only ones:</p>
+    <ul>
+        <li>
+            <strong>web3forms</strong> — form submissions are posted directly to
+            <code>api.web3forms.com</code> and delivered to our inbox. They process
+            the fields listed above on our behalf.
+        </li>
+        <li>
+            <strong>Google Analytics 4</strong> — sets cookies to measure page views,
+            scroll depth and outbound link clicks in aggregate.
+        </li>
+        <li>
+            <strong>Cloudflare</strong> — hosts and delivers this site and keeps standard
+            security and traffic logs (IP address, request metadata).
+        </li>
+    </ul>
+    <p>
+        Product images and documents are served from our own Cloudflare R2
+        storage, not from a third-party CDN with its own tracking.
+    </p>
+
+    <h2>Cookies</h2>
+    <p>
+        This site sets only analytics cookies. There is no advertising pixel, no
+        cross-site tracking and no cookie wall. If you block cookies in your
+        browser, every page on this site still works and the enquiry form still
+        submits.
+    </p>
+
+    <h2>Your rights</h2>
+    <p>
+        If you are in the EEA or UK, you can ask us to access, correct, delete
+        or port the personal data we hold about you, or to restrict how we
+        process it. You can also withdraw consent at any time without affecting
+        processing that already happened.
+    </p>
+    <p>
+        Email us at
+        <a href={`mailto:${companyFacts.email}`}>{companyFacts.email}</a>
+        and tell us which enquiry your request relates to. We will respond within
+        a reasonable period. You also have the right to complain to your local data
+        protection authority.
+    </p>
+
+    <h2>International transfers</h2>
+    <p>
+        We are based in China, and our service providers operate globally.
+        Sending us an enquiry means your details will be processed outside your
+        home country.
+    </p>
+
+    <h2>Security</h2>
+    <p>
+        The site is served only over HTTPS. Enquiry data is limited to what you
+        voluntarily send us and is not used for any other purpose.
+    </p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+        If we change how we handle data, we will update this page. The date
+        below shows the last revision.
+    </p>
+
+    <p class="doc-updated">
+        Last updated: October 2026 · Questions to
+        <a href={`mailto:${companyFacts.email}`}>{companyFacts.email}</a>
+    </p>
+</DocPage>

@@ -1,0 +1,119 @@
+---
+/**
+ * certifications.astro — 标准与合规页
+ *
+ * 徽章清单直接渲染 companyProfile.certBadges —— 那是本站认证数据的唯一来源，
+ * 这样这个页不可能和页脚、About 页说的不一致。
+ *
+ * 红线（附录 A）：证书编号与测试报告编号不公开，所以本页不写任何编号；
+ * 也不写「已通过 X 检测」这类需要报告支撑的具体结论，只写标准名与合规口径。
+ */
+import DocPage from "../layouts/DocPage.astro";
+import {
+    companyFacts,
+    certBadges,
+    standardTerms,
+    termsNote,
+} from "../lib/companyProfile";
+---
+
+<DocPage
+    pageTitle="Certifications"
+    description="The standards MEIYU Aluminium works to — ISO 9001 quality management, CE marking under EN 13964, ASTM E84 and EN 13501-1 fire classification."
+    titleWhite="Standards &"
+    titleGold="Certifications"
+    eyebrow="Compliance"
+    subtitle="What our documentation covers, and what we will send you on request."
+>
+    <h2>What we work to</h2>
+    <!-- 样式必须用 DocPage 的 .doc-* 类：Footer 的 my-ft-badge 是 scoped 样式，
+       选择器带 Footer 的 data-astro-cid，在本页完全不会命中。 -->
+    <ul class="doc-certs">
+        {certBadges.map((badge) => <li>✓ {badge}</li>)}
+    </ul>
+
+    <p>
+        Each of those is a different kind of claim, and procurement reviews
+        treat them differently, so it is worth being precise:
+    </p>
+
+    <h3>ISO 9001 — quality management</h3>
+    <p>
+        Our management system is operated to ISO 9001. That is about how
+        consistently we control incoming material, process changes, inspection
+        and records — it is not a product performance certificate, and a buyer's
+        technical review should not treat it as one.
+    </p>
+
+    <h3>CE marking under EN 13964 — ceiling systems</h3>
+    <p>
+        EN 13964 is the European product standard for ceiling and linear ceiling
+        systems. It covers the characteristics a manufacturer must declare —
+        reaction to fire, mechanical performance including deflection under
+        load, acoustic behaviour where claimed, and durability. Where a product
+        family is supplied under CE marking, the declaration of performance for
+        that family travels with the quotation.
+    </p>
+
+    <h3>ASTM E84 and EN 13501-1 — fire classification</h3>
+    <p>
+        These are the two classification frameworks buyers most often specify:
+        <strong>ASTM E84</strong> (surface burning characteristics, Class A/B/C, used
+        in North America) and <strong>EN 13501-1</strong> (reaction to fire, Euroclasses
+        A1 through F, used in Europe and the Gulf).
+    </p>
+    <div class="doc-note">
+        Fire classification depends on the specific product build — alloy,
+        gauge, coating system and, for acoustic panels, the acoustic tissue or
+        backing. Bare aluminium is inherently non-combustible, but a coated or
+        lined panel is classified as assembled. Always confirm the class against
+        the exact product you are ordering, not against the range name.
+    </div>
+
+    <h3>What we do not claim</h3>
+    <ul>
+        <li>
+            We do not publish certificate or test report numbers on this
+            website. They are provided to a buyer or consultant on request,
+            against a specific enquiry.
+        </li>
+        <li>
+            We do not claim third-party testing we cannot document. If a project
+            requires a witnessed test or an accredited report to a standard we
+            have not already classified against, we say so before you commit to
+            it.
+        </li>
+        <li>
+            Project photographs and rendered imagery on this site illustrate
+            construction and finish options; they are not certification that a
+            given assembly has been installed elsewhere.
+        </li>
+    </ul>
+
+    <h2>Documentation we can supply</h2>
+    <p>For a project file or submittal pack, we typically provide:</p>
+    <ul>
+        <li>Technical data sheet for the specified product family.</li>
+        <li>Declaration of performance / CE documentation where applicable.</li>
+        <li>Fire test classification reference for the build being quoted.</li>
+        <li>Mill certificates for the aluminium supplied.</li>
+        <li>Coating system specification and warranty terms.</li>
+        <li>Setting-out and installation detail drawings.</li>
+    </ul>
+
+    <h2>Commercial terms</h2>
+    <ul>
+        {
+            standardTerms.map((row) => (
+                <li>
+                    <strong>{row.label}</strong> — {row.value}
+                </li>
+            ))
+        }
+    </ul>
+    <p class="doc-updated">
+        {termsNote} · Requests to
+        <a href={`mailto:${companyFacts.email}`}>{companyFacts.email}</a> or via the
+        <a href="/contact/">contact page</a>.
+    </p>
+</DocPage>

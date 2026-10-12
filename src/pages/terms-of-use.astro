@@ -1,0 +1,113 @@
+---
+/**
+ * terms-of-use.astro — 使用条款
+ *
+ * 写作红线：本站是制造商的产品资料页，不是工程顾问。所以条款必须明确
+ * 「页面参数是参考值、最终以报价单与确认图为准」—— 这与 companyProfile.termsNote
+ * 的口径保持一致，也是产品页规格表已经在用的措辞。
+ * 不虚构争议解决机制之外的细节；管辖法律按公司注册地写。
+ *
+ * ⚠️ 由代码与商务条款事实整理而成，不构成法律意见；对外使用前应请法务/律师复核。
+ */
+import DocPage from "../layouts/DocPage.astro";
+import { companyFacts, termsNote } from "../lib/companyProfile";
+---
+
+<DocPage
+    pageTitle="Terms of Use"
+    description="The terms governing use of MEIYU Aluminum's website: product information status, intellectual property, disclaimers and liability."
+    titleWhite="Terms of"
+    titleGold="Use"
+    eyebrow="Legal"
+    subtitle="The ground rules for using this website and the information on it."
+>
+    <h2>Acceptance</h2>
+    <p>
+        By using <strong>{Astro.site?.host}</strong> you agree to these terms. If
+        you do not agree, please do not use the site.
+    </p>
+
+    <h2>Status of the information on this site</h2>
+    <p>This is the most important point, so we state it plainly:</p>
+    <div class="doc-note">
+        Specification tables, finish descriptions, perforation patterns, fire
+        ratings, weights and installation guidance on this site are <strong
+            >indicative product information</strong
+        >, not engineering specifications for your project. Confirmed figures —
+        including alloy, temper, gauge, coating system, panel dimensions,
+        tolerances and fixing details — are those issued with your quotation and
+        approved shop drawings.
+    </div>
+    <p>
+        {termsNote} Curtain wall, facade and ceiling systems must be designed and
+        verified by a qualified engineer for the specific building, load case and
+        local code. Nothing on this site substitutes for that.
+    </p>
+
+    <h2>Prices and lead times</h2>
+    <p>
+        Any figures shown for MOQ, lead time or warranty describe our standard
+        offer and are confirmed at quotation. They are not standing price quotes
+        and expire with the quotation that carries them.
+    </p>
+
+    <h2>Your submissions</h2>
+    <p>
+        When you send us an enquiry, drawings or a project brief, you keep
+        ownership of them. You grant us permission to use them only to prepare
+        and price what you asked for. Please do not send confidential material
+        without telling us.
+    </p>
+
+    <h2>Intellectual property</h2>
+    <p>
+        The site text, layout and original photography are owned by
+        {companyFacts.name}. Product photographs show our own production where
+        marked as such; rendered and illustrative images are used to explain
+        construction and are not records of completed projects. Downloaded
+        material may be used inside your own organisation for evaluation and
+        specification; it may not be republished commercially or presented as
+        your own.
+    </p>
+
+    <h2>Third-party links</h2>
+    <p>
+        Where we link to standards bodies, test references or our YouTube
+        channel, we do not control and are not responsible for those sites.
+    </p>
+
+    <h2>No warranty on the site itself</h2>
+    <p>
+        The site is provided "as is". We do not warrant that it is
+        uninterrupted, error-free, or that every page reflects the current
+        product catalogue — some ranges are updated in the catalogue ahead of
+        the website.
+    </p>
+
+    <h2>Limits of liability</h2>
+    <p>
+        To the extent permitted by law, we are not liable for losses arising
+        from reliance on website information alone. Contractual responsibility
+        for supplied goods is governed by the quotation, purchase order and
+        applicable standards referenced in them.
+    </p>
+
+    <h2>Governing law</h2>
+    <p>
+        These terms are governed by the laws of the People's Republic of China,
+        where
+        {companyFacts.name} is established. Supply contracts may specify a different
+        governing law; the contract documents prevail.
+    </p>
+
+    <h2>Changes</h2>
+    <p>
+        We may update these terms as the site or our product range changes. The
+        date below shows the last revision.
+    </p>
+
+    <p class="doc-updated">
+        Last updated: October 2026 · Questions to
+        <a href={`mailto:${companyFacts.email}`}>{companyFacts.email}</a>
+    </p>
+</DocPage>

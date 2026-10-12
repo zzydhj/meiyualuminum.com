@@ -61,7 +61,10 @@ import MegaMenu from "./MegaMenu.astro";
   </div>
 
   <div class="has-dropdown">
-    <a href="#">
+    <!-- Resource 本身没有着陆页（子项才有），所以不给 href：
+         带 href="#" 时点一下会把页面弹回顶部，看起来像菜单坏了。
+         不给 href 的 <a> 不是链接也不可聚焦，下拉仍由 hover/focus 触发。 -->
+    <a tabindex="-1" aria-disabled="true">
       Resource
       <svg
         class="nav-chevron"

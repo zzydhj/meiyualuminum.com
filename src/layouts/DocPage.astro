@@ -1,0 +1,189 @@
+---
+/**
+ * DocPage.astro — 说明类 / 政策类单页的统一外壳
+ *
+ * 组成：BaseLayout（SEO meta、全站页眉页脚、GA）+ PageHero（统一页头）+ 正文排版容器。
+ * 给 privacy-policy / terms-of-use / manufacturing / certifications / careers 这类
+ * 「一个页头 + 若干段文字」的页面共用，避免五个页面各抄一遍页头与正文样式后互相漂移。
+ *
+ * 约定：
+ * - H1 由 PageHero 输出，所以这里固定给 BaseLayout 传 hideTitle，保证全页仅一个 H1。
+ * - 正文里不要再手写 <h1>；标题层级从 h2 开始。
+ * - 正文样式必须写在 <style is:global> 里：slot 的内容属于调用方组件的作用域，
+ *   本文件的 scoped 样式选择器带不到那些元素上（同 set:html 注入内容的失效原理）。
+ *   因此所有规则都以 .doc 前缀限定作用域，避免污染其它页面。
+ */
+import BaseLayout from "./BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+
+interface CrumbItem {
+    name: string;
+    url: string;
+}
+
+interface Props {
+    /** 同时作为 <title> 与面包屑末项 */
+    pageTitle: string;
+    /** meta description，控制在 160 字符内 */
+    description: string;
+    /** 页头双色标题：白色部分 */
+    titleWhite: string;
+    /** 页头双色标题：品牌金部分（可省） */
+    titleGold?: string;
+    subtitle?: string;
+    /** 标题上方的小胶囊徽章 */
+    eyebrow?: string;
+    /** 面包屑；不传则自动拼 Home → 当前页 */
+    crumb?: CrumbItem[];
+    /** 页头背景图；不传用全站统一背景 */
+    image?: string;
+    imageAlt?: string;
+}
+
+const {
+    pageTitle,
+    description,
+    titleWhite,
+    titleGold,
+    subtitle,
+    eyebrow,
+    crumb,
+    image,
+    imageAlt = "",
+} = Astro.props;
+
+const crumbs: CrumbItem[] = crumb ?? [
+    { name: "Home", url: "/" },
+    { name: pageTitle, url: Astro.url.pathname },
+];
+---
+
+<BaseLayout pageTitle={pageTitle} description={description} hideTitle>
+    <PageHero
+        image={image}
+        imageAlt={imageAlt}
+        eyebrow={eyebrow}
+        titleWhite={titleWhite}
+        titleGold={titleGold}
+        subtitle={subtitle}
+        crumb={{ items: crumbs }}
+    />
+    <article class="doc">
+        <slot />
+    </article>
+</BaseLayout>
+
+<style is:global>
+    .doc {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 2.5rem 1rem 3.5rem;
+        color: #475569;
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    .doc h2 {
+        margin: 2.25rem 0 0.75rem;
+        color: #0d0950;
+        font-size: 1.35rem;
+        line-height: 1.35;
+    }
+
+    .doc h2:first-child {
+        margin-top: 0;
+    }
+
+    .doc h3 {
+        margin: 1.5rem 0 0.5rem;
+        color: #1e293b;
+        font-size: 1.05rem;
+    }
+
+    .doc p {
+        margin: 0 0 1rem;
+    }
+
+    .doc ul,
+    .doc ol {
+        margin: 0 0 1.25rem;
+        padding-left: 1.4rem;
+    }
+
+    .doc li {
+        margin-bottom: 0.45rem;
+    }
+
+    .doc a {
+        color: #0053a0;
+    }
+
+    .doc strong {
+        color: #1e293b;
+    }
+
+    /* 事实小卡片：把「公司数据只出自 companyProfile」这件事在视觉上标出来 */
+    .doc-facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        margin: 0 0 2rem;
+        padding: 1.25rem;
+        background: #faf8f5;
+        border: 1px solid #eee6dc;
+        border-radius: 12px;
+        list-style: none;
+    }
+
+    .doc-facts li {
+        margin: 0;
+    }
+
+    .doc-facts b {
+        display: block;
+        color: #69574a;
+        font-size: 1.15rem;
+    }
+
+    .doc-facts span {
+        color: #94a3b8;
+        font-size: 0.82rem;
+    }
+
+    /* 认证 / 合规徽章行 */
+    .doc-certs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0 0 1.75rem;
+        padding: 0;
+        list-style: none;
+    }
+
+    .doc-certs li {
+        margin: 0;
+        padding: 0.4rem 0.85rem;
+        background: #faf8f5;
+        border: 1px solid #eee6dc;
+        border-radius: 999px;
+        color: #69574a;
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+
+    /* 提示条：用于「以报价单为准」这类必须与正文同时出现的限定语 */
+    .doc-note {
+        margin: 0 0 2rem;
+        padding: 0.9rem 1.1rem;
+        background: #fffaf0;
+        border-left: 3px solid #c09020;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.92rem;
+    }
+
+    .doc-updated {
+        margin-top: 3rem;
+        color: #94a3b8;
+        font-size: 0.85rem;
+    }
+</style>

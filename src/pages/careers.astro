@@ -1,0 +1,97 @@
+---
+/**
+ * careers.astro — 招聘页
+ *
+ * 刻意不写：具体在招岗位、薪资区间、福利清单、人数增长 —— 这些我无从核实，
+ * 编出来就是下一个「+86 123 4567 8900」。所以本页只做一件事：
+ * 说清楚我们在哪、做什么类型的工作、以及怎么把简历递到人手上。
+ * 真有岗位开放时，把岗位清单加进 roles 数组即可，页面结构不用动。
+ */
+import DocPage from "../layouts/DocPage.astro";
+import { companyFacts } from "../lib/companyProfile";
+---
+
+<DocPage
+    pageTitle="Careers"
+    description="Work with MEIYU Aluminium in Dongguan — production, quality, engineering support and export sales roles. Send a speculative application."
+    titleWhite="Work at"
+    titleGold="MEIYU"
+    eyebrow="Careers"
+    subtitle="A Dongguan manufacturer of aluminium ceiling and facade systems."
+>
+    <h2>Who we are</h2>
+    <p>
+        {companyFacts.name} makes architectural aluminium products — ceiling tiles,
+        linear and baffle ceilings, wall and facade panels, honeycomb and veneer panels
+        — in our own plant in {companyFacts.location}, and ships them to
+        building projects overseas.
+    </p>
+    <p>
+        That combination shapes the kind of person the work suits: detail-minded
+        about dimensions and finish, comfortable when the reference document is
+        a setting-out drawing rather than a marketing brief, and patient with
+        the questions an international specifier asks.
+    </p>
+
+    <h2>The kind of work here</h2>
+    <p>
+        Roles at the plant and the export office generally fall into four
+        groups:
+    </p>
+    <ul>
+        <li>
+            <strong>Production</strong> — roll forming, press brake and folding, perforation,
+            coating line operation and packing.
+        </li>
+        <li>
+            <strong>Quality</strong> — incoming material checks against mill certificates,
+            first-article sign-off, coating thickness and adhesion, final inspection
+            before packing.
+        </li>
+        <li>
+            <strong>Engineering support</strong> — reading and preparing shop drawings,
+            setting-out, and turning a concept into a product family that can actually
+            be made.
+        </li>
+        <li>
+            <strong>Export sales and order follow-up</strong> — enquiries, quotations,
+            sample approvals, and seeing an order through production to the container.
+        </li>
+    </ul>
+
+    <div class="doc-note">
+        We do not keep a live job board on this website. If you are asking
+        whether we have an opening right now, the honest answer is that it
+        changes week to week — so send us your details and we will contact you
+        when something fits.
+    </div>
+
+    <h2>How to apply</h2>
+    <p>
+        Email the following to <a href={`mailto:${companyFacts.email}`}
+            >{companyFacts.email}</a
+        >:
+    </p>
+    <ol>
+        <li>
+            The type of work you want to do (one of the four groups above is
+            enough).
+        </li>
+        <li>Where you have done it before, and for how long.</li>
+        <li>
+            What you can start with — a machine, a drawing set, a coating line,
+            a market.
+        </li>
+        <li>Your location and, if relevant, your availability.</li>
+    </ol>
+    <p>
+        A short, specific message tells us more than a formatted CV. If you have
+        photographs of work you have made or drawings you have produced, attach
+        them.
+    </p>
+
+    <p class="doc-updated">
+        {companyFacts.location} · Applications to
+        <a href={`mailto:${companyFacts.email}`}>{companyFacts.email}</a>
+    </p>
+</DocPage>

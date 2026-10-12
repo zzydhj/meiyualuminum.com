@@ -16,7 +16,25 @@
 //   每张卡的 img / title / href 都是真实写出的字符串，直接改对应行即可，
 //   不要改回 Array.from / 索引自动增序的写法。
 //   图片暂复用现有 8 张真实 CDN 图（各子选项重复使用，后续可换）。
-const MENU = [
+/**
+ * 一张产品卡。
+ * href 省略或写 "#" 表示这个产品还**没有页面**：渲染成不可点的 “Coming soon” 灰卡。
+ * 以前这些卡写的是 href="#"，看起来是链接、点下去只把页面滚到顶部 ——
+ * 对买家是“这站没建完”，对 Google 是每个页面都自指一次。
+ * 以后给某个产品建好页，把 "#" 换成真路径即可，卡片自动恢复可点。
+ */
+interface MegaCardItem {
+  img: string;
+  title: string;
+  href?: string;
+}
+
+interface MegaGroup {
+  label: string;
+  cards: MegaCardItem[];
+}
+
+const MENU: MegaGroup[] = [
   {
     label: "Metal Ceiling Systems",
     cards: [
@@ -339,16 +357,31 @@ const MENU = [
           MENU.map((m, i) => (
             <div class="mega-pane" id={`mega-pane-${i}`} hidden={i !== 0}>
               <div class="mega-grid">
-                {m.cards.map((c, j) => (
-                  <a href={c.href} class="mega-card" style={`--i:${j}`}>
-                    <img src={c.img} alt={c.title} loading="lazy" />
-                    <div class="mega-card-overlay" />
-                    <div class="mega-card-content">
-                      <span class="mega-card-title">{c.title}</span>
-                    </div>
-                    <span class="mega-card-accent" />
-                  </a>
-                ))}
+                {m.cards.map((c, j) => {
+                  // 没有真实目标就不给 href：<a> 不带 href 时浏览器不把它当链接、
+                  // 也不可聚焦，比 href="#" 诚实；同时不用拆两套 markup，
+                  // 避开 scoped 样式跟不到新组件的坑。
+                  const soon = !c.href || c.href === "#";
+                  return (
+                    <a
+                      href={soon ? undefined : c.href}
+                      class:list={["mega-card", { "mega-card--soon": soon }]}
+                      style={`--i:${j}`}
+                      aria-disabled={soon ? "true" : undefined}
+                      tabindex={soon ? "-1" : undefined}
+                    >
+                      <img src={c.img} alt={c.title} loading="lazy" />
+                      <div class="mega-card-overlay" />
+                      <div class="mega-card-content">
+                        <span class="mega-card-title">{c.title}</span>
+                        {soon && (
+                          <span class="mega-card-badge">Coming soon</span>
+                        )}
+                      </div>
+                      <span class="mega-card-accent" />
+                    </a>
+                  );
+                })}
               </div>
             </div>
           ))
@@ -537,6 +570,34 @@ const MENU = [
   }
 
   /* Card */
+  /* 还没有页面的产品卡：保留图与标题（它们本身有展示价值），
+     但去颜 + 压暗 + 禁用 hover 位移，让它在视觉上就读作“不能点”。 */
+  .mega-card--soon {
+    cursor: default;
+    filter: saturate(0.25) brightness(0.72);
+  }
+
+  .mega-card--soon:hover {
+    transform: none;
+  }
+
+  .mega-card--soon:hover .mega-card-accent {
+    transform: scaleX(0);
+  }
+
+  .mega-card-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 8px;
+    border: 1px solid rgba(200, 169, 110, 0.5);
+    border-radius: 999px;
+    color: #c8a96e;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
   .mega-card {
     position: relative;
     display: block;

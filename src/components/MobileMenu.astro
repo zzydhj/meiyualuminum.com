@@ -10,7 +10,16 @@
  *
  * ⚠️ 菜单链接与 Navigation.astro / MegaMenu.astro 各维护一份，
  *    修改导航结构时两处需同步更新。
+ *
+ * 视频标签子菜单不再手写：改成从 lib/videoTags 取已发布视频的真实标签。
+ * 原先这里硬编了 8 个 href="#" 的标签名，其中 6 个其实早就有可用页面 ——
+ * 手机用户点了没反应，而修的人只要改数据库就会忘改这里（同一原因又造出
+ * 了下面的 Distributor / Aluminum Solutions 两个空项）。
  */
+import { fetchAllVideos, groupVideosByTag } from "../lib/videoTags";
+
+// 与 /video-tags/ 索引页、VideoFilterBar 同一取数口径，保证三处不会不一致
+const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
 ---
 
 <div class="m-menu" id="mobile-menu" aria-hidden="true">
@@ -48,8 +57,8 @@
       <!-- Home -->
       <li><a class="m-link" href="/">Home</a></li>
 
-      <!-- Aluminum Solutions -->
-      <li><a class="m-link" href="#">Aluminum Solutions</a></li>
+      <!-- Aluminum Solutions：删项。它没有子菜单也没有对应页面，
+           与下面的 Products 完全重叠，留着只会多一个点不动的行。 -->
 
       <!-- Products（三级结构） -->
       <li class="m-acc">
@@ -132,7 +141,7 @@
       <!-- Videos -->
       <li class="m-acc">
         <div class="m-row">
-          <a class="m-link" href="#">Videos</a>
+          <a class="m-link" href="/videos/">Videos</a>
           <button
             type="button"
             class="m-toggle"
@@ -155,30 +164,31 @@
         <div class="m-panel">
           <div class="m-panel-in">
             <ul class="m-list m-l2">
-              <li><a class="m-link" href="#">Project Cases</a></li>
-              <li><a class="m-link" href="#">Client Testimonial</a></li>
-              <li><a class="m-link" href="#">Factory Tour</a></li>
-              <li><a class="m-link" href="#">How It's Made</a></li>
-              <li><a class="m-link" href="#">Installation Guide</a></li>
-              <li>
-                <a class="m-link" href="#">Sample &amp; Custom Service</a>
-              </li>
-              <li><a class="m-link" href="#">Product Showcase</a></li>
-              <li>
-                <a class="m-link" href="#">Quality &amp; Certifications</a>
-              </li>
+              {
+                videoTags.map((tag) => (
+                  <li>
+                    <a
+                      class="m-link"
+                      href={`/video-tags/${encodeURIComponent(tag)}/`}
+                    >
+                      {tag}
+                    </a>
+                  </li>
+                ))
+              }
             </ul>
           </div>
         </div>
       </li>
 
-      <!-- Distributor -->
-      <li><a class="m-link" href="#">Distributor</a></li>
+      <!-- Distributor：删项。全站没有经销商相关页面，href="#" 的死行不如不放；
+           真要开经销商招募，建完 /distributors/ 再加回来。 -->
 
-      <!-- Resource -->
+      <!-- Resource：子项都是真页面，但父项本身没有着陆页。
+           不给 href 的 <a> 不是链接也不可聚焦，展开仍由旁边的按钮负责。 -->
       <li class="m-acc">
         <div class="m-row">
-          <a class="m-link" href="#">Resource</a>
+          <a class="m-link" tabindex="-1" aria-disabled="true">Resource</a>
           <button
             type="button"
             class="m-toggle"

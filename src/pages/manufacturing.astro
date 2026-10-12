@@ -1,0 +1,137 @@
+---
+/**
+ * manufacturing.astro — 制造能力页
+ *
+ * 与 About 的分工（刻意不重复）：About 承载信任信号（成立年份、工厂视频、认证、
+ * 团队、下单流程），本页只回答采购技术评审的那一类问题 —— 材料牌号、能做什么工序、
+ * 公差与涂层的实际边界。数字仍只取 companyFacts，附录 A 没有的一律写成不带数字的能力句。
+ */
+import DocPage from "../layouts/DocPage.astro";
+import { companyFacts } from "../lib/companyProfile";
+---
+
+<DocPage
+    pageTitle="Manufacturing"
+    description="How MEIYU forms, perforates, coats and packs aluminium ceiling and facade panels in Dongguan — alloys, processes and tolerances."
+    titleWhite="Manufacturing"
+    titleGold="Capability"
+    eyebrow="What happens in the plant"
+    subtitle="The processes between your drawings and a packed container."
+>
+    <ul class="doc-facts">
+        <li><b>{companyFacts.established}</b><span>Established</span></li>
+        <li><b>{companyFacts.plantArea}</b><span>Plant area</span></li>
+        <li>
+            <b>{companyFacts.productionLines}</b><span>Production lines</span>
+        </li>
+        <li><b>{companyFacts.staff}</b><span>People</span></li>
+    </ul>
+
+    <h2>Where it happens</h2>
+    <p>
+        All forming, perforation, coating and packing take place in our own
+        plant in
+        {companyFacts.location}. We buy coil and sheet from certified mills and
+        process it in-house rather than outsourcing the stages that decide
+        appearance and dimensional accuracy.
+    </p>
+
+    <h2>Materials we work with</h2>
+    <ul>
+        <li>
+            <strong>Alloy and temper</strong> — the common ceiling grades (such as
+            AA1100 and AA3003) and the structural grades used for facade panels and
+            tubes, chosen per product family. The grade we quote is stated on the
+            quotation; we do not substitute within a grade family.
+        </li>
+        <li>
+            <strong>Formats</strong> — coil and sheet for panels and strips, extruded
+            profile for baffles, tubes and carriers.
+        </li>
+        <li>
+            <strong>Everything is aluminium.</strong> Subframes and carriers supplied
+            with a system may be galvanised steel; fasteners we recommend are stainless
+            to avoid galvanic corrosion. Where aluminium must be isolated from carbon
+            steel, we say so on the detail.
+        </li>
+    </ul>
+
+    <h2>Processes</h2>
+    <h3>Forming</h3>
+    <p>
+        Roll forming for strip and linear ceiling profiles, press braking and
+        folding for panel edges and cassettes, and punching or roll perforation
+        for acoustic patterns. Curved and tapered work is formed to your
+        setting-out drawing.
+    </p>
+
+    <h3>Perforation</h3>
+    <p>
+        Round, square and slotted patterns are produced to a specified pitch and
+        open area. Perforation is what makes an acoustic ceiling behave
+        acoustically, so the pattern, aperture and open-area figure are
+        confirmed before production — our <a
+            href="/tools/perforation-open-area/">open area calculator</a
+        > explains how those numbers relate.
+    </p>
+
+    <h3>Coating</h3>
+    <p>
+        Powder coating and PVDF (fluorocarbon) liquid paint, plus anodised and
+        wood grain finishes where specified. Exterior panels intended for UV,
+        coastal or polluted exposure are quoted on the coating system
+        appropriate to that environment. The
+        <a href="/surface-treatment-comparison/">surface treatment comparison</a
+        >
+        sets out how the options differ in practice.
+    </p>
+
+    <h3>Assembly and packing</h3>
+    <p>
+        Cut-to-length members, carriers and suspension hardware are kitted
+        against the setting-out drawing so a site crew receives what a given
+        zone needs, rather than one bulk bundle. Perimeter trim is quoted as a
+        linear metre run, not a piece count.
+    </p>
+
+    <h2>Quality control</h2>
+    <ul>
+        <li>Incoming coil and sheet checked against the mill certificate.</li>
+        <li>
+            First-article dimensional and appearance sign-off before a batch
+            runs.
+        </li>
+        <li>Coating thickness and adhesion checks during the coating stage.</li>
+        <li>
+            Colour and finish approved against a physical sample panel before
+            volume production.
+        </li>
+        <li>Final visual and dimensional check before packing.</li>
+    </ul>
+
+    <h2>What we need from you to start</h2>
+    <ol>
+        <li>System type and product family (or a photo / reference detail).</li>
+        <li>Panel dimensions, gauge and alloy preference if you have one.</li>
+        <li>
+            Finish system and colour reference (RAL, Pantone or a physical
+            sample).
+        </li>
+        <li>
+            Perforation pattern and open area, if acoustic performance is
+            required.
+        </li>
+        <li>Quantities by zone, and the destination port or site.</li>
+    </ol>
+    <p>
+        If you have drawings, send them. If you only have a concept, send that
+        too — a sketch and a target budget are usually enough for us to come
+        back with options.
+    </p>
+
+    <p class="doc-updated">
+        Capability summary · exact grades, tolerances and coating systems are
+        confirmed with your quotation ·
+        <a href="/contact/">Talk to us about a project</a>
+    </p>
+</DocPage>
