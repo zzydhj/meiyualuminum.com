@@ -1,6 +1,6 @@
 ---
 /**
- * about.astro — About 页（静态预渲染 · 询盘转化导向）
+ * about.astro — About 页（SSR 按需渲染 · 询盘转化导向）
  *
  * 架构借鉴自同类工厂站的 About 骨架，内容与配色全部换成 MEIYU 自有：
  *   1 Hero（PageHero + 徽章 + CTA slot + 数据条）
@@ -30,6 +30,9 @@ import PageHero from "../components/PageHero.astro";
 import { supabase } from "../lib/supabase";
 import { isSelfHostedVideo, firstFrameSrc } from "../lib/videoSource";
 import { companyFacts, certBadges } from "../lib/companyProfile";
+
+// SSR：本页 Factory Tour 区块读 videos 表，转静态会让“上传新视频”必须跟着一次重建部署。
+export const prerender = false;
 
 const CDN = "https://file.meiyualuminum.com/";
 const IMG_STORY = `${CDN}home/custom-aluminum-single-panel-design-factory-installation-building-facade.webp`;

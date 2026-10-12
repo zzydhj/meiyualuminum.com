@@ -63,3 +63,18 @@ export function groupVideosByTag(videos: VideoItem[]): Map<string, VideoItem[]> 
   }
   return map;
 }
+
+/**
+ * SSR 路由用：按标签取该标签下全部已发布视频；标签不存在返回 null。
+ * 与 lib/tagPosts.ts 的 getPostsForTag 镜像，编码兼容的理由也相同。
+ */
+export async function getVideosForTag(tag: string): Promise<VideoItem[] | null> {
+  const byTag = groupVideosByTag(await fetchAllVideos());
+  const hit = byTag.get(tag);
+  if (hit) return hit;
+  try {
+    return byTag.get(decodeURIComponent(tag)) ?? null;
+  } catch {
+    return null;
+  }
+}

@@ -8,20 +8,27 @@ import {
   type CategoryNode,
 } from "../../lib/categoryPath";
 
-export async function getStaticPaths() {
-  const { data: allCategories } = await supabase
-    .from("categories")
-    .select("id, name, slug, parent_id, description");
+// SSR：分类页是全站关键词价值最高的着陆页。转静态时新发布一个产品，
+// 它所属分类页不会自动列出这个产品，必须重建部署 —— 改库即生效才对。
+export const prerender = false;
 
-  const categories = (allCategories ?? []) as CategoryNode[];
+// select 必须带上 seo_title / seo_description / keywords：下面渲染 meta 时要读这三列。
+// 以前漏选过，导致数据库里填好的 14 条分类 SEO 文案从未生效、也不报错。
+const { data: allCategoriesData } = await supabase
+  .from("categories")
+  .select(
+    "id, name, slug, parent_id, description, seo_title, seo_description, keywords",
+  );
 
-  return categories.map((category) => ({
-    params: { slug: category.slug },
-    props: { category, allCategories: categories },
-  }));
+const allCategories = (allCategoriesData ?? []) as CategoryNode[];
+
+const slug = decodeURIComponent(Astro.params.slug ?? "");
+const category = allCategories.find((c) => c.slug === slug);
+
+// 分类不存在（URL 拼错、或分类被删）→ 302 回分类索引，与标签页同一做法。
+if (!category) {
+  return Astro.redirect("/categories/");
 }
-
-const { category, allCategories } = Astro.props;
 
 // Build breadcrumb chain from parent categories
 const parentChain = await getCategoryChain(category.parent_id);

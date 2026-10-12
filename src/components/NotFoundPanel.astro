@@ -1,0 +1,186 @@
+---
+/**
+ * NotFoundPanel.astro — 「页面不存在」兜底面板
+ *
+ * 两个调用方，共用同一份 UI，避免两处各写一套然后漂移：
+ *   1. src/pages/404.astro —— 未匹配任何路由时由 Astro 下发（真 404）
+ *   2. src/pages/[page].astro —— 单段路径查不到 pages 表记录时（以前返回 14 字节空白页）
+ *
+ * 状态码不在这里管，由调用方负责；本组件只负责「给访客一条出路」。
+ */
+
+// 入口清单：买家真正会想找的东西，按「最可能补救成功」排序
+const links = [
+    {
+        href: "/products/",
+        name: "Product Lines",
+        note: "All aluminum ceiling, facade and panel ranges",
+    },
+    {
+        href: "/categories/",
+        name: "Categories",
+        note: "Browse by system type — strip, baffle, tile, mesh",
+    },
+    {
+        href: "/project-gallery/",
+        name: "Project Gallery",
+        note: "Installed work by sector",
+    },
+    {
+        href: "/blog/",
+        name: "Technical Notes",
+        note: "Specification and installation guidance",
+    },
+    {
+        href: "/surface-treatment-comparison/",
+        name: "Surface Treatments",
+        note: "PVDF, powder coat, anodised and wood grain",
+    },
+];
+---
+
+<div class="nf">
+    <p class="nf-code">404</p>
+    <h2>We couldn't find that page</h2>
+    <p class="nf-lead">
+        It may have been renamed, moved, or the link may have a typo. Everything
+        we publish is reachable from the pages below.
+    </p>
+
+    <ul class="nf-list">
+        {
+            links.map((l) => (
+                <li>
+                    <a href={l.href}>
+                        <span class="nf-name">{l.name}</span>
+                        <span class="nf-note">{l.note}</span>
+                    </a>
+                </li>
+            ))
+        }
+    </ul>
+
+    <div class="nf-actions">
+        <a class="nf-btn" href="/contact/">Send an Inquiry</a>
+        <a class="nf-btn nf-btn--ghost" href="/"> ← Back to Home </a>
+    </div>
+
+    <p class="nf-sub">
+        Looking for something specific? Tell us the profile, finish and quantity
+        and we'll come back with options.
+    </p>
+</div>
+
+<style>
+    .nf {
+        max-width: 620px;
+        margin: 1.5rem auto;
+        padding: 2.5rem 1.75rem;
+        text-align: center;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+    }
+
+    .nf-code {
+        margin: 0 0 0.5rem;
+        color: #c09020;
+        font-size: 2.6rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        line-height: 1;
+    }
+
+    .nf h2 {
+        margin: 0 0 0.6rem;
+        color: #0d0950;
+        font-size: 1.4rem;
+    }
+
+    .nf-lead {
+        margin: 0 0 1.5rem;
+        color: #475569;
+        line-height: 1.7;
+    }
+
+    .nf-list {
+        margin: 0 0 1.75rem;
+        padding: 0;
+        list-style: none;
+        text-align: left;
+    }
+
+    .nf-list li + li {
+        margin-top: 0.5rem;
+    }
+
+    .nf-list a {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.7rem 0.9rem;
+        background: #faf8f5;
+        border: 1px solid #eee6dc;
+        border-radius: 9px;
+        text-decoration: none;
+        transition: border-color 0.15s ease;
+    }
+
+    .nf-list a:hover {
+        border-color: #c09020;
+    }
+
+    .nf-name {
+        color: #69574a;
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    .nf-note {
+        color: #94a3b8;
+        font-size: 0.82rem;
+    }
+
+    .nf-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .nf-btn {
+        padding: 0.7rem 1.4rem;
+        background-color: #69574a;
+        color: #fff;
+        border: 1px solid #69574a;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: opacity 0.15s ease;
+    }
+
+    .nf-btn:hover {
+        opacity: 0.88;
+    }
+
+    /* 次级按钮：只描边不填色，与主按钮拉开层级但同属一套品牌色 */
+    .nf-btn--ghost {
+        background-color: transparent;
+        color: #69574a;
+    }
+
+    .nf-btn--ghost:hover {
+        background-color: rgba(105, 87, 74, 0.06);
+        opacity: 1;
+    }
+
+    .nf-sub {
+        margin: 1.25rem 0 0;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+</style>

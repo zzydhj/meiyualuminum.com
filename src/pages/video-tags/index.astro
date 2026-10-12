@@ -9,6 +9,9 @@ import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 
+// SSR：跟 /tags/ 同理 —— 标签由已发布视频聚合而来，改库即生效。
+export const prerender = false;
+
 const { data: allVideos } = await supabase
   .from("videos")
   .select("tags")

@@ -7,6 +7,15 @@ export interface CategoryNode {
   parent_id: number | null;
   /** 分类描述（列表页展示用；部分查询不选该列，故可选） */
   description?: string | null;
+  /**
+   * 以下三列是分类页的 SEO 字段，仅在需要渲染 meta 的路由里 select。
+   * 设为可选是因为面包屑、索引页等查询不取它们。
+   * 踩过的坑：categories/[slug].astro 读了这三列但 select 漏了，
+   * 导致数据库里写好的 SEO 标题与描述始终走 fallback，且不报任何错。
+   */
+  seo_title?: string | null;
+  seo_description?: string | null;
+  keywords?: string[] | null;
 }
 
 /**

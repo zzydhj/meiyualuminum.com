@@ -10,6 +10,9 @@ import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProductGrid from "../../components/ProductGrid.astro";
 import PaginationNav from "../../components/PaginationNav.astro";
+
+// SSR：列表读 products 表，新增/下线产品后改库即生效，不需要重建部署。
+export const prerender = false;
 import { supabase } from "../../lib/supabase";
 import { currentLang, loc, SUPPORTED_LANGS } from "../../lib/i18n";
 import { PAGE_SIZE } from "../../lib/pagination";

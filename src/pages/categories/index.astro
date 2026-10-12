@@ -4,6 +4,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 import { getChildCategoryIds, type CategoryNode } from "../../lib/categoryPath";
 
+// SSR：分类树读 categories / products 两张表，改库即生效，不需要重建部署。
+export const prerender = false;
+
 const { data: allCategories, error } = await supabase
   .from("categories")
   .select("id, name, slug, parent_id, description")

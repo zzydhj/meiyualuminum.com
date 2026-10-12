@@ -1,8 +1,8 @@
 ---
 /**
- * tags/[tag].astro — 标签文章列表第 1 页
+ * tags/[tag].astro — 标签文章列表第 1 页（SSR）
  *
- * - 第 2~N 页由 tags/[tag]/page/[page].astro 生成（/tags/{tag}/page/N/）
+ * - 第 2~N 页由 tags/[tag]/page/[page].astro 渲染（/tags/{tag}/page/N/）
  * - 每页 PAGE_SIZE 篇，与博客列表共用分页配置与导航组件
  */
 import PageHero from "../../components/PageHero.astro";
@@ -10,39 +10,44 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostGrid from "../../components/PostGrid.astro";
 import PaginationNav from "../../components/PaginationNav.astro";
 import { PAGE_SIZE } from "../../lib/pagination";
-import { fetchAllTagPosts, groupPostsByTag } from "../../lib/tagPosts";
+import { getPostsForTag } from "../../lib/tagPosts";
 
-export async function getStaticPaths() {
-  const byTag = groupPostsByTag(await fetchAllTagPosts());
-
-  return [...byTag.entries()].map(([tag, tagged]) => ({
-    params: { tag },
-    props: {
-      posts: tagged.slice(0, PAGE_SIZE),
-      currentPage: 1,
-      totalPages: Math.max(1, Math.ceil(tagged.length / PAGE_SIZE)),
-    },
-  }));
-}
+// SSR：标签是从已发布文章聚合出来的。转静态会让“把文章移回 published”后
+// 标签页仍停在旧快照上（新标签 404、旧标签空着），改库即生效才是对的。
+export const prerender = false;
 
 const { tag } = Astro.params;
-const { posts, currentPage, totalPages } = Astro.props;
-const pageDescription = `Browse all blog posts tagged with "${tag}".`;
-const tagPath = encodeURIComponent(tag);
+// 展示与拼链接统一用解码后的名字：带空格的标签万一拿到的是 %20 形态，
+// 直接上屏会让标题变成“Quality%20%26%20Certifications”。已解码时这一步是空操作。
+const tagName = decodeURIComponent(tag ?? "");
+const tagged = await getPostsForTag(tag ?? "");
+
+// 该标签下一篇可用文章都没有（全部转 draft，或 URL 拼错）→ 302 回标签索引。
+// 不返回 404 空白页：与 blog/[...slug].astro 对已下线文章的做法保持一致，
+// 而且你把文章移回来这个 URL 就自动复活，不需要任何重建部署。
+if (!tagged) {
+  return Astro.redirect("/tags/");
+}
+
+const posts = tagged.slice(0, PAGE_SIZE);
+const currentPage = 1;
+const totalPages = Math.max(1, Math.ceil(tagged.length / PAGE_SIZE));
+const pageDescription = `Browse all blog posts tagged with "${tagName}".`;
+const tagPath = encodeURIComponent(tagName);
 ---
 
-<BaseLayout pageTitle={tag} description={pageDescription} hideTitle>
+<BaseLayout pageTitle={tagName} description={pageDescription} hideTitle>
   <PageHero
     slim
-    imageAlt={tag}
+    imageAlt={tagName}
     titleWhite="Tag"
-    titleGold={tag}
-    subtitle={`Posts tagged with "${tag}"`}
+    titleGold={tagName}
+    subtitle={`Posts tagged with "${tagName}"`}
     crumb={{
       items: [
         { name: "Home", url: "/" },
         { name: "Tags", url: "/tags/" },
-        { name: tag, url: `/tags/${tagPath}/` },
+        { name: tagName, url: `/tags/${tagPath}/` },
       ],
     }}
   />

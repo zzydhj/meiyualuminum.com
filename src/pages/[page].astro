@@ -2,6 +2,7 @@
 import PageHero from "../components/PageHero.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProjectGallery from "../components/ProjectGallery.astro";
+import NotFoundPanel from "../components/NotFoundPanel.astro";
 import { supabase } from "../lib/supabase";
 import { currentLang } from "../lib/i18n";
 
@@ -19,21 +20,29 @@ const { data: page, error } = await supabase
   .eq("status", "published")
   .maybeSingle();
 
-if (error || !page) {
-  return new Response("Page not found", { status: 404 });
+if (error) {
+  console.error(`[page] query failed for "${pageSlug}":`, error);
+}
+
+// page 为空表示这个单段路径在 pages 表里没有已发布记录（拼错 / 草稿 / 已删除）。
+// 以前这里直接 return new Response("Page not found", { status: 404 })，
+// 买家看到的是一整张 14 字节空白页；现在保留 404 状态码，但渲染带出路的兜底面板。
+const notFound = !page;
+if (notFound) {
+  Astro.response.status = 404;
 }
 
 // Use seo_title if available, otherwise fall back to title
-const pageTitle = page.seo_title || page.title;
-const pageDescription = page.seo_description || "";
-const keywords = page.keywords ?? [];
+const pageTitle = page?.seo_title || page?.title || "Page Not Found";
+const pageDescription = page?.seo_description || "";
+const keywords = page?.keywords ?? [];
 
 // Custom per-page code (plain text columns: custom_css / custom_js)
-const customCss = page.custom_css ?? "";
-const customJs = page.custom_js ?? "";
+const customCss = page?.custom_css ?? "";
+const customJs = page?.custom_js ?? "";
 
 // 特殊页面类型检测
-const isProjectGallery = page.slug === "project-gallery";
+const isProjectGallery = page?.slug === "project-gallery";
 
 // 标题自动拆双色（供 PageHero）：优先按 "|" 拆；无则按空格把最后一个词染金；单词标题全白
 const splitHeroTitle = (t: string) => {
@@ -50,65 +59,74 @@ const splitHeroTitle = (t: string) => {
     };
   return { white: s, gold: "" };
 };
-const heroTitleParts = splitHeroTitle(page.title);
+const heroTitleParts = splitHeroTitle(page?.title ?? "");
 
 // 正文 HTML 若自带 <h1> 会与页头 H1 冲突（全页仅一个 H1），渲染时降级为 h2（不改数据库）
-const safeContent = (page.content || "")
+const safeContent = (page?.content || "")
   .replace(/<h1(\s|>)/gi, "<h2$1")
   .replace(/<\/h1>/gi, "</h2>");
 ---
 
 <BaseLayout
   pageTitle={pageTitle}
-  headingTitle={page.title}
+  headingTitle={page?.title ?? ""}
   hideTitle
   description={pageDescription}
-  image={page.image_url || undefined}
+  image={page?.image_url || undefined}
   keywords={keywords}
   customCss={customCss}
   customJs={customJs}
+  noindex={notFound}
 >
-  <PageHero
-    imageAlt={page.title}
-    titleWhite={heroTitleParts.white}
-    titleGold={heroTitleParts.gold}
-    subtitle={page.hero_subtitle || ""}
-    crumb={{
-      items: [
-        { name: "Home", url: "/" },
-        { name: page.title, url: `/${page.slug}/` },
-      ],
-    }}
-  />
-
-  <!-- hero_title 作为正文引导标题（hero_subtitle 已并入 PageHero 副标题） -->
   {
-    page.hero_title && (
-      <section class="hero">
-        <h2>{page.hero_title}</h2>
-      </section>
+    page ? (
+      <>
+        <PageHero
+          imageAlt={page.title}
+          titleWhite={heroTitleParts.white}
+          titleGold={heroTitleParts.gold}
+          subtitle={page.hero_subtitle || ""}
+          crumb={{
+            items: [
+              { name: "Home", url: "/" },
+              { name: page.title, url: `/${page.slug}/` },
+            ],
+          }}
+        />
+
+        <!-- hero_title 作为正文引导标题（hero_subtitle 已并入 PageHero 副标题） -->
+        {
+          page.hero_title && (
+            <section class="hero">
+              <h2>{page.hero_title}</h2>
+            </section>
+          )
+        }
+
+        <!-- Hero image -->
+        {
+          page.image_url && (
+            <img
+              src={page.image_url}
+              alt={page.image_alt || page.title}
+              width="800"
+              height="400"
+              class="hero-image"
+              loading="lazy"
+            />
+          )
+        }
+
+        <!-- Page content (HTML from database) -->
+        {page.content && <div class="page-content" set:html={safeContent} />}
+
+        <!-- Project Gallery (动态渲染 posts 表中 primary_tag='projects' 的文章) -->
+        {isProjectGallery && <ProjectGallery />}
+      </>
+    ) : (
+      <NotFoundPanel />
     )
   }
-
-  <!-- Hero image -->
-  {
-    page.image_url && (
-      <img
-        src={page.image_url}
-        alt={page.image_alt || page.title}
-        width="800"
-        height="400"
-        class="hero-image"
-        loading="lazy"
-      />
-    )
-  }
-
-  <!-- Page content (HTML from database) -->
-  {page.content && <div class="page-content" set:html={safeContent} />}
-
-  <!-- Project Gallery (动态渲染 posts 表中 primary_tag='projects' 的文章) -->
-  {isProjectGallery && <ProjectGallery />}
 </BaseLayout>
 
 <style>

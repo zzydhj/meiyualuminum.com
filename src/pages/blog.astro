@@ -5,6 +5,11 @@ import PostGrid from "../components/PostGrid.astro";
 import PaginationNav from "../components/PaginationNav.astro";
 import { supabase } from "../lib/supabase";
 import { PAGE_SIZE } from "../lib/pagination";
+import { BLOG_LIST_DESCRIPTION } from "../lib/pageCopy";
+
+// SSR：列表数据全部来自 posts 表。转静态的话，发布/下线文章后详情页会立刻变，
+// 但本页不会 —— 会出现“文章能直链打开、列表里却找不到”的裂缝。改库即生效。
+export const prerender = false;
 
 // 已发布文章总数（轻量 count 查询，不拉取行数据）
 const { count } = await supabase
@@ -30,7 +35,7 @@ if (result.error) {
 
 const posts = result.data ?? [];
 const pageTitle = "Blog";
-const pageDescription = "Latest news, tips and insights about automotive parts and industry trends.";
+const pageDescription = BLOG_LIST_DESCRIPTION;
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription}>

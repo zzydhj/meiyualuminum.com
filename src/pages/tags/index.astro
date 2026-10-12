@@ -3,6 +3,10 @@ import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 
+// SSR：标签是从已发布文章聚合出来的，文章一进 draft 本页就该跟着空掉。
+// 转静态的话它会停在旧标签列表上，点进去全是 404 —— 改库即生效。
+export const prerender = false;
+
 const { data: allPosts } = await supabase
   .from("posts")
   .select("tags")

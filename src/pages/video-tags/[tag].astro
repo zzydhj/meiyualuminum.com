@@ -1,8 +1,8 @@
 ---
 /**
- * video-tags/[tag].astro — 视频标签列表第 1 页
+ * video-tags/[tag].astro — 视频标签列表第 1 页（SSR）
  *
- * - 第 2~N 页由 video-tags/[tag]/page/[page].astro 生成（/video-tags/{tag}/page/N/）
+ * - 第 2~N 页由 video-tags/[tag]/page/[page].astro 渲染（/video-tags/{tag}/page/N/）
  * - 每页 PAGE_SIZE 条，与博客/视频列表共用分页配置与导航组件
  */
 import PageHero from "../../components/PageHero.astro";
@@ -11,43 +11,43 @@ import VideoGrid from "../../components/VideoGrid.astro";
 import VideoFilterBar from "../../components/VideoFilterBar.astro";
 import PaginationNav from "../../components/PaginationNav.astro";
 import { PAGE_SIZE } from "../../lib/pagination";
-import { fetchAllVideos, groupVideosByTag } from "../../lib/videoTags";
+import { getVideosForTag } from "../../lib/videoTags";
 
-export async function getStaticPaths() {
-  const byTag = groupVideosByTag(await fetchAllVideos());
-
-  return [...byTag.entries()].map(([tag, tagged]) => ({
-    params: { tag },
-    props: {
-      videos: tagged.slice(0, PAGE_SIZE),
-      currentPage: 1,
-      totalPages: Math.max(1, Math.ceil(tagged.length / PAGE_SIZE)),
-    },
-  }));
-}
+// SSR：跟 tags/[tag].astro 同理 —— 标签由已发布视频聚合而来，改库即生效。
+export const prerender = false;
 
 const { tag } = Astro.params;
-const { videos, currentPage, totalPages } = Astro.props;
-const pageDescription = `Browse all videos tagged with "${tag}".`;
-const tagPath = encodeURIComponent(tag);
+const tagName = decodeURIComponent(tag ?? "");
+const tagged = await getVideosForTag(tag ?? "");
+
+// 标签下已无可用视频→ 302 回视频标签索引（与博客标签页同一做法）。
+if (!tagged) {
+  return Astro.redirect("/video-tags/");
+}
+
+const videos = tagged.slice(0, PAGE_SIZE);
+const currentPage = 1;
+const totalPages = Math.max(1, Math.ceil(tagged.length / PAGE_SIZE));
+const pageDescription = `Browse all videos tagged with "${tagName}".`;
+const tagPath = encodeURIComponent(tagName);
 ---
 
-<BaseLayout pageTitle={tag} description={pageDescription} hideTitle>
+<BaseLayout pageTitle={tagName} description={pageDescription} hideTitle>
   <PageHero
     slim
-    imageAlt={tag}
+    imageAlt={tagName}
     titleWhite="Tag"
-    titleGold={tag}
-    subtitle={`Videos tagged with "${tag}"`}
+    titleGold={tagName}
+    subtitle={`Videos tagged with "${tagName}"`}
     crumb={{
       items: [
         { name: "Home", url: "/" },
         { name: "Video Tags", url: "/video-tags/" },
-        { name: tag, url: `/video-tags/${tagPath}/` },
+        { name: tagName, url: `/video-tags/${tagPath}/` },
       ],
     }}
   />
-  <VideoFilterBar currentTag={tag} />
+  <VideoFilterBar currentTag={tagName} />
   <VideoGrid videos={videos} />
   <PaginationNav
     currentPage={currentPage}

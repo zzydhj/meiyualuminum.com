@@ -1,29 +1,26 @@
 ---
 /**
- * project-gallery/page/[page].astro — 项目画廊总列表第 2~N 页（静态分页）
+ * project-gallery/page/[page].astro — 项目画廊总列表第 2~N 页（SSR）
  *
- * - 第 1 页由 [page].astro 渲染（SSR，/project-gallery/ 为规范地址），本路由只生成 /project-gallery/page/2/ 起
- * - 构建流程：取全部项目案例算总页数 → 生成页码路由 → 组件内按页切片
- * - 项目总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
+ * - 第 1 页由 [page].astro 渲染（SSR，/project-gallery/ 为规范地址），本路由只负责第 2 页起
+ * - 页码非法或超出总页数一律 302 回第 1 页：不留空页，也不产生重复内容
  */
 import PageHero from "../../../components/PageHero.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ProjectGallery from "../../../components/ProjectGallery.astro";
-import { PAGE_SIZE } from "../../../lib/pagination";
+import { PAGE_SIZE, resolvePage } from "../../../lib/pagination";
 import { fetchAllProjects } from "../../../lib/projectGallery";
 
-export async function getStaticPaths() {
-    const total = (await fetchAllProjects()).length;
-    const totalPages = Math.ceil(total / PAGE_SIZE);
+// SSR：案例数一变总页数就得重算，理由同 blog/page/[page].astro。
+export const prerender = false;
 
-    // 生成第 2 ~ totalPages 页的路由（第 1 页 = /project-gallery/）
-    return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
-        params: { page: String(i + 2) },
-        props: { currentPage: i + 2 },
-    }));
+const totalPages = Math.ceil((await fetchAllProjects()).length / PAGE_SIZE);
+const currentPage = resolvePage(Astro.params.page, totalPages);
+
+if (currentPage === null) {
+    return Astro.redirect("/project-gallery/");
 }
 
-const { currentPage } = Astro.props;
 const pageDescription =
     "Browse our portfolio of aluminum building material installations across sectors and multiple continents.";
 ---

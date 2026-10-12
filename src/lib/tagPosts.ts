@@ -60,3 +60,22 @@ export function groupPostsByTag(posts: TagPost[]): Map<string, TagPost[]> {
   }
   return map;
 }
+
+/**
+ * SSR 路由用：按标签取该标签下全部已发布文章；标签不存在返回 null。
+ *
+ * 为何要两种形态都试一次：带空格与 & 的标签（如 "Quality & Certifications"）在 URL 里
+ * 是 %20 / %26，而 Astro 对 SSR 路由参数是否预先解码并不总是一致。
+ * 只按一种形态查会让这类标签隔一段时间就 404，而且只在真机上能重现。
+ */
+export async function getPostsForTag(tag: string): Promise<TagPost[] | null> {
+  const byTag = groupPostsByTag(await fetchAllTagPosts());
+  const hit = byTag.get(tag);
+  if (hit) return hit;
+  try {
+    return byTag.get(decodeURIComponent(tag)) ?? null;
+  } catch {
+    // 残缺的百分号编码（手改 URL 或爬虫拼错）会抛错，当作未命中处理
+    return null;
+  }
+}

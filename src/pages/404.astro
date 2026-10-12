@@ -1,0 +1,33 @@
+---
+/**
+ * 404.astro — 未匹配任何路由时下发的兜底页
+ *
+ * 为什么值得单独做：以前未匹配的 URL 返回的是 14 字节空白页（来自 [page].astro 的
+ * `new Response("Page not found")`），买家点错链接直接懵，Google 判断 404 页质量时
+ * 也会看有没有给访客出路。
+ *
+ * 状态码由 Astro / 适配器负责（未匹配路由以 404 下发），这里只管内容。
+ * 设了 noindex：直接访问 /404 会拿到 200，不标的话会被编录成一份无内容页。
+ * UI 在 components/NotFoundPanel.astro，[page].astro 的查无此页分支共用它。
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import NotFoundPanel from "../components/NotFoundPanel.astro";
+
+const pageTitle = "Page Not Found";
+const pageDescription =
+    "The page you were looking for isn't here. Browse our aluminum ceiling and facade product lines, categories and technical notes instead.";
+
+// canonical 固定指向 /404：不写的话 Astro.url 用的是访客原本请求的那个不存在的路径，
+// 等于让每个坏链都自报一个不同的规范地址。
+const canonicalURL = new URL("/404", Astro.site).href;
+---
+
+<BaseLayout
+    pageTitle={pageTitle}
+    description={pageDescription}
+    canonicalURL={canonicalURL}
+    hideTitle
+    noindex
+>
+    <NotFoundPanel />
+</BaseLayout>

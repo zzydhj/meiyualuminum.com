@@ -1,35 +1,34 @@
 ---
 /**
- * blog/page/[page].astro — 博客列表第 2~N 页（静态分页）
+ * blog/page/[page].astro — 博客列表第 2~N 页（SSR）
  *
- * - 第 1 页由 blog.astro 渲染（/blog/ 为规范地址），本路由只生成 /blog/page/2/ 起
- * - 构建流程：count 查询算总页数 → 生成页码路由 → 每页用 .range() 只取自己那 16 篇
- * - 文章总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
+ * - 第 1 页由 blog.astro 渲染（/blog/ 为规范地址），本路由只负责 /blog/page/2/ 起
+ * - 页码非法或超出总页数一律 302 回第 1 页：不留空页，也不产生重复内容
  */
 import Breadcrumb from "../../../components/Breadcrumb.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PostGrid from "../../../components/PostGrid.astro";
 import PaginationNav from "../../../components/PaginationNav.astro";
 import { supabase } from "../../../lib/supabase";
-import { PAGE_SIZE } from "../../../lib/pagination";
+import { PAGE_SIZE, resolvePage } from "../../../lib/pagination";
+import { BLOG_LIST_DESCRIPTION } from "../../../lib/pageCopy";
 
-export async function getStaticPaths() {
-  // 只取总数计算页数，不拉取文章数据
-  const { count } = await supabase
-    .from("posts")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "published");
+// SSR：文章总数一变，总页数就得重算。转静态会让第 2 页停在旧文章数上，
+// 要么多出一个空页、要么少一页翻不到。
+export const prerender = false;
 
-  const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
+// 只取总数计算页数，不拉取文章数据
+const { count } = await supabase
+  .from("posts")
+  .select("*", { count: "exact", head: true })
+  .eq("status", "published");
 
-  // 生成第 2 ~ totalPages 页的路由（第 1 页 = /blog/）
-  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
-    params: { page: String(i + 2) },
-    props: { currentPage: i + 2, totalPages },
-  }));
+const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
+const currentPage = resolvePage(Astro.params.page, totalPages);
+
+if (currentPage === null) {
+  return Astro.redirect("/blog/");
 }
-
-const { currentPage, totalPages } = Astro.props;
 
 // 本页对应的数据切片（.range() 两端含，数据库层分页）
 const from = (currentPage - 1) * PAGE_SIZE;
@@ -52,7 +51,7 @@ const posts = result.data ?? [];
 
 <BaseLayout
   pageTitle={`Blog - Page ${currentPage}`}
-  description="Latest news, tips and insights about automotive parts and industry trends."
+  description={BLOG_LIST_DESCRIPTION}
 >
   <Breadcrumb
     items={[

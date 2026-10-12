@@ -1,70 +1,59 @@
 ---
 /**
- * video-tags/[tag]/page/[page].astro — 视频标签列表第 2~N 页（静态分页）
+ * video-tags/[tag]/page/[page].astro — 视频标签列表第 2~N 页（SSR）
  *
- * - 第 1 页由 video-tags/[tag].astro 渲染（/video-tags/{tag}/ 为规范地址），本路由只生成第 2 页起
- * - 构建流程：取全部已发布视频 → 按标签分组 → 为每个标签生成 2~totalPages 页路由
- * - 某标签视频数 ≤ PAGE_SIZE 时不生成该标签的分页（避免空页）
+ * - 第 1 页由 video-tags/[tag].astro 渲染（/video-tags/{tag}/ 为规范地址），本页只负责第 2 页起
+ * - 页码非法或超出范围一律 302 回第 1 页：不留空页，也不产生重复内容
  */
 import PageHero from "../../../../components/PageHero.astro";
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import VideoGrid from "../../../../components/VideoGrid.astro";
 import VideoFilterBar from "../../../../components/VideoFilterBar.astro";
 import PaginationNav from "../../../../components/PaginationNav.astro";
-import { PAGE_SIZE } from "../../../../lib/pagination";
-import {
-  fetchAllVideos,
-  groupVideosByTag,
-  type VideoItem,
-} from "../../../../lib/videoTags";
+import { PAGE_SIZE, resolvePage } from "../../../../lib/pagination";
+import { getVideosForTag } from "../../../../lib/videoTags";
 
-export async function getStaticPaths() {
-  const byTag = groupVideosByTag(await fetchAllVideos());
-
-  const paths: {
-    params: { tag: string; page: string };
-    props: { videos: VideoItem[]; currentPage: number; totalPages: number };
-  }[] = [];
-
-  for (const [tag, tagged] of byTag) {
-    const totalPages = Math.ceil(tagged.length / PAGE_SIZE);
-    for (let page = 2; page <= totalPages; page++) {
-      const start = (page - 1) * PAGE_SIZE;
-      paths.push({
-        params: { tag, page: String(page) },
-        props: {
-          videos: tagged.slice(start, start + PAGE_SIZE),
-          currentPage: page,
-          totalPages,
-        },
-      });
-    }
-  }
-  return paths;
-}
+// SSR：跟 video-tags/[tag].astro 同一个理由 —— 视频量一变，分页边界就得重算。
+export const prerender = false;
 
 const { tag, page } = Astro.params;
-const { videos, currentPage, totalPages } = Astro.props;
-const pageDescription = `Browse all videos tagged with "${tag}" - page ${currentPage}.`;
-const tagPath = encodeURIComponent(tag);
+const tagName = decodeURIComponent(tag ?? "");
+const tagPath = encodeURIComponent(tagName);
+const tagged = await getVideosForTag(tag ?? "");
+
+if (!tagged) {
+  return Astro.redirect("/video-tags/");
+}
+
+const totalPages = Math.ceil(tagged.length / PAGE_SIZE);
+const currentPage = resolvePage(page, totalPages);
+
+// 非整数页码 / 小于 2 / 超出总页数，全部回第 1 页（规则见 lib/pagination 的 resolvePage）。
+if (currentPage === null) {
+  return Astro.redirect(`/video-tags/${tagPath}/`);
+}
+
+const start = (currentPage - 1) * PAGE_SIZE;
+const videos = tagged.slice(start, start + PAGE_SIZE);
+const pageDescription = `Browse all videos tagged with "${tagName}" - page ${currentPage}.`;
 ---
 
 <BaseLayout
-  pageTitle={`${tag} - Page ${currentPage}`}
+  pageTitle={`${tagName} - Page ${currentPage}`}
   description={pageDescription}
   hideTitle
 >
   <PageHero
     slim
-    imageAlt={tag}
+    imageAlt={tagName}
     titleWhite="Tag"
-    titleGold={tag}
-    subtitle={`Videos tagged with "${tag}" — Page ${currentPage}`}
+    titleGold={tagName}
+    subtitle={`Videos tagged with "${tagName}" — Page ${currentPage}`}
     crumb={{
       items: [
         { name: "Home", url: "/" },
         { name: "Video Tags", url: "/video-tags/" },
-        { name: tag, url: `/video-tags/${tagPath}/` },
+        { name: tagName, url: `/video-tags/${tagPath}/` },
         {
           name: `Page ${currentPage}`,
           url: `/video-tags/${tagPath}/page/${currentPage}/`,
@@ -72,7 +61,7 @@ const tagPath = encodeURIComponent(tag);
       ],
     }}
   />
-  <VideoFilterBar currentTag={tag} />
+  <VideoFilterBar currentTag={tagName} />
   <VideoGrid videos={videos} />
   <PaginationNav
     currentPage={currentPage}

@@ -1,10 +1,9 @@
 ---
 /**
- * products/page/[page].astro — 产品列表第 2~N 页（静态分页）
+ * products/page/[page].astro — 产品列表第 2~N 页（SSR）
  *
- * - 第 1 页由 products/index.astro 渲染（/products/ 为规范地址），本路由只生成 /products/page/2/ 起
- * - 构建流程：count 查询算总页数 → 生成页码路由 → 每页用 .range() 只取自己那 PAGE_SIZE 个
- * - 产品总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
+ * - 第 1 页由 products/index.astro 渲染（/products/ 为规范地址），本路由只负责 /products/page/2/ 起
+ * - 页码非法或超出总页数一律 302 回第 1 页：不留空页，也不产生重复内容
  * - 卡片网格与第 1 页共用 ProductGrid 组件
  */
 import PageHero from "../../../components/PageHero.astro";
@@ -13,28 +12,26 @@ import ProductGrid from "../../../components/ProductGrid.astro";
 import PaginationNav from "../../../components/PaginationNav.astro";
 import { supabase } from "../../../lib/supabase";
 import { currentLang, loc } from "../../../lib/i18n";
-import { PAGE_SIZE } from "../../../lib/pagination";
+import { PAGE_SIZE, resolvePage } from "../../../lib/pagination";
 
-export async function getStaticPaths() {
-    // 只取总数计算页数，不拉取产品数据（停放期仅英语）
-    const { count } = await supabase
-        .from("products")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "published")
-        .eq("lang", "en");
-
-    const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
-
-    // 生成第 2 ~ totalPages 页的路由（第 1 页 = /products/）
-    return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
-        params: { page: String(i + 2) },
-        props: { currentPage: i + 2, totalPages },
-    }));
-}
-
-const { currentPage, totalPages } = Astro.props;
+// SSR：新增/下线产品会改变总页数，转静态会让第 2 页停在旧总数上。
+export const prerender = false;
 
 const lang = currentLang(Astro.locals);
+
+// 只取总数计算页数，不拉取产品数据（停放期仅英语）
+const { count } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published")
+    .eq("lang", "en");
+
+const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
+const currentPage = resolvePage(Astro.params.page, totalPages);
+
+if (currentPage === null) {
+    return Astro.redirect("/products/");
+}
 
 // 本页对应的数据切片（.range() 两端含，数据库层分页）
 const from = (currentPage - 1) * PAGE_SIZE;

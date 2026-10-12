@@ -10,6 +10,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import VideoGrid from "../components/VideoGrid.astro";
 import VideoFilterBar from "../components/VideoFilterBar.astro";
 import PaginationNav from "../components/PaginationNav.astro";
+
+// SSR：列表读 videos 表，改库即生效，不需要重建部署。
+export const prerender = false;
 import { supabase } from "../lib/supabase";
 import { PAGE_SIZE } from "../lib/pagination";
 

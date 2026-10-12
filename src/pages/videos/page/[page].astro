@@ -1,10 +1,9 @@
 ---
 /**
- * videos/page/[page].astro — 视频列表第 2~N 页（静态分页）
+ * videos/page/[page].astro — 视频列表第 2~N 页（SSR）
  *
- * - 第 1 页由 videos.astro 渲染（/videos/ 为规范地址），本路由只生成 /videos/page/2/ 起
- * - 构建流程：count 查询算总页数 → 生成页码路由 → 每页用 .range() 只取自己那 PAGE_SIZE 条
- * - 视频总数 ≤ PAGE_SIZE 时不生成任何分页（避免空页）
+ * - 第 1 页由 videos.astro 渲染（/videos/ 为规范地址），本路由只负责 /videos/page/2/ 起
+ * - 页码非法或超出总页数一律 302 回第 1 页：不留空页，也不产生重复内容
  */
 import PageHero from "../../../components/PageHero.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
@@ -12,25 +11,23 @@ import VideoGrid from "../../../components/VideoGrid.astro";
 import VideoFilterBar from "../../../components/VideoFilterBar.astro";
 import PaginationNav from "../../../components/PaginationNav.astro";
 import { supabase } from "../../../lib/supabase";
-import { PAGE_SIZE } from "../../../lib/pagination";
+import { PAGE_SIZE, resolvePage } from "../../../lib/pagination";
 
-export async function getStaticPaths() {
-  // 只取总数计算页数，不拉取视频数据
-  const { count } = await supabase
-    .from("videos")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "published");
+// SSR：视频数一变总页数就得重算，理由同 blog/page/[page].astro。
+export const prerender = false;
 
-  const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
+// 只取总数计算页数，不拉取视频数据
+const { count } = await supabase
+  .from("videos")
+  .select("*", { count: "exact", head: true })
+  .eq("status", "published");
 
-  // 生成第 2 ~ totalPages 页的路由（第 1 页 = /videos/）
-  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
-    params: { page: String(i + 2) },
-    props: { currentPage: i + 2, totalPages },
-  }));
+const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
+const currentPage = resolvePage(Astro.params.page, totalPages);
+
+if (currentPage === null) {
+  return Astro.redirect("/videos/");
 }
-
-const { currentPage, totalPages } = Astro.props;
 
 // 本页对应的数据切片（.range() 两端含，数据库层分页）
 const from = (currentPage - 1) * PAGE_SIZE;

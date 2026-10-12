@@ -1,10 +1,10 @@
 ---
 /**
- * project-gallery/[category].astro — 项目画廊分类列表第 1 页
+ * project-gallery/[category].astro — 项目画廊分类列表第 1 页（SSR）
  *
- * - 第 2~N 页由 project-gallery/[category]/page/[page].astro 生成
+ * - 第 2~N 页由 project-gallery/[category]/page/[page].astro 渲染
  * - 药丸为链接式筛选（A 方案）：服务端过滤 + 分页正确，取代旧版页内 JS 隐藏
- * - 只为「有案例且在 CATEGORY_MAP 内」的分类生成路由，未知分类 404
+ * - 只渲染「有案例且在 CATEGORY_MAP 内」的分类，其余 302 回画廊首页
  */
 import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -15,17 +15,20 @@ import {
     groupProjectsByCategory,
 } from "../../lib/projectGallery";
 
-export async function getStaticPaths() {
-    const byCategory = groupProjectsByCategory(await fetchAllProjects());
+// SSR：案例存在 posts 表，新增或删除案例后分类页与首页同步变化，不需重建部署。
+export const prerender = false;
 
-    return [...byCategory.keys()]
-        .filter((category) => CATEGORY_MAP[category])
-        .map((category) => ({ params: { category } }));
+const category = decodeURIComponent(Astro.params.category ?? "");
+const byCategory = groupProjectsByCategory(await fetchAllProjects());
+
+// 与原先 getStaticPaths 完全同口径：不在 CATEGORY_MAP 里、或该分类下一例都没有，
+// 都不该有这个页面。处理同标签页：302 回画廊首页，不返回 404 空白页。
+if (!CATEGORY_MAP[category] || !byCategory.has(category)) {
+    return Astro.redirect("/project-gallery/");
 }
 
-const { category } = Astro.params;
-const label = CATEGORY_MAP[category ?? ""]?.label ?? category ?? "";
-const categoryPath = encodeURIComponent(category ?? "");
+const label = CATEGORY_MAP[category].label;
+const categoryPath = encodeURIComponent(category);
 const pageDescription = `Browse our ${label} project cases: aluminum building material installations worldwide.`;
 ---
 
