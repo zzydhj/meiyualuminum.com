@@ -801,17 +801,3 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 bare / A2-s1,d0 coated"],
     },
 };
-
-/**
- * 获取品类 slug 列表（用于遍历）
- */
-export function getCategorySlugs(): string[] {
-    return Object.keys(productKnowledge);
-}
-
-/**
- * 获取品类知识（安全取值，返回 undefined 如果品类不存在）
- */
-export function getKnowledge(slug: string): ProductKnowledge | undefined {
-    return productKnowledge[slug];
-}
