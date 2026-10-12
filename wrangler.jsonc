@@ -1,0 +1,47 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	// ── 为什么需要这个文件 ───────────────────────────────────────────────
+	// @astrojs/cloudflare v14 产出的是「Workers + static assets」结构：
+	//   dist/client/  预渲染的静态文件
+	//   dist/server/  Worker 入口 entry.mjs
+	// 它不支持 Cloudflare Pages 跑 SSR，而本项目首页 / 产品 / 博客 / 视频都是
+	// SSR（index.astro 里 prerender = false），Pages 静态目录里根本没有 index.html，
+	// 所以 / 一定 404。正确宿主是 Workers，wrangler 以本文件为部署的唯一事实来源。
+	// astro build 时适配器会读取本文件，并据此生成 dist/server/wrangler.json。
+	//
+	// 部署：Build command = npx astro build ，Deploy command = npx wrangler deploy
+	// 参见 https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/
+	"name": "meiyualuminum-com",
+	// 适配器的默认 server 入口，不要改成 dist/server/entry.mjs —— 那是给本地预览用的。
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	// 与适配器内置值保持一致；过早的日期会让 Astro 用到的新 workerd API 不可用。
+	"compatibility_date": "2026-10-01",
+	"assets": {
+		"binding": "ASSETS",
+		// 只有 dist/client 是静态资源；dist/server 是 Worker 代码，不能被当作文件公开（否则 /server/wrangler.json 会像现在这样裸奔在外网）。
+		"directory": "./dist/client"
+	},
+	// 适配器默认注入一个无 id 的 SESSION KV 绑定，部署时「自动开通」。
+	// 但实测（2026-10-12 首次部署）开通后的 id 不会回写到任何配置文件，
+	// 于是每次 wrangler deploy 都会新建一个 namespace、留下孤儿资源；接上 CI 后会持续膨胀。
+	// 这里显式钉住首次开通的那个，适配器文档说明：手动声明后 Astro 直接用你的配置，不再自动开通。
+	// namespace 名 meiyualuminum-com-session；本项目当前未用到 session API，保留不影响运行。
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "4accc83772c04a73a2445f06bcfa6e45"
+		}
+	],
+	"observability": {
+		"enabled": true
+	},
+	// 关掉 <worker>.<账号>.workers.dev 公网路由。正式域名已绑在本 Worker 上，
+	// 留着它等于同一份内容多一个公开镜像地址：浪费抓取配额，以外界能直接拿它扫我们的站。
+	// 关键陷阱：只在 Dashboard 点 Disable 不管用 —— 官方文档写明下次 wrangler deploy
+	// 会把 workers.dev 重新打开，必须在这里写 false 才是永久的。
+	// 注：关路由不影响 Revision 的 Preview URL，排查时仍可比对单次部署版本。
+	// 但实测 wrangler 会连着把 Preview URL 一起默认关掉（会弹 WARNING），所以显式打开：
+	// Preview URL 带令牌保护、不外泄，只用于定位某一次部署版本。
+	"workers_dev": false,
+	"preview_urls": true
+}
