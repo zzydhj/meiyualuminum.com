@@ -26,10 +26,29 @@ const { posts } = Astro.props;
 {
   posts.length > 0 ? (
     <ul class="post-grid">
-      {posts.map((post) => <BlogPost post={post} />)}
+      {posts.map((post) => (
+        <BlogPost post={post} />
+      ))}
     </ul>
   ) : (
-    <p class="post-empty">No articles yet.</p>
+    <section class="post-empty">
+      <p class="post-empty-eyebrow">In production</p>
+      <h2 class="post-empty-title">Technical notes are being written up</h2>
+      <p class="post-empty-text">
+        We are turning what our own shop floor has learned about aluminum
+        ceiling systems, facade panels and surface treatments into articles you
+        can specify against. Our product lines already carry full specification
+        tables, finishes and installation details.
+      </p>
+      <div class="post-empty-actions">
+        <a class="post-empty-btn" href="/products/">
+          Browse Product Lines
+        </a>
+        <a class="post-empty-btn post-empty-btn--ghost" href="/contact/">
+          Send an Inquiry
+        </a>
+      </div>
+    </section>
   )
 }
 
@@ -44,7 +63,70 @@ const { posts } = Astro.props;
   }
 
   .post-empty {
+    max-width: 620px;
+    margin: 2rem auto;
+    padding: 2.25rem 1.75rem;
+    text-align: center;
+    background: #faf8f5;
+    border: 1px solid #eee6dc;
+    border-radius: 14px;
+  }
+
+  .post-empty-eyebrow {
+    margin: 0 0 0.5rem;
+    color: #c09020;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+  }
+
+  .post-empty-title {
+    margin: 0 0 0.75rem;
+    color: #1f2937;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .post-empty-text {
+    margin: 0 0 1.5rem;
     color: #6b7280;
     font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .post-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .post-empty-btn {
+    padding: 0.7rem 1.4rem;
+    background-color: #69574a;
+    color: #fff;
+    border: 1px solid #69574a;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .post-empty-btn:hover {
+    opacity: 0.88;
+  }
+
+  /* 次级按钮：只描边不填色，与主按钮拉开层级但同属一套品牌色 */
+  .post-empty-btn--ghost {
+    background-color: transparent;
+    color: #69574a;
+  }
+
+  .post-empty-btn--ghost:hover {
+    background-color: rgba(105, 87, 74, 0.06);
+    opacity: 1;
   }
 </style>
