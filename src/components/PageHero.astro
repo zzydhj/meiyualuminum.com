@@ -13,7 +13,9 @@
  *   依赖 global.css 的 body{overflow-x:clip} 吸收 100vw 与滚动条宽度差。
  * - slim=true：分页 / 长尾页用瘦身版（更矮、不渲染数据行），避免每页背大图+推下首屏。
  * - eyebrow（可选）：标题上方的小胶囊徽章；default slot（可选）：副标题下方的 CTA 按钮行。
- *   两者都不传时，输出与以前完全一致（列表页 / 分类页 / CMS 单页不受影响）。
+ *   badges slot（可选）：数据行下方的认证徽章行（由页面自带样式，随 slot 作用域带回）。
+ *   flush（可选）：去掉页头下外边距，让全幅色带紧贴页头（About 页深色视频带）。
+ *   以上都不传时，输出与以前完全一致（列表页 / 分类页 / CMS 单页不受影响）。
  */
 import Breadcrumb from "./Breadcrumb.astro";
 
@@ -47,6 +49,8 @@ interface Props {
     subtitle?: string;
     stats?: Stat[];
     slim?: boolean;
+    /** 页头下沿不留白：后面紧跟全幅色带时用（About） */
+    flush?: boolean;
     crumb: CrumbProps;
 }
 
@@ -63,11 +67,12 @@ const {
     subtitle = "",
     stats = [],
     slim = false,
+    flush = false,
     crumb,
 } = Astro.props;
 ---
 
-<section class:list={["page-hero", { slim }]}>
+<section class:list={["page-hero", { slim, flush }]}>
     <img
         class="page-hero-bg"
         src={image}
@@ -127,6 +132,14 @@ const {
                 </div>
             )
         }
+
+        {
+            Astro.slots.has("badges") && (
+                <div class="page-hero-badges">
+                    <slot name="badges" />
+                </div>
+            )
+        }
     </div>
 </section>
 
@@ -139,6 +152,10 @@ const {
         margin: -1rem calc(50% - 50vw) 2.5rem;
         background: #10131a;
         color: #fff;
+    }
+    /* flush：页头与后续全幅色带直接相接，2.5rem 下边距归零（About 页指定） */
+    .page-hero.flush {
+        margin-bottom: 0;
     }
 
     .page-hero-bg {

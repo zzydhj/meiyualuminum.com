@@ -1,0 +1,579 @@
+---
+/**
+ * FactoryTourRail.astro — 工厂工序视频横向滑动带
+ *
+ * 为什么做成组件而不是往 index.astro 里加：首页已经 3288 行，再塞 200 行标记+样式
+ * 只会更难维护。本组件自己查库、自己渲染、自己带样式，页面只写一行 <FactoryTourRail />。
+ *
+ * 数据来源：videos 表里 slug 以 factory- 开头的已发布自托管视频。
+ * 排序按 slug 升序 = 工序顺序（01→12），**不按 pub_date** —— 12 条同一天上传，
+ * 按日期排等于随机取，工序顺序会整个乱掉。
+ *
+ * 性能策略（关键）：
+ *   卡片初始 preload="none"，每张由自己的 IntersectionObserver 观察到才升级为
+ *   metadata（自托管视频靠首帧当封面）。所以首屏只下载视口内那几张的元数据，
+ *   而不是 12 条一起下。滚出视口即暂停并释放。
+ *   prefers-reduced-motion 时完全不自动播，只留静态首帧 + 详情页链接。
+ *
+ * 卡片为什么是竖屏 9:16：工序视频本身是竖屏拍的，画面里烧录了工序字幕。
+ * 横槽（16:9 / 1:1）+ object-fit:cover 只露出画面中部约三成高度，字幕必被裁掉；
+ * 槽与视频同比例时整帧可见，字幕一行都不丢 —— 这比调 object-position「取中间」彻底。
+ */
+import { supabase } from "../lib/supabase";
+import { firstFrameSrc, isSelfHostedVideo } from "../lib/videoSource";
+import { companyFacts } from "../lib/companyProfile";
+
+const { data } = await supabase
+  .from("videos")
+  .select("slug, title, video_url, duration")
+  .eq("status", "published")
+  .like("slug", "factory-*")
+  .order("slug", { ascending: true });
+
+const steps = (data ?? [])
+  .filter((v) => isSelfHostedVideo(v.video_url))
+  .map((v, i) => ({
+    ...v,
+    n: String(i + 1).padStart(2, "0"),
+    // 只前两段循环自播当「动态海报」，其余静止首帧 + 播放按钮（用户指定 2026-10-13）：
+    // 12 条同时自播既费流量又像弹窗广告，两段刚好让带子活起来而不吵。
+    auto: i < 2,
+    cover: firstFrameSrc(v.video_url!),
+  }));
+
+const total = steps.length;
+
+// 收尾 CTA 直连 WhatsApp（2026-10-13 用户指定）：看完工序带的人正处于
+// “想聊这块板子”的情绪里，多一跳 /contact/ 会折掉一半。号码取 companyFacts，
+// wa.me 只收纯数字。
+const waHref = `https://wa.me/${companyFacts.phone.replace(/\D/g, "")}?text=${encodeURIComponent(
+  "Hi, I'd like to ask about a panel build — can you advise on specifications and pricing?",
+)}`;
+---
+
+{
+  total > 0 && (
+    <section class="ft" id="factoryTour">
+      <div class="ft-inner">
+        <div class="ft-head">
+          <div class="ft-head-text">
+            <span class="ft-eyebrow">Inside the plant · {total} steps</span>
+            <div class="ft-rule"></div>
+            <h2>
+              How an Aluminum Panel <span>Gets Made</span>
+            </h2>
+            <p>
+              Filmed on our own line, in order — from laser-cut blank to crated
+              panel. No stock footage, no outsourced stages.
+            </p>
+          </div>
+          <div class="ft-nav">
+            <span class="ft-counter" data-ft-counter aria-live="polite">
+              {steps[0].n} <i>/</i> {steps[total - 1].n}
+            </span>
+            <button
+              type="button"
+              class="ft-arrow"
+              data-ft-prev
+              aria-label="Previous steps"
+              disabled
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path
+                  d="M15 18l-6-6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="ft-arrow"
+              data-ft-next
+              aria-label="More steps"
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path
+                  d="M9 18l6-6-6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 轨道用满宽出血，卡片超出部分靠右缘的渐隐提示「还有更多」 -->
+      <div class="ft-rail-wrap">
+        <div class="ft-rail" data-ft-rail tabindex="0" role="region" aria-label="Factory process videos, scrollable">
+          {steps.map((s) => (
+            <a
+              class="ft-card"
+              href={`/videos/${s.slug}/`}
+              /* 新标签页开详情页（2026-10-13 用户指定）：首页浏览不被打断，
+                 详情页有带声音的完整播放器；卡内自播保持静音仅作预览。 */
+              target="_blank"
+              rel="noopener noreferrer"
+              data-ft-card
+              data-autoplay={s.auto ? "true" : undefined}
+            >
+              <div class="ft-cell">
+                <video
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                  src={`${s.cover}`}
+                  aria-hidden="true"
+                />
+                <span class="ft-scrim"></span>
+                <span class="ft-step">
+                  <i>Step</i>
+                  {s.n}
+                </span>
+                {/* 静止卡给居中播放按钮（与首页项目视频画廊同一款式）；
+                    自播的两段正在动，不再叠按钮 */}
+                {!s.auto && (
+                  <span class="ft-play" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" width="44" height="44">
+                      <circle cx="24" cy="24" r="23" fill="rgba(0,0,0,0.55)"></circle>
+                      <path d="M19 15l14 9-14 9V15z" fill="#fff"></path>
+                    </svg>
+                  </span>
+                )}
+                {/* 标题压在画面底部渐变上：整帧可见后，烧录字幕与卡片标题上下各占其位，互不裁切 */}
+                <span class="ft-title">{s.title}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+        <div class="ft-fade" aria-hidden="true"></div>
+      </div>
+
+      <div class="ft-foot">
+        <p>
+          Every stage above happens under one roof in Dongguan — which is why we
+          can hold the coating and flatness terms we quote.
+        </p>
+        <a
+          class="ft-cta"
+          href={waHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-wa-source="factory_rail"
+        >
+          Ask about a panel build
+        </a>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  /* 横向轨道：箭头按「一屏几张」整屏推进；到两端自动禁用。
+     卡片各自一个 IntersectionObserver：进视口才把 preload 从 none 升到 metadata
+     并起播，离开就暂停 —— 这样首屏不会一次拉 12 条视频。 */
+  const rail = document.querySelector<HTMLElement>('[data-ft-rail]');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-ft-card]'));
+  const prev = document.querySelector<HTMLButtonElement>('[data-ft-prev]');
+  const next = document.querySelector<HTMLButtonElement>('[data-ft-next]');
+  const counter = document.querySelector<HTMLElement>('[data-ft-counter]');
+
+  if (rail && cards.length) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /** 一屏能看到几张：按当前卡片实宽 + gap 推算，不写死断点，改 CSS 不用改 JS */
+    const stepSize = () => {
+      const first = cards[0];
+      const gap = parseFloat(getComputedStyle(rail).columnGap || '0') || 0;
+      const perView = Math.max(1, Math.round(rail.clientWidth / (first.offsetWidth + gap)));
+      return (first.offsetWidth + gap) * perView;
+    };
+
+    const sync = () => {
+      const max = rail.scrollWidth - rail.clientWidth - 2;
+      if (prev) prev.disabled = rail.scrollLeft <= 2;
+      if (next) next.disabled = rail.scrollLeft >= max;
+      // 计数器跟随最左可见卡片
+      const left = rail.scrollLeft + 1;
+      const idx = Math.max(0, cards.findIndex((c) => c.offsetLeft + c.offsetWidth > left));
+      const el = cards[idx]?.querySelector('.ft-step');
+      if (counter && el) {
+        const total = cards[cards.length - 1].querySelector('.ft-step')?.textContent ?? '';
+        counter.innerHTML = `${el.textContent} <i>/</i> ${total}`;
+      }
+    };
+
+    const by = (dir: number) => {
+      rail.scrollBy({ left: dir * stepSize(), behavior: reduceMotion ? 'auto' : 'smooth' });
+    };
+
+    prev?.addEventListener('click', () => by(-1));
+    next?.addEventListener('click', () => by(1));
+    rail.addEventListener('scroll', () => window.requestAnimationFrame(sync), { passive: true });
+    window.addEventListener('resize', sync);
+
+    // 键盘可达：轨道本身可聚焦，左右键翻页
+    rail.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); by(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); by(-1); }
+    });
+
+    if (!reduceMotion) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const card = entry.target as HTMLElement;
+            const v = card.querySelector('video');
+            if (!v) return;
+            if (entry.isIntersecting) {
+              // 首次进入才要元数据：这一步让封面首帧显形（静止卡也只到这一步）
+              if (v.preload === 'none') {
+                v.preload = 'metadata';
+                v.load();
+              }
+              // 只有前两段循环自播；其余保持静止首帧，由播放按钮暗示可点
+              if (card.dataset.autoplay === 'true') {
+                v.play().catch(() => { /* 浏览器可能拦自动播放，忽略即可 */ });
+              }
+            } else {
+              v.pause();
+            }
+          });
+        },
+        // 横向轨道：只要卡片进入横向可视区就该亮起来，rootMargin 给一点提前量
+        { threshold: 0.35, rootMargin: '0px 80px' },
+      );
+      cards.forEach((c) => io.observe(c));
+    }
+
+    sync();
+  }
+</script>
+
+<style>
+  /* ── 深色带：与首页项目视频画廊同一套暗色语言，但用左右滑动而非网格 ── */
+  .ft {
+    position: relative;
+    /* 全宽出血：BaseLayout 的 <main class="container"> 是 1400 限宽容器，
+       不逃逸的话深色带两侧会露出白边（2560 屏实测缺陷）；轨道内边距又按 100vw
+       计算首卡对齐，被箍在容器里时内边距会反吃掉内容宽度、卡片缩成一小条。
+       手法与首页 .trust-section 等既有全宽区块一致；html 已有 overflow-x: clip
+       兜住 100vw 与滚动条的差值。 */
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    background: #110e0b;
+    color: #fff;
+    padding: 3.5rem 0 3rem;
+    overflow: hidden;
+  }
+
+  .ft-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .ft-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.4rem;
+  }
+
+  .ft-eyebrow {
+    display: block;
+    color: #c0a882;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+  }
+
+  .ft-rule {
+    width: 56px;
+    height: 2px;
+    margin: 0.7rem auto 0.9rem;
+    background: #c0a882;
+  }
+
+  .ft-head h2 {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.5rem, 3vw, 2.15rem);
+    font-weight: 800;
+    line-height: 1.25;
+    color: #fff;
+  }
+
+  .ft-head h2 span {
+    color: #c0a882;
+  }
+
+  .ft-head p {
+    margin: 0 auto;
+    max-width: 46ch;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.92rem;
+    line-height: 1.65;
+  }
+
+  /* ── 计数器 + 箭头：模块头居中后，控制组居中贴在标题与轨道之间 ── */
+  .ft-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.1rem;
+  }
+
+  .ft-counter {
+    margin-right: 0.35rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+  }
+
+  .ft-counter i {
+    font-style: normal;
+    opacity: 0.45;
+  }
+
+  .ft-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(192, 168, 130, 0.35);
+    border-radius: 50%;
+    color: #c0a882;
+    cursor: pointer;
+    transition: background-color 0.18s, color 0.18s, opacity 0.18s;
+  }
+
+  .ft-arrow:hover:not(:disabled) {
+    background: #c0a882;
+    border-color: #c0a882;
+    color: #110e0b;
+  }
+
+  .ft-arrow:disabled {
+    opacity: 0.28;
+    cursor: default;
+  }
+
+  .ft-arrow:focus-visible {
+    outline: 2px solid #c0a882;
+    outline-offset: 3px;
+  }
+
+  /* ── 轨道 ── */
+  .ft-rail-wrap {
+    position: relative;
+    margin-top: 2rem;
+  }
+
+  .ft-rail {
+    display: flex;
+    gap: 14px;
+    padding: 0 max(1rem, calc((100vw - 1400px) / 2 + 1rem));
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    /* 滚动条必须归零：它会占 ~10px 高度并让卡片底部描边被切掉 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .ft-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 一屏 6 张（桌面）。用 flex-basis 算而不是固定像素，窄屏逐级减到 4/3/1.4 张，
+     1.4 这种「半张露出」本身就是可滑动的提示。 */
+  .ft-card {
+    flex: 0 0 calc((100% - 5 * 14px) / 6);
+    scroll-snap-align: start;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  @media (max-width: 1439px) {
+    .ft-card { flex-basis: calc((100% - 3 * 14px) / 4); }
+  }
+
+  @media (max-width: 1023px) {
+    .ft-card { flex-basis: calc((100% - 2 * 14px) / 3); }
+  }
+
+  @media (max-width: 767px) {
+    .ft-card { flex-basis: calc((100% - 14px) / 2); }
+  }
+
+  @media (max-width: 511px) {
+    .ft-card { flex-basis: calc((100% - 14px) / 1.35); }
+  }
+
+  .ft-cell {
+    position: relative;
+    /* 竖屏海报卡：与工序视频同比例，整帧入画（烧录字幕不被裁） */
+    aspect-ratio: 9 / 16;
+    background: #211a15;
+    border: 1px solid rgba(192, 168, 130, 0.16);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ft-cell video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+  }
+
+  .ft-card:hover .ft-cell video {
+    transform: scale(1.045);
+  }
+
+  /* 只压顶部一条：给工序编号留对比度；底部渐变交给 .ft-title 自己带 */
+  .ft-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, transparent 30%);
+    pointer-events: none;
+  }
+
+  .ft-step {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    padding: 3px 9px;
+    background: rgba(20, 16, 13, 0.72);
+    border: 1px solid rgba(192, 168, 130, 0.45);
+    border-radius: 999px;
+    color: #c0a882;
+    font-size: 0.82rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+  }
+
+  .ft-step i {
+    font-style: normal;
+    font-size: 0.56rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  /* 居中播放按钮：与首页项目视频画廊 .play-overlay 同一款式，
+     告诉买家这张是「可点开的视频」而不只是图片 */
+  .ft-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .ft-play svg {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+    transition: transform 0.25s ease;
+  }
+
+  .ft-card:hover .ft-play svg {
+    transform: scale(1.12);
+  }
+
+  /* 底部标题带：自带渐变，保证压在亮画面上也读得清 */
+  .ft-title {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 2.4rem 11px 10px;
+    background: linear-gradient(180deg, transparent, rgba(10, 8, 6, 0.9) 62%);
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #fff;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ft-card:focus-visible {
+    outline: 2px solid #c0a882;
+    outline-offset: 3px;
+  }
+
+  /* 右缘渐隐：告诉买家轨道还没走完 */
+  .ft-fade {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 72px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #110e0b);
+    pointer-events: none;
+  }
+
+  /* ── 收尾：与模块头一样居中（用户指定 2026-10-13）── */
+  .ft-foot {
+    max-width: 1400px;
+    margin: 1.75rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.1rem;
+  }
+
+  .ft-foot p {
+    margin: 0;
+    max-width: 62ch;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+
+  .ft-cta {
+    padding: 0.62rem 1.3rem;
+    background: #69574a;
+    border: 1px solid #69574a;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.18s;
+  }
+
+  .ft-cta:hover {
+    opacity: 0.88;
+  }
+</style>

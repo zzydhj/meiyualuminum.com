@@ -134,6 +134,12 @@ const thumb = (v: (typeof candidates)[number]) => {
     display: block;
   }
 
+  /* 竖屏自托管视频：取帧窗口对准中部偏下（烧录字幕区），同 VideoPost 口径；
+     不用 contain —— 小槽里整帧会缩成一条细丝 */
+  video.rec-thumb {
+    object-position: 50% 62%;
+  }
+
   .rec-card-title {
     font-size: 0.875rem;
     font-weight: 600;

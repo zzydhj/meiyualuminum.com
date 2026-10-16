@@ -4,10 +4,10 @@
  *
  * 架构借鉴自同类工厂站的 About 骨架，内容与配色全部换成 MEIYU 自有：
  *   1 Hero（PageHero + 徽章 + CTA slot + 数据条）
- *   2 Who We Are（左图右文 + 要点清单）
- *   3 What You Can Verify（证据索引表 · 回应 B2B 采购评审缺口 1、2）
- *   4 What Arrives With an Export Order（出口文档包 · 回应缺口 3、6）
- *   5 Factory Tour（Supabase videos 表真实视频卡；无视频时回退 WhatsApp 索片钩子）
+ *   2 Factory Tour（Supabase videos 表真实视频卡，6 列 × 2 行全展 12 段；无视频时回退 WhatsApp 索片钩子）
+ *   3 Who We Are（左图右文 + 要点清单）
+ *   4 What You Can Verify（证据索引表 · 回应 B2B 采购评审缺口 1、2）
+ *   5 What Arrives With an Export Order（出口文档包 · 回应缺口 3、6）
  *   6 Team & Support（工程与下单支持）
  *   7 How an Order Runs（下单到出货 5 步）
  *   8 Quality & Certification（标准卡 + 自有 QC 试验）
@@ -20,6 +20,8 @@
  * 能不能算成本 / 出问题谁负责」必须在前部出现；「What We Make」与首页产品展示区、
  * Products Mega Menu 三重重复，作为导航它不该在 About 抢位置，故下移到 Why Buy Direct
  * 之后。调整于 2026-10-10，依据用户要求：About 聚焦公司实力，不重复产品信息。
+ * 2026-10-13 再调：Factory Tour 上移到第 2 位（用户要求工厂实拍尽量往前，
+ *   仅次于 Hero），并改 6 列 × 2 行一次全展 12 段工序。
  *
  * 路由说明：静态 about.astro 的优先级高于 [page].astro，
  *   因此 Supabase pages 表中 slug='about' 的行不再被读取（保留但不使用）。
@@ -350,21 +352,25 @@ const faqJsonLd = {
 };
 
 /* ── 工厂视频：About 只放自托管素材（R2 / 同源）——
-   当前 videos 表里的 YouTube 条目是别家工厂素材（帧上带中文解说与“XINENZE”水印），
-   放到自己 About 页就是假称自家车间，因此一律不展示；
-   用户上传自有 mp4 到 R2 后本节会自动出现。无自托管视频时回退成 WhatsApp 索片钩子。── */
+   12 段工序视频已上传至 file.meiyualuminum.com/home/video/，slug 统一以 factory- 开头。
+   两条约束：
+   1) 按 slug 升序而不按 pub_date —— 12 条同一天上传，按日期排等于随机取，
+      工序顺序（切割→折弯→喷涂→质检→包装）会整个乱掉。
+   2) 过滤下推到数据库（like），不在拉回后才 filter：
+      原先 limit(3) 先于 filter 执行，一旦表里混进非自托管条目，本页就会凑不满。
+   3) 不设 limit：视频墙 6 列 × 2 行一次全展 12 段（2026-10-13 用户指定）。 */
 const { data: dbVideos } = await supabase
     .from("videos")
     .select("slug,title,video_url,thumbnail_url")
     .eq("status", "published")
-    .order("pub_date", { ascending: false })
-    .limit(3);
+    .like("slug", "factory-*")
+    .order("slug", { ascending: true });
 
 const videos = (dbVideos ?? [])
     .filter((v) => isSelfHostedVideo(v.video_url))
-    .map((v) => ({
+    .map((v, i) => ({
         slug: v.slug,
-        title: v.title,
+        title: `${String(i + 1).padStart(2, "0")} · ${v.title}`,
         cover: v.thumbnail_url || firstFrameSrc(v.video_url!),
     }));
 
@@ -402,6 +408,7 @@ const tourHooks = [
         titleGold="Every Panel"
         subtitle="MEIYU Aluminum Co., Ltd. forms, perforates, coats and packs architectural aluminium ceiling and facade panels in our own plant — 15,000 m², 15 lines, and an engineering team that answers shop drawings, samples and quotations directly."
         stats={heroStats}
+        flush
         crumb={{
             items: [
                 { name: "Home", url: "/" },
@@ -440,194 +447,24 @@ const tourHooks = [
         <a class="ab-btn ab-btn--ghost-light" href="/products/"
             >Browse Products</a
         >
+        {
+            /* 认证徽章条：页头的一部分（2026-10-13 用户指定），挂在数据行下方；
+            半透明白胶囊适配深色页头底图，样式随 slot 作用域由本页 .ab-badges 提供。 */
+        }
+        <ul class="ab-badges" slot="badges">
+            {heroBadges.map((b) => <li>{b}</li>)}
+        </ul>
     </PageHero>
 
-    <ul class="ab-badges">
-        {heroBadges.map((b) => <li>{b}</li>)}
-    </ul>
-
-    <!-- ══════ 2. Who We Are ══════ -->
-    <section class="ab-band">
-        <div class="ab-wrap">
-            <div class="ab-story-grid">
-                <figure class="ab-media">
-                    <img
-                        src={IMG_STORY}
-                        alt="Collage of MEIYU aluminium panel shop drawings, panels hanging on the coating line, container packing, an installer on a scissor lift and the finished facade"
-                        width="760"
-                        height="900"
-                        loading="lazy"
-                        data-no-watermark
-                    />
-                    <figcaption class="ab-media-flag">
-                        Drawings → coating line → packing → installation
-                    </figcaption>
-                </figure>
-                <div class="ab-copy">
-                    <span class="ab-eyebrow">Who We Are</span>
-                    <h2 class="ab-h2">
-                        Manufacturer First, <span class="ab-hl"
-                            >Trader Never</span
-                        >
-                    </h2>
-                    <p>
-                        MEIYU was founded in 2015 in Dongguan City, Guangdong
-                        Province, with 15,000 m² of plant and 15 production
-                        lines. Aluminium coil comes in at one end; formed,
-                        perforated, coated and packed panels leave at the other.
-                        Nothing is subcontracted, so the people who quote your
-                        project are talking about the same line that will run
-                        it.
-                    </p>
-                    <p>
-                        We supply ceiling and facade systems across Southeast
-                        Asia, the Middle East, and parts of Africa and South
-                        America. Shop drawing review, CAD layout and OEM/ODM
-                        development are done in-house — which is why a technical
-                        question usually comes back with a detail drawing rather
-                        than a forwarding email.
-                    </p>
-                    <ul class="ab-checks">
-                        {storyPoints.map((p) => <li>{p}</li>)}
-                    </ul>
-                    <div class="ab-btn-row">
-                        <button
-                            type="button"
-                            class="ab-btn ab-btn--primary"
-                            data-open-inquiry-modal
-                            >Talk to Our Engineers</button
-                        >
-                        <a
-                            class="ab-btn ab-btn--outline"
-                            href={waUrl(
-                                "Hi, I'd like to know more about MEIYU's factory and products",
-                            )}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            data-wa-source="about_story">WhatsApp Us</a
-                        >
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ══════ 3. What You Can Verify（证据索引 · 回应采购评审缺口 1、2） ══════ -->
-    <section class="ab-band ab-band--alt">
+    <!-- ══════ 2. Factory Tour ══════ -->
+    <!-- 深色带：与首页工序带/项目带同一套暗色语言，黑白交替提升高级感
+         （2026-10-13 用户指定）；页头按深色带惯例走金 eyebrow + 白标题。 -->
+    <section class="ab-band ab-band--dark">
         <div class="ab-wrap">
             <div class="ab-head">
-                <span class="ab-eyebrow">Evidence Index</span>
-                <h2 class="ab-h2">
-                    What You Can Verify <span class="ab-hl"
-                        >Before You Order</span
-                    >
-                </h2>
-                <p class="ab-sub">
-                    A brochure says what a supplier promises. This table says
-                    what you can actually ask for, what each document covers,
-                    and where its limits are — so your engineer, your fire
-                    consultant and your procurement team can approve it without
-                    phoning us first.
-                </p>
-            </div>
-            <div class="ab-evi-wrap">
-                <table class="ab-evi">
-                    <thead>
-                        <tr>
-                            <th scope="col">Evidence</th>
-                            <th scope="col">The question it answers</th>
-                            <th scope="col"
-                                >What it covers — and what it does not</th
-                            >
-                            <th scope="col">How to get it</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            evidenceIndex.map((e) => (
-                                <tr>
-                                    <th scope="row" data-label="Evidence">
-                                        {e.item}
-                                    </th>
-                                    <td data-label="Answers">{e.asks}</td>
-                                    <td data-label="Coverage">{e.scope}</td>
-                                    <td data-label="How to get it">
-                                        {e.obtain}
-                                    </td>
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <p class="ab-note">
-                Where something has not been tested, we say so rather than infer
-                it from a similar product.
-            </p>
-            <div class="ab-btn-row">
-                <button
-                    type="button"
-                    class="ab-btn ab-btn--outline ab-btn--sm"
-                    data-open-inquiry-modal
-                    >Request the document list for my spec</button
-                >
-            </div>
-        </div>
-    </section>
-
-    <!-- ══════ 4. What Arrives With an Export Order（回应采购评审缺口 3、6） ══════ -->
-    <section class="ab-band">
-        <div class="ab-wrap">
-            <div class="ab-head">
-                <span class="ab-eyebrow">Export Delivery</span>
-                <h2 class="ab-h2">
-                    What Arrives With <span class="ab-hl">an Export Order</span>
-                </h2>
-                <p class="ab-sub">
-                    Ordering aluminium from another continent is not difficult.
-                    Ordering it so that a local crew can install it without
-                    calling China every afternoon is the part that decides
-                    whether a supplier is usable. This is what we send.
-                </p>
-            </div>
-            <ul class="ab-why-grid">
-                {
-                    exportPack.map((x) => (
-                        <li class="ab-why-card">
-                            <span class="ab-why-icon">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <path d={x.icon} />
-                                </svg>
-                            </span>
-                            <strong>{x.t}</strong>
-                            <span class="ab-why-desc">{x.d}</span>
-                        </li>
-                    ))
-                }
-            </ul>
-            <p class="ab-note">
-                Our documented project references to date are domestic — we
-                would rather say that plainly than send you a photograph of a
-                building you cannot verify. Judge us on the paperwork and a live
-                run on the line.
-            </p>
-        </div>
-    </section>
-
-    <!-- ══════ 5. Factory Tour ══════ -->
-    <section class="ab-band">
-        <div class="ab-wrap">
-            <div class="ab-head">
-                <span class="ab-eyebrow">Factory Tour</span>
-                <h2 class="ab-h2">
+                <span class="ab-eyebrow ab-eyebrow--gold">Factory Tour</span>
+                <div class="ab-head-rule"></div>
+                <h2 class="ab-h2 ab-h2--light">
                     See the Plant <span class="ab-hl">Before You Buy</span>
                 </h2>
                 <p class="ab-sub">
@@ -642,18 +479,24 @@ const tourHooks = [
                     <ul class="ab-video-grid">
                         {videos.map((v) => (
                             <li class="ab-video-card">
-                                <a href={`/videos/${v.slug}/`}>
+                                {/* 原地播放、不跳页（2026-10-13 用户指定）：封面区是播放按钮，
+                                    点击给 video 加 controls 并在当前卡片内起播；标题保留详情页链接。
+                                    cover 是第一帧地址（mp4#t=0.1），必须用 <video>，用 img 会裂图。
+                                    竖屏槽与工序视频同比例，整帧入画，烧录字幕不被裁。 */}
+                                <div class="ab-video-box">
                                     <span class="ab-video-thumb">
-                                        <img
+                                        <video
                                             src={v.cover}
-                                            alt={`${v.title} — MEIYU factory video`}
-                                            width="480"
-                                            height="360"
-                                            loading="lazy"
+                                            muted
+                                            playsinline
+                                            preload="metadata"
+                                            data-ab-video
                                         />
-                                        <span
+                                        <button
+                                            type="button"
                                             class="ab-play"
-                                            aria-hidden="true"
+                                            data-ab-play
+                                            aria-label={`Play ${v.title} in place`}
                                         >
                                             <svg
                                                 viewBox="0 0 24 24"
@@ -661,12 +504,15 @@ const tourHooks = [
                                             >
                                                 <path d="M8 5.5v13l11-6.5-11-6.5z" />
                                             </svg>
-                                        </span>
+                                        </button>
                                     </span>
-                                    <strong class="ab-video-title">
+                                    <a
+                                        class="ab-video-title"
+                                        href={`/videos/${v.slug}/`}
+                                    >
                                         {v.title}
-                                    </strong>
-                                </a>
+                                    </a>
+                                </div>
                             </li>
                         ))}
                     </ul>
@@ -733,6 +579,182 @@ const tourHooks = [
                     Ask on WhatsApp</a
                 >{" "}— or browse the full{" "}
                 <a href="/videos/">video library</a>.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════ 3. Who We Are ══════ -->
+    <section class="ab-band">
+        <div class="ab-wrap">
+            <div class="ab-story-grid">
+                <figure class="ab-media">
+                    <img
+                        src={IMG_STORY}
+                        alt="Collage of MEIYU aluminium panel shop drawings, panels hanging on the coating line, container packing, an installer on a scissor lift and the finished facade"
+                        width="760"
+                        height="900"
+                        loading="lazy"
+                        data-no-watermark
+                    />
+                    <figcaption class="ab-media-flag">
+                        Drawings → coating line → packing → installation
+                    </figcaption>
+                </figure>
+                <div class="ab-copy">
+                    <span class="ab-eyebrow">Who We Are</span>
+                    <h2 class="ab-h2">
+                        Manufacturer First, <span class="ab-hl"
+                            >Trader Never</span
+                        >
+                    </h2>
+                    <p>
+                        MEIYU was founded in 2015 in Dongguan City, Guangdong
+                        Province, with 15,000 m² of plant and 15 production
+                        lines. Aluminium coil comes in at one end; formed,
+                        perforated, coated and packed panels leave at the other.
+                        Nothing is subcontracted, so the people who quote your
+                        project are talking about the same line that will run
+                        it.
+                    </p>
+                    <p>
+                        We supply ceiling and facade systems across Southeast
+                        Asia, the Middle East, and parts of Africa and South
+                        America. Shop drawing review, CAD layout and OEM/ODM
+                        development are done in-house — which is why a technical
+                        question usually comes back with a detail drawing rather
+                        than a forwarding email.
+                    </p>
+                    <ul class="ab-checks">
+                        {storyPoints.map((p) => <li>{p}</li>)}
+                    </ul>
+                    <div class="ab-btn-row">
+                        <button
+                            type="button"
+                            class="ab-btn ab-btn--primary"
+                            data-open-inquiry-modal
+                            >Talk to Our Engineers</button
+                        >
+                        <a
+                            class="ab-btn ab-btn--outline"
+                            href={waUrl(
+                                "Hi, I'd like to know more about MEIYU's factory and products",
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-wa-source="about_story">WhatsApp Us</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ 4. What You Can Verify（证据索引 · 回应采购评审缺口 1、2） ══════ -->
+    <section class="ab-band ab-band--alt">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">Evidence Index</span>
+                <h2 class="ab-h2">
+                    What You Can Verify <span class="ab-hl"
+                        >Before You Order</span
+                    >
+                </h2>
+                <p class="ab-sub">
+                    A brochure says what a supplier promises. This table says
+                    what you can actually ask for, what each document covers,
+                    and where its limits are — so your engineer, your fire
+                    consultant and your procurement team can approve it without
+                    phoning us first.
+                </p>
+            </div>
+            <div class="ab-evi-wrap">
+                <table class="ab-evi">
+                    <thead>
+                        <tr>
+                            <th scope="col">Evidence</th>
+                            <th scope="col">The question it answers</th>
+                            <th scope="col"
+                                >What it covers — and what it does not</th
+                            >
+                            <th scope="col">How to get it</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            evidenceIndex.map((e) => (
+                                <tr>
+                                    <th scope="row" data-label="Evidence">
+                                        {e.item}
+                                    </th>
+                                    <td data-label="Answers">{e.asks}</td>
+                                    <td data-label="Coverage">{e.scope}</td>
+                                    <td data-label="How to get it">
+                                        {e.obtain}
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p class="ab-note">
+                Where something has not been tested, we say so rather than infer
+                it from a similar product.
+            </p>
+            <div class="ab-btn-row">
+                <button
+                    type="button"
+                    class="ab-btn ab-btn--outline ab-btn--sm"
+                    data-open-inquiry-modal
+                    >Request the document list for my spec</button
+                >
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ 5. What Arrives With an Export Order（回应采购评审缺口 3、6 ） ══════ -->
+    <section class="ab-band">
+        <div class="ab-wrap">
+            <div class="ab-head">
+                <span class="ab-eyebrow">Export Delivery</span>
+                <h2 class="ab-h2">
+                    What Arrives With <span class="ab-hl">an Export Order</span>
+                </h2>
+                <p class="ab-sub">
+                    Ordering aluminium from another continent is not difficult.
+                    Ordering it so that a local crew can install it without
+                    calling China every afternoon is the part that decides
+                    whether a supplier is usable. This is what we send.
+                </p>
+            </div>
+            <ul class="ab-why-grid">
+                {
+                    exportPack.map((x) => (
+                        <li class="ab-why-card">
+                            <span class="ab-why-icon">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d={x.icon} />
+                                </svg>
+                            </span>
+                            <strong>{x.t}</strong>
+                            <span class="ab-why-desc">{x.d}</span>
+                        </li>
+                    ))
+                }
+            </ul>
+            <p class="ab-note">
+                Our documented project references to date are domestic — we
+                would rather say that plainly than send you a photograph of a
+                building you cannot verify. Judge us on the paperwork and a live
+                run on the line.
             </p>
         </div>
     </section>
@@ -815,6 +837,7 @@ const tourHooks = [
                 <span class="ab-eyebrow ab-eyebrow--gold"
                     >How an Order Runs</span
                 >
+                <div class="ab-head-rule"></div>
                 <h2 class="ab-h2 ab-h2--light">
                     From Drawing to <span class="ab-hl-gold"
                         >Loaded Container</span
@@ -1081,7 +1104,8 @@ const tourHooks = [
     /* ============================================================
      About 页专用样式：全站没有全局 design tokens（各组件自带 scoped CSS），
      因此本块自包含，统一 ab- 前缀，色值取自站内既有品牌色
-     （棕 #69574a / 金 #c09020 / 亮金 #f0c96a / 香槟 #c0a882 / 深色 #10131a）。
+     （棕 #69574a / 金 #c09020 / 檀金 #c0a882 / 深色 #110e0b；
+        深色带的金一律用檀金 #c0a882，与首页暗色带同色，亮金 #f0c96a 已弃用）。
      ============================================================ */
 
     /* 全幅色带靠 100vw + calc(50% - 50vw) 冲出容器，而 100vw 含滚动条宽度，
@@ -1104,7 +1128,7 @@ const tourHooks = [
         background: #f8f6f3;
     }
     .ab-band--dark {
-        background: #10131a;
+        background: #110e0b;
         color: #fff;
     }
     .ab-wrap {
@@ -1117,6 +1141,15 @@ const tourHooks = [
         margin: 0 auto clamp(28px, 4vw, 44px);
         text-align: center;
     }
+    /* 深色带页头的金色分隔线：与首页 .vg-gold-line / .ft-rule 同一尺寸同一色，
+       保证两个站的暗色带页头解剖结构一致 */
+    .ab-head-rule {
+        width: 48px;
+        height: 3px;
+        background: #c0a882;
+        margin: 0 auto 20px;
+        border-radius: 2px;
+    }
     .ab-eyebrow {
         display: inline-block;
         font-size: 0.75rem;
@@ -1127,7 +1160,7 @@ const tourHooks = [
         margin-bottom: 0.7rem;
     }
     .ab-eyebrow--gold {
-        color: #f0c96a;
+        color: #c0a882;
     }
     .ab-h2 {
         margin: 0 0 0.9rem;
@@ -1142,8 +1175,13 @@ const tourHooks = [
     .ab-hl {
         color: #69574a;
     }
+    /* 深色带里的高亮词：品牌棕压在深底上几乎看不见（实测成一片褐），
+       统一为首页暗色带的檀金 #c0a882。 */
+    .ab-band--dark .ab-hl {
+        color: #c0a882;
+    }
     .ab-hl-gold {
-        color: #f0c96a;
+        color: #c0a882;
     }
     .ab-sub {
         margin: 0;
@@ -1152,7 +1190,12 @@ const tourHooks = [
         color: #475569;
     }
     .ab-band--dark .ab-sub {
-        color: rgba(255, 255, 255, 0.78);
+        color: rgba(255, 255, 255, 0.55);
+    }
+    /* 深色带里的注释行与索片钩子文案：默认灰字在深底上读不清 */
+    .ab-band--dark .ab-note,
+    .ab-band--dark .ab-hook-label {
+        color: rgba(255, 255, 255, 0.72);
     }
 
     /* ---------- 按钮 ---------- */
@@ -1207,11 +1250,11 @@ const tourHooks = [
     }
     .ab-btn--light {
         background: #fff;
-        color: #10131a;
+        color: #110e0b;
     }
     .ab-btn--light:hover {
-        background: #f0c96a;
-        color: #10131a;
+        background: #c0a882;
+        color: #110e0b;
     }
     .ab-btn--outline-light {
         background: transparent;
@@ -1242,23 +1285,23 @@ const tourHooks = [
         margin-top: 1.9rem;
     }
 
-    /* ---------- Hero 下方徽章条 ---------- */
+    /* ---------- Hero 内认证徽章条（深色页头半透明胶囊） ---------- */
     .ab-badges {
         list-style: none;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 8px;
-        margin: -0.5rem 0 0;
+        margin: 0;
         padding: 0;
     }
     .ab-badges li {
         font-size: 0.78rem;
         font-weight: 600;
         letter-spacing: 0.02em;
-        color: #69574a;
-        background: #f5f0eb;
-        border: 1px solid #e2d6c8;
+        color: rgba(255, 255, 255, 0.88);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.22);
         border-radius: 4px;
         padding: 5px 12px;
     }
@@ -1337,14 +1380,40 @@ const tourHooks = [
     }
 
     /* ---------- 产品族卡片 ---------- */
-    .ab-product-grid,
-    .ab-video-grid {
+    .ab-product-grid {
         list-style: none;
         margin: 0;
         padding: 0;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: clamp(16px, 2.2vw, 22px);
+    }
+
+    /* 工厂视频墙：6 列 × 2 行一次全展 12 段工序（2026-10-13 用户指定）。
+       竖屏海报槽较窄（1400 容器下每列约 210px），gap 比产品网格收一档，
+       标题字号也同步收，避免两行字就撑满卡底。 */
+    .ab-video-grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: clamp(10px, 1.4vw, 16px);
+    }
+    .ab-video-grid .ab-video-title {
+        padding: 0.5rem 0.75rem 0;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        /* 限两行：12 张卡的白条高度统一，不会因标题三行而忽高忽低。
+           padding-bottom 必须为 0、底部留白交给 .ab-video-box：Chromium 的
+           -webkit-line-clamp 有绘制 bug，被裁掉的下一行会漏画进元素自己的
+           padding-bottom（overflow 裁切边在 padding 外沿），白条底会露出半行字
+           （2026-10-13 用户截图实测）。 */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     .ab-product-card a {
         display: flex;
@@ -1410,30 +1479,36 @@ const tourHooks = [
     }
 
     /* ---------- 视频卡 ---------- */
-    .ab-video-card a {
+    /* 卡片容器用独立类，不用 .ab-video-card a 这种裸标签选择器 ——
+       标题本身也是 <a>（详情页链接），裸选择器会把卡片样式打到标题上，
+       height:100% 反撑网格行高，整墙布局爆掉（2026-10-13 实测事故）。 */
+    .ab-video-box {
         display: flex;
         flex-direction: column;
         height: 100%;
+        /* 标题白条的底部留白放在这里：clamp 元素自身不能带 padding-bottom（见下） */
+        padding-bottom: 0.6rem;
         background: #fff;
         border: 1px solid #e8e4df;
         border-radius: 10px;
         overflow: hidden;
-        text-decoration: none;
         transition:
             transform 0.2s ease,
             box-shadow 0.2s ease;
     }
-    .ab-video-card a:hover {
+    .ab-video-box:hover {
         transform: translateY(-4px);
         box-shadow: 0 14px 32px rgba(16, 19, 26, 0.12);
     }
     .ab-video-thumb {
         position: relative;
         display: block;
-        aspect-ratio: 16 / 9;
-        background: #e8e4df;
+        /* 竖屏海报槽：与工序视频同比例，整帧可见（烧录字幕不裁） */
+        aspect-ratio: 9 / 16;
+        background: #14100d;
     }
-    .ab-video-thumb img {
+    .ab-video-thumb img,
+    .ab-video-thumb video {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -1446,13 +1521,30 @@ const tourHooks = [
         line-height: 1.5;
         color: #1e293b;
     }
+    /* 标题现在是详情页链接（封面负责原地播放）：保持卡片文字色与无下划线 */
+    a.ab-video-title {
+        text-decoration: none;
+    }
+    a.ab-video-title:hover {
+        color: #c09020;
+    }
+    /* 播放按钮（button 元素）：点击原地起播、不跳页。
+       索片钩子的大图区复用本类，但那里是 span，button 专属属性不生效。 */
     .ab-play {
         position: absolute;
         inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        pointer-events: none;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+    }
+    /* 起播后藏起大播放按钮，交给原生控制条；暂停时恢复 */
+    .ab-video-thumb[data-playing] .ab-play {
+        display: none;
     }
     .ab-play svg {
         width: 58px;
@@ -1466,7 +1558,8 @@ const tourHooks = [
             transform 0.25s ease,
             background-color 0.25s ease;
     }
-    a:hover .ab-play svg {
+    .ab-play:hover svg,
+    .ab-play:focus-visible svg {
         transform: scale(1.12);
         background: rgba(105, 87, 74, 0.72);
     }
@@ -1548,7 +1641,7 @@ const tourHooks = [
         color: #fff;
     }
     .ab-hook-chips a:hover::before {
-        background: #f0c96a;
+        background: #c0a882;
     }
 
     /* ---------- 流程步骤（深色带）---------- */
@@ -1573,7 +1666,7 @@ const tourHooks = [
         font-size: 1.5rem;
         font-weight: 800;
         line-height: 1;
-        color: #f0c96a;
+        color: #c0a882;
         letter-spacing: 0.02em;
     }
     .ab-step strong {
@@ -1968,9 +2061,11 @@ const tourHooks = [
             max-width: 620px;
         }
         .ab-product-grid,
-        .ab-video-grid,
         .ab-why-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+        .ab-video-grid {
+            grid-template-columns: repeat(3, 1fr);
         }
         .ab-steps {
             grid-template-columns: repeat(2, 1fr);
@@ -1987,10 +2082,12 @@ const tourHooks = [
             padding: clamp(44px, 9vw, 60px) clamp(14px, 4vw, 24px);
         }
         .ab-product-grid,
-        .ab-video-grid,
         .ab-why-grid,
         .ab-steps {
             grid-template-columns: 1fr;
+        }
+        .ab-video-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
         .ab-cert-wall {
             grid-template-columns: 1fr;
@@ -2009,3 +2106,39 @@ const tourHooks = [
         }
     }
 </style>
+
+<script>
+    /* 工厂视频原地播放（2026-10-13 用户指定）：点封面的大播放按钮，
+     就给本卡 video 加 controls 并在当前页当前位置起播，不跳详情页；
+     标题链接仍去详情页（想看全屏/评论时）。
+     同一时刻只播一条：新的起播前先暂停别的，避免十几条流同时抢带宽。 */
+    const abVideos = Array.from(
+        document.querySelectorAll("video[data-ab-video]"),
+    ) as HTMLVideoElement[];
+
+    for (const v of abVideos) {
+        v.addEventListener("play", () => {
+            for (const other of abVideos) if (other !== v) other.pause();
+            v.closest(".ab-video-thumb")?.setAttribute("data-playing", "true");
+        });
+        v.addEventListener("pause", () => {
+            v.closest(".ab-video-thumb")?.removeAttribute("data-playing");
+        });
+    }
+
+    document.addEventListener("click", (e) => {
+        const btn = (e.target as HTMLElement).closest?.("[data-ab-play]");
+        if (!btn) return;
+        const video = btn
+            .closest(".ab-video-thumb")
+            ?.querySelector("video[data-ab-video]") as HTMLVideoElement | null;
+        if (!video) return;
+        video.controls = true;
+        video.muted = false; // 显式点击属用户手势，允许解除静音
+        video.play().catch(() => {
+            // 个别浏览器仍拦截时退回收音静音再试
+            video.muted = true;
+            video.play().catch(() => {});
+        });
+    });
+</script>

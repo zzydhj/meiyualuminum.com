@@ -127,10 +127,10 @@ const thumbSrc =
     box-shadow: 0 12px 28px rgba(105, 87, 74, 0.14);
   }
 
-  /* 缩略图区域：16:9（视频标准比例），相对定位用于叠加播放按钮和时长角标 */
+  /* 缩略图区域：2:1（比 16:9 矮一档，整卡高度收小）；相对定位用于叠加播放按钮和时长角标 */
   .video-thumb {
     position: relative;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 2 / 1;
     overflow: hidden;
     background: #f0ede9;
   }
@@ -141,6 +141,13 @@ const thumbSrc =
     object-fit: cover;
     display: block;
     transition: transform 0.35s ease;
+  }
+  /* 竖屏自托管视频的取帧窗口：cover 必然只露一条横带，
+     用 object-position 把这条带对准画面中部偏下（烧录字幕所在区），
+     而不是默认正中 —— 正中会把字幕行的下半截切掉。
+     不用 contain 整帧：竖屏源在横槽里整帧会留下两侧大片黑边（用户否掉）。 */
+  .video-thumb video {
+    object-position: 50% 62%;
   }
   .video-card-link:hover .video-thumb img,
   .video-card-link:hover .video-thumb video {
@@ -190,17 +197,17 @@ const thumbSrc =
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 18px 20px 20px;
+    padding: 14px 18px 16px;
   }
 
   /* 标签行：间距由容器控制，胶囊本体样式在 Tag.astro */
   .video-tag-row {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .video-title {
-    margin: 0 0 8px;
-    font-size: 1.05rem;
+    margin: 0 0 6px;
+    font-size: 1rem;
     font-weight: 700;
     line-height: 1.4;
     color: #0d0950;
@@ -215,8 +222,8 @@ const thumbSrc =
   }
 
   .video-excerpt {
-    margin: 0 0 14px;
-    font-size: 0.875rem;
+    margin: 0 0 10px;
+    font-size: 0.85rem;
     line-height: 1.6;
     color: #6b7280;
     display: -webkit-box;
