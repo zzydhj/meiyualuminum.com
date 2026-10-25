@@ -291,7 +291,9 @@ def verify_public(url: str, retries: int = 2):
     """返回 (HTTP 状态码, Content-Type)。
     HTTPError（404 / 403 等）也是有效应答 → 返回其状态码（说明域可达）；
     只有网络层失败（DNS / 超时 / 连接拒绝）才返回 (None, 原因)。
-    部分域不支持 HEAD → 自动改用带 Range 的 GET 重试。"""
+    部分域不支持 HEAD → 自动改用带 Range 的 GET 重试。
+    2026-10-26：file.meiyualuminum.com 开始对 HEAD 返回 403（CF 拦截），
+    降级后的 Range GET 返回 206 —— 206 同样证明对象公开可读，视为成功。"""
     from urllib.error import HTTPError
     last = None
     for _ in range(retries + 1):
@@ -362,7 +364,7 @@ def process(cli, item: dict, keep_tmp: bool = False) -> dict:
 
         code, ct = verify_public(out["url"])
         out["public_check"] = f"{code} {ct}".strip()
-        if code != 200:
+        if code not in (200, 206):
             out["status"] = "verify-failed"
             return out
 
