@@ -65,12 +65,14 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, "") || "";
 // 因此 BaseLayout 不再有 image prop，各页原先传的 image={...}（产品主图、文章封面…）
 // 已全部摘掉；那些字段仍服务 JSON-LD 与页面自身排版，只是不再进 og:image。
 // 若要恢复“每页各自的分享图”，见 git blame 这行的上一版（ogImage = image || 默认图）。
-// 换图只改这一行 + 下面三个 og:image:* 尺寸值。
-// 注意：WhatsApp 卡片框是 1.91:1 横条，方图会被居中裁成一条横带（上下丢失），
-//      所以换图优先选 1200×630；当前这张是 800×800 方图，属于已知取舍。
-const SHARE_IMAGE = "https://file.meiyualuminum.com/home/meiyualuminum.webp";
-const SHARE_IMAGE_W = 800;
-const SHARE_IMAGE_H = 800;
+// 本图由 docs/share-card.py 合成（大兴机场实拍 + 真 LOGO + 代码排版文字，
+// 文字不走 AI 生成），1200×630 = Meta 推荐的 1.91:1，因此 WhatsApp 不会裁切；
+// 换图请仍保持 1200×630（方图会被居中裁成一条横带，丢 LOGO 与底部联系方式），
+// 并同步下面三个值。JPG 而非 webp：Meta 官方推荐格式，微信 / LinkedIn 兼容性最稳。
+const SHARE_IMAGE =
+  "https://file.meiyualuminum.com/home/social-share-card-aecd1d.jpg";
+const SHARE_IMAGE_W = 1200;
+const SHARE_IMAGE_H = 630;
 const SHARE_IMAGE_ALT =
   "MEIYU Aluminum — custom aluminium ceiling and facade panels, direct factory in Dongguan, China.";
 
