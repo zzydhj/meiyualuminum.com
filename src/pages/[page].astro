@@ -30,6 +30,9 @@ if (error) {
 const notFound = !page;
 if (notFound) {
   Astro.response.status = 404;
+  // 404 不进边缘缓存（astro.config 的 routeRules 会给 /[page] 加缓存头）：
+  // 否则草稿页被先访问一次后，发布后的首抓会在 swr 窗口里继续拿到这份 404。
+  Astro.cache.set(false);
 }
 
 // Use seo_title if available, otherwise fall back to title
