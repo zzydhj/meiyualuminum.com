@@ -15,7 +15,6 @@ interface Props {
       用途分离：pageTitle 服务 <title>/OG 等 SEO 标签，headingTitle 服务读者看到的 h1。 */
   headingTitle?: string;
   description?: string;
-  image?: string;
   canonicalURL?: string;
   type?: "website" | "article";
   pubDate?: Date;
@@ -41,7 +40,6 @@ const {
   pageTitle,
   headingTitle,
   description = "MEIYU Aluminum Co., Ltd. — direct factory of architectural aluminium ceiling tiles, linear strip ceilings, wall cladding and facade panels in Dongguan, China.",
-  image,
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   type = "website",
   pubDate,
@@ -62,14 +60,19 @@ const alternates = alternatesProp ?? buildAlternates(Astro.url.pathname);
 const siteName = "Meiyu Aluminum";
 const siteUrl = Astro.site?.toString().replace(/\/$/, "") || "";
 
-// 站点级默认分享图：页面未传 image 时兜底，避免 twitter:card=summary_large_image
-// 声明了大图却没有 og:image（WhatsApp / LinkedIn / 微信转发时无预览图）。
-// 换图只改这一行；理想尺寸是 1200×630，当前这张是 800×533（3:2，可用）。
-const DEFAULT_OG_IMAGE =
-  "https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp";
-
-// 未传图时回退到站点默认图，保证每页都有 og:image / twitter:image
-const ogImage = new URL(image || DEFAULT_OG_IMAGE, Astro.site).href;
+// 全站唯一分享图（WhatsApp / LinkedIn / 微信转发时链接卡片用的图）。
+// 2026-10-25 用户定口径：不管发哪条链接，卡片都显示同一张品牌图，不再随页变化。
+// 因此 BaseLayout 不再有 image prop，各页原先传的 image={...}（产品主图、文章封面…）
+// 已全部摘掉；那些字段仍服务 JSON-LD 与页面自身排版，只是不再进 og:image。
+// 若要恢复“每页各自的分享图”，见 git blame 这行的上一版（ogImage = image || 默认图）。
+// 换图只改这一行 + 下面三个 og:image:* 尺寸值。
+// 注意：WhatsApp 卡片框是 1.91:1 横条，方图会被居中裁成一条横带（上下丢失），
+//      所以换图优先选 1200×630；当前这张是 800×800 方图，属于已知取舍。
+const SHARE_IMAGE = "https://file.meiyualuminum.com/home/meiyualuminum.webp";
+const SHARE_IMAGE_W = 800;
+const SHARE_IMAGE_H = 800;
+const SHARE_IMAGE_ALT =
+  "MEIYU Aluminum — custom aluminium ceiling and facade panels, direct factory in Dongguan, China.";
 
 // Google Analytics 衡量 ID：默认值就是本站正式 ID，PUBLIC_GA_ID 仅用于换属性时覆盖。
 // 以前 head 里一份硬编码、body 末尾一份 env 驱动，共两套；一旦真的设了 PUBLIC_GA_ID
@@ -189,7 +192,12 @@ const orgJsonLd = {
     <meta property="og:type" content={type} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
+    <!-- 分享图全站统一（见上方 SHARE_IMAGE）。宽高与 alt 一并给出：
+         客户端能先占位再加载，卡片不跳版；Meta 也推荐带这三项。 -->
+    <meta property="og:image" content={SHARE_IMAGE} />
+    <meta property="og:image:width" content={String(SHARE_IMAGE_W)} />
+    <meta property="og:image:height" content={String(SHARE_IMAGE_H)} />
+    <meta property="og:image:alt" content={SHARE_IMAGE_ALT} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content={siteName} />
     {
@@ -206,7 +214,7 @@ const orgJsonLd = {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
-    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <meta name="twitter:image" content={SHARE_IMAGE} />
 
     <!-- Organization Schema -->
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
