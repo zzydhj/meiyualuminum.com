@@ -357,7 +357,7 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
   工程支持：shop drawing review、CAD layout、OEM/ODM。
 【质保（标准 offer）】PE 涂层 10 年；PVDF 涂层 15 年（标准大气暴露；沿海/高盐环境可能需调整涂层规格）；
   结构/材料缺陷自发货起 1 年。
-【MOQ/交期（标准 offer）】标准品 500 m²/项/规格；定制（穿孔/异形）1,000 m²（视模具）；
+【MOQ/交期（标准 offer）】标准品 50 m²/项/规格（2026-10-25 用户调低，原 500）；定制（穿孔/异形）1,000 m²（视模具）；
   交期标准单 20–25 工作日、定制穿孔/特殊表面 30–40 工作日（视订单量与排产）。
 【出口市场】东南亚（Vietnam、Philippines、Indonesia、Malaysia）、中东（UAE、Saudi Arabia、Qatar）、
   部分非洲与南美市场。

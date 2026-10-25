@@ -46,7 +46,7 @@ export const certBadges = [
 export const standardTerms: TermRow[] = [
     {
         label: "MOQ",
-        value: "500 m² per item for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)",
+        value: "50 m² per item for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)",
     },
     {
         label: "Lead Time",
