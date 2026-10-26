@@ -40,7 +40,9 @@ interface MegaGroup {
 const MENU: MegaGroup[] = [
   // 一级 = 工程产品线（客户经营范围/工程部位），卡片 = 二级系列（报告 §04 菜单表口径）。
   // 顺序按报告：天花吊顶 → 室内墙面 → 外墙覆面 → 踢脚与收边。
-  // 14 张卡全部指向现有分类/产品页，不出现空的 “Coming soon” 类别。
+  // 2026-10-26 与用户 18 系列口径表对齐：6+5+4+3 = 18 张卡全部指向真实
+  // 分类/产品页，不出现空的 “Coming soon” 类别；新建的 4 个系列页
+  // （perforated / honeycomb-wall / insulated / trim）内容待后续逐个深化。
   {
     label: "Aluminum Ceilings",
     cards: [
@@ -92,24 +94,35 @@ const MENU: MegaGroup[] = [
         title: "Fluted Wall Panels",
         href: "/products/interior-fluted-wall-panel/",
       },
+      {
+        img: "https://file.meiyualuminum.com/home/general/acoustic-aluminum-panels.webp",
+        title: "Perforated Aluminum Panels",
+        href: "/products/perforated-aluminum-panel/",
+      },
+      {
+        // 2026-10-26 口径表把异形铝单板列在室内墙面列（原挂在外墙列），移回。
+        img: "https://file.meiyualuminum.com/home/aluminum-ceiling-project/beijing-daxing-airport-terminal-tree-column-curved-aluminum-ceiling-interior.webp",
+        title: "Curved & Custom Aluminum Panels",
+        href: "/products/curved-aluminum-veneer-panel/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-honeycomb-panel.webp",
+        title: "Honeycomb Wall Panels",
+        href: "/products/honeycomb-wall-panel/",
+      },
     ],
   },
   {
     label: "Facade & Exterior Cladding",
     cards: [
       {
-        img: "https://file.meiyualuminum.com/home/aluminum-facade/modern-skyscraper-perforated-facade-low-angle.webp",
+        // 卡图换实心单板实拍：原穿孔幕墙照片让给室内列的穿孔卡，避免图不对题。
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-veneer.webp",
         title: "Solid Aluminum Cladding",
         href: "/categories/aluminum-veneer/",
       },
       {
-        // 报告 §07：曲面型号接定制深化入口，归外墙线（页面主要用途即立面）。
-        img: "https://file.meiyualuminum.com/home/aluminum-ceiling-project/beijing-daxing-airport-terminal-tree-column-curved-aluminum-ceiling-interior.webp",
-        title: "Curved & Custom Facade Panels",
-        href: "/products/curved-aluminum-veneer-panel/",
-      },
-      {
-        img: "https://file.meiyualuminum.com/home/general/aluminum-honeycomb-panel.webp",
+        img: "https://file.meiyualuminum.com/home/mega-menu/aluminum-honeycomb-core-panel.webp",
         title: "Honeycomb Cladding Panels",
         href: "/categories/aluminum-honeycomb-core-panel/",
       },
@@ -118,12 +131,17 @@ const MENU: MegaGroup[] = [
         title: "Fluted Cladding Panels",
         href: "/products/exterior-fluted-facade-panel/",
       },
+      {
+        // 占位渲染图（renders/ 命名空间）：保温板暂无实拍，有素材后替换。
+        img: "https://file.meiyualuminum.com/renders/insulated-facade-panel/panel-section-mineral-core-b53778.webp",
+        title: "Insulated Facade Panels",
+        href: "/products/insulated-facade-panel/",
+      },
     ],
   },
   {
     label: "Skirting & Trims",
     cards: [
-      // 首期只有踢脚线，报告 §06：不出「收边」空卡；收边型号齐备后再在本线内扩卡。
       {
         img: "https://file.meiyualuminum.com/home/general/aluminum-skirting-board.webp",
         title: "Surface-Mount Skirting",
@@ -134,6 +152,11 @@ const MENU: MegaGroup[] = [
         img: "https://file.meiyualuminum.com/home/general/led-aluminum-skirting-board.webp",
         title: "Recessed Skirting",
         href: "/products/recessed-aluminum-skirting/",
+      },
+      {
+        img: "https://file.meiyualuminum.com/home/general/aluminum-edge-trim-strip.webp",
+        title: "Trim & Closing Profiles",
+        href: "/products/aluminum-trim-profiles/",
       },
     ],
   },

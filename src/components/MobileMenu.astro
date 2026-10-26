@@ -85,50 +85,257 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
         </div>
         <div class="m-panel">
           <div class="m-panel-in">
+            <!-- 2026-10-26 与用户 18 系列口径表对齐：二级 = 4 条产品线（不可点行，
+                 线级分类页无产品挂载不放链接），三级 = 18 个系列真链接，
+                 与桌面端 MegaMenu 同口径同目标。 -->
             <ul class="m-list m-l2">
-              <li>
-                <a class="m-link" href="/categories/aluminum-veneer/"
-                  >Aluminum Veneer</a
-                >
+              <li class="m-acc">
+                <div class="m-row">
+                  <a class="m-link" tabindex="-1" aria-disabled="true"
+                    >Aluminum Ceilings</a
+                  >
+                  <button
+                    type="button"
+                    class="m-toggle"
+                    aria-expanded="false"
+                    aria-label="Toggle Aluminum Ceilings submenu"
+                  >
+                    <svg
+                      class="m-chevron"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      ><path d="M6 9l6 6 6-6"></path></svg
+                    >
+                  </button>
+                </div>
+                <div class="m-panel">
+                  <div class="m-panel-in">
+                    <ul class="m-list m-l3">
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/categories/aluminum-ceiling-tile/"
+                          >Clip-In &amp; Lay-In Ceiling Tiles</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/categories/baffle-blade-ceilings/"
+                          >Baffle &amp; Blade Ceilings</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/aluminum-strip-ceiling/"
+                          >Linear Strip Ceilings</a
+                        >
+                      </li>
+                      <li>
+                        <a class="m-link" href="/categories/open-cell-ceiling/"
+                          >Open Cell Ceilings</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/categories/aluminum-mesh-ceiling/"
+                          >Mesh Ceilings</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/categories/aluminum-honeycomb-ceiling/"
+                          >Honeycomb Ceiling Panels</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </li>
-              <li>
-                <a class="m-link" href="/categories/aluminum-strip-panel/"
-                  >Aluminum Strip Panel</a
-                >
+              <li class="m-acc">
+                <div class="m-row">
+                  <a class="m-link" tabindex="-1" aria-disabled="true"
+                    >Interior Wall Panels</a
+                  >
+                  <button
+                    type="button"
+                    class="m-toggle"
+                    aria-expanded="false"
+                    aria-label="Toggle Interior Wall Panels submenu"
+                  >
+                    <svg
+                      class="m-chevron"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      ><path d="M6 9l6 6 6-6"></path></svg
+                    >
+                  </button>
+                </div>
+                <div class="m-panel">
+                  <div class="m-panel-in">
+                    <ul class="m-list m-l3">
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/categories/aluminum-wall-panels/"
+                          >Solid Aluminum Wall Panels</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/interior-fluted-wall-panel/"
+                          >Fluted Wall Panels</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/perforated-aluminum-panel/"
+                          >Perforated Aluminum Panels</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/curved-aluminum-veneer-panel/"
+                          >Curved &amp; Custom Aluminum Panels</a
+                        >
+                      </li>
+                      <li>
+                        <a class="m-link" href="/products/honeycomb-wall-panel/"
+                          >Honeycomb Wall Panels</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </li>
-              <li>
-                <a
-                  class="m-link"
-                  href="/categories/u-shaped-aluminum-square-tube/"
-                  >U-Shaped Aluminum Square Tube</a
-                >
+              <li class="m-acc">
+                <div class="m-row">
+                  <a class="m-link" tabindex="-1" aria-disabled="true"
+                    >Facade &amp; Exterior Cladding</a
+                  >
+                  <button
+                    type="button"
+                    class="m-toggle"
+                    aria-expanded="false"
+                    aria-label="Toggle Facade and Exterior Cladding submenu"
+                  >
+                    <svg
+                      class="m-chevron"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      ><path d="M6 9l6 6 6-6"></path></svg
+                    >
+                  </button>
+                </div>
+                <div class="m-panel">
+                  <div class="m-panel-in">
+                    <ul class="m-list m-l3">
+                      <li>
+                        <a class="m-link" href="/categories/aluminum-veneer/"
+                          >Solid Aluminum Cladding</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/categories/aluminum-honeycomb-core-panel/"
+                          >Honeycomb Cladding Panels</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/exterior-fluted-facade-panel/"
+                          >Fluted Cladding Panels</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/insulated-facade-panel/"
+                          >Insulated Facade Panels</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </li>
-              <li>
-                <a
-                  class="m-link"
-                  href="/categories/aluminum-honeycomb-core-panel/"
-                  >Aluminum Honeycomb Core Panel</a
-                >
-              </li>
-              <li>
-                <a class="m-link" href="/categories/aluminum-ceiling-tile/"
-                  >Aluminum Ceiling Tile</a
-                >
-              </li>
-              <li>
-                <a class="m-link" href="/categories/aluminum-square-tube/"
-                  >Aluminum Square Tube</a
-                >
-              </li>
-              <li>
-                <a class="m-link" href="/categories/fluted-aluminum-panel/"
-                  >Fluted Aluminum Panel</a
-                >
-              </li>
-              <li>
-                <a class="m-link" href="/categories/aluminum-skirting-board/"
-                  >Aluminum Skirting Board</a
-                >
+              <li class="m-acc">
+                <div class="m-row">
+                  <a class="m-link" tabindex="-1" aria-disabled="true"
+                    >Skirting &amp; Trims</a
+                  >
+                  <button
+                    type="button"
+                    class="m-toggle"
+                    aria-expanded="false"
+                    aria-label="Toggle Skirting and Trims submenu"
+                  >
+                    <svg
+                      class="m-chevron"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      ><path d="M6 9l6 6 6-6"></path></svg
+                    >
+                  </button>
+                </div>
+                <div class="m-panel">
+                  <div class="m-panel-in">
+                    <ul class="m-list m-l3">
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/surface-mount-aluminum-skirting/"
+                          >Surface-Mount Skirting</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/recessed-aluminum-skirting/"
+                          >Recessed Skirting</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/aluminum-trim-profiles/"
+                          >Trim &amp; Closing Profiles</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </li>
             </ul>
           </div>
