@@ -4,7 +4,7 @@
  */
 
 import * as THREE from 'three';
-import { ASSEMBLY } from './config.js';
+import { ASSEMBLY, QUALITY, LABEL_HZ } from './config.js';
 import { createStage } from './core/stage.js';
 import { createEnvironment } from './core/environment.js';
 import { createCameraRig } from './core/camera.js';
@@ -12,6 +12,7 @@ import { createAssembly } from './core/assembly.js';
 import { createHighlighter } from './core/highlight.js';
 import { createPicker } from './core/picker.js';
 import { createLabelLayer } from './core/labels.js';
+import { autoQuality, detectRenderer, rememberQuality, storedQuality } from './core/quality.js';
 import { buildCeilingNode, boundsOf } from './model/build.js';
 import { createStepsPanel } from './ui/stepsPanel.js';
 import { createDetailPanel } from './ui/detailPanel.js';
@@ -41,6 +42,7 @@ const dom = {
   metaParts: $('#metaParts'),
   boot: $('#boot'),
   bootText: $('#boot .boot-text'),
+  gpuNote: $('#gpuNote'),
   guide: $('#guide'),
 };
 
@@ -49,6 +51,7 @@ const viewport = { w: 1, h: 1, left: 0, right: 1, top: 0, bottom: 1 };
 const state = {
   step: 1,
   mode: 'sequence',
+  quality: 'balanced',
   labelsOn: false,
   ghostOn: true,
   gridOn: false,
@@ -239,8 +242,13 @@ function resetSequence() {
 /* ------------------------------------------------------------------ */
 
 function boot() {
+  // 画质档：用户手动选过就以他选的为准，否则按设备自动判
+  const gpu = detectRenderer();
+  const qualityName = storedQuality() ?? autoQuality(gpu);
+  state.quality = qualityName;
+
   rig = createCameraRig({ canvas: dom.canvas, getFitBox: currentBox });
-  stage = createStage({ canvas: dom.canvas, camera: rig.camera });
+  stage = createStage({ canvas: dom.canvas, camera: rig.camera, quality: QUALITY[qualityName] });
   env = createEnvironment({ scene: stage.scene, renderer: stage.renderer });
 
   world = buildCeilingNode();
@@ -291,6 +299,13 @@ function boot() {
       onView: (name) => {
         rig.preset(name);
         toolbar.setActiveView(name);
+      },
+      onQuality: (name) => {
+        state.quality = name;
+        stage.setQuality(QUALITY[name]);
+        rememberQuality(name);
+        // 像素量变了，面板避让与取景范围要重新同步一次
+        syncViewport();
       },
       onToggle: toggle,
       onAllParts: toggleAll,
@@ -345,6 +360,15 @@ function boot() {
   if ('ResizeObserver' in window) new ResizeObserver(syncViewport).observe(dom.toolbar);
 
   dom.metaParts.textContent = String(PARTS.length);
+  toolbar.setQuality(qualityName);
+  // 软件渲染（CPU 模拟显卡）不是模型重，是浏览器配置问题，直接告诉访问者怎么修
+  if (gpu.software) {
+    dom.gpuNote.hidden = false;
+    dom.gpuNote.textContent =
+      `Your browser is drawing on the CPU (${gpu.name || 'software renderer'}) instead of the graphics card, ` +
+      `so this page will feel sluggish at any quality level. Turn hardware acceleration back on in the browser ` +
+      `settings — in Chrome, open chrome://flags, set “Choose ANGLE graphics backend” to Default, and relaunch.`;
+  }
   syncViewport();
   applyStep(deepStep ?? 1);
   detail.render();
@@ -363,6 +387,7 @@ function boot() {
 /* ------------------------------------------------------------------ */
 
 let last = performance.now();
+let labelNext = 0;
 
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
@@ -381,7 +406,11 @@ function loop(now) {
   env.update(now / 1000);
   rig.update(dt);
   highlighter.update();
-  labels.update(viewport.w, viewport.h);
+  // 标注层节流到 LABEL_HZ：卡片只要跟得上相机就不必每帧重排，高刷屏上省得最多
+  if (now >= labelNext) {
+    labelNext = now + 1000 / LABEL_HZ;
+    labels.update(viewport.w, viewport.h);
+  }
   stage.render();
   requestAnimationFrame(loop);
 }

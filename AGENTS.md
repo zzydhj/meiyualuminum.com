@@ -85,8 +85,11 @@ request no text, labels, numbers or arrows — rendered lettering comes out garb
 ## Verification
 
 - `astro build` must pass after any change.
-- Product and blog pages are SSR (`prerender = false`) so database edits show on refresh. Home,
-  About, Tools, guides and the procurement page are prerendered — they need a rebuild and redeploy.
+- Product and blog pages are SSR (`prerender = false`) so database edits show on refresh.
+  About is also SSR (its Factory Tour block reads `videos`), so its copy changes need a
+  rebuild and redeploy — but a `pages`-table row is never used for it, because the literal
+  route `about.astro` wins over the `[page]` catch-all. Same for `/contact/`, which is
+  prerendered. Tools sub-pages, guides and the procurement page are prerendered.
 - The dev server crashes on its own in this project. Check `astro dev status` before trusting any
   HTTP result, and use a fresh variable name when inspecting responses: a stale PowerShell variable
   from an earlier session has produced false "200" readings before.

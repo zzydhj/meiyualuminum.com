@@ -42,6 +42,8 @@
             <!-- 品牌水印：与全站图片水印同一张 logo-clear.png，纯装饰不拦截事件 -->
             <img class="stage-mark" src="https://file.meiyualuminum.com/logo-clear.png" alt="" aria-hidden="true"
                 tabindex="-1" />
+            <!-- 仅在探测到软件渲染（CPU 模拟显卡）时出现：这种卡顿不是模型重，而是浏览器没在用 GPU -->
+            <div id="gpuNote" class="gpu-note" hidden></div>
         </div>
 
         <!-- ===== Top bar ===== -->
@@ -134,6 +136,19 @@
                     <button class="seg-btn" data-view="bottom">Upward</button>
                     <button class="seg-btn" data-view="top">Downward</button>
                     <button class="seg-btn is-active" data-view="iso">45°</button>
+                </div>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label">Quality</label>
+                <div class="seg" role="group" aria-label="Render quality">
+                    <button class="seg-btn" data-quality="high" title="Full resolution + 4× MSAA + bloom">High</button>
+                    <button class="seg-btn" data-quality="balanced" title="1.5× pixel ratio, no MSAA">
+                        Balanced
+                    </button>
+                    <button class="seg-btn" data-quality="lite" title="1× pixel ratio, bloom off">
+                        Lite
+                    </button>
                 </div>
             </div>
 

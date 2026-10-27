@@ -283,3 +283,23 @@ kbd {
         display: none;
     }
 }
+
+/* ---------- 软件渲染提示 ----------
+   只在探测到 CPU 模拟显卡时由 main.js 去掉 hidden；放在操作台上方居中，
+   不挡构件也不挡面板。这种卡顿换档救不了，必须让访问者去改浏览器设置。 */
+.gpu-note {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(var(--toolbar-h) + 22px);
+    max-width: min(620px, calc(100vw - 48px));
+    padding: 10px 14px;
+    border: 1px solid rgba(198, 147, 26, 0.5);
+    border-radius: var(--r-md);
+    background: rgba(255, 251, 243, 0.94);
+    box-shadow: var(--shadow-md);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    line-height: 1.5;
+}

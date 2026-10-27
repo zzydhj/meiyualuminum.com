@@ -57,6 +57,11 @@ export const GET: APIRoute = async ({ site }) => {
         "/tags/",
         "/video-tags/",
         "/contact/",
+        // /about/ 与 /contact/ 必须写在这里：两者都有各自的页面组件
+        // （about.astro 是 SSR，contact.astro 是预渲染），Astro 的字面路由优先于
+        // [page].astro 这个单段通配路由，所以 pages 表里的同名记录从来不渲染。
+        // 但它们以前正是靠那两行 DB 记录才被收进 sitemap 的——行已删，不收进来就直接漏页。
+        "/about/",
         // /thank-you/ 故意不收：询盘成功页，无内容价值；页面已标 robots 禁止编录，
         // 再列进清单就是自相矛盾。
         "/installation-guides/",

@@ -13,7 +13,7 @@ export const COLORS = {
 };
 
 export const RENDER = {
-  maxPixelRatio: 2,
+  // 像素量上限与 MSAA 采样数已下放到下方 QUALITY 分档，这里只留与档位无关的色调参数
   toneExposure: 1.06,
   bloom: {
     // 亮色背景下只让很强的自发光（弹线）过阈值，避免整幅发灰
@@ -21,8 +21,23 @@ export const RENDER = {
     radius: 0.35,
     threshold: 1.15,
   },
-  msaa: 4,
 };
+
+/**
+ * 画质分档——每帧成本几乎全在三个地方：像素量（pixelRatio²）、MSAA 采样数、
+ * Bloom 的多级模糊全屏 pass。三档只动这三项，几何、材质、灯光、工序数据完全一致，
+ * 所以不同档看到的构造与尺寸是同一回事，只是边缘锐度与辉光差别。
+ *
+ * 默认按设备自动选（core/quality.js），工具栏可手动覆盖并记在 localStorage。
+ */
+export const QUALITY = {
+  high: { label: "High", pixelRatio: 2, msaa: 4, bloom: true },
+  balanced: { label: "Balanced", pixelRatio: 1.5, msaa: 0, bloom: true },
+  lite: { label: "Lite", pixelRatio: 1, msaa: 0, bloom: false },
+};
+
+/** 标注层节流频率（Hz）：卡片只要跟得上相机就不必每帧重排，120Hz 屏上省得最多 */
+export const LABEL_HZ = 30;
 
 export const CAMERA = {
   // 吊顶节点用窄视角：近大远小会把等壁厚的方通拍成一头厚一头薄

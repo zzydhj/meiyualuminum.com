@@ -28,14 +28,14 @@ function gradientBackground(colors) {
   return tex;
 }
 
-export function createStage({ canvas, camera }) {
+export function createStage({ canvas, camera, quality }) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: false, // 交给 composer 的 MSAA 目标
     powerPreference: 'high-performance',
     alpha: false,
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, RENDER.maxPixelRatio));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, quality.pixelRatio));
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = RENDER.toneExposure;
@@ -48,7 +48,7 @@ export function createStage({ canvas, camera }) {
   const size = new THREE.Vector2(canvas.clientWidth, canvas.clientHeight);
   const rt = new THREE.WebGLRenderTarget(size.x, size.y, {
     type: THREE.HalfFloatType,
-    samples: RENDER.msaa,
+    samples: quality.msaa,
   });
 
   const composer = new EffectComposer(renderer, rt);
@@ -59,17 +59,33 @@ export function createStage({ canvas, camera }) {
     RENDER.bloom.radius,
     RENDER.bloom.threshold
   );
+  bloom.enabled = quality.bloom;
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
   composer.setSize(size.x, size.y);
 
   function resize(width, height) {
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, RENDER.maxPixelRatio));
+    const ratio = Math.min(window.devicePixelRatio, quality.pixelRatio);
+    renderer.setPixelRatio(ratio);
     renderer.setSize(width, height, false);
-    composer.setPixelRatio(Math.min(window.devicePixelRatio, RENDER.maxPixelRatio));
+    composer.setPixelRatio(ratio);
     composer.setSize(width, height);
     camera.aspect = width / Math.max(1, height);
     camera.updateProjectionMatrix();
+  }
+
+  /**
+   * 运行中换档。三项都能热切：像素量与 Bloom 直接改参数，
+   * MSAA 改 samples 后 dispose 掉渲染目标，下一帧按新参数重建。
+   */
+  function setQuality(next) {
+    quality = next;
+    bloom.enabled = next.bloom;
+    if (rt.samples !== next.msaa) {
+      rt.samples = next.msaa;
+      rt.dispose();
+    }
+    resize(canvas.clientWidth, canvas.clientHeight);
   }
 
   return {
@@ -78,6 +94,10 @@ export function createStage({ canvas, camera }) {
     composer,
     bloom,
     resize,
+    setQuality,
+    get quality() {
+      return quality;
+    },
     render: () => composer.render(),
     dispose() {
       rt.dispose();

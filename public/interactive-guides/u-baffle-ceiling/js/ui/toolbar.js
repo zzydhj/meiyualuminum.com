@@ -1,5 +1,5 @@
 /**
- * ui/toolbar.js —— 底部操作台：模式 / 工序步进 / 爆炸滑块 / 视角预设 / 显示开关 / 动作
+ * ui/toolbar.js —— 底部操作台：模式 / 工序步进 / 爆炸滑块 / 视角预设 / 画质 / 显示开关 / 动作
  * 只做 DOM 事件绑定与状态回填，业务判断都在 main.js。
  */
 
@@ -7,6 +7,7 @@ export function createToolbar({ root, handlers }) {
   const $ = (sel) => root.querySelector(sel);
   const modeBtns = [...root.querySelectorAll('[data-mode]')];
   const viewBtns = [...root.querySelectorAll('[data-view]')];
+  const qualityBtns = [...root.querySelectorAll('[data-quality]')];
   const chipBtns = [...root.querySelectorAll('[data-toggle]')];
   const range = $('#explodeRange');
   const rangeOut = $('#explodeValue');
@@ -24,6 +25,13 @@ export function createToolbar({ root, handlers }) {
     btn.addEventListener('click', () => {
       viewBtns.forEach((b) => b.classList.toggle('is-active', b === btn));
       handlers.onView(btn.dataset.view);
+    })
+  );
+
+  qualityBtns.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      qualityBtns.forEach((b) => b.classList.toggle('is-active', b === btn));
+      handlers.onQuality(btn.dataset.quality);
     })
   );
 
@@ -76,6 +84,10 @@ export function createToolbar({ root, handlers }) {
 
     setActiveView(name) {
       viewBtns.forEach((b) => b.classList.toggle('is-active', b.dataset.view === name));
+    },
+
+    setQuality(name) {
+      qualityBtns.forEach((b) => b.classList.toggle('is-active', b.dataset.quality === name));
     },
 
     /** 供主程序实测操作台高度，写入 --toolbar-h 让面板与取景避让 */
