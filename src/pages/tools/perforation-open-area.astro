@@ -11,9 +11,10 @@ export const prerender = true;
 import ToolLayout from "../../layouts/ToolLayout.astro";
 
 const toolName = "Perforation Open Area";
-const pageTitle = "Perforated Metal Open Area Calculator | Round Hole Pattern";
+// BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
+const pageTitle = "Perforated Metal Open Area | Round Hole Pattern";
 const description =
-    "Free open area calculator for perforated metal: enter hole diameter, pitch and layout (60° staggered or square) to get open area percentage, ligament width and holes per m² — plus a reverse check for a target open area.";
+    "Open area calculator for perforated metal: hole diameter, pitch and layout give open area percentage, ligament width and holes per m², plus a reverse check.";
 ---
 
 <ToolLayout

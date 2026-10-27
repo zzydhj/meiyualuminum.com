@@ -5,9 +5,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import InquiryButton from "../components/InquiryButton.astro";
 
-const pageTitle = "Surface Treatment Comparison Guide";
+// BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
+const pageTitle = "Aluminium Surface Treatment Comparison";
 const pageDescription =
-    "Compare PVDF, powder coating, anodized, roller coating, and wood grain transfer finishes for aluminum building products. Find the right surface treatment for your project.";
+    "Compare PVDF, powder coating, anodized, roller coating and wood grain finishes for aluminium building products, and pick the right one for your project.";
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>

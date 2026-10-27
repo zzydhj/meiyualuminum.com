@@ -11,9 +11,10 @@ export const prerender = true;
 import ToolLayout from "../../layouts/ToolLayout.astro";
 
 const toolName = "Ceiling Panel Take-off";
-const pageTitle = "Aluminium Ceiling Take-off Calculator | Panels & Cut Widths";
+// BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
+const pageTitle = "Aluminium Ceiling Take-off | Panels & Cut Widths";
 const description =
-    "Free ceiling take-off calculator: enter room size and panel module to get panel count, balanced perimeter cut widths, total square metres, perimeter trim length and an order quantity with wastage.";
+    "Free ceiling take-off: room size and module give panel count, balanced perimeter cut widths, total square metres, trim length and an order quantity.";
 ---
 
 <ToolLayout

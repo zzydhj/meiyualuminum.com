@@ -66,8 +66,40 @@ TABLES = {
     "categories": {"url_prefix": "/categories/",  "label": "分类页",   "title_col": "name",  "has_lang": False, "has_status": False},
 }
 
-TITLE_MAX, TITLE_MIN = 60, 25        # 超出会被截断；过短浪费关键词位
+TITLE_MAX, TITLE_MIN = 60, 25        # 指渲染后的长度；超出会被截断，过短浪费关键词位
 DESC_MAX, DESC_MIN = 160, 70
+
+# ── 渲染后的标题 ──────────────────────────────────────────────
+# BaseLayout 把 <title> 拼成 `{seo_title} | {titleSuffix}`，但标题里已出现品牌时不追加
+# （那边叫 hasBrandInTitle）。审计必须量渲染后的长度：以前直接拿字段本身比 60，
+# 于是 44–52 字这段全部放行，实际线上 54/109 页超标却零告警。
+# 后缀从 BaseLayout.astro 里读，两边不会各写一份然后慢慢走偏。
+def _read_title_suffix() -> str:
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       "..", "src", "layouts", "BaseLayout.astro")
+    try:
+        m = re.search(r'const titleSuffix\s*=\s*"([^"]*)"', open(src, encoding="utf-8").read())
+    except OSError:
+        m = None
+    if not m:
+        sys.exit("[!] 读不到 src/layouts/BaseLayout.astro 里的 titleSuffix，无法核对渲染后长度")
+    return " | " + m.group(1)
+
+
+TITLE_SUFFIX = _read_title_suffix()
+BRAND_IN_TITLE = re.compile(r"\bmeiyu\b|镁域", re.I)
+
+
+def rendered_title(seo_title: str) -> str:
+    """页面真正出现在搜索结果里的那串字符。"""
+    return seo_title if BRAND_IN_TITLE.search(seo_title) else seo_title + TITLE_SUFFIX
+
+
+def effective_title(row: dict, title_col: str) -> str:
+    """页面真正用的那串标题。
+    前端是 seo_title or title，所以 seo_title 为空时长度得量 title——
+    19 条 videos 全部没有 seo_title，上一版拿空串去量，全部漏报。"""
+    return (row.get("seo_title") or "").strip() or (row.get(title_col) or "")
 
 
 def fetch(table: str, retries: int = 5) -> list[dict]:
@@ -154,13 +186,14 @@ def main() -> int:
             print(f"      … 另有 {len(lst) - 12} 条")
 
     print("\n【3】长度风险（Google 桌面约截断于 title 60 字符 / desc 160 字符）")
-    long_t = [r for r in pub if len(r["seo_title"]) > TITLE_MAX]
-    short_t = [r for r in pub if 0 < len(r["seo_title"]) < TITLE_MIN]
+    print(f"     量的是渲染后的实际标题：seo_title（缺则回退 title）+ “{TITLE_SUFFIX}”，后缀从 BaseLayout 读")
+    long_t = [r for r in pub if len(rendered_title(effective_title(r, "title"))) > TITLE_MAX]
+    short_t = [r for r in pub if 0 < len(rendered_title(effective_title(r, "title"))) < TITLE_MIN]
     long_d = [r for r in pub if len(r["seo_description"]) > DESC_MAX]
     short_d = [r for r in pub if 0 < len(r["seo_description"]) < DESC_MIN]
     print(f"  标题过长（>{TITLE_MAX}）  {len(long_t):>3} 条  ← 会被截断，重点词可能落在省略号后")
-    for r in sorted(long_t, key=lambda x: -len(x["seo_title"]))[:10]:
-        print(f"      {len(r['seo_title']):>3} 字符  {r['url']}")
+    for r in sorted(long_t, key=lambda x: -len(rendered_title(effective_title(x, "title"))))[:10]:
+        print(f"      {len(rendered_title(effective_title(r, 'title'))):>3} 字符  {r['url']}")
     print(f"  标题过短（<{TITLE_MIN}）  {len(short_t):>3} 条")
     print(f"  描述过长（>{DESC_MAX}） {len(long_d):>3} 条")
     print(f"  描述过短（<{DESC_MIN}） {len(short_d):>3} 条")
@@ -213,18 +246,23 @@ def main() -> int:
     if a.csv:
         with open(a.csv, "w", newline="", encoding="utf-8-sig") as f:
             w = csv.writer(f)
-            w.writerow(["类型", "语言", "URL", "状态", "seo_title", "title 字符数",
-                        "seo_description", "desc 字符数", "主攻词", "全部关键词"])
+            w.writerow(["类型", "语言", "URL", "状态", "实际标题",
+                        "渲染后 title 字符数", "seo_description", "desc 字符数",
+                        "主攻词", "全部关键词"])
             for r in sorted(pub, key=lambda x: (x["type"], x["url"])):
                 w.writerow([r["type"], r["lang"], r["url"], r["status"],
-                            r["seo_title"], len(r["seo_title"]),
+                            effective_title(r, "title"),
+                            len(rendered_title(effective_title(r, "title"))),
                             r["seo_description"], len(r["seo_description"]),
                             r["keywords"][0] if r["keywords"] else "",
                             " | ".join(r["keywords"])])
             print(f"\n[i] 明细已写入 {a.csv}（{len(pub)} 行）")
 
-    print("\n注：本脚本只读，不会修改任何数据。静态页（About / 首页 / 采购须知 / 安装指南 /"
-          "\n    表面处理对比）的 SEO 写在 .astro 源码里，不在数据库中，因此不在本报告内。")
+    print("\n注一：本脚本只读，不会修改任何数据。")
+    print("注二：静态页与 SSR 页（首页 / About / 采购须知 / 安装指南 / 表面处理对比 /"
+          "\n      工具页）的 SEO 写在 .astro 源码里，不在数据库，因此不在本报告内。")
+    print("      这部分只能拿渲染后的页面查（拼 sitemap 逐 URL 读 <title>），"
+          "\n      2026-10-27 就是这么查出 54 页超标的。改完数据库标题后建议再跑一次线上核对。")
     return 0
 
 

@@ -10,10 +10,10 @@ export const prerender = true;
 import ToolLayout from "../../layouts/ToolLayout.astro";
 
 const toolName = "Aluminium Weight Calculator";
-const pageTitle =
-    "Aluminium Sheet & Panel Weight Calculator | kg per m² and Total";
+// BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
+const pageTitle = "Aluminium Weight Calculator | kg per m² and Total";
 const description =
-    "Free aluminium weight calculator using published alloy densities: weight per panel, per square metre and for a whole shipment, with an optional perforation deduction for perforated ceiling panels.";
+    "Free aluminium weight calculator using published alloy densities: weight per panel, per square metre and per shipment, with optional perforation deduction.";
 ---
 
 <ToolLayout

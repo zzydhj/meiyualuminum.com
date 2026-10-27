@@ -13,9 +13,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import { interactiveGuides, guidePath } from "../lib/interactiveGuides";
 
-const pageTitle = "Interactive 3D Installation Guides — Build-Up Animation";
+// BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
+const pageTitle = "Interactive 3D Installation Guides";
 const pageDescription =
-    "Rotatable, to-scale 3D build-up guides for aluminium ceiling systems: setting-out, anchors, carriers, clip-in baffles, splices and handover, each step with tools, materials, method and acceptance criteria.";
+    "Rotatable, to-scale 3D build-up guides for aluminium ceilings: setting-out, anchors, carriers, clip-in and splices, each step with tools and method.";
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>

@@ -12,9 +12,11 @@ import {
     guideStepHref,
 } from "../lib/interactiveGuides";
 
-const pageTitle = "Installation Guides & Technical Resources";
+// BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
+// 标题里带 Aluminium：后缀缩短后它不再供材质词，这一页本来一个材质词都没有。
+const pageTitle = "Aluminium Installation Guides & Technical Resources";
 const pageDescription =
-    "Step-by-step installation guides for aluminum ceiling systems, facade panels, baffle ceilings, and skirting boards — setting-out, carrier fixing and levelling details from the MEIYU engineering team.";
+    "Step-by-step installation guides for aluminium ceilings, baffles, facade panels and skirting — setting-out, carrier fixing and levelling details.";
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>

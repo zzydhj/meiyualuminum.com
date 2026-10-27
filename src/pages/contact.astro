@@ -5,7 +5,8 @@ import InquiryForm from "../components/InquiryForm.astro";
 
 const pageTitle = "Contact Us";
 const pageDescription =
-  "Request a quote or send an inquiry about aluminium ceiling tiles, linear strip ceilings, wall cladding and facade systems. Our engineering team replies within 1 hour.";
+  // ≤ 160 字（改前 166，只多了“linear”一个词就被截断）
+  "Request a quote or send an inquiry about aluminium ceiling tiles, strip ceilings, wall cladding and facade systems. Our engineering team replies within 1 hour.";
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>

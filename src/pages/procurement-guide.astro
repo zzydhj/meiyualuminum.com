@@ -21,9 +21,11 @@ import {
     responseTime,
 } from "../lib/companyProfile";
 
-const pageTitle = "Procurement Guide";
+// BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
+// 标题加 Aluminium：后缀不再供材质词，而“采购”单独一个词对搜索没有价值。
+const pageTitle = "Aluminium Procurement Guide";
 const pageDescription =
-    "How MEIYU quotes aluminium ceiling and facade orders: MOQ counting basis, lead time milestones, samples, packing and logistics data, trade terms, warranty limits and the claim route — written for procurement teams who need to cost a full system.";
+    "How MEIYU quotes aluminium ceiling and facade orders: MOQ basis, lead time milestones, samples, packing, trade terms, warranty limits and the claim route.";
 
 /** 报价单包含 / 不包含 —— 评审要求「让采购知道报价包含什么」 */
 const quoteScope = [

@@ -58,6 +58,16 @@ const {
 const alternates = alternatesProp ?? buildAlternates(Astro.url.pathname);
 
 const siteName = "Meiyu Aluminum";
+// <title> 的后缀单独开一个常量：它每页白占 17 个字符，而 Google 大约 60 字就截断，
+// 全站 109 页里有 54 页因此超长（首页甚至 110 字）。缩成 "MEIYU"（后缀共 8 字）
+// 后其中 38 页自动达标，不必去改已定的 SEO 目标词。
+// 完整品牌名仍留在下方 og:site_name 与 Organization JSON-LD 里，分享卡片与结构化数据不受影响。
+const titleSuffix = "MEIYU";
+// 少数数据库行的 seo_title 末尾本来就手写了品牌（8 条 posts + 1 条中文产品行），
+// 再拼一次后缀就是「… | MEIYU | MEIYU」——线上 /blog/starlight-3d-aluminium-ceiling-zhaoqing/
+// 以前就是「… | MEIYU | Meiyu Aluminum」。这些行在 posts 表，anon key 被 RLS 拦着改不了，
+// 所以在渲染层兜住：标题里已经出现品牌就不再追加后缀，顺带挡住以后同类写法。
+const hasBrandInTitle = /\bmeiyu\b|镁域/i.test(pageTitle);
 const siteUrl = Astro.site?.toString().replace(/\/$/, "") || "";
 
 // 全站唯一分享图（WhatsApp / LinkedIn / 微信转发时链接卡片用的图）。
@@ -150,7 +160,9 @@ const orgJsonLd = {
     >
 
     <!-- Basic SEO -->
-    <title>{pageTitle} | {siteName}</title>
+    <title>
+      {hasBrandInTitle ? pageTitle : `${pageTitle} | ${titleSuffix}`}
+    </title>
     <meta name="description" content={description} />
     {
       keywords.length > 0 && (

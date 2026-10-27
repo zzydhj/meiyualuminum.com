@@ -8,10 +8,12 @@ export const prerender = false;
 // 首页是纯代码页面：标题、副标题、SEO 信息全部写死在下方常量中，
 // 不依赖数据库 pages 表（home 记录已删除，/home/ 影子路由随之消失）。
 // 如需修改首页文案 / SEO，直接编辑下面的常量，改完重新构建或重启生效。
-const pageTitle =
-  "Meiyu Aluminum — Professional Aluminum Building Materials Supplier | Facade & Ceiling Systems";
+// <title> 由 BaseLayout 拼成 `{pageTitle} | MEIYU`（后缀占 8 字），Google 约 60 字截断，
+// 所以这里必须 ≤ 52 字。品牌名不写进来——后缀已经带了，写两次就是白占位置
+// （改前本页 title 是 110 字，全站最严重的一页）。描述同理 ≤ 160。
+const pageTitle = "Aluminum Ceiling & Facade Systems Manufacturer";
 const pageDescription =
-  "Manufacturer of aluminum veneer panels, ceiling tiles, honeycomb panels, baffle ceilings & fluted panels. Custom CNC fabrication, PVDF/powder coating, BIM support. Factory direct pricing.";
+  "Aluminum veneer, ceiling tiles, honeycomb, baffle and fluted panels. Custom CNC fabrication, PVDF and powder coating, BIM support, factory direct.";
 const keywords = [
   "aluminum veneer",
   "aluminum facade cladding",
