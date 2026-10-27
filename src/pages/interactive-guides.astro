@@ -1,0 +1,397 @@
+---
+export const prerender = true;
+
+/**
+ * interactive-guides.astro — 交互式 3D 装配指南清单页
+ *
+ * 存在理由：/installation-guides/ 上的工序是文字表，看不清构造先后。这里给
+ * 三维装配动画一个可收录的父页，也是所有 3D 指南的入口。
+ * 红线：条目全部来自 src/lib/interactiveGuides.ts，页面不写死任何指南地址；
+ * 数字（工序数）必须与包内 js/data/steps.js 一致，新增指南只改注册表。
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import { interactiveGuides, guidePath } from "../lib/interactiveGuides";
+
+const pageTitle = "Interactive 3D Installation Guides — Build-Up Animation";
+const pageDescription =
+    "Rotatable, to-scale 3D build-up guides for aluminium ceiling systems: setting-out, anchors, carriers, clip-in baffles, splices and handover, each step with tools, materials, method and acceptance criteria.";
+---
+
+<BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
+    <PageHero
+        imageAlt="Interactive 3D build-up guides"
+        titleWhite="Interactive "
+        titleGold="3D Build-Up Guides"
+        subtitle="The written step tables on the installation page tell a site team what to do. These models show what the assembly actually looks like while it is being built — to scale, rotatable, with every component clickable and every step sequenced."
+        stats={[
+            {
+                value: String(interactiveGuides.length),
+                label: "Systems Modelled in 3D",
+            },
+        ]}
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Resources", url: "#" },
+                { name: "3D Build-Up Guides", url: "/interactive-guides/" },
+            ],
+        }}
+    />
+
+    <div class="ixg-main">
+        <div class="ixg-head">
+            <span class="ixg-eyebrow">No Plugin, No Download</span>
+            <h2 class="ixg-h2">
+                The Ceiling Built <span class="ixg-hl">Layer by Layer</span>
+            </h2>
+            <p class="ixg-sub">
+                Each guide is generated in code from the same section geometry
+                we fabricate to — no external 3D assets, no stock model. Work
+                through it step by step, jump straight to one operation from a
+                written guide, or explode the whole assembly at once.
+            </p>
+        </div>
+
+        <ul class="ixg-grid">
+            {
+                interactiveGuides.map((g) => (
+                    <li>
+                        <a class="ixg-card" href={guidePath(g.slug)}>
+                            <span class="ixg-top">
+                                <span class="ixg-ico" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M12 2.6 21 7v10l-9 4.4L3 17V7z" />
+                                        <path d="M3 7l9 4.4L21 7M12 21.4V11.4" />
+                                    </svg>
+                                </span>
+                                <span class="ixg-tag">
+                                    {g.stepCount} build-up steps
+                                </span>
+                            </span>
+
+                            <strong>{g.title}</strong>
+                            <p>{g.summary}</p>
+
+                            <ul class="ixg-points">
+                                {g.highlights.map((h) => (
+                                    <li>{h}</li>
+                                ))}
+                            </ul>
+
+                            <span class="ixg-btn">
+                                Open the 3D build-up
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5 12h14M13 6l6 6-6 6" />
+                                </svg>
+                            </span>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+
+        <div class="ixg-cols">
+            <section class="ixg-block">
+                <h3>What Each Step Carries</h3>
+                <p>
+                    A rotating picture on its own is decoration. Every operation
+                    in these guides opens with the four things a site team
+                    actually asks for — the tools and consumables it needs, the
+                    method in the order it is performed, the acceptance criteria
+                    to sign it off against, and the one thing that goes wrong on
+                    site at that moment. The component list on the right is the
+                    same information from the other direction: pick a part and
+                    the model tells you which operation installs it.
+                </p>
+            </section>
+            <section class="ixg-block">
+                <h3>Reading the Model</h3>
+                <ul class="ixg-tips">
+                    <li>
+                        Drag to orbit, scroll to zoom, or use the view buttons
+                        for front, side, upward and 45°.
+                    </li>
+                    <li>
+                        Not-yet-installed parts show as ghost outlines, so the
+                        sequence stays readable without hiding where things go.
+                    </li>
+                    <li>
+                        Click any component — or its callout — for its section,
+                        material and fixing.
+                    </li>
+                    <li>
+                        Keyboard: <b>←</b> / <b>→</b> change step, <b>1</b>–
+                        <b>9</b> jump to one, <b>Space</b> plays the sequence,
+                        <b>E</b> explodes, <b>L</b> labels, <b>R</b> resets.
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="ixg-note">
+            <p>
+                <strong>What these models are, and what they are not.</strong>{
+                    " "
+                }
+                They are technical illustrations of a typical build-up, generated
+                from section geometry — not photographs of a completed MEIYU project,
+                and not a substitute for the project-specific setting-out drawing.
+                Spacing, camber, rod positions and the interface with lights, air
+                valves and sprinklers are set by the ceiling layout for the job, which
+                is issued with the order. The written step guides for every product
+                category sit alongside these at{" "}
+                <a href="/installation-guides/">Installation Guides</a>; the
+                calculators at <a href="/tools/">Free Tools</a> cover take-off, weight
+                and perforation open area.
+            </p>
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    /* 本页专用（scoped），配色与 /tools/ 索引页同一套 */
+    .ixg-main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: clamp(36px, 5vw, 60px) clamp(16px, 4vw, 32px)
+            clamp(52px, 6vw, 80px);
+    }
+    .ixg-head {
+        max-width: 760px;
+        margin: 0 0 clamp(26px, 3.6vw, 38px);
+    }
+    .ixg-eyebrow {
+        display: inline-block;
+        margin-bottom: 0.6rem;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #c09020;
+    }
+    .ixg-h2 {
+        margin: 0 0 0.9rem;
+        font-size: clamp(1.5rem, 3.2vw, 2.15rem);
+        line-height: 1.28;
+        color: #1e293b;
+    }
+    .ixg-hl {
+        color: #69574a;
+    }
+    .ixg-sub {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.85;
+        color: #475569;
+    }
+    .ixg-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(16px, 2.2vw, 22px);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .ixg-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        height: 100%;
+        padding: 1.7rem 1.5rem 1.5rem;
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-top: 3px solid #c0a882;
+        border-radius: 12px;
+        text-decoration: none;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-top-color 0.2s ease;
+    }
+    .ixg-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(105, 87, 74, 0.1);
+        border-top-color: #c09020;
+    }
+    .ixg-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 2px;
+    }
+    .ixg-ico {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: #f5f0eb;
+        border: 1px solid #e2d6c8;
+        color: #69574a;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
+    }
+    .ixg-ico svg {
+        width: 23px;
+        height: 23px;
+    }
+    .ixg-card:hover .ixg-ico {
+        background: #69574a;
+        border-color: #69574a;
+        color: #f0c96a;
+    }
+    .ixg-tag {
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: #f5f0eb;
+        border: 1px solid #e2d6c8;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #69574a;
+    }
+    .ixg-card strong {
+        margin-top: 4px;
+        font-size: 1.14rem;
+        line-height: 1.35;
+        color: #1e293b;
+    }
+    .ixg-card > p {
+        margin: 0;
+        font-size: 0.89rem;
+        line-height: 1.7;
+        color: #475569;
+    }
+    .ixg-points {
+        list-style: none;
+        margin: 2px 0 0;
+        padding: 0;
+        flex: 1;
+    }
+    .ixg-points li {
+        position: relative;
+        padding-left: 16px;
+        margin-bottom: 5px;
+        font-size: 0.82rem;
+        line-height: 1.6;
+        color: #64748b;
+    }
+    .ixg-points li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.55em;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #c0a882;
+    }
+    .ixg-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        align-self: flex-start;
+        margin-top: 6px;
+        padding: 10px 20px;
+        border-radius: 999px;
+        background: #69574a;
+        color: #fff;
+        font-size: 0.86rem;
+        font-weight: 700;
+        box-shadow: 0 2px 10px rgba(105, 87, 74, 0.26);
+        transition:
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.15s ease;
+    }
+    .ixg-btn svg {
+        width: 15px;
+        height: 15px;
+    }
+    .ixg-card:hover .ixg-btn {
+        background: #c09020;
+        box-shadow: 0 6px 18px rgba(192, 144, 32, 0.34);
+        transform: translateX(2px);
+    }
+    .ixg-cols {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(18px, 2.6vw, 28px);
+        margin-top: clamp(30px, 4vw, 44px);
+    }
+    .ixg-block h3 {
+        margin: 0 0 0.6rem;
+        font-size: 1.02rem;
+        color: #1e293b;
+    }
+    .ixg-block p {
+        margin: 0;
+        font-size: 0.89rem;
+        line-height: 1.8;
+        color: #475569;
+    }
+    .ixg-tips {
+        margin: 0;
+        padding-left: 1.1rem;
+        font-size: 0.89rem;
+        line-height: 1.8;
+        color: #475569;
+    }
+    .ixg-tips li {
+        margin-bottom: 4px;
+    }
+    .ixg-tips b {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.82rem;
+        color: #69574a;
+    }
+    .ixg-note {
+        margin: clamp(28px, 3.8vw, 40px) 0 0;
+        padding: 1.2rem 1.35rem;
+        background: #faf8f6;
+        border-left: 4px solid #c09020;
+        border-radius: 0 10px 10px 0;
+    }
+    .ixg-note p {
+        margin: 0;
+        font-size: 0.89rem;
+        line-height: 1.75;
+        color: #475569;
+    }
+    .ixg-note strong {
+        color: #334155;
+    }
+    .ixg-note a {
+        color: #69574a;
+        font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+        .ixg-grid,
+        .ixg-cols {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+</style>

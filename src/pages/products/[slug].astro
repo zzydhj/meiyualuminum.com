@@ -6,6 +6,7 @@ import InquiryFormSection from "../../components/InquiryFormSection.astro";
 import { supabase } from "../../lib/supabase";
 import { getCategoryChain } from "../../lib/categoryPath";
 import { productKnowledge, type ProductEnrichedSpecs, type ProductKnowledge } from "../../lib/productKnowledge";
+import { guideForCategories, guidePath, guideStepHref } from "../../lib/interactiveGuides";
 import { standardTerms, termsNote } from "../../lib/companyProfile";
 import { currentLang } from "../../lib/i18n";
 
@@ -64,6 +65,16 @@ const displaySizes = (es?.standardSizes && es.standardSizes.length > 0) ? es.sta
 const displayInstallSteps = (es?.installationSteps && es.installationSteps.length > 0) ? es.installationSteps : (knowledge?.installationSteps ?? []);
 const displayInstallTips = (es?.installationTips && es.installationTips.length > 0) ? es.installationTips : (knowledge?.installationTips ?? []);
 const hasProductSpecificData = !!es; // 标记：当前产品有专属数据
+
+/**
+ * 交互式 3D 装配指南入口。产品页的叶子分类可能是线级分类，所以整条链上任意一级命中就算。
+ * 步骤深链按品类知识库的步骤号登记在注册表里；产品行自带另一套工序时编号对不上，
+ * 宁可不链，也不能把客户送到不相干的画面上。
+ */
+const interactiveGuide = guideForCategories([...categoryChain.map((c) => c.slug), categorySlug]);
+const installStepsAreCategoryLevel = !(es?.installationSteps && es.installationSteps.length > 0);
+const step3dHref = (n: number) =>
+  interactiveGuide && installStepsAreCategoryLevel ? guideStepHref(interactiveGuide, n) : null;
 /** 是否有图集：决定画廊是否预留左侧缩略图槽位 */
 const hasThumbs = !!(product.gallery && product.gallery.length > 0);
 
@@ -263,16 +274,31 @@ const jsonLd = {
       <!-- Tab: Installation -->
       <div class="pk-tab-panel" data-panel="install" role="tabpanel">
         <h3>Installation Guide</h3>
+        {interactiveGuide && (
+          <a class="pk-3d-cta" href={guidePath(interactiveGuide.slug)}>
+            <span class="pk-3d-cta-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6 21 7v10l-9 4.4L3 17V7z"/><path d="M3 7l9 4.4L21 7M12 21.4V11.4"/></svg>
+            </span>
+            <span class="pk-3d-cta-body">
+              <strong>Watch this assembly go together in 3D</strong>
+              <small>{interactiveGuide.stepCount} sequenced operations, drawn to scale — rotate it, explode it, click any component for its section and fixing.</small>
+            </span>
+            <span class="pk-3d-cta-btn">Open 3D</span>
+          </a>
+        )}
         <div class="pk-steps">
-          {displayInstallSteps.map((s) => (
+          {displayInstallSteps.map((s) => {
+            const href = step3dHref(s.step);
+            return (
             <div class="pk-step">
               <span class="pk-step-num">{s.step}</span>
               <div class="pk-step-body">
-                <h4>{s.title}</h4>
+                <h4>{href ? (<a class="pk-step-3d" href={href}>{s.title}<span class="pk-step-3d-mark" aria-hidden="true">3D</span></a>) : s.title}</h4>
                 <p>{s.description}</p>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
         {displayInstallTips.length > 0 && (
           <div class="pk-tips">
@@ -314,6 +340,19 @@ const jsonLd = {
       <div class="pk-tab-panel" data-panel="docs" role="tabpanel">
         <h3>Documents &amp; Guides</h3>
         <div class="pk-docs">
+          {interactiveGuide && (
+            <a class="pk-doc-item" href={guidePath(interactiveGuide.slug)}>
+              <span class="pk-doc-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6 21 7v10l-9 4.4L3 17V7z"/><path d="M3 7l9 4.4L21 7M12 21.4V11.4"/></svg>
+              </span>
+              <span class="pk-doc-body">
+                <strong>Interactive 3D Build-Up</strong>
+                <small>The suspension system assembled step by step at true scale, with tools, materials, method and acceptance criteria for every operation.</small>
+              </span>
+              <span class="pk-doc-meta">{interactiveGuide.stepCount} steps</span>
+            </a>
+          )}
+
           <a class="pk-doc-item" href="/installation-guides/">
             <span class="pk-doc-ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -630,6 +669,23 @@ const jsonLd = {
   .pk-step-num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #c09020; color: #fff; font-size: .8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
   .pk-step-body h4 { margin: 0 0 4px; font-size: .95rem; color: #1e293b; }
   .pk-step-body p { margin: 0; font-size: .88rem; color: #475569; line-height: 1.6; }
+  /* 3D 装配指南入口 */
+  .pk-3d-cta { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 14px; margin: 0 0 20px; padding: 14px 16px; background: #faf8f6; border: 1px solid #e2d6c8; border-left: 4px solid #c09020; border-radius: 0 10px 10px 0; text-decoration: none; color: inherit; transition: background .2s, border-color .2s; }
+  .pk-3d-cta:hover { background: #fff; border-color: #c09020; }
+  .pk-3d-cta-ico { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: #69574a; color: #f0c96a; }
+  .pk-3d-cta-ico svg { width: 22px; height: 22px; }
+  .pk-3d-cta-body { display: grid; gap: 3px; }
+  .pk-3d-cta-body strong { font-size: .95rem; color: #1e293b; font-weight: 600; }
+  .pk-3d-cta-body small { font-size: .83rem; line-height: 1.6; color: #64748b; }
+  .pk-3d-cta-btn { padding: 8px 14px; border-radius: 999px; background: #69574a; color: #fff; font-size: .8rem; font-weight: 700; white-space: nowrap; transition: background .2s; }
+  .pk-3d-cta:hover .pk-3d-cta-btn { background: #c09020; }
+  .pk-step-3d { color: inherit; text-decoration: none; border-bottom: 1px dashed #c0a882; }
+  .pk-step-3d:hover { color: #92400e; border-bottom-color: #c09020; }
+  .pk-step-3d-mark { display: inline-block; margin-left: 7px; padding: 1px 5px; border-radius: 3px; background: #69574a; color: #fff; font-size: .6rem; font-weight: 800; letter-spacing: .04em; vertical-align: 2px; }
+  @media (max-width: 620px) {
+    .pk-3d-cta { grid-template-columns: 1fr; }
+    .pk-3d-cta-ico { display: none; }
+  }
   .pk-tips { margin-top: 1.5rem; padding: 16px 20px; background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; }
   .pk-tips h4 { margin: 0 0 8px; font-size: .95rem; color: #92400e; }
   .pk-tips ul { margin: 0; padding: 0 0 0 18px; }

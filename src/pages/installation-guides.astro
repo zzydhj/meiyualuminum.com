@@ -5,6 +5,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import InquiryButton from "../components/InquiryButton.astro";
 import { productKnowledge } from "../lib/productKnowledge";
+import {
+    interactiveGuides,
+    guideForCategory,
+    guidePath,
+    guideStepHref,
+} from "../lib/interactiveGuides";
 
 const pageTitle = "Installation Guides & Technical Resources";
 const pageDescription =
@@ -35,50 +41,123 @@ const pageDescription =
     <!-- ══════ PRODUCT CATEGORY CARDS ══════ -->
     <section class="ig-categories" id="categories">
         <h2>Installation Guides by Product Category</h2>
+        {
+            interactiveGuides.length > 0 && (
+                <div class="ig-3d-banner">
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="34"
+                        height="34"
+                        fill="none"
+                        stroke="#c09020"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M12 2.6 21 7v10l-9 4.4L3 17V7z" />
+                        <path d="M3 7l9 4.4L21 7M12 21.4V11.4" />
+                    </svg>
+                    <p>
+                        <b>
+                            {interactiveGuides.length} of these categories also
+                            carry an interactive 3D build-up.
+                        </b>{" "}
+                        Rotate the assembly, explode it, or jump straight to one
+                        operation. The model is generated in code from section
+                        geometry — a typical build-up drawn to scale, not a
+                        photograph of a completed project.
+                    </p>
+                    <a href="/interactive-guides/">See the 3D guides →</a>
+                </div>
+            )
+        }
         <div class="ig-grid">
             {
-                Object.values(productKnowledge).map((pk) => (
-                    <div class="ig-card">
-                        <div class="ig-card-head">
-                            <h3>{pk.categoryName}</h3>
-                            <span class="ig-steps-count">
-                                {pk.installationSteps.length} Steps
-                            </span>
-                        </div>
-                        <p class="ig-card-overview">
-                            {pk.overview.substring(0, 150)}...
-                        </p>
-
-                        <div class="ig-card-steps">
-                            {pk.installationSteps.slice(0, 3).map((s) => (
-                                <div class="ig-mini-step">
-                                    <span class="ig-mini-num">{s.step}</span>
-                                    <span>{s.title}</span>
-                                </div>
-                            ))}
-                            {pk.installationSteps.length > 3 && (
-                                <span class="ig-more">
-                                    +{pk.installationSteps.length - 3} more
-                                    steps
+                Object.values(productKnowledge).map((pk) => {
+                    const g = guideForCategory(pk.categorySlug);
+                    return (
+                        <div class="ig-card">
+                            <div class="ig-card-head">
+                                <h3>{pk.categoryName}</h3>
+                                <span class="ig-head-meta">
+                                    {g && (
+                                        <a
+                                            class="ig-3d-badge"
+                                            href={guidePath(g.slug)}
+                                            title={`Interactive 3D build-up — ${g.stepCount} sequenced steps`}
+                                        >
+                                            3D
+                                        </a>
+                                    )}
+                                    <span class="ig-steps-count">
+                                        {pk.installationSteps.length} Steps
+                                    </span>
                                 </span>
-                            )}
-                        </div>
+                            </div>
+                            <p class="ig-card-overview">
+                                {pk.overview.substring(0, 150)}...
+                            </p>
 
-                        <div class="ig-card-footer">
-                            <a
-                                href={`/categories/${pk.categorySlug}/`}
-                                class="ig-view-products"
-                            >
-                                View Products →
-                            </a>
-                            {pk.installationTips.length > 0 && (
-                                <span class="ig-tips-count">
-                                    {pk.installationTips.length} pro tips
+                            <div class="ig-card-steps">
+                                {pk.installationSteps.slice(0, 3).map((s) => {
+                                    const href = g
+                                        ? guideStepHref(g, s.step)
+                                        : null;
+                                    return (
+                                        <div class="ig-mini-step">
+                                            <span class="ig-mini-num">
+                                                {s.step}
+                                            </span>
+                                            {href ? (
+                                                <a
+                                                    class="ig-mini-link"
+                                                    href={href}
+                                                    title="Open this operation in the 3D build-up"
+                                                >
+                                                    {s.title}
+                                                </a>
+                                            ) : (
+                                                <span>{s.title}</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                                {pk.installationSteps.length > 3 && (
+                                    <span class="ig-more">
+                                        +{pk.installationSteps.length - 3} more
+                                        steps
+                                    </span>
+                                )}
+                            </div>
+
+                            <div class="ig-card-footer">
+                                <a
+                                    href={`/categories/${pk.categorySlug}/`}
+                                    class="ig-view-products"
+                                >
+                                    View Products →
+                                </a>
+                                <span class="ig-foot-right">
+                                    {pk.installationTips.length > 0 && (
+                                        <span class="ig-tips-count">
+                                            {pk.installationTips.length} pro
+                                            tips
+                                        </span>
+                                    )}
+                                    {g && (
+                                        <a
+                                            class="ig-3d-link"
+                                            href={guidePath(g.slug)}
+                                        >
+                                            3D build-up →
+                                        </a>
+                                    )}
                                 </span>
-                            )}
+                            </div>
                         </div>
-                    </div>
-                ))
+                    );
+                })
             }
         </div>
     </section>
@@ -188,6 +267,28 @@ const pageDescription =
                     fixing sequence and installation tips.
                 </p>
                 <a href="#categories" class="ig-dl-link">Jump to the guides →</a
+                >
+            </div>
+            <div class="ig-dl-card">
+                <svg
+                    viewBox="0 0 24 24"
+                    width="32"
+                    height="32"
+                    fill="none"
+                    stroke="#c09020"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path d="M12 2.6 21 7v10l-9 4.4L3 17V7z"></path><path
+                        d="M3 7l9 4.4L21 7M12 21.4V11.4"></path></svg
+                >
+                <h4>Interactive 3D Build-Up</h4>
+                <p>
+                    Where a system has one, the whole assembly can be rotated,
+                    exploded and stepped through to scale.
+                </p>
+                <a href="/interactive-guides/" class="ig-dl-link"
+                    >Open the 3D guides →</a
                 >
             </div>
             <div class="ig-dl-card">
@@ -319,6 +420,81 @@ const pageDescription =
         border-radius: 4px;
         white-space: nowrap;
     }
+    /* 有 3D 装配模型的品类：标题行多一枚徽标，步骤行变成深链 */
+    .ig-head-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .ig-3d-badge {
+        font-size: 0.66rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: #fff;
+        background: #69574a;
+        padding: 3px 7px;
+        border-radius: 4px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .ig-3d-badge:hover {
+        background: #c09020;
+    }
+    .ig-foot-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .ig-3d-link {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #69574a;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .ig-3d-link:hover {
+        color: #c09020;
+        text-decoration: underline;
+    }
+    .ig-3d-banner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin: 0 0 18px;
+        padding: 15px 20px;
+        background: #faf8f6;
+        border: 1px solid #e2d6c8;
+        border-left: 4px solid #c09020;
+        border-radius: 0 10px 10px 0;
+    }
+    .ig-3d-banner p {
+        margin: 0;
+        flex: 1;
+        font-size: 0.88rem;
+        line-height: 1.7;
+        color: #475569;
+    }
+    .ig-3d-banner b {
+        color: #334155;
+    }
+    .ig-3d-banner a {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #c09020;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .ig-3d-banner a:hover {
+        text-decoration: underline;
+    }
+    @media (max-width: 640px) {
+        .ig-3d-banner {
+            flex-wrap: wrap;
+        }
+        .ig-3d-banner svg {
+            display: none;
+        }
+    }
     .ig-card-overview {
         font-size: 0.85rem;
         color: #64748b;
@@ -352,6 +528,16 @@ const pageDescription =
     .ig-mini-step span:last-child {
         font-size: 0.82rem;
         color: #334155;
+    }
+    .ig-mini-link {
+        font-size: 0.82rem;
+        color: #334155;
+        text-decoration: none;
+        border-bottom: 1px dashed #c0a882;
+    }
+    .ig-mini-link:hover {
+        color: #c09020;
+        border-bottom-color: #c09020;
     }
     .ig-more {
         font-size: 0.78rem;

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <title>U-Shaped Aluminum Square Tube Ceiling · 3D Build-Up Guide | MEIYU</title>
+    <meta name="description"
+        content="A to-scale interactive 3D breakdown of a U-shaped aluminum square tube (baffle) ceiling: 9 build-up steps from setting-out lines to handover, with tools, materials, method and acceptance criteria. By MEIYU Aluminum Co., Ltd." />
+    <meta name="author" content="MEIYU Aluminum Co., Ltd." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="MEIYU Aluminum" />
+    <meta property="og:title" content="U-Shaped Aluminum Square Tube Ceiling · 3D Build-Up Guide" />
+    <meta property="og:description"
+        content="Interactive, true-scale 3D installation breakdown: toothed carrier with dovetail slots, clip-in wood-grain baffles, 9 sequenced steps." />
+    <meta property="og:image" content="https://file.meiyualuminum.com/home/logo-1.png" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="https://www.meiyualuminum.com/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://www.meiyualuminum.com/interactive-guides/u-baffle-ceiling/" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/panels.css" />
+    <link rel="stylesheet" href="./css/overlay.css" />
+    <script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/"
+  }
+}
+</script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- ===== 3D viewport ===== -->
+        <div class="stage">
+            <canvas id="viewport"></canvas>
+            <svg id="leaders" class="leaders" aria-hidden="true"></svg>
+            <div id="labels" class="labels"></div>
+            <div id="hoverTip" class="hover-tip"></div>
+            <!-- 品牌水印：与全站图片水印同一张 logo-clear.png，纯装饰不拦截事件 -->
+            <img class="stage-mark" src="https://file.meiyualuminum.com/logo-clear.png" alt="" aria-hidden="true"
+                tabindex="-1" />
+        </div>
+
+        <!-- ===== Top bar ===== -->
+        <header class="topbar">
+            <div class="brand">
+                <!-- 顶栏品牌位：与站内 Header.astro 同一张 logo，链回站点首页 -->
+                <a class="brand-logo" href="https://www.meiyualuminum.com/" title="MEIYU Aluminum">
+                    <img src="https://file.meiyualuminum.com/home/logo-1.png" alt="MEIYU Aluminum" />
+                </a>
+                <div class="brand-text">
+                    <h1>U-Shaped Aluminum Square Tube Ceiling <em>· 3D Build-Up Guide</em></h1>
+                    <p>MEIYU Aluminum · Technical document library · 9 build-up steps, model generated in code
+                        (no external 3D assets)
+                    </p>
+                </div>
+            </div>
+            <div class="topbar-meta">
+                <div class="meta-item"><span>Current step</span><b id="metaStep">1/9</b></div>
+                <div class="meta-item"><span>Component</span><b id="metaParts">--</b></div>
+                <div class="meta-item"><span>Module size</span><b>1200×800 mm</b></div>
+                <button id="btnGuide" class="icon-btn" title="Replay the interactive guide">?</button>
+                <!-- 站点接线：回到 3D 指南清单，与顶栏 logo（回首页）互补 -->
+                <a id="btnBack" class="icon-btn" href="/interactive-guides/" title="All MEIYU 3D build-up guides">‹</a>
+            </div>
+        </header>
+
+        <!-- ===== Left: build-up sequence ===== -->
+        <aside class="panel panel-left" id="stepsPanel">
+            <div class="panel-head">
+                <h2>Build-Up Sequence</h2>
+                <button id="btnCollapseLeft" class="icon-btn" title="Collapse panel">«</button>
+            </div>
+            <div class="panel-body" id="stepsList"><!-- rendered by js/ui/stepsPanel.js --></div>
+            <div class="panel-foot">
+                <div class="legend">
+                    <span class="legend-title">Layer legend</span>
+                    <ul id="layerLegend"></ul>
+                </div>
+                <p class="panel-credit">
+                    <a href="/interactive-guides/" rel="noopener">MEIYU · Interactive Build-Up Guides</a>
+                </p>
+            </div>
+        </aside>
+
+        <!-- ===== Right: step notes / component detail ===== -->
+        <aside class="panel panel-right" id="detailPanel">
+            <div class="panel-head">
+                <h2 id="detailTitle">Step Notes</h2>
+                <button id="btnCollapseRight" class="icon-btn" title="Collapse panel">»</button>
+            </div>
+            <div class="tabs" role="tablist">
+                <button class="tab is-active" data-tab="step" role="tab">Step Notes</button>
+                <button class="tab" data-tab="part" role="tab">Component</button>
+                <button class="tab" data-tab="spec" role="tab">System Data</button>
+            </div>
+            <div class="panel-body" id="detailBody"><!-- rendered by js/ui/detailPanel.js --></div>
+        </aside>
+
+        <!-- ===== Bottom toolbar ===== -->
+        <footer class="toolbar" id="toolbar">
+            <div class="tool-block">
+                <label class="tool-label">Mode</label>
+                <div class="seg" role="group" aria-label="Presentation mode">
+                    <button class="seg-btn is-active" data-mode="sequence">Step Sequence</button>
+                    <button class="seg-btn" data-mode="explode">Exploded View</button>
+                </div>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label">Step</label>
+                <div class="stepper">
+                    <button id="btnPrevStep" class="ghost-btn" title="Previous step (←)">‹</button>
+                    <span class="step-text"><b id="stepNow">1</b>/<span id="stepTotal">9</span></span>
+                    <button id="btnNextStep" class="ghost-btn" title="Next step (→)">›</button>
+                    <button id="btnPlay" class="ghost-btn is-play" title="Auto play (Space)">▶</button>
+                </div>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label" for="explodeRange">Explode amount</label>
+                <input id="explodeRange" class="range" type="range" min="0" max="100" value="0" step="1" />
+                <output id="explodeValue" class="range-out">0%</output>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label">View</label>
+                <div class="seg" role="group" aria-label="Camera preset">
+                    <button class="seg-btn" data-view="front">Front</button>
+                    <button class="seg-btn" data-view="side">Side</button>
+                    <button class="seg-btn" data-view="bottom">Upward</button>
+                    <button class="seg-btn" data-view="top">Downward</button>
+                    <button class="seg-btn is-active" data-view="iso">45°</button>
+                </div>
+            </div>
+
+            <div class="tool-block tool-switches">
+                <label class="tool-label">Display</label>
+                <button class="chip" data-toggle="labels" title="Show every component callout (L)">Labels</button>
+                <button class="chip is-active" data-toggle="ghost"
+                    title="Not-yet-installed parts shown as ghost outlines">Ghost parts</button>
+                <button class="chip" data-toggle="grid" title="Level reference grid at the top">Grid</button>
+                <button class="chip" data-toggle="orbit" title="Auto orbit">Orbit</button>
+            </div>
+
+            <div class="tool-block tool-actions">
+                <button id="btnAllParts" class="primary-btn" title="Show every component at once (E)">Install
+                    All</button>
+                <button id="btnRestore" class="ghost-btn" title="Back to step 1 (R)">Reset Steps</button>
+                <button id="btnHome" class="ghost-btn" title="Reset camera">Reset View</button>
+            </div>
+        </footer>
+
+        <!-- ===== Interactive guide ===== -->
+        <div class="guide" id="guide" hidden>
+            <div class="guide-card">
+                <p class="guide-kicker">MEIYU · Interactive guide</p>
+                <h3 id="guideTitle"></h3>
+                <p id="guideDesc"></p>
+                <ol class="guide-dots" id="guideDots"></ol>
+                <div class="guide-actions">
+                    <button id="guideSkip" class="ghost-btn">Skip</button>
+                    <button id="guideNext" class="primary-btn">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Boot overlay ===== -->
+        <div class="boot" id="boot">
+            <div class="boot-inner">
+                <img class="boot-mark" src="https://file.meiyualuminum.com/home/logo-1.png" alt="MEIYU Aluminum" />
+                <div class="boot-ring"></div>
+                <p class="boot-text">Generating the ceiling node model…</p>
+                <p class="boot-brand">MEIYU Aluminum Co., Ltd. · meiyualuminum.com</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>

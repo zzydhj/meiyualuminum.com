@@ -8,6 +8,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { supabase } from "../lib/supabase";
+import { interactiveGuides, guidePath } from "../lib/interactiveGuides";
 import { ACTIVE_LANGS, loc, type Lang } from "../lib/i18n";
 import { fetchAllTagPosts, groupPostsByTag } from "../lib/tagPosts";
 import { fetchAllVideos, groupVideosByTag } from "../lib/videoTags";
@@ -59,6 +60,7 @@ export const GET: APIRoute = async ({ site }) => {
         // /thank-you/ 故意不收：询盘成功页，无内容价值；页面已标 robots 禁止编录，
         // 再列进清单就是自相矛盾。
         "/installation-guides/",
+        "/interactive-guides/",
         "/procurement-guide/",
         "/manufacturing/",
         "/certifications/",
@@ -74,6 +76,12 @@ export const GET: APIRoute = async ({ site }) => {
 
     for (const p of staticPaths) {
         addEntry(p);
+    }
+
+    // 3D 装配指南：public/interactive-guides/<slug>/ 下的独立应用，不走 Astro 路由，
+    // 只能从注册表显式登记。地址不带 #step —— 深链是站内跳转用的，不是给抓取器的。
+    for (const g of interactiveGuides) {
+        addEntry(guidePath(g.slug));
     }
 
     // 数据库查询：所有已发布的英语内容
