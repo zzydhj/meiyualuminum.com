@@ -20,8 +20,10 @@ export interface TermRow {
 export const companyFacts = {
     name: "MEIYU Aluminum Co., Ltd.",
     brand: "MEIYU",
-    established: "2015",
-    location: "Dongguan City, Guangdong Province, China",
+    // 2026-10-27 业主指令：成立年份由 2015 改为 2011，对外地址不再写城市（东莞/佛山禁用）。
+    // 注意：由此推出的“约 15 年经验”仍不得写成 “15+ Years Experience”（页脚历史注释里有此红线）。
+    established: "2011",
+    location: "Guangdong Province, China",
     plantArea: "15,000 m²",
     productionLines: "15",
     staff: "80",
@@ -49,8 +51,10 @@ export const standardTerms: TermRow[] = [
         value: "50 m² per item for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)",
     },
     {
+        // 2026-10-27 业主指令：取消原「标准 20–25 / 定制 30–40 工作日」双档，
+        // 标准品与定制穿孔/异形/特殊表面共用同一口径。产述句式里不得再出现两档数字。
         label: "Lead Time",
-        value: "20–25 working days for standard orders; 30–40 days for custom perforation or special finishes, subject to production schedule",
+        value: "7–10 working days for standard and custom orders alike, including perforation, formed work and special finishes, subject to order size and production schedule",
     },
     {
         label: "Warranty",

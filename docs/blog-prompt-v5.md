@@ -1,8 +1,12 @@
-# Blog 交付提示词 v5.7.6
+# Blog 交付提示词 v5.7.7
 
 > 用途：把任意参考文章（网址或 HTML）重写成**质量高于参考原文**的英文 Blog，
 > 并产出一个"交付页面"（预览 + 一键复制正文/字段/整条记录 + 一键导入 SQL），供直接导入 Supabase `posts` 表。
 >
+> v5.7.7 变化（公司事实三项变更，业主 2026-10-27 指令）：成立年份 2015 → **2011**；对外地址
+> 不再写城市（Dongguan / Foshan 一律禁用）→ 统一 **Guangdong Province, China**；交期取消
+> 「标准 20–25 / 定制 30–40 工作日」分档 → **统一 7–10 工作日**。附录 A 已同步，全站文案与
+> `src/lib/companyProfile.ts` 按此重刷。
 > v5.7.6 变化（密钥随 docs/ 迁移）：新增第三密钥来源 `docs/r2-credentials.env`（已 gitignore，拷
 > `docs/` 文件夹即自带 → 换电脑/换 IDE 零配置）；读取优先级：环境变量 > 项目根 .env/.env.local >
 > 该文件；附录 B `creds()` 同步（pipeline-core v1.1，70 行）；密钥红线补「禁入提示词正文」。
@@ -340,10 +344,14 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
 7. 生成的 SQL 必须与 Zone 3 字段、Zone 2 content 完全一致（同源），用户改任一处应重新复制 SQL。
 
 ═══ 附录 A · 公司事实（MEIYU Company Facts · 唯一允许引用的公司数据源）═══
-【基础】官方名称 MEIYU Aluminum Co., Ltd.；成立 2015；工厂位于 Baima Cuiyuan Street, Nancheng Subdistrict,
-  Dongguan City, Guangdong Province, China；15,000 m² 厂房、15 条产线；80 名员工（含专职工程与质检团队）；
+【基础】官方名称 MEIYU Aluminum Co., Ltd.；成立 2011；对外厂址口径统一为 Guangdong Province, China；
+  15,000 m² 厂房、15 条产线；80 名员工（含专职工程与质检团队）；
   官网 meiyualuminum.com。
-【联系（可公开）】Email: info@meiyualuminum.com；WhatsApp/电话: +86 135 0983 8008；工厂地址同【基础】。
+  ⚠ 对外文案禁写城市名（业主 2026-10-27 指令）：网站、博客、SEO 字段、产品正文一律不得出现
+  Dongguan / 东莞 / Foshan / 佛山；实际厂区街道地址仅用于合同与物流，见【联系】。
+【联系（可公开）】Email: info@meiyualuminum.com；WhatsApp/电话: +86 135 0983 8008；
+  实物街道地址 Baima Cuiyuan Street, Nancheng Subdistrict, Dongguan City, Guangdong Province, China
+  —— 仅供合同/发票/寄样/提货使用，**禁止写进任何网站页面或博客文案**。
 【响应时效（用户 2026-10-09 确认）】询盘（Email / WhatsApp / 站内表单）首次回复：1 小时内，
   口径与站内询盘弹窗一致（We reply within 1 hour）；全站不得出现与此矛盾的“24 小时回复”类文案。
 【认证】ISO 9001；CE；防火：ASTM E84 Class A（Flame Spread Index 0–25，Steiner Tunnel 法）、
@@ -358,7 +366,8 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
 【质保（标准 offer）】PE 涂层 10 年；PVDF 涂层 15 年（标准大气暴露；沿海/高盐环境可能需调整涂层规格）；
   结构/材料缺陷自发货起 1 年。
 【MOQ/交期（标准 offer）】标准品 50 m²/项/规格（2026-10-25 用户调低，原 500）；定制（穿孔/异形）1,000 m²（视模具）；
-  交期标准单 20–25 工作日、定制穿孔/特殊表面 30–40 工作日（视订单量与排产）。
+  交期 **7–10 工作日**（业主 2026-10-27 指令：取消原「标准单 20–25、定制 30–40」分档，
+  标准品与定制穿孔/异形/特殊表面共用同一口径，视订单量与排产）。
 【出口市场】东南亚（Vietnam、Philippines、Indonesia、Malaysia）、中东（UAE、Saudi Arabia、Qatar）、
   部分非洲与南美市场。
 【代表项目类型（案例写作粒度 = 地区 + 行业 + 产品）】
@@ -451,6 +460,10 @@ def push(cli, key, data):         # HEAD 去重 → 上传 → 公开 URL 校验
 
 ## 变更记录
 
+- **v5.7.7（2026-10-27）**：公司事实三项变更（业主指令）——成立年份 2015 → 2011；对外地址去掉
+  城市名，统一 Guangdong Province, China，并把 Dongguan / Foshan 列入禁用词（真实街道地址降级为
+  仅合同与物流用）；交期取消标准/定制分档，统一 7–10 工作日。全站文案、`companyProfile.ts`、
+  数据库五表同步重刷；派生口径需注意 2011 年成立 → 至今约 15 年，仍不得写 “15+ Years Experience”。
 - **v5.7.6（2026-10-06）**：密钥随 docs/ 迁移——新增第三密钥来源 `docs/r2-credentials.env`
   （已 gitignore：拷 `docs/` 文件夹会跟着走、提交仓库不会走 → 换电脑/换 IDE 零配置）；
   读取优先级：环境变量 > 项目根 .env/.env.local > 该文件；附录 B `creds()` 同步为三来源

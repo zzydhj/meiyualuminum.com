@@ -4,8 +4,9 @@
  *
  * 公司数据（地址 / 电话 / 邮箱 / 认证）一律从 lib/companyProfile.ts 取，
  * 不在这里硬编码。以前本组件自己写了一套，而且写的还是错的：
- *   城市填了 Foshan（实际是 Dongguan）、电话是模板占位号 +86 123 4567 8900、
- *   写了无依据的 “SGS Tested” 与 “15+ Years Experience”（2015 年成立，只有 ~11 年）。
+ *   城市填了 Foshan（2026-10-27 起对外口径统一不写城市，只到 Guangdong Province）、
+ *   电话是模板占位号 +86 123 4567 8900、
+ *   写了无依据的 “SGS Tested” 与 “15+ Years Experience”。
  * 页脚出现在每一个页面上，这类错会直接砸信任，也会被采购合规审查抓到。
  */
 import { companyFacts, certBadges, responseTime } from "../lib/companyProfile";
@@ -182,8 +183,9 @@ const year = new Date().getFullYear();
     </div>
 
     <!-- 认证徽章：只渲染 companyProfile.certBadges（对齐附录 A）。
-         原先硬写的 “SGS Tested” 与 “15+ Years Experience” 已删：前者无报告依据、
-         后者与 2015 年成立不符。无依据的第三方认证声明是合规风险，不是营销修饰。 -->
+         原先硬写的 “SGS Tested” 与 “15+ Years Experience” 已删：前者无报告依据，
+         后者当时与 2015 年成立不符。成立年份 2026-10-27 已改为 2011（至今约 15 年），
+         但不自动恢复该徽章：年限属营销措辞，要写就写可核对的 “Established 2011”。 -->
     <div class="my-ft-certs">
       {certBadges.map((badge) => <span class="my-ft-badge">✓ {badge}</span>)}
     </div>

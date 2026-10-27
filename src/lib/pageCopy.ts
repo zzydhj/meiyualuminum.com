@@ -14,4 +14,4 @@
  * 控制在 160 字符内 —— Google 桌面端约在此处截断，超出部分买家看不到。
  */
 export const BLOG_LIST_DESCRIPTION =
-    "Technical notes on aluminum ceiling systems, facade panels and surface treatments, written from our own production floor in Dongguan.";
+    "Technical notes on aluminum ceiling systems, facade panels and surface treatments, written from our own production floor in Guangdong.";
