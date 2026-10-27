@@ -85,42 +85,41 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
     "aluminum-veneer": {
         categorySlug: "aluminum-veneer",
         categoryName: "Aluminum Veneer",
-        overview: "Aluminum veneer is a premium building facade material crafted from high-quality aluminum alloy sheets (1100/3003 series). Through CNC cutting, folding, and welding, it can be formed into flat panels, curved surfaces, and complex geometric shapes. Finished with PVDF or powder coating, aluminum veneer delivers exceptional weather resistance, color stability, and a service life exceeding 25 years. It is the material of choice for high-end commercial, institutional, and landmark architecture worldwide.",
+        overview: "Aluminum veneer is a facade and lining material formed from aluminium alloy sheet (1100 / 3003 / 5005 series). Through CNC cutting, folding and welding it can be formed into flat panels, curved surfaces and complex geometric shapes. Finished with PVDF, powder or PE coating, it offers the weather resistance and colour stability of a non-combustible metal surface.",
         keyFeatures: [
-            "Custom shapes: flat, curved, folded, perforated, and parametric forms",
-            "PVDF coating with 25+ year color warranty (AAMA 2605 compliant)",
-            "Lightweight: 4.5–8.2 kg/m², reducing structural load vs. stone or GRC",
-            "100% recyclable aluminum alloy — sustainable building material",
-            "Fire-rated A2-s1,d0 (non-combustible per EN 13501-1)",
+            "Custom shapes: flat, curved, folded, perforated and parametric forms",
+            "PVDF coating at the AAMA 2605 performance tier — 15-year standard-offer warranty",
+            "Light for its stiffness: about 4 kg/m² at 1.5 mm and 8 kg/m² at 3.0 mm (calculated at 2 700 kg/m³)",
+            "100% recyclable aluminium alloy — sustainable building material",
+            "Non-combustible substrate; declared ASTM E84 Class A and EN 13501-1 Class B-s1 for the coated product",
             "Factory pre-fabrication ensures consistent quality and fast installation",
             "Compatible with concealed fix and face-fix subframe systems"
         ],
         technicalSpecs: [
             { label: "Material", value: "AA1100 / AA3003 / AA5005 Aluminum Alloy" },
-            { label: "Panel Thickness", value: "1.5mm / 2.0mm / 2.5mm / 3.0mm" },
-            { label: "Standard Width", value: "1000mm / 1220mm / 1500mm (max 2000mm)" },
-            { label: "Standard Length", value: "Up to 6000mm (custom cut to project size)" },
-            { label: "Weight", value: "4.5 kg/m² (2.0mm) / 6.8 kg/m² (3.0mm)" },
-            { label: "Tensile Strength", value: "≥ 130 MPa (AA3003-H24)" },
-            { label: "Yield Strength", value: "≥ 115 MPa (AA3003-H24)" },
-            { label: "Fire Rating", value: "A2-s1,d0 (EN 13501-1) / Class A (ASTM E84)" },
-            { label: "Wind Load Resistance", value: "Up to 5.0 kPa (depending on fixing and span)" },
+            { label: "Panel Thickness", value: "Our standard range 0.8–1.5 mm; facade gauges of 1.5 / 2.0 / 2.5 / 3.0 mm produced to the specified drawing" },
+            { label: "Panel Format", value: "Cut to project drawing — no fixed module for facade veneer" },
+            { label: "Weight", value: "≈ gauge (mm) × 2.7 kg/m² — 2.0 mm ≈ 5.4, 3.0 mm ≈ 8.1 kg/m²" },
+            { label: "Tensile Strength", value: "AA3003-H24 nominal ≈ 130 MPa minimum (material property, not a design value)" },
+            { label: "Yield Strength", value: "AA3003-H24 nominal ≈ 115 MPa (material property, not a design value)" },
+            { label: "Fire Rating", value: "Substrate non-combustible; our declarations are ASTM E84 Class A and EN 13501-1 Class B-s1 for the coated product" },
+            { label: "Wind Load Resistance", value: "Engineered and tested per project (ASTM E330 / EN 12150 basis) — not a fixed product rating" },
             { label: "Thermal Expansion", value: "2.4 × 10⁻⁵ /°C" },
-            { label: "Sound Insulation", value: "25–30 dB (single panel); up to 42 dB with acoustic backing" },
-            { label: "Flatness Tolerance", value: "≤ 1.5mm per 1000mm (per ASTM B209)" },
-            { label: "Coating Adhesion", value: "Cross-cut test: Grade 0–1 (ISO 2409)" },
+            { label: "Sound Insulation", value: "A property of the assembled wall, not of the panel; test the build-up (ASTM E90 / ISO 10140)" },
+            { label: "Flatness Tolerance", value: "Agreed on the shop drawing per gauge, format and joint; verified on the first article" },
+            { label: "Coating Adhesion", value: "Cross-cut test per ISO 2409, judged on the delivered finish" },
         ],
         surfaceOptions: [
-            { name: "PVDF (Fluorocarbon) Coating", description: "2-coat, 3-coat, or 4-coat PVDF system based on Kynar 500® / Hylar 5000® resin. Superior UV, chemical, and salt-spray resistance.", thickness: "25–40 μm total film", warranty: "25-year color retention (AAMA 2605)", suitableFor: ["Exterior facades", "Coastal environments", "High-UV regions", "Landmark architecture"] },
-            { name: "Powder Coating (Polyester)", description: "Electrostatic powder coating, thermoset polyester. Wide RAL color range with excellent mechanical durability.", thickness: "60–80 μm film", warranty: "10–15 year color retention (AAMA 2604)", suitableFor: ["Interior applications", "Covered exterior", "Budget-conscious projects", "Standard commercial facades"] },
-            { name: "Anodized Finish", description: "Electrochemical anodizing creates a hard, integral oxide layer. Metallic appearance with natural aluminum luster.", thickness: "15–25 μm oxide layer (AA Class I/II)", warranty: "20+ year natural weathering resistance", suitableFor: ["Modern minimalist design", "Interior feature walls", "Low-maintenance applications"] },
+            { name: "PVDF (Fluorocarbon) Coating", description: "2-coat, 3-coat or 4-coat PVDF system at the AAMA 2605 resin tier. Superior UV, chemical and salt-spray resistance.", thickness: "25–40 μm total film", warranty: "15-year standard offer (AAMA 2605 class)", suitableFor: ["Exterior facades", "Coastal environments", "High-UV regions", "Landmark architecture"] },
+            { name: "Powder Coating (Polyester)", description: "Electrostatic powder coating, thermoset polyester. Wide RAL color range with excellent mechanical durability.", thickness: "60–80 μm film", warranty: "Standard offer per quotation (PE coil tier: 10 years)", suitableFor: ["Interior applications", "Covered exterior", "Budget-conscious projects", "Standard commercial facades"] },
+            { name: "Anodized Finish", description: "Electrochemical anodizing creates a hard, integral oxide layer. Metallic appearance with natural aluminum luster.", thickness: "15–25 μm oxide layer (AA Class I/II)", warranty: "Outside the coating warranty schedule; the oxide is UV-stable", suitableFor: ["Modern minimalist design", "Interior feature walls", "Low-maintenance applications"] },
         ],
         standardSizes: [
-            { label: "Flat Panel (Standard)", value: "1220 × 2440mm / 1500 × 3000mm / 1500 × 4000mm" },
-            { label: "Flat Panel (Large)", value: "2000 × 6000mm (custom, max)" },
-            { label: "Curved Panel (Single Curve)", value: "Min radius 300mm, max arc 3000mm" },
-            { label: "Curved Panel (Double Curve)", value: "Custom CNC formed, project-specific" },
-            { label: "Perforated Panel", value: "Hole dia. 2–25mm, open area 5–60%" },
+            { label: "Ceiling / Wall Formats", value: "300 × 300mm to 600 × 1200mm standard, custom to project drawing" },
+            { label: "Facade Panels", value: "Cut to the job — larger formats are a project decision, not a catalogue size" },
+            { label: "Curved Panel (Single Curve)", value: "Formed to the model; cold roll-forming is commonly held to a radius of about 5 × sheet thickness" },
+            { label: "Curved Panel (Double Curve)", value: "Custom formed, project-specific" },
+            { label: "Perforated Panel", value: "Ø1.5–6mm, open area 10–30% (our stated capability range)" },
         ],
         installationSteps: [
             { step: 1, title: "Subframe Installation", description: "Install aluminum or galvanized steel subframe to the structural wall using expansion bolts or chemical anchors. Typical spacing: 600–1200mm horizontally." },
@@ -138,12 +137,12 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             "Install panels in consistent grain/coating direction",
         ],
         applications: [
-            { type: "Commercial Skyscrapers", whyUse: "Lightweight cladding reduces structural cost while enabling bold architectural expression.", recommendedProducts: ["3.0mm PVDF flat panels", "Curved panels for corners", "Perforated panels for ventilation zones"], keyBenefit: "30–40% lighter than stone, 25+ year lifespan" },
-            { type: "Airport Terminals", whyUse: "Large-format panels minimize joints for clean aesthetics. Fire-rated A2 for public safety.", recommendedProducts: ["2.5mm PVDF metallic panels", "Curved panels for ceiling transitions"], keyBenefit: "Fast large-area installation, aviation fire safety" },
+            { type: "Commercial Skyscrapers", whyUse: "Lightweight cladding reduces structural cost while enabling bold architectural expression.", recommendedProducts: ["3.0mm PVDF flat panels", "Curved panels for corners", "Perforated panels for ventilation zones"], keyBenefit: "Far lighter than stone or GRC; 15-year PVDF coating warranty (standard offer)" },
+            { type: "Airport Terminals", whyUse: "Large-format panels minimise joints for clean aesthetics, on a non-combustible metal substrate.", recommendedProducts: ["2.5mm PVDF metallic panels", "Curved panels for ceiling transitions"], keyBenefit: "Fast large-area installation, non-combustible substrate" },
             { type: "Sports Stadiums", whyUse: "Custom curved and angular panels create dynamic facades.", recommendedProducts: ["3.0mm PVDF folded panels", "Parametric CNC-cut panels"], keyBenefit: "Design freedom, high wind load resistance" },
             { type: "Hospitals & Healthcare", whyUse: "Smooth, non-porous surface is easy to clean and maintain.", recommendedProducts: ["2.0mm powder-coated (interior)", "PVDF panels (exterior)"], keyBenefit: "Hygienic, low maintenance, fire-rated" },
         ],
-        certifications: ["ISO 9001:2015", "CE Marking (EN 13830)", "SGS Test Report", "AAMA 2605", "ASTM E84 Class A"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
 
     // ═══════════════════════════════════════════════════════════
@@ -213,7 +212,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Swimming Pools, Kitchens and Healthcare", whyUse: "Aluminium does not rot, swell or support mould, and a solid or wiped-clean strip has no ledge to collect dust — but pool air is chemically aggressive, so the coating and the corrosion class are what decide the build-up.", recommendedProducts: ["Post-form powder or anodised, sealed folded edges, EN 13964 humidity and corrosion class stated"], keyBenefit: "Durable and cleanable in continuous humidity" },
             { type: "Entrance Soffits, Canopies and Low Facade", whyUse: "An open-joint strip passes wind instead of loading it like a sealed panel, cannot oil-can, and screens the structure overhead — provided the finish and the carrier are specified for exposure.", recommendedProducts: ["Thicker-gauge extruded strip, PVDF finish, wind-resistant carriers and retaining clips"], keyBenefit: "Weather-tolerant linear soffit with no wind-loaded plane" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 bare / A2-s1,d0 coated"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
 
     // ═══════════════════════════════════════════════════════════
@@ -231,14 +230,14 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Width (Face)", value: "30 / 40 / 50 / 60 / 80 / 100mm" },
             { label: "Depth", value: "50 / 80 / 100 / 120 / 150 / 200mm" },
             { label: "Length", value: "Up to 6000mm" },
-            { label: "Spacing", value: "50–300mm center-to-center" },
-            { label: "Fire Rating", value: "A2-s1,d0" },
-            { label: "Acoustic NRC", value: "0.40–0.65 (with infill)" },
+            { label: "Spacing", value: "50–300mm center-to-center, set by the design intent" },
+            { label: "Fire Rating", value: "Non-combustible aluminium substrate; classification of the finished board is tested per build-up" },
+            { label: "Acoustic NRC", value: "Open baffles absorb little on their own; any NRC figure belongs to a tested assembly" },
         ],
         surfaceOptions: [
-            { name: "Powder Coating", description: "Uniform matte/gloss across all surfaces.", thickness: "60–80 μm", warranty: "10–15 year", suitableFor: ["Lobbies", "Malls", "Exhibition halls"] },
-            { name: "Wood Grain Transfer", description: "Timber appearance, zero maintenance.", thickness: "Film layer", warranty: "10 year", suitableFor: ["Hotels", "Restaurants", "Cultural venues"] },
-            { name: "PVDF", description: "For semi-exposed soffit applications.", thickness: "25–40 μm", warranty: "20–25 year", suitableFor: ["Exterior soffits", "Canopies", "Stadiums"] },
+            { name: "Powder Coating", description: "Uniform matte/gloss across all surfaces.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Lobbies", "Malls", "Exhibition halls"] },
+            { name: "Wood Grain Transfer", description: "Timber appearance, zero maintenance.", thickness: "Film layer", warranty: "Standard offer per quotation", suitableFor: ["Hotels", "Restaurants", "Cultural venues"] },
+            { name: "PVDF", description: "For semi-exposed soffit applications.", thickness: "25–40 μm", warranty: "15-year standard offer", suitableFor: ["Exterior soffits", "Canopies", "Stadiums"] },
         ],
         standardSizes: [
             { label: "30×50mm (Slim)", value: "0.6mm wall, lightweight baffles" },
@@ -258,33 +257,33 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Shopping Malls", whyUse: "Variable depths create dynamic effects.", recommendedProducts: ["Mixed depths, alternating colors"], keyBenefit: "Design flexibility" },
             { type: "Exhibition Halls", whyUse: "Deep baffles conceal overhead services.", recommendedProducts: ["80×200mm matte black"], keyBenefit: "Service concealment" },
         ],
-        certifications: ["ISO 9001:2015", "CE Marking", "SGS", "ASTM E84 Class A"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A"],
     },
 
     "aluminum-honeycomb-core-panel": {
         categorySlug: "aluminum-honeycomb-core-panel",
         categoryName: "Aluminum Honeycomb Core Panel",
         overview: "Ultra-lightweight, high-rigidity composite panels with two aluminum face sheets bonded to hexagonal honeycomb core. Originally aerospace technology, now used for large-format facades, interior partitions, and applications requiring maximum flatness over large spans.",
-        keyFeatures: ["Ultra-light: 4.5–6.0 kg/m² (50–70% lighter than solid aluminum)", "Exceptional flatness: ≤0.5mm over 1500mm", "Large-format up to 2000×6000mm", "Fire-rated A2-s1,d0", "Acoustic STC 28–35", "Thermal insulation", "100% recyclable"],
+        keyFeatures: ["Stiffness of a deep section at the mass of a thin sheet", "Flat over large spans — the reason it is specified where solid sheet would oil-can", "Formats cut to the project drawing", "All-aluminium build-up keeps the fire question on the adhesive line, not the metal", "A sealed sandwich is a sound barrier, not an absorber", "Thermal break across the thickness", "100% recyclable"],
         technicalSpecs: [
-            { label: "Face Sheet", value: "AA3003/5005, 0.5–1.0mm" },
+            { label: "Face Sheet", value: "AA3003 / 5005; the market quotes 0.5–1.5 mm skins [vendor-typical], our standard sheet range is 0.8–1.5 mm" },
             { label: "Core", value: "AA3003 hexagonal honeycomb" },
-            { label: "Cell Size", value: "6 / 10 / 15 / 20mm" },
-            { label: "Total Thickness", value: "10 / 15 / 20 / 25 / 50mm" },
-            { label: "Max Panel", value: "2000 × 6000mm" },
-            { label: "Weight", value: "4.5–6.0 kg/m²" },
-            { label: "Fire Rating", value: "A2-s1,d0" },
-            { label: "Acoustic STC", value: "28–35 dB" },
+            { label: "Cell Size", value: "6 / 10 / 15 / 20mm [vendor-typical]" },
+            { label: "Total Thickness", value: "10 / 15 / 20 / 25 / 50mm [vendor-typical]" },
+            { label: "Max Panel", value: "Cut to the job — suppliers quote up to 2000 × 6000 mm [vendor-typical, unverified]" },
+            { label: "Weight", value: "Roughly 7 kg/m² for a 20 mm facade panel against about 8 kg/m² for a 3 mm solid sheet [vendor-typical]" },
+            { label: "Fire Rating", value: "All-aluminium cores argue for the top classes, but an A2 declaration needs a test report for the exact build-up; our own declarations are ASTM E84 Class A and EN 13501-1 Class B-s1 for the coated product" },
+            { label: "Acoustic STC", value: "A property of the assembled wall; single-number claims without a test standard are not comparable" },
         ],
         surfaceOptions: [
-            { name: "PVDF (on face)", description: "Premium fluorocarbon for exterior.", thickness: "25–40 μm", warranty: "25 year", suitableFor: ["Exterior facades", "Curtain wall infill"] },
-            { name: "Powder Coating", description: "For interior applications.", thickness: "60–80 μm", warranty: "10–15 year", suitableFor: ["Wall panels", "Elevator lobbies", "Partitions"] },
+            { name: "PVDF (on face)", description: "Premium fluorocarbon for exterior.", thickness: "25–40 μm", warranty: "15-year standard offer", suitableFor: ["Exterior facades", "Curtain wall infill"] },
+            { name: "Powder Coating", description: "For interior applications.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Wall panels", "Elevator lobbies", "Partitions"] },
             { name: "Stone Veneer Composite", description: "Thin stone bonded to honeycomb.", thickness: "5–8mm stone + honeycomb", warranty: "Project-specific", suitableFor: ["Luxury interiors", "Elevator cabs"] },
         ],
         standardSizes: [
-            { label: "Standard 10mm", value: "1250×2500mm (0.5+9+0.5)" },
-            { label: "Standard 20mm", value: "1500×3000mm (1.0+18+1.0)" },
-            { label: "Large 25mm", value: "2000×6000mm (1.0+23+1.0)" },
+            { label: "Typical Build-Up", value: "Face + core + rear skin, e.g. 1.0 + 18 + 1.0 mm for a 20 mm panel [vendor-typical]" },
+            { label: "Formats", value: "Cut to project drawing — 1250 × 2500 mm and larger are quoted by suppliers [vendor-typical, unverified]" },
+            { label: "Interior Lining", value: "Thinner skins with 6–25 mm totals are the market steps for walls, doors and furniture [vendor-typical]" },
         ],
         installationSteps: [
             { step: 1, title: "Subframe", description: "Install aluminum subframe, 1200–1500mm spacing." },
@@ -294,36 +293,36 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         ],
         installationTips: ["Never drill through entire panel", "Use adhesive + mechanical fixings for brackets", "Edge sealing critical for exterior", "Handle edges carefully"],
         applications: [
-            { type: "High-Rise Curtain Wall", whyUse: "Ultra-light reduces dead load on mullions.", recommendedProducts: ["20mm PVDF face"], keyBenefit: "50–70% lighter than solid panel" },
+            { type: "High-Rise Curtain Wall", whyUse: "Ultra-light reduces dead load on mullions.", recommendedProducts: ["20mm PVDF face"], keyBenefit: "Deep-section stiffness at thin-sheet mass" },
             { type: "Interior Feature Walls", whyUse: "Maximum flatness for premium finishes.", recommendedProducts: ["10mm powder coated or stone veneer"], keyBenefit: "Ultra-flat, luxury materials" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13830)", "SGS", "AAMA 2605", "ASTM E84 Class A"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
 
     "aluminum-ceiling-tile": {
         categorySlug: "aluminum-ceiling-tile",
         categoryName: "Aluminum Ceiling Tile",
         overview: "Modular aluminum ceiling panels in standard grid sizes (600×600, 300×600mm) for lay-in or clip-in suspended ceiling systems. Combines aluminum durability with modular grid practicality — the standard for commercial offices, hospitals, and clean environments.",
-        keyFeatures: ["Standard modular sizes", "Lay-in or clip-in options", "Perforated acoustic options", "100% moisture-proof", "Light reflectance ≥80%", "Individual tile removable", "Recyclable"],
+        keyFeatures: ["Standard modular sizes", "Lay-in or clip-in options", "Perforated acoustic options", "100% moisture-proof", "Adds to room brightness — the gain depends on gloss and colour, not on the metal alone", "Individual tile removable", "Recyclable"],
         technicalSpecs: [
             { label: "Material", value: "AA3003 / AA5005" },
-            { label: "Thickness", value: "0.5 / 0.6 / 0.7 / 0.8mm" },
+            { label: "Thickness", value: "Our standard range 0.8–1.5 mm; the market also quotes 0.5–0.7 mm tiles [vendor-typical]" },
             { label: "Sizes", value: "300×300 / 300×600 / 600×600 / 600×1200mm" },
             { label: "Edge Profile", value: "Lay-in / Tegular / Clip-in" },
-            { label: "Weight", value: "1.5–2.8 kg/m²" },
-            { label: "Fire Rating", value: "A1 (bare metal) / B-s1,d0 (coated + acoustic fleece) per EN 13501-1" },
-            { label: "NRC", value: "0.50–0.75 (perforated + fleece, cavity-dependent)" },
+            { label: "Weight", value: "≈ 2.2 kg/m² at 0.8 mm and 3.2 kg/m² at 1.2 mm (calculated at 2 700 kg/m³)" },
+            { label: "Fire Rating", value: "Bare aluminium is non-combustible; our coated product is declared ASTM E84 Class A and EN 13501-1 Class B-s1" },
+            { label: "NRC", value: "Perforated + fleece tiles are quoted in the 0.5–0.75 region by suppliers [vendor-typical]; the rating belongs to the tested assembly, cavity included" },
             { label: "Humidity", value: "Up to 100% RH" },
         ],
         surfaceOptions: [
-            { name: "Powder Coating", description: "Standard RAL colors.", thickness: "60–80 μm", warranty: "10–15 year", suitableFor: ["Offices", "Schools", "Hospitals"] },
-            { name: "Roller Coating (PE)", description: "Cost-effective for large projects.", thickness: "18–25 μm", warranty: "10 year", suitableFor: ["Large-area ceilings", "Budget projects"] },
-            { name: "Perforated + Fleece", description: "Factory perforated with acoustic backing.", thickness: "1.5–2.5mm holes, 10–20% open", warranty: "Same as base", suitableFor: ["Open-plan offices", "Classrooms"] },
+            { name: "Powder Coating", description: "Standard RAL colors.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Offices", "Schools", "Hospitals"] },
+            { name: "Roller Coating (PE)", description: "Cost-effective for large projects.", thickness: "18–25 μm", warranty: "10-year standard offer (PE)", suitableFor: ["Large-area ceilings", "Budget projects"] },
+            { name: "Perforated + Fleece", description: "Factory perforated with acoustic backing.", thickness: "Ø1.5–6mm, 10–30% open area (our range)", warranty: "Same as base coat", suitableFor: ["Open-plan offices", "Classrooms"] },
         ],
         standardSizes: [
-            { label: "300×300mm", value: "0.5–0.6mm, lay-in or clip-in" },
-            { label: "600×600mm", value: "0.6–0.8mm, most common" },
-            { label: "600×1200mm", value: "0.7–0.8mm, lay-in or tegular" },
+            { label: "300×300mm", value: "0.8–1.0mm, lay-in or clip-in" },
+            { label: "600×600mm", value: "0.8–1.2mm, most common" },
+            { label: "600×1200mm", value: "1.0–1.2mm, lay-in or tegular" },
         ],
         installationSteps: [
             { step: 1, title: "Grid Installation", description: "Install T-bar grid system, main runners at 1200mm centers." },
@@ -337,7 +336,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Hospitals", whyUse: "Non-porous, resists bacteria and mold.", recommendedProducts: ["600×600 clip-in, solid"], keyBenefit: "Hygienic, cleanable" },
             { type: "Swimming Pools", whyUse: "100% moisture-proof.", recommendedProducts: ["600×600 powder coated"], keyBenefit: "Zero moisture damage" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 B-s1,d0"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
 
     "aluminum-square-tube": {
@@ -353,9 +352,9 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Fire Rating", value: "A1 (non-combustible)" },
         ],
         surfaceOptions: [
-            { name: "Anodized", description: "Metallic finish, durable.", thickness: "10–25 μm", warranty: "20+ year", suitableFor: ["Facade fins", "Screens", "Structural framing"] },
-            { name: "Powder Coating", description: "Full RAL range.", thickness: "60–100 μm", warranty: "10–15 year", suitableFor: ["Color-matched facades", "Interior features"] },
-            { name: "PVDF", description: "Premium exterior.", thickness: "25–40 μm", warranty: "25 year", suitableFor: ["Sun louvers", "Coastal environments"] },
+            { name: "Anodized", description: "Metallic finish, durable.", thickness: "10–25 μm", warranty: "Outside the coating warranty schedule; the oxide is UV-stable", suitableFor: ["Facade fins", "Screens", "Structural framing"] },
+            { name: "Powder Coating", description: "Full RAL range.", thickness: "60–100 μm", warranty: "Standard offer per quotation", suitableFor: ["Color-matched facades", "Interior features"] },
+            { name: "PVDF", description: "Premium exterior.", thickness: "25–40 μm", warranty: "15-year standard offer", suitableFor: ["Sun louvers", "Coastal environments"] },
         ],
         standardSizes: [
             { label: "25×25×1.5mm", value: "Lightweight decorative elements" },
@@ -371,10 +370,10 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         ],
         installationTips: ["Pre-drill all holes", "Use EPDM washers between dissimilar metals", "Allow 3mm expansion per meter", "Store horizontally on bearers"],
         applications: [
-            { type: "Sun Louvers", whyUse: "Solar shading while maintaining views.", recommendedProducts: ["50×100 PVDF"], keyBenefit: "40% solar heat reduction" },
+            { type: "Sun Louvers", whyUse: "Solar shading while maintaining views.", recommendedProducts: ["50×100 PVDF"], keyBenefit: "Shading gain depends on depth, pitch and orientation — model it per project" },
             { type: "Decorative Screens", whyUse: "Semi-transparent privacy.", recommendedProducts: ["25×25 anodized"], keyBenefit: "Privacy + ventilation" },
         ],
-        certifications: ["ISO 9001:2015", "CE", "SGS", "ASTM B221"],
+        certifications: ["ISO 9001", "CE"],
     },
 
     "fluted-aluminum-panel": {
@@ -389,12 +388,12 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Flute Depth", value: "5 / 10 / 15 / 20 / 25mm" },
             { label: "Width", value: "1000 / 1200mm" },
             { label: "Length", value: "Up to 6000mm" },
-            { label: "Fire Rating", value: "A2-s1,d0" },
+            { label: "Fire Rating", value: "Non-combustible aluminium substrate; the finished board is classified on a test of that build-up — our declarations are ASTM E84 Class A and EN 13501-1 Class B-s1" },
         ],
         surfaceOptions: [
-            { name: "PVDF", description: "Premium exterior, metallic/pearlescent.", thickness: "25–40 μm", warranty: "25 year", suitableFor: ["Exterior facades", "Coastal areas"] },
-            { name: "Powder Coating", description: "Standard interior.", thickness: "60–80 μm", warranty: "10–15 year", suitableFor: ["Feature walls", "Retail", "Hospitality"] },
-            { name: "Anodized", description: "Natural metallic enhancing light play.", thickness: "15–25 μm", warranty: "20+ year", suitableFor: ["Minimalist facades", "Interior accents"] },
+            { name: "PVDF", description: "Premium exterior, metallic/pearlescent.", thickness: "25–40 μm", warranty: "15-year standard offer", suitableFor: ["Exterior facades", "Coastal areas"] },
+            { name: "Powder Coating", description: "Standard interior.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Feature walls", "Retail", "Hospitality"] },
+            { name: "Anodized", description: "Natural metallic enhancing light play.", thickness: "15–25 μm", warranty: "Outside the coating warranty schedule", suitableFor: ["Minimalist facades", "Interior accents"] },
         ],
         standardSizes: [
             { label: "Micro-Flute 18/5", value: "0.7mm, interior walls" },
@@ -413,7 +412,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Commercial Facades", whyUse: "Dynamic light-play changes all day.", recommendedProducts: ["Trapezoidal 50/15 PVDF metallic"], keyBenefit: "Distinctive identity" },
             { type: "Interior Feature Walls", whyUse: "Subtle texture without overwhelming.", recommendedProducts: ["Micro-flute 18/5 matte white"], keyBenefit: "Premium feel" },
         ],
-        certifications: ["ISO 9001:2015", "CE", "SGS", "ASTM E84", "AAMA 2605"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A"],
     },
 
     "aluminum-skirting-board": {
@@ -432,9 +431,9 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Moisture", value: "100% waterproof" },
         ],
         surfaceOptions: [
-            { name: "Anodized", description: "Hard anodized for max abrasion resistance.", thickness: "10–20 μm", warranty: "Lifetime", suitableFor: ["Commercial offices", "Hotels", "High-traffic areas"] },
-            { name: "Powder Coating", description: "Color-matched to wall/floor.", thickness: "60–80 μm", warranty: "15 year", suitableFor: ["Color-coordinated interiors", "Healthcare"] },
-            { name: "Wood Grain Transfer", description: "Timber appearance.", thickness: "Film layer", warranty: "10 year", suitableFor: ["Residential", "Hospitality"] },
+            { name: "Anodized", description: "Hard anodized for max abrasion resistance.", thickness: "10–20 μm", warranty: "Outside the coating warranty schedule", suitableFor: ["Commercial offices", "Hotels", "High-traffic areas"] },
+            { name: "Powder Coating", description: "Color-matched to wall/floor.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Color-coordinated interiors", "Healthcare"] },
+            { name: "Wood Grain Transfer", description: "Timber appearance.", thickness: "Film layer", warranty: "Standard offer per quotation", suitableFor: ["Residential", "Hospitality"] },
         ],
         standardSizes: [
             { label: "Flat 50×10mm", value: "Standard, screw or adhesive fix" },
@@ -445,7 +444,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         ],
         installationSteps: [
             { step: 1, title: "Wall Preparation", description: "Ensure flat, clean wall base. Create rebate for recessed profiles." },
-            { step: 2, title: "Mounting Rail (Clip-On)", description: "Screw rail to wall at 300mm centers." },
+            { step: 2, title: "Mounting Rail (Clip-On)", description: "Screw the rail to the wall at the centres set by the setting-out drawing." },
             { step: 3, title: "Fix Skirting", description: "Adhesive or mechanical fix. Press firmly." },
             { step: 4, title: "Corner Joints", description: "Use pre-formed 90° and 135° corner pieces." },
         ],
@@ -454,7 +453,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Commercial Offices", whyUse: "Durable, clean lines, cable management.", recommendedProducts: ["Recessed 60mm anodized silver"], keyBenefit: "Professional finish, cable routing" },
             { type: "Hospitals", whyUse: "Hygienic, cleanable, impact resistant.", recommendedProducts: ["Flat 70mm powder coated"], keyBenefit: "Infection control, durability" },
         ],
-        certifications: ["ISO 9001:2015", "CE", "SGS", "ASTM B221"],
+        certifications: ["ISO 9001", "CE"],
     },
 
     // ═══════════════════════════════════════════════════════
@@ -525,7 +524,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Gyms and Leisure Halls", whyUse: "High air movement and impact resistance; nothing to trap humidity above the ceiling.", recommendedProducts: ["100×100 mm, W15, H50 mm, PVDF"], keyBenefit: "Airflow and durability in humid halls" },
             { type: "Exhibition Halls and Airports", whyUse: "Long unbroken areas where rigging points and re-routing happen every season.", recommendedProducts: ["200×200 mm, W15, H80 mm, deeper section"], keyBenefit: "Full demountable access to the plenum" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 (bare metal)"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 A1 (bare metal)"],
     },
 
     // ═══════════════════════════════════════════════════════
@@ -596,7 +595,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Exhibition and Cultural Spaces", whyUse: "Backlit and draped mesh gives depth and lets rigging points stay usable between shows.", recommendedProducts: ["Roll mesh in a perimeter tension profile"], keyBenefit: "Continuous unbroken surface, re-tensionable" },
             { type: "Semi-External Canopies", whyUse: "Aluminium mesh tolerates weather, passes wind pressure and stays non-combustible at ground level.", recommendedProducts: ["PVDF-finished expanded mesh, framed panels"], keyBenefit: "Durability with a 15-year coating warranty (standard offer)" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 (bare metal)"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 A1 (bare metal)"],
     },
 
     // ═══════════════════════════════════════════════════════
@@ -668,7 +667,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Hospitals & Clean Spaces", whyUse: "A true flat plane does not collect dust on ledges and wipes down; no open grid or fine mesh to harbour it either.", recommendedProducts: ["15 mm, scrub-resistance powder finish"], keyBenefit: "Cleanable, joint-minimal surface" },
             { type: "Canopies & Semi-External Soffits", whyUse: "The sandwich insulates and stays dimensionally stable outdoors, and PVDF holds colour under sun and rain.", recommendedProducts: ["20 mm PVDF boards, sealed folded edges"], keyBenefit: "Weather-stable large soffit in one plane" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A2-s1,d0"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
     "round-tube-baffle-ceiling": {
         categorySlug: "round-tube-baffle-ceiling",
@@ -733,7 +732,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Offices, Lobbies & Restaurants", whyUse: "The curved face gives a warmer, less industrial linear look than a rectangular baffle, and acoustics can be added by perforating the tube.", recommendedProducts: ["Perforated 50–60 mm tubes with fleece lining, wood-grain or anodised"], keyBenefit: "Feature line with an optional acoustic route" },
             { type: "Outdoor Canopies & Building Entrances", whyUse: "An open ceiling does not trap wind or moisture and cannot oil-can the way a soffit panel does; with the right gauge and anti-wind clips it works as an entrance canopy.", recommendedProducts: ["Thicker gauge extruded tube on a bolted C-channel carrier, PVDF finish, anti-wind clips"], keyBenefit: "Weather-tolerant linear soffit with no wind-trapped plane" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 bare / A2-s1,d0 coated"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
     "teardrop-shape-baffle-ceiling": {
         categorySlug: "teardrop-shape-baffle-ceiling",
@@ -798,6 +797,6 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { type: "Offices and Showrooms", whyUse: "It hides the slab while leaving the services where they are, so a fit-out can keep its ductwork and still look resolved.", recommendedProducts: ["50 × 150 mm blades, white or grey powder"], keyBenefit: "Screened services, cheap access, no sealed ceiling" },
             { type: "Entrance Canopies and Soffits", whyUse: "An open ceiling cannot trap wind pressure or condensation the way a sealed soffit panel does; with PVDF and a bolted carrier it works outdoors.", recommendedProducts: ["Thicker-gauge blades, PVDF finish, bolted carrier with anti-wind fixings"], keyBenefit: "Weather-tolerant linear soffit with no wind-loaded plane" },
         ],
-        certifications: ["ISO 9001:2015", "CE (EN 13964)", "ASTM E84 Class A", "EN 13501-1 A1 bare / A2-s1,d0 coated"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
 };
