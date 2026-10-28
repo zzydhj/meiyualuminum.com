@@ -22,7 +22,13 @@ export interface ProcessNode {
     n: string;
     /** 阶段名 */
     t: string;
-    /** 一句话定位，brief 变体只显示这一行 */
+    /**
+     * 列表行副标题：折叠态也要能扫出这一步的实质，所以只放 3–7 个词。
+     * 一律由同节点的 s 压缩而来，不引入新事实；可用的数字只有
+     * 附录 A 已授权的几个（15 条产线、7–10 工作日、1 小时、一年）。
+     */
+    tag: string;
+    /** 一句话定位，展开后作为正文导语 */
     s: string;
     /** 甲方在这一步要提供什么 */
     you: string;
@@ -38,6 +44,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "01",
         t: "Enquiry and documents in",
+        tag: "No full drawing set needed",
         s: "A full drawing set is not required to start; what you already have is enough to price.",
         you: "Architectural or reflected-ceiling drawings, a bill of quantities, a schedule of finishes — or a room size with photographs at the sketch stage.",
         ours: "A specification recommendation and an itemised quotation in which the exclusions are written out rather than left to be discovered on site.",
@@ -47,6 +54,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "02",
         t: "Clause-by-clause compliance review",
+        tag: "Compliant, deviating, or not verified",
         s: "Every specification line is answered as compliant, deviating or not verified — never as a blanket “we comply”.",
         you: "The project specification with the standard each clause is written to, plus any fire, coating or acoustic test requirement.",
         ours: "A compliance statement listing where we meet the clause, where we do not, what we propose instead, and what we have not tested and will not imply.",
@@ -56,6 +64,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "03",
         t: "Setting-out, shop drawings and panel numbering",
+        tag: "Drawings a crew can fix from",
         s: "The stage where a project either gets built or gets rebuilt; drawings are made to the point a crew can fix from them.",
         you: "Design intent and the dimensions your trade is holding on site.",
         ours: "Fabrication-level shop drawings: module setting-out, joint widths, expansion and perimeter detail, the attachment interface to the substructure, and a panel numbering schedule that is also the packing list.",
@@ -65,6 +74,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "04",
         t: "Samples and approval",
+        tag: "Approved on physical samples",
         s: "Colour, perforation and surface are approved on physical samples before tooling and before mass production.",
         you: "The finish you want matched, and where a colour is being matched to something, the reference itself.",
         ours: "Sample panels for colour, perforation and finish approval, and the retained record of what was approved.",
@@ -74,6 +84,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "05",
         t: "Production",
+        tag: "15 in-house lines · 7–10 working days",
         s: "Forming, perforation and coating run on our own 15 lines — 7–10 working days for standard and custom work alike.",
         you: "The approved drawing revision and the released order.",
         ours: "Cut, formed, perforated and coated material to the approved drawings, on 15 in-house lines under a controlled process change record.",
@@ -83,6 +94,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "06",
         t: "Inspection and release",
+        tag: "Every lot inspected and recorded",
         s: "Each lot is inspected and recorded before it is allowed into a carton.",
         you: "Your acceptance criteria, if they are stricter than the standard offer.",
         ours: "Coating adhesion, salt spray and sag-resistance checks from our own QC, plus the dimensional and appearance check on the lot and the release record that goes with it.",
@@ -92,6 +104,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "07",
         t: "Packing, loading plan and staged despatch",
+        tag: "The panel the drawing names",
         s: "Packed so a site crew can find the panel the drawing names, without opening crates to look.",
         you: "The site sequence — which area is being closed first, and whether the order has to arrive in more than one lot.",
         ours: "Panels flat in cartons on pallets with carriers and trim boxed separately, crate and package labels tied to the panel numbering schedule, and a container loading plan.",
@@ -101,6 +114,7 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "08",
         t: "After despatch",
+        tag: "1-hour replies · quoted batches",
         s: "The gap between a delivered order and a finished ceiling is answered, not argued about.",
         you: "Photographs, the panel number and the drawing reference — not a general complaint.",
         ours: "Installation guidance in English, the numbering schedule read against your drawings, remote support, and a quotation for any replacement or supplementary batch.",

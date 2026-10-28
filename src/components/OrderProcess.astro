@@ -78,7 +78,10 @@ const openAll = variant === "about";
                         <details open={openAll || i === 0 ? true : undefined}>
                             <summary class="op-node-top">
                                 <span class="op-node-n">{s.n}</span>
-                                <h3 class="op-node-t">{s.t}</h3>
+                                <span class="op-node-main">
+                                    <h3 class="op-node-t">{s.t}</h3>
+                                    <span class="op-node-tag">{s.tag}</span>
+                                </span>
                                 <span class="op-plus" aria-hidden="true" />
                             </summary>
                             <div class="op-node-body">
@@ -279,13 +282,27 @@ const openAll = variant === "about";
         flex: none;
     }
     .op-node-t {
-        flex: 1 1 auto;
         margin: 0;
         font-size: 1.02rem;
         line-height: 1.35;
         letter-spacing: -0.2px;
         color: #1e293b;
         font-weight: 600;
+    }
+    /* 标题与副标题占满中间一列，长标题换行时不会被 + 号顶开 */
+    .op-node-main {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    /* 折叠态也要能扫出这一步的实质，所以副标题常驻标题行；
+       展开后它与下面那句 s 不重复：一个是标签，一个是完整句子。 */
+    .op-node-tag {
+        display: block;
+        margin-top: 3px;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        color: #8b7f74;
+        font-weight: 500;
     }
     .op-plus {
         position: relative;
