@@ -78,7 +78,196 @@
                 <h2>Build-Up Sequence</h2>
                 <button id="btnCollapseLeft" class="icon-btn" title="Collapse panel">«</button>
             </div>
-            <div class="panel-body" id="stepsList"><!-- rendered by js/ui/stepsPanel.js --></div>
+            <div class="panel-body" id="stepsList">
+              <!-- Static copy of the eight operations, for crawlers that do not run JavaScript
+                   and for visitors with JS disabled. js/ui/stepsPanel.js empties this container
+                   before building the interactive list, so nothing is ever shown twice.
+                   Generated from js/data/steps.js - do not edit by hand. -->
+              <p class="st-lead">The eight site operations, with the tools, materials, method and
+                acceptance check for each. The interactive viewer beside this list plays the same
+                sequence on a to-scale model.</p>
+              <ol class="st-list-wrap">
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">1</span>Marking Out</h3>
+                  <p class="st-short">FFL +50 line + lift points + baffle module lines</p>
+                  <p class="st-row"><b>Duration</b> 0.5 day / 2 people</p>
+                  <p class="st-row"><b>Tools</b> Laser level · 5 m tape · Chalk line · Rebar / service detector</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Clean the soffit, then detect and mark the rebar and electrical services.</li>
+                    <li>Snap the +50 horizontal line around all walls (the ceiling finish level) and close the loop to check the rise.</li>
+                    <li>Mark the lift-point crosses on the soffit: spacing ≤ 1000 mm, ≤ 300 mm from the wall.</li>
+                    <li>Snap the baffle module lines to the grid — the carrier slot pitch is already punched to this grid at the factory, so marking out is about verifying the module and the edge sizes.</li>
+                    <li>Where the span ≥ 4 m, camber 1/200 – 1/300 across the short span.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Lines crisp, closed and re-checkable</li>
+                    <li>Marking deviation ≤ 2 mm</li>
+                    <li>No edge strip narrower than 1/3 of a baffle</li>
+                  </ul>
+                  <p class="st-note">Position the lights, air valves, sprinklers and access panels in this same round — cutting the holes afterwards means doing the work twice.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">2</span>Drilling and Anchor Bolts</h3>
+                  <p class="st-short">Drilled upward from the soffit · embedment ≥ 60 mm</p>
+                  <p class="st-row"><b>Duration</b> 0.5 day / 2 hammer drills</p>
+                  <p class="st-row"><b>Tools</b> φ8 hammer drill · Mallet · Air blow / brush for hole cleaning · Socket wrench</p>
+                  <p class="st-row"><b>Materials</b> M8×80 expansion anchor · Heavy-duty sleeve · (Chemical anchor where edge distance is short)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>All drilling is done from inside the room, upward into the slab soffit; never drill from the floor above to chase a position.</li>
+                    <li>Set out on the lift-point crosses, drill perpendicular to the soffit, depth = effective embedment + 10 mm.</li>
+                    <li>Clean the hole: blow it out at least 3 times (this is what determines the holding strength).</li>
+                    <li>Insert the sleeve with the cone facing inwards (towards the bottom of the hole) and the bolt after it; the stud and nut stay outside the hole, then tighten until the washer bears on the soffit.</li>
+                    <li>On hollow spots, main bars or services, relocate and re-drill on this same side — never skew the bolt or force it in.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>No rotation or movement by hand</li>
+                    <li>Embedment ≥ 60 mm</li>
+                    <li>One anchor per lift point, never shared</li>
+                  </ul>
+                  <p class="st-note">A sleeve that has expanded once never grips again, so reclaimed sleeves are prohibited; drilling through the slab would destroy the floor and the waterproofing above, which is out of the question.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">3</span>Threaded Rods and Locking Sets</h3>
+                  <p class="st-short">φ8 threaded · into the anchor above · through the top plate below</p>
+                  <p class="st-row"><b>Duration</b> 1 day / 2 people</p>
+                  <p class="st-row"><b>Tools</b> Hacksaw / cutter (cutting) · Spanners 13, 14 · Laser level for re-check</p>
+                  <p class="st-row"><b>Materials</b> φ8 fully threaded hanger rod · M8 nuts (2 per point) · φ8 flat washer</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Cut to the void height plus 30 mm of adjustment allowance; deburr the cut and paint it with zinc-rich paint.</li>
+                    <li>Screw the upper end into the internal thread of the anchor ≥ 30 mm and add the locking nut.</li>
+                    <li>Let the rod hang plumb, pass the lower end through the hanger hole in the carrier top plate, then add the washer and the double nut inside the channel to carry it.</li>
+                    <li>One full length per lift point: the rod is cut to the void rather than built up from a coupler — and welding or wire binding a rod is out of the question.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Rod plumb and not swinging</li>
+                    <li>2–3 pitches exposed after tightening</li>
+                    <li>Same level on a given cross-section</li>
+                  </ul>
+                  <p class="st-note">An inclined rod pushes a horizontal component into the grid and slowly walks it out of place; most later sagging and displacement traces back to this.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">4</span>Carriers: Lift, Level, Camber</h3>
+                  <p class="st-short">U channel 30×30×1.0 · opening downward</p>
+                  <p class="st-row"><b>Duration</b> 1 day / 3 people</p>
+                  <p class="st-row"><b>Tools</b> Spanners · Mason’s line / laser line · 2 m straight edge</p>
+                  <p class="st-row"><b>Materials</b> Toothed carrier (U channel 30×30×1.0, black coated) · Splice connectors</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Lift the carrier onto the rods along the module lines: the stud passes through the φ8 hole in the top plate, washer and double nut inside the channel, started but not tightened.</li>
+                    <li>Pull a line from one end and level point by point, putting the camber in at the same time.</li>
+                    <li>The carrier must run perpendicular to the baffles, with the slot mouths facing down and the slot phase consistent along the whole run — fitted upside down or out of phase and the return lips will not go in.</li>
+                    <li>Splice the 500 mm standard lengths with the connector; never leave a joint hanging mid-span unsupported; ends ≤ 300 mm from the wall.</li>
+                    <li>Once the whole area is level, tighten every double nut in the channel.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Level within 5 mm on a 5 m line</li>
+                    <li>≤ 2 mm on a 2 m straight edge</li>
+                    <li>Slot mouths undamaged and unblocked</li>
+                    <li>Camber smooth, no local sag</li>
+                  </ul>
+                  <p class="st-note">This system has only one carrier layer: it carries the load and it sets the position, and there is no second layer to save you.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">5</span>Clipping In the Baffles</h3>
+                  <p class="st-short">Opening upward · lips squeezed into the dovetail slots</p>
+                  <p class="st-row"><b>Duration</b> 2–3 days / 4 people (area dependent)</p>
+                  <p class="st-row"><b>Tools</b> Suction lifter / lifting bar · Tape · Laser line · Cotton gloves · Wireless pliers (to straighten crushed slots)</p>
+                  <p class="st-row"><b>Materials</b> U-channel aluminium baffle 50×100, wood grain · Matching accessories</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Before starting, check every slot run: straighten anything crushed in transit or handling with pliers; a blocked slot must never be substituted with wire.</li>
+                    <li>Work from the centre line outwards, starting with the first baffle off the datum line.</li>
+                    <li>Keep the baffle opening upward, lift it to design height and line the two inward lips up with the dovetail mouths in the carrier walls.</li>
+                    <li>Push up: the lips squeeze past the 4.5 necks into the 18.5 chambers, the legs pass the mouth and neck, and on release the lips hang on the shoulders — locked.</li>
+                    <li>The slots run at 22.5 all the way along, far denser than the baffles, so there is no one-slot-per-baffle rule: take the nearest slot and leave the empty ones alone.</li>
+                    <li>Check alignment with the laser as you go and hold spacing within 1 mm.</li>
+                    <li>Gloves throughout; wipe off fingerprints and adhesive residue, never bend a leg to level, and never drag the baffle across the grain face.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Spacing even within 1 mm</li>
+                    <li>Rows straight with no wave</li>
+                    <li>Panels free of warp, scratches and colour difference</li>
+                  </ul>
+                  <p class="st-note">Baffles go in as full lengths ordered to the run: a short offcut from the previous row is not used, and two pieces are never butted together inside the ceiling — the extra material costs less than a visible joint does. In high traffic or negative pressure zones (under air diffusers, for instance) add a matching aluminium hold-down clip every other baffle so the airflow cannot lift them and set up rattling.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">6</span>Details, Penetrations and Service Openings</h3>
+                  <p class="st-short">Lights / air valves / pelmet interfaces</p>
+                  <p class="st-row"><b>Duration</b> 1 day / with electrical and fire protection</p>
+                  <p class="st-row"><b>Tools</b> Hole saw · Jigsaw · Laser line · Vacuum</p>
+                  <p class="st-row"><b>Materials</b> Trim in matching grain · Ready-made access panel · Sealant (at colour differences)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Set out lights, sprinklers, smoke detectors and air valves onto the baffle back panel before cutting; no flame cutting.</li>
+                    <li>Support the edges of every opening with a short carrier piece or hold-down clip so the baffle around the hole cannot flex.</li>
+                    <li>The length of baffle beyond the last carrier is a free end: keep the cantilever within 250 mm, hang nothing on it, and close the wall junction with matching trim.</li>
+                    <li>Trim all junctions with walls, pelmet boxes and light coves with matching trim, keeping the joint width constant.</li>
+                    <li>Make access panels a demountable section that pushes down and out; never weld or glue a baffle to the carrier.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Openings on site with clean edges</li>
+                    <li>Trim joints even and unbroken</li>
+                    <li>Access sections removable on their own</li>
+                  </ul>
+                  <p class="st-note">With the opening facing upward every service penetration is cut from the back panel downwards: measure first, cut second — one wrong hole means taking a whole row down.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">7</span>Final Levelling and Cleaning</h3>
+                  <p class="st-short">Adjust the rod nuts only, never bend the aluminium</p>
+                  <p class="st-row"><b>Duration</b> 0.5–1 day</p>
+                  <p class="st-row"><b>Tools</b> Laser level · 2 m straight edge · Feeler gauge · Soft cloth / vacuum</p>
+                  <p class="st-row"><b>Materials</b> — (re-lock nuts and touch up colour where needed)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Look up along each row; where the surface bulges, trim the level on the corresponding rod nuts.</li>
+                    <li>Measure surface flatness with the 2 m straight edge and level and spacing with a line.</li>
+                    <li>Re-check the anchors for looseness, the dovetail slots for damage, and the trim for lifting.</li>
+                    <li>Peel off the protective film, remove fingerprints and adhesive residue, and clear debris out of the void.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Level within 5 mm</li>
+                    <li>Flatness within 2 mm</li>
+                    <li>Spacing within 1 mm</li>
+                    <li>Finish free of staining and scratches</li>
+                  </ul>
+                  <p class="st-note">Levelling is always done at the rod nuts. Aluminium bent past its elastic limit springs back leaving a gap, and it cannot be repaired.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">8</span>Completion Inspection and Handover</h3>
+                  <p class="st-short">Appearance + concealed work + documentation</p>
+                  <p class="st-row"><b>Duration</b> 0.5 day</p>
+                  <p class="st-row"><b>Tools</b> Laser level · Straight edge · Feeler gauge · Steel tape · Pull-out tester (sampling)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Appearance: overall straight, spacing even, no colour difference or scratches, consistent trim.</li>
+                    <li>Measured: record level, flatness, spacing, joint offsets and camber item by item.</li>
+                    <li>Concealed: anchor pull-out sampling, rod spacing and plumb, carrier spacing and connections.</li>
+                    <li>Documentation: certificates and test reports, concealed-work records, inspection lot acceptance records.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Ceiling level within 5 mm (5 m line)</li>
+                    <li>Surface flatness within 2 mm (2 m straight edge and feeler gauge)</li>
+                    <li>Baffle spacing within 1 mm, alignment within 2 mm</li>
+                    <li>Joint step within 0.5 mm, end set-back within 0.5 mm</li>
+                    <li>Rod plumb within 3 mm/m, carrier spacing within 3 mm</li>
+                    <li>Anchor pull-out sampling passed, nothing loose or pulled out</li>
+                    <li>Finish free of scratches, colour difference, warp and staining</li>
+                  </ul>
+                  <p class="st-note">For a toothed carrier system the handover record should also note demountability: two baffles sampled at random must come down and be refitted individually.</p>
+                </li>
+              </ol>
+            </div>
             <div class="panel-foot">
                 <div class="legend">
                     <span class="legend-title">Layer legend</span>

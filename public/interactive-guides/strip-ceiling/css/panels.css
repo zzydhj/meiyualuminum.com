@@ -1,3 +1,79 @@
+/* static-steps */
+
+/* Static copy of the eight operations, living in #stepsList of index.html.
+   stepsPanel.js empties that container before building the interactive list,
+   so this block is what a no-JS crawler or a JS-disabled visitor reads. */
+.st-list-wrap {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.st-lead {
+  margin: 0 0 12px;
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--text-dim, #93a1b0);
+}
+.st-item {
+  padding: 12px 0;
+  border-top: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+}
+.st-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.st-name {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: var(--text, #e8edf2);
+}
+.st-no {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent, #c0a882);
+}
+.st-short {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-dim, #93a1b0);
+}
+.st-row,
+.st-note {
+  margin: 4px 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-dim, #93a1b0);
+}
+.st-row b {
+  color: var(--text, #e8edf2);
+  font-weight: 650;
+}
+.st-h {
+  margin: 8px 0 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent, #c0a882);
+}
+.st-list,
+.st-checks {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--text-dim, #93a1b0);
+}
+.st-list li,
+.st-checks li {
+  margin: 2px 0;
+}
+
 /* =====================================================================
    panels.css —— 左右信息面板：工序流程清单 / Tab 详情（工序·部件·系统）
    颜色一律取自 base.css 的 :root 变量

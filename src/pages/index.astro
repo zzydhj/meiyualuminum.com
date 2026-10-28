@@ -110,8 +110,14 @@ const websiteJsonLd = {
   <!-- ===== Full-screen Video Hero Banner ===== -->
   <section class="video-hero">
     <video class="video-hero-bg" muted loop playsinline preload="metadata">
+      {
+        /* 版本号是必需的，不是装饰：R2 自定义域名对这类文件回 `cache-control:
+          max-age=31536000`（一年），而键名不变。业主 2026-10-28 重传了视频，
+          源站与边缘都已是新字节，但回访浏览器的旧条目还有一年才过期——
+          不改 URL 就只能你自己 Ctrl+F5 看得到。换视频时跟着改 ?v= 。 */
+      }
       <source
-        src="https://file.meiyualuminum.com/meiyu-video-3.mp4#t=0.1"
+        src="https://file.meiyualuminum.com/meiyu-video-3.mp4?v=20261028#t=0.1"
         type="video/mp4"
       />
     </video>

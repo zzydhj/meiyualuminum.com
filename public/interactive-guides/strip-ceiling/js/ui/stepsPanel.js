@@ -6,6 +6,8 @@ import { STEPS, STEP_COUNT } from '../data/steps.js';
 import { LAYERS } from '../data/parts.js';
 
 export function createStepsPanel({ listEl, legendEl, onSelect }) {
+  /* index.html ships a static copy of these operations for crawlers that do not run JavaScript. Empty the container first, or appendChild would stack the interactive list underneath it and every operation would appear twice. */
+  listEl.innerHTML = '';
   const items = [];
 
   STEPS.forEach((step) => {
