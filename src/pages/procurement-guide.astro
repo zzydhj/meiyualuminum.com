@@ -39,8 +39,11 @@ const quoteScope = [
         detail: "Priced per square metre or per panel as appropriate, against a take-off from your drawing — not a lump sum you cannot interrogate.",
     },
     {
-        inc: "MOQ per item and per specification",
-        detail: "Stated for each line, so a job mixing three colours reads as three lines with three minima rather than one blended figure.",
+        // 业主 2026-10-28：不能确认 item 的定义，所以这里不再写“每条线一个起订量”。
+        // 能确认的只有 50 m² 是订单层面的最低量；多饰面多规格会多换线这件事，
+        // 只能写成“在报价单上告诉你”，不得替厂里认下一个算法。
+        inc: "MOQ as a single order minimum",
+        detail: "50 m² on the order for standard panels, and 1,000 m² where custom perforation or profiling needs a die. Where your mix of finishes needs more set-up than that implies, it is said on the quotation rather than found out after you commit.",
     },
     {
         inc: "Lead time",
@@ -133,7 +136,7 @@ const rfqChecklist = [
 const faqs = [
     {
         q: "Is MOQ counted per project or per product?",
-        a: `Our standard offer is ${standardTerms[0].value}. That means per item and per specification: a job combining two colours of the same panel is two lines. Smaller trial quantities can be discussed at quotation stage.`,
+        a: `Our standard offer is ${standardTerms[0].value}. The 50 m² is a minimum on the order, not a figure we multiply by the number of lines on a take-off. What does change is set-up: a job that spreads those square metres over several finishes, perforations or panel types needs more than one production run, and we say at quotation what the order needs to look like to be made economically rather than after you have committed. Smaller trial quantities can be discussed at quotation stage.`,
     },
     {
         q: "When does the lead-time clock actually start?",
@@ -187,7 +190,7 @@ const faqJsonLd = {
         }}
     />
 
-    <!-- ══════ 1. 标准条款 ══════ -->
+    {/* ══════ 1. 标准条款 ══════ */}
     <section class="pg-band">
         <div class="pg-wrap">
             <div class="pg-head">
@@ -216,7 +219,7 @@ const faqJsonLd = {
         </div>
     </section>
 
-    <!-- ══════ 2. 报价范围 ══════ -->
+    {/* ══════ 2. 报价范围 ══════ */}
     <section class="pg-band pg-band--alt">
         <div class="pg-wrap">
             <div class="pg-head">
@@ -258,7 +261,7 @@ const faqJsonLd = {
         </div>
     </section>
 
-    <!-- ══════ 3. 物流与商务数据 ══════ -->
+    {/* ══════ 3. 物流与商务数据 ══════ */}
     <section class="pg-band">
         <div class="pg-wrap">
             <div class="pg-head">
@@ -311,7 +314,7 @@ const faqJsonLd = {
         </div>
     </section>
 
-    <!-- ══════ 4. 质保与索赔 ══════ -->
+    {/* ══════ 4. 质保与索赔 ══════ */}
     <section class="pg-band pg-band--alt">
         <div class="pg-wrap">
             <div class="pg-head">
@@ -365,7 +368,7 @@ const faqJsonLd = {
         </div>
     </section>
 
-    <!-- ══════ 5. RFQ 清单 + CTA ══════ -->
+    {/* ══════ 5. RFQ 清单 + CTA ══════ */}
     <section class="pg-band">
         <div class="pg-wrap">
             <div class="pg-head">

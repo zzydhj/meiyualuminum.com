@@ -96,7 +96,7 @@ const safeContent = (page?.content || "")
           }}
         />
 
-        <!-- hero_title 作为正文引导标题（hero_subtitle 已并入 PageHero 副标题） -->
+        {/* hero_title 作为正文引导标题（hero_subtitle 已并入 PageHero 副标题） */}
         {
           page.hero_title && (
             <section class="hero">
@@ -122,7 +122,7 @@ const safeContent = (page?.content || "")
         <!-- Page content (HTML from database) -->
         {page.content && <div class="page-content" set:html={safeContent} />}
 
-        <!-- Project Gallery (动态渲染 posts 表中 primary_tag='projects' 的文章) -->
+        {/* Project Gallery (动态渲染 posts 表中 primary_tag='projects' 的文章) */}
         {isProjectGallery && <ProjectGallery />}
       </>
     ) : (

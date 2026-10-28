@@ -82,7 +82,7 @@ export const STEPS = [
     short: 'Edge hooks snap into the carrier wall dovetails · flush joint',
     duration: '2–3 days / 4 people (area dependent)',
     tools: ['Suction lifter / lifting bar', 'Tape', 'Laser line', 'Cotton gloves', 'Wireless pliers (to straighten crushed wall edges)'],
-    materials: ['Aluminium strip panel 86×10×0.8, smooth-arc clip-in, wood grain', 'Matching accessories'],
+    materials: ['Aluminium strip panel 88×10×0.8, smooth-arc clip-in, wood grain', 'Matching accessories'],
     method: [
       'Before starting, check the free edge of every carrier run: straighten anything crushed in transit or handling with pliers — the panel edge hooks snap over it, so a bent wall edge shows on the finished surface.',
       'Work from the centre line outwards, starting with the first panel off the datum line.',

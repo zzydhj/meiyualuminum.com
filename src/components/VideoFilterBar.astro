@@ -54,7 +54,7 @@ const categories = [...tagCounts.entries()]
     .map(([tag]) => ({ tag, icon: iconMap[tag] ?? "🎬" }));
 ---
 
-<!-- Stats Strip（与 ProjectGallery 的 pg-stats 同款棕色条） -->
+{/* Stats Strip（与 ProjectGallery 的 pg-stats 同款棕色条） */}
 <section class="vf-stats">
     <div class="vf-stats-inner">
         <div class="vf-stat">
@@ -72,7 +72,7 @@ const categories = [...tagCounts.entries()]
     </div>
 </section>
 
-<!-- Category Pills：链接式筛选（服务端过滤 + 分页正确），当前分类高亮 -->
+{/* Category Pills：链接式筛选（服务端过滤 + 分页正确），当前分类高亮 */}
 <nav class="vf-filters" aria-label="Video categories">
     <a href="/videos/" class:list={["vf-filter-btn", { active: !currentTag }]}>
         <span class="vf-filter-icon">🎬</span>

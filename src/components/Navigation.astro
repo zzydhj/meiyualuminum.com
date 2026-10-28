@@ -61,9 +61,9 @@ import MegaMenu from "./MegaMenu.astro";
   </div>
 
   <div class="has-dropdown">
-    <!-- Resource 本身没有着陆页（子项才有），所以不给 href：
+    {/* Resource 本身没有着陆页（子项才有），所以不给 href：
          带 href="#" 时点一下会把页面弹回顶部，看起来像菜单坏了。
-         不给 href 的 <a> 不是链接也不可聚焦，下拉仍由 hover/focus 触发。 -->
+         不给 href 的 <a> 不是链接也不可聚焦，下拉仍由 hover/focus 触发。 */}
     <a tabindex="-1" aria-disabled="true">
       Resource
       <svg
@@ -83,7 +83,7 @@ import MegaMenu from "./MegaMenu.astro";
       </svg>
     </a>
     <div class="dropdown">
-      <!-- 三级飞出：子工具挂在 Free Tools 右侧弹出，不平铺进 Resource 下拉 -->
+      {/* 三级飞出：子工具挂在 Free Tools 右侧弹出，不平铺进 Resource 下拉 */}
       <div class="has-flyout">
         <a href="/tools/" class="flyout-trigger">
           Free Tools &amp; Calculators

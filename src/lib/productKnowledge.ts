@@ -294,7 +294,9 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Core", value: "AA3003 hexagonal honeycomb" },
             { label: "Cell Size", value: "6 / 10 / 15 / 20mm [vendor-typical]" },
             { label: "Total Thickness", value: "10 / 15 / 20 / 25 / 50mm [vendor-typical]" },
-            { label: "Max Panel", value: "Cut to the job — suppliers quote up to 2000 × 6000 mm [vendor-typical, unverified]" },
+            // 2026-10-28 业主定为对外统一上限（附录 A【最大板幅】），所以不再标
+            // [vendor-typical, unverified]：这是公司值，不是同行数据。
+            { label: "Max Panel", value: "Up to 2 000 × 6 000 mm; beyond that a board is split and the joint designed in rather than made to arrive in one piece" },
             { label: "Weight", value: "Roughly 7 kg/m² for a 20 mm facade panel against about 8 kg/m² for a 3 mm solid sheet [vendor-typical]" },
             { label: "Fire Rating", value: "All-aluminium cores argue for the top classes, but an A2 declaration needs a test report for the exact build-up; our own declarations are ASTM E84 Class A and EN 13501-1 Class B-s1 for the coated product" },
             { label: "Acoustic STC", value: "A property of the assembled wall; single-number claims without a test standard are not comparable" },

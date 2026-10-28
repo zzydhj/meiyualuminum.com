@@ -62,7 +62,9 @@ export const certBadges = [
 export const standardTerms: TermRow[] = [
     {
         label: "MOQ",
-        value: "50 m² per item for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)",
+        // 业主 2026-10-28：口径就是「50 平就能做」，无法确认 item 的定义，
+        // 所以对外不写 per item / 每项——一个说不清的限定词比不写更安全。
+        value: "50 m² for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)",
     },
     {
         // 2026-10-27 业主指令：取消原「标准 20–25 / 定制 30–40 工作日」双档，

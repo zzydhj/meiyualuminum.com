@@ -26,8 +26,8 @@ import {
     subtitle="What our documentation covers, and what we will send you on request."
 >
     <h2>What we work to</h2>
-    <!-- 样式必须用 DocPage 的 .doc-* 类：Footer 的 my-ft-badge 是 scoped 样式，
-       选择器带 Footer 的 data-astro-cid，在本页完全不会命中。 -->
+    {/* 样式必须用 DocPage 的 .doc-* 类：Footer 的 my-ft-badge 是 scoped 样式，
+       选择器带 Footer 的 data-astro-cid，在本页完全不会命中。 */}
     <ul class="doc-certs">
         {certBadges.map((badge) => <li>✓ {badge}</li>)}
     </ul>

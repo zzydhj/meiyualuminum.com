@@ -1,9 +1,9 @@
 /**
  * 把两份 3D 指南的工序文案静态化进 index.html。
  *
- * 用法：在仓库根跑 `node docs/guide-static-steps.mjs`。幂等：已注入过的包会跳过。
- * 改了任一份包的 js/data/steps.js 就要重跑一次，再跑 `python docs/guides-audit.py`
- * 确认静态文案与 steps.js 没漂移。
+ * 用法：在仓库根跑 `node docs/guide-static-steps.mjs`。可重复跑：每次从 steps.js
+ * 重新生成整块替换旧的，所以改了工序文案只要重跑一次就同步。
+ * 跑完再跑 `python docs/guides-audit.py` 确认没漂移。
  *
  * 为什么要静态化：public/ 下的指南页只有一层裸 HTML，8 道工序的名字、机具、
  * 材料、工艺、验收全在 js/data/steps.js 里等 JS 注入。Google 会渲染 JS（第二波，
@@ -17,7 +17,7 @@
  * 禁用 JS 的访客则直接读到全部工序——那正是没有 WebGL 时该有的样子。
  *
  * 文案不手写：直接从各包的 steps.js import 出来生成，杜绝两处文字打架。
- * 幂等：重复执行会跳过。
+ * 重复执行会整块重建（占位正则能匹配已生成的块，因为块内没有嵌套 div）。
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
@@ -139,11 +139,7 @@ for (const slug of SLUGS) {
 
   const { STEPS } = await import(pathToFileURL(join(dir, 'js', 'data', 'steps.js')).href);
   const idx = readFileSync(idxPath, 'utf8');
-
-  if (idx.includes(MARK)) {
-    console.log(`${slug}: 已静态化，跳过`);
-    continue;
-  }
+  const again = idx.includes(MARK);
 
   const placeholder = /(\s*)<div class="panel-body" id="stepsList">[\s\S]*?<\/div>/;
   const m = idx.match(placeholder);
@@ -181,7 +177,7 @@ for (const slug of SLUGS) {
   // 不先剥掉就会被我自己的 \n→\r\n 替换顶成 \r\r\n（每行之间多一个空行）。
   const body = block.replace(/\r/g, '').replace(/\n/g, eol);
   writeFileSync(idxPath, idx.replace(placeholder, () => body), 'utf8');
-  console.log(`${slug}: index.html 已注入 ${STEPS.length} 道工序静态文案`);
+  console.log(`${slug}: index.html ${again ? '已重建' : '已注入'} ${STEPS.length} 道工序静态文案`);
 
   let css = readFileSync(cssPath, 'utf8');
   if (!css.includes('/* static-steps */')) {

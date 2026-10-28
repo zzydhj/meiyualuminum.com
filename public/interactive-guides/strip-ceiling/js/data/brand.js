@@ -34,7 +34,7 @@ export const BRAND = {
   stencil: {
     word: 'MEIYU',
     tag: 'SAMPLE SECTION · MEIYU CEILINGS',
-    spec: 'Strip panel 86×10×0.8 clip-in · carrier 30×30×1.0',
+    spec: 'Strip panel 88×10×0.8 clip-in · carrier 30×30×1.0',
   },
 
   facts: [
@@ -62,7 +62,7 @@ export const BRAND = {
     },
     {
       k: 'MOQ',
-      v: '50 m² per item for standard profiles; 1,000 m² for custom perforation or profiles (tooling dependent)',
+      v: '50 m² per order for standard profiles; 1,000 m² for custom perforation or profiles (tooling dependent)',
     },
   ],
 };

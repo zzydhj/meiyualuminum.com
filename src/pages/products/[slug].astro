@@ -126,7 +126,7 @@ const jsonLd = {
               <img src={url} alt={`${product.title} - image ${i + 2}`} class="pk-thumb" data-full={url} width="80" height="60" loading="lazy" />
             ))}
           </div>
-          <!-- 缩略图列上下箭头：列高 = 大图高，装不下的靠箭头滚 -->
+          {/* 缩略图列上下箭头：列高 = 大图高，装不下的靠箭头滚 */}
           <button type="button" class="pk-thumb-nav pk-thumb-up" id="pk-thumb-up" aria-label="Scroll to previous images" aria-controls="pk-thumbs" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6" /></svg>
           </button>
@@ -141,7 +141,7 @@ const jsonLd = {
       {product.part_code && <p class="pk-part-code">Part No: {product.part_code}</p>}
       <p class="pk-desc"><em>{product.description}</em></p>
 
-      <!-- Certifications badges：先给信任，紧接下面就是行动按钮 -->
+      {/* Certifications badges：先给信任，紧接下面就是行动按钮 */}
       {knowledge && knowledge.certifications.length > 0 && (
         <div class="pk-certs">
           {knowledge.certifications.slice(0, 4).map((cert) => (
@@ -186,8 +186,8 @@ const jsonLd = {
         </a>
       )}
 
-      <!-- 公司级标准条款：只列影响报价的 3 行（MOQ / 交期 / 质保）；
-           standardTerms 第 4 条 Samples 不在此展示，因为紧邻的 Request Sample 按钮就是它的入口，重复写反而多占一行 -->
+      {/* 公司级标准条款：只列影响报价的 3 行（MOQ / 交期 / 质保）；
+           standardTerms 第 4 条 Samples 不在此展示，因为紧邻的 Request Sample 按钮就是它的入口，重复写反而多占一行 */}
       <div class="pk-terms">
         <p class="pk-specs-label">Ordering &amp; Terms</p>
         <table class="pk-terms-table">
@@ -205,7 +205,7 @@ const jsonLd = {
     </div>
   </div>
 
-  <!-- ══════ KEY FEATURES: enriched_specs 优先，回退品类通用 ══════ -->
+  {/* ══════ KEY FEATURES: enriched_specs 优先，回退品类通用 ══════ */}
   {displayFeatures.length > 0 && (
     <section class="pk-features">
       <h2>Key Features</h2>

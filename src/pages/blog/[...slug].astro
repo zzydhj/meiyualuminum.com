@@ -160,7 +160,7 @@ const articleContent = (post.content || "").replace(
   }
 
   <div class="blog-layout">
-    <!-- 左栏：文章正文（头部结构与视频详情页保持一致） -->
+    {/* 左栏：文章正文（头部结构与视频详情页保持一致） */}
     <article class="blog-article">
       {
         post.image_url && (
@@ -212,7 +212,7 @@ const articleContent = (post.content || "").replace(
       <div class="article-content" set:html={articleContent} />
     </article>
 
-    <!-- 右栏：推荐文章 + 所有标签（两个并列的独立区块） -->
+    {/* 右栏：推荐文章 + 所有标签（两个并列的独立区块） */}
     <div class="blog-sidebar">
       <RecommendedPosts excludeSlug={post.slug} primaryTag={post.primary_tag} />
       <SidebarTags />

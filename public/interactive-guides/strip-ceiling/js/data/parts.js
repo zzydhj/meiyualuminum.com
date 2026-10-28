@@ -177,9 +177,9 @@ export const PARTS = [
     explode: [0, -3.9, 0],
     installFrom: [0, -3.2, 0],
     labelOffset: [-225, 72],
-    keySpec: '86×10×0.8 · wood grain · smooth-arc clip-in edge',
+    keySpec: '88×10×0.8 · wood grain · smooth-arc clip-in edge',
     params: [
-      { k: 'Section', v: 'Smooth-arc clip-in channel, 86 wide face × 10 deep, 0.8 mm skin (per the smooth-arc generator HTML)' },
+      { k: 'Section', v: 'Smooth-arc clip-in channel, 88 wide face × 10 deep, 0.8 mm skin; laid on a 90 mm module, so the visible joint is 2 mm' },
       { k: 'Wall thickness', v: '0.8 mm — real rolled sheet thickness, not exaggerated for visibility' },
       { k: 'Clip-in edge', v: 'Both top edges stand up as a smooth arc and curl inward into a ~4.5 mm fishhook (tip flares back); the hook snaps through the carrier wall dovetail and hangs on the shoulder' },
       { k: 'R corner', v: 'The face meets each edge with a 2 mm arc (G1 continuous), so the visible finish has no sharp corner — the “smooth arc edge” look' },

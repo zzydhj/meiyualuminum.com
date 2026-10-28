@@ -59,7 +59,7 @@ export const BRAND = {
     },
     {
       k: 'MOQ',
-      v: '50 m² per item for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)',
+      v: '50 m² per order for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)',
     },
   ],
 };

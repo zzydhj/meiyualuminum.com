@@ -103,7 +103,7 @@ const videoJsonLd = {
   />
 
   <div class="video-layout">
-    <!-- 左栏：播放器 + 视频信息 + 详细介绍 -->
+    {/* 左栏：播放器 + 视频信息 + 详细介绍 */}
     <article class="video-article">
       {
         embedSrc && (
@@ -119,7 +119,7 @@ const videoJsonLd = {
         )
       }
 
-      <!-- 自托管视频：原生播放器，preload=metadata + #t=0.1 默认第一帧做封面 -->
+      {/* 自托管视频：原生播放器，preload=metadata + #t=0.1 默认第一帧做封面 */}
       {
         !embedSrc && selfHosted && (
           <div class="player-wrap">
@@ -177,7 +177,7 @@ const videoJsonLd = {
       {video.content && <div class="video-content" set:html={video.content} />}
     </article>
 
-    <!-- 右栏：推荐视频 + 所有标签（两个并列的独立区块） -->
+    {/* 右栏：推荐视频 + 所有标签（两个并列的独立区块） */}
     <div class="video-sidebar">
       <RecommendedVideos
         excludeSlug={video.slug}

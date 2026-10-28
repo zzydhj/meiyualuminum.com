@@ -9,7 +9,7 @@ export const SYSTEM = {
   params: [
     { k: 'Demo module', v: '1200 × 800 mm (1 scene unit = 100 mm)' },
     { k: 'System', v: 'Single toothed carrier + clip-in strip panels (no screws)' },
-    { k: 'Finish', v: 'Aluminium strip panel 86 × 10 × 0.8, smooth-arc clip-in edge, wood grain, laid at a 90 mm module with a fine joint, 8 pieces' },
+    { k: 'Finish', v: 'Aluminium strip panel 88 × 10 × 0.8, smooth-arc clip-in edge, wood grain, laid at a 90 mm module with a 2 mm joint, 8 pieces' },
     { k: 'Clip-in edge', v: 'Both top edges stand up as a smooth arc and curl inward into a ~4.5 mm fishhook (tip flares back); the hook snaps through the carrier wall dovetail mouth and hangs on the shoulder' },
     { k: 'Toothed carrier', v: 'U channel 30×30×1.0, black powder coating, 3 runs across the short span, opening downward' },
     { k: 'Dovetail slot', v: 'Punched in the free edge: mouth 9.5 / neck 4.5 / chamber 18.5; the strip panel edge hook snaps through it and the same slot also takes hold-down clips' },

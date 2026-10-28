@@ -23,7 +23,7 @@ const year = new Date().getFullYear();
 
 <footer class="my-ft">
   <div class="my-ft-inner">
-    <!-- Logo + 社媒 -->
+    {/* Logo + 社媒 */}
     <div class="my-ft-head">
       <div class="my-ft-head-logo">
         <img
@@ -32,8 +32,8 @@ const year = new Date().getFullYear();
         />
       </div>
 
-      <!-- 只保留已核实的真实账号。宁可不放，也不要留一排 href="#" 的空图标：
-           买家点半天没反应，读作“这个站没人维护”。加账号在下方添一个 <a> 即可。 -->
+      {/* 只保留已核实的真实账号。宁可不放，也不要留一排 href="#" 的空图标：
+           买家点半天没反应，读作“这个站没人维护”。加账号在下方添一个 <a> 即可。 */}
       <div class="my-ft-socials">
         <a
           class="soc--yt"
@@ -47,8 +47,8 @@ const year = new Date().getFullYear();
             ></path></svg
           ></a
         >
-        <!-- LinkedIn：当前给的是个人档案（/in/）。若以后建了公司主页（/company/），
-             只需换 href，图标不动。 -->
+        {/* LinkedIn：当前给的是个人档案（/in/）。若以后建了公司主页（/company/），
+             只需换 href，图标不动。 */}
         <a
           class="soc--li"
           href="https://www.linkedin.com/in/william-wei-meiyu-aluminum/"
@@ -89,9 +89,9 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <!-- 主体 -->
+    {/* 主体 */}
     <div class="my-ft-top">
-      <!-- 品牌描述 -->
+      {/* 品牌描述 */}
       <div class="my-ft-brand">
         <p>
           Premium aluminum ceiling panels, facade cladding and decorative metal
@@ -145,7 +145,7 @@ const year = new Date().getFullYear();
         </ul>
       </div>
 
-      <!-- Contact：公/私地址与电话均取自 companyFacts，不在这里敲字 -->
+      {/* Contact：公/私地址与电话均取自 companyFacts，不在这里敲字 */}
       <div class="my-ft-col">
         <h4>Contact Us</h4>
         <ul class="my-ft-contact">
@@ -169,7 +169,7 @@ const year = new Date().getFullYear();
         </ul>
       </div>
 
-      <!-- CTA 卡片 -->
+      {/* CTA 卡片 */}
       <div class="my-ft-cta-box">
         <strong>Contact MEIYU</strong>
         <p>
@@ -201,7 +201,7 @@ const year = new Date().getFullYear();
       {certBadges.map((badge) => <span class="my-ft-badge">✓ {badge}</span>)}
     </div>
 
-    <!-- 版权：年份自算，不写死（写死于 2026 会在明年自动变成陈旧信息） -->
+    {/* 版权：年份自算，不写死（写死于 2026 会在明年自动变成陈旧信息） */}
     <div class="my-ft-bottom">
       <span>© {year} {companyFacts.name}. All Rights Reserved.</span>
       <div>

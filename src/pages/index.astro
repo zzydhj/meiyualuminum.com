@@ -100,7 +100,7 @@ const websiteJsonLd = {
   hideTitle
   transparentHeader
 >
-  <!-- 预连接 CDN，省去 DNS+TCP+TLS 握手时间 -->
+  {/* 预连接 CDN，省去 DNS+TCP+TLS 握手时间 */}
   <Fragment slot="head">
     <link rel="preconnect" href="https://file.meiyualuminum.com" crossorigin />
   </Fragment>
@@ -1047,7 +1047,7 @@ const websiteJsonLd = {
   <!-- ===== Global Map Section ===== -->
   <div class="meiyu-map-wrapper">
     <div class="meiyu-map-container">
-      <!-- 顶部标题 + 数据 -->
+      {/* 顶部标题 + 数据 */}
       <div class="meiyu-map-topbar">
         <div>
           <div class="meiyu-map-tl-tag">Global Projects</div>
@@ -1078,9 +1078,9 @@ const websiteJsonLd = {
         </div>
       </div>
 
-      <!-- 主体 -->
+      {/* 主体 */}
       <div class="meiyu-map-body">
-        <!-- 地图 -->
+        {/* 地图 */}
         <div class="meiyu-map-wrap" id="meiyu-mw">
           <img
             src="https://file.meiyualuminum.com/home/world-map.webp"
@@ -1092,7 +1092,7 @@ const websiteJsonLd = {
             height="960"
           />
 
-          <!-- 点位 -->
+          {/* 点位 */}
           <div
             class="meiyu-map-pin lg"
             data-id="cn"
@@ -1179,7 +1179,7 @@ const websiteJsonLd = {
             </div><div class="core"></div>
           </div>
 
-          <!-- 图例 -->
+          {/* 图例 */}
           <div class="meiyu-map-legend">
             <div class="meiyu-map-leg-i">
               <div class="meiyu-map-leg-d" style="background:#C0A882"></div>50+
@@ -1204,7 +1204,7 @@ const websiteJsonLd = {
           </div>
         </div>
 
-        <!-- 右侧面板 -->
+        {/* 右侧面板 */}
         <div class="meiyu-map-panel">
           <div class="meiyu-map-p-head">
             <h3 id="meiyu-pReg">All Regions</h3>
@@ -1260,8 +1260,8 @@ const websiteJsonLd = {
         </p>
       </div>
       <div class="certificates-grid">
-        <!-- 证书扫描件不在 CDN 上（旧 home/certificates/* 已全部 404），
-             改用具名标准卡：只写可核实的标准，不编造编号与图。 -->
+        {/* 证书扫描件不在 CDN 上（旧 home/certificates/* 已全部 404），
+             改用具名标准卡：只写可核实的标准，不编造编号与图。 */}
         <div class="cert-card">
           <span class="cert-seal">
             <svg
@@ -2498,7 +2498,7 @@ const websiteJsonLd = {
   }
 </style>
 
-<!-- is:global: JS 通过 innerHTML 动态生成案例列表 DOM，作用域样式无法覆盖 -->
+{/* is:global: JS 通过 innerHTML 动态生成案例列表 DOM，作用域样式无法覆盖 */}
 <style is:global>
   /* ===== Global Map Section ===== */
   .meiyu-map-wrapper {

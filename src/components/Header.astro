@@ -31,14 +31,14 @@ const waHref = whatsappUrl(
             href={waHref}
             waSource="header_cta"
         />
-        <!-- 多语言暂处于停放态（lib/i18n 的 MULTILINGUAL_ENABLED = false，/zh/ 等语言路由全 404），
+        {/* 多语言暂处于停放态（lib/i18n 的 MULTILINGUAL_ENABLED = false，/zh/ 等语言路由全 404），
              所以切换器跟着隐。组件、样式、下拉逻辑全部保留未动，
-             以后把那个开关打开即可自动恢复，不需改这里。 -->
+             以后把那个开关打开即可自动恢复，不需改这里。 */}
         {MULTILINGUAL_ENABLED && <LanguageSwitcher />}
     </nav>
 </header>
 
-<!-- 移动端全屏手风琴菜单（< 1280px），独立于桌面端 Navigation -->
+{/* 移动端全屏手风琴菜单（< 1280px），独立于桌面端 Navigation */}
 <MobileMenu />
 
 {transparent && (

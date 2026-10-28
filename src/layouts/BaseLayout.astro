@@ -143,7 +143,7 @@ const orgJsonLd = {
       )
     }
 
-    <!-- Inter font — 异步加载，不阻塞首屏渲染 -->
+    {/* Inter font — 异步加载，不阻塞首屏渲染 */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -171,7 +171,7 @@ const orgJsonLd = {
     }
     <link rel="canonical" href={canonicalURL} />
 
-    <!-- hreflang 多语言替代链接 -->
+    {/* hreflang 多语言替代链接 */}
     {
       alternates.map((alt) => (
         <link
@@ -269,9 +269,11 @@ const orgJsonLd = {
     <!-- Global back-to-top sticky tab — bottom of the floating stack, flush to window bottom -->
     <BackToTop />
 
-    <!-- WhatsApp 点击统计：任何 wa.me 链接被点击 → 记一次 GA4 事件 whatsapp_click。
+    {
+      /* WhatsApp 点击统计：任何 wa.me 链接被点击 → 记一次 GA4 事件 whatsapp_click。
          wa.me 新开标签页，click 先于跳转触发；gtag 以 beacon 发送不丢失。
-         业务/运营在 GA4 → 报告 → 互动 → 事件 中查看 whatsapp_click。 -->
+         业务/运营在 GA4 → 报告 → 互动 → 事件 中查看 whatsapp_click。 */
+    }
     <script>
       document.addEventListener(
         "click",

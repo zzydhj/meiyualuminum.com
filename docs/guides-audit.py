@@ -133,6 +133,23 @@ for pkg in sorted(GUIDES.iterdir()):
     check("stepsPanel 填充前清空容器（不会重复渲染）",
           "listEl.innerHTML = ''" in read(pkg / "js" / "ui" / "stepsPanel.js"))
 
+    # 断面尺寸：文字层写的面宽必须等于模型里的面宽。
+    # 条扣包曾经文字写 86×10、模型画 88 宽/90 模数，买家量一下模型就知道两处不同。
+    spec_src = read(pkg / "js" / "model" / "spec.js")
+    face = re.search(r"(?:STRIP|BAFFLE)\s*=\s*\{[^}]*?width:\s*([\d.]+)", spec_src, re.S)
+    if face:
+        mm = round(float(face.group(1)) * 100)
+        stale = []
+        for f in ("js/data/parts.js", "js/data/overview.js", "js/data/steps.js", "js/data/brand.js"):
+            for m in re.finditer(r"(\d{2,3})\s*[×x]\s*\d{1,2}\s*[×x]\s*0?\.\d", read(pkg / f)):
+                if int(m.group(1)) != mm:
+                    stale.append("%s:%s" % (f, m.group(0)))
+            for m in re.finditer(r"(\d{2,3})\s+wide face", read(pkg / f)):
+                if int(m.group(1)) != mm:
+                    stale.append("%s:%s wide" % (f, m.group(1)))
+        check("文字层面宽 = 模型面宽（%d mm）且无旧值残留" % mm, not stale,
+              str(stale) if stale else "parts/overview/steps/brand 全部对齐")
+
     # 会渲染给访客的中文（注释已剔除）
     bad = []
     for f in sorted((pkg / "js").rglob("*.js")) + [pkg / "index.html"]:

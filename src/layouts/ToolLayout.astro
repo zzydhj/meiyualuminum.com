@@ -132,12 +132,12 @@ const jsonLd = {
 
     <div class="tl-main">
         <div class="tl-grid">
-            <!-- 左：计算器本体（子页面注入） -->
+            {/* 左：计算器本体（子页面注入） */}
             <div class="tl-tool">
                 <slot />
             </div>
 
-            <!-- 右：假设、边界、依据、下一步 -->
+            {/* 右：假设、边界、依据、下一步 */}
             <aside class="tl-side">
                 <section class="tl-card">
                     <h2 class="tl-h">Assumptions</h2>
@@ -163,7 +163,7 @@ const jsonLd = {
                         the full system — panels, carriers, perimeter trim and
                         fixings itemised, so nothing arrives missing on site.
                     </p>
-                    <!-- id 供工具脚本在运行时刷新 data-inquiry-message，把计算结果带进询盘正文 -->
+                    {/* id 供工具脚本在运行时刷新 data-inquiry-message，把计算结果带进询盘正文 */}
                     <InquiryButton
                         id="tool-inquiry"
                         label="Send These Figures"
