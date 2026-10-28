@@ -31,6 +31,20 @@ export const companyFacts = {
     phone: "+86 135 0983 8008",
 };
 
+/**
+ * WhatsApp 链接的唯一构造入口。
+ *
+ * 号码仍然只存上面 companyFacts.phone 一处（wa.me 只收纯数字，所以剔掉符号）。
+ * 以前页眉 / 页脚 / 悬浮按钮 / About / 采购须知 / 询盘区块各写一份，
+ * 其中四处把 8613509838008 硬写在代码里，而号码换过一次（旧号 8617671728821 已作废），
+ * 再换一次就得改六个地方。
+ *
+ * 带 data-wa-source 的埋点由 BaseLayout 全局监听 wa.me 上报 GA4，新加链接时记得传 waSource。
+ */
+export const WHATSAPP_NUMBER = companyFacts.phone.replace(/[^\d]/g, "");
+export const whatsappUrl = (message: string): string =>
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
 /** 认证与合规徽章：只写「标准名 + 合规状态」，证书/报告编号不公开（附录 A 红线） */
 export const certBadges = [
     "ISO 9001",

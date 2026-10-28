@@ -9,6 +9,7 @@
  * - 暖色渐变带 + 圆角描边，与站点品牌色（棕 #69574a / 金 #c09020）协调
  */
 import InquiryForm from "./InquiryForm.astro";
+import { whatsappUrl } from "../lib/companyProfile";
 
 interface Props {
     /** 来源页路径，透传给 InquiryForm 的隐藏字段 */
@@ -28,16 +29,17 @@ const {
     desc = "Tell us about your project — our engineering team replies within 1 hour with pricing, specifications and recommendations.",
 } = Astro.props;
 
-const WHATSAPP_URL =
-    "https://wa.me/8613509838008?text=" +
-    encodeURIComponent("Hi, I'm interested in your aluminum products");
+// 号码不再硬写在本文件，走 companyProfile.whatsappUrl（唯一来源 companyFacts.phone）
+const WHATSAPP_URL = whatsappUrl(
+    "Hi, I'm interested in your aluminum products",
+);
 ---
 
 <section class="ifs" aria-label="Inquiry form">
     <div class="ifs-inner">
         <div class="ifs-copy">
             <div class="ifs-head">
-                <p class="ifs-eyebrow">Get a Free Quote</p>
+                <p class="ifs-eyebrow">Get a Quote</p>
                 <h2 class="ifs-title">{title}</h2>
                 <p class="ifs-desc">{desc}</p>
             </div>
@@ -68,7 +70,7 @@ const WHATSAPP_URL =
                     <span class="ifs-step-txt">
                         <strong>Confirm samples &amp; drawings</strong>
                         <small
-                            >Free samples and shop drawings before you place an
+                            >Sample panels and shop drawings before you place an
                             order.</small
                         >
                     </span>

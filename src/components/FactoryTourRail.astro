@@ -21,7 +21,7 @@
  */
 import { supabase } from "../lib/supabase";
 import { firstFrameSrc, isSelfHostedVideo } from "../lib/videoSource";
-import { companyFacts } from "../lib/companyProfile";
+import { whatsappUrl } from "../lib/companyProfile";
 
 const { data } = await supabase
   .from("videos")
@@ -44,11 +44,11 @@ const steps = (data ?? [])
 const total = steps.length;
 
 // 收尾 CTA 直连 WhatsApp（2026-10-13 用户指定）：看完工序带的人正处于
-// “想聊这块板子”的情绪里，多一跳 /contact/ 会折掉一半。号码取 companyFacts，
-// wa.me 只收纯数字。
-const waHref = `https://wa.me/${companyFacts.phone.replace(/\D/g, "")}?text=${encodeURIComponent(
+// “想聊这块板子”的情绪里，多一跳 /contact/ 会折掉一半。号码与链接构造
+// 统一走 companyProfile.whatsappUrl（唯一来源 companyFacts.phone）。
+const waHref = whatsappUrl(
   "Hi, I'd like to ask about a panel build — can you advise on specifications and pricing?",
-)}`;
+);
 ---
 
 {

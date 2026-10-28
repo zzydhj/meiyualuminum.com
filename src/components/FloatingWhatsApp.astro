@@ -7,11 +7,12 @@
  * - 绿色品牌色 + 脉冲光环动效
  * - 在 BaseLayout.astro 中引入一次即可，所有页面自动生效
  */
-const WHATSAPP_NUMBER = "8613509838008";
-const WHATSAPP_MESSAGE = encodeURIComponent(
+import { whatsappUrl } from "../lib/companyProfile";
+
+// 号码不再硬写在组件里，走 companyProfile.whatsappUrl（唯一来源 companyFacts.phone）。
+const WHATSAPP_URL = whatsappUrl(
   "Hi, I'm interested in your aluminum products",
 );
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
 ---
 
 <a

@@ -19,6 +19,7 @@ import {
     standardTerms,
     termsNote,
     responseTime,
+    whatsappUrl as waUrl,
 } from "../lib/companyProfile";
 
 // BaseLayout 会拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里 ≤ 52 字；description ≤ 160。
@@ -158,8 +159,8 @@ const faqJsonLd = {
     })),
 };
 
-const waUrl = (msg: string) =>
-    `https://wa.me/8613509838008?text=${encodeURIComponent(msg)}`;
+// waUrl 已换成从 companyProfile 引入的 whatsappUrl（号码唯一来源 companyFacts.phone），
+// 本页调用点仍用 waUrl 这个短名。
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>

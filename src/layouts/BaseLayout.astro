@@ -4,7 +4,7 @@ import Footer from "../components/Footer.astro";
 import FloatingInquiry from "../components/FloatingInquiry.astro";
 import FloatingWhatsApp from "../components/FloatingWhatsApp.astro";
 import BackToTop from "../components/BackToTop.astro";
-import FloatingFreeSample from "../components/FloatingFreeSample.astro";
+import FloatingSampleCta from "../components/FloatingSampleCta.astro";
 import InquiryModal from "../components/InquiryModal.astro";
 import "../styles/global.css";
 import { DEFAULT_LANG, buildAlternates, type Lang } from "../lib/i18n";
@@ -258,8 +258,8 @@ const orgJsonLd = {
     <!-- Global floating inquiry FAB — fixed bottom-right, all pages -->
     <FloatingInquiry />
 
-    <!-- Global floating Free Sample capsule — above WhatsApp, desktop only -->
-    <FloatingFreeSample />
+    <!-- Global floating Sample Panels capsule — above WhatsApp, desktop only -->
+    <FloatingSampleCta />
 
     <!-- Global floating WhatsApp button — above inquiry FAB -->
     <FloatingWhatsApp />

@@ -177,8 +177,15 @@ const { source = "", regarding = "" } = Astro.props;
     ></textarea>
   </label>
 
+  {
+    /* 2026-10-27：原文案断言“提供免费样品”，那是一句成本承诺，但附录 A 没有样品政策条目，
+     而 src/lib/companyProfile.ts 的 Samples 条款上写着「只写不含数字与费用承诺的能力陈述」。
+     改成只问要不要样品板，不替业主承诺免费；字段名一并改掉（全仓仅此一处引用）。
+     注：这里用 Astro 的表达式注释而不是 HTML 注释，前者只在编译期存在，
+     不会随页面源码发给访客。 */
+  }
   <label class="checkbox-field">
-    <input type="checkbox" name="free_sample" value="Yes" />
+    <input type="checkbox" name="sample_request" value="Yes" />
     <span class="checkbox-box" aria-hidden="true">
       <svg
         viewBox="0 0 16 16"
@@ -194,7 +201,8 @@ const { source = "", regarding = "" } = Astro.props;
       </svg>
     </span>
     <span class="checkbox-text"
-      >We support free samples for you to test the quality. Do you need them?</span
+      >Would you like sample panels to check quality, colour and finish before
+      ordering?</span
     >
   </label>
 

@@ -7,7 +7,7 @@ import { supabase } from "../../lib/supabase";
 import { getCategoryChain } from "../../lib/categoryPath";
 import { productKnowledge, type ProductEnrichedSpecs, type ProductKnowledge } from "../../lib/productKnowledge";
 import { guideForCategories, guidePath, guideStepHref } from "../../lib/interactiveGuides";
-import { standardTerms, termsNote } from "../../lib/companyProfile";
+import { standardTerms, termsNote, whatsappUrl } from "../../lib/companyProfile";
 import { currentLang } from "../../lib/i18n";
 
 // SSR 按需渲染
@@ -150,12 +150,25 @@ const jsonLd = {
         </div>
       )}
 
-      <!-- CTA Buttons：放在右栏顶部（首屏必现）。
+      {/* CTA：放在右栏顶部（首屏必现）。
            不能靠后：hero 从文档 ~217px 起，右栏内容高 ~800px，按钮若排在规格表之后
-           会落在文档 y≈950，在 845 高（及更矮的笔记本）视口里首屏完全看不到。 -->
+           会落在文档 y≈950，在 845 高（及更矮的笔记本）视口里首屏完全看不到。
+
+           2026-10-27 业主指令：删掉原来那个带「Free」字样的报价按钮。一是询盘本来
+           就不收费，标免费是个没意义的承诺；二是它与旁边的样品按钮调的是同一个弹窗、
+           连预填正文都没区别，功能 100% 重复。现在只留一个主按钮，直接带产品名跳 WhatsApp。
+           询盘表单入口没丢：右下角全局悬浮 FAB 与下方 Docs 区的
+           「Request Documents with an Enquiry」开的还是同一个弹窗。
+           用表达式注释而不是 HTML 注释：前者不会随页面源码发给访客。 */}
       <div class="pk-cta-row">
-        <InquiryButton label="Get a Free Quote" class="pk-cta-primary" />
-        <InquiryButton label="Request Sample" class="pk-cta-secondary" />
+        <InquiryButton
+          label="Request Sample"
+          class="pk-cta-primary"
+          href={whatsappUrl(
+            `Hi, I'd like sample panels of ${product.title} — can you advise on colour, finish and perforation options?`,
+          )}
+          waSource="product_sample"
+        />
       </div>
 
       {/* 规格表不放在首屏：左栏画廊只有 ~584px（列宽 668 扣掉 84 缩略图槽，1:1 即高），
@@ -440,7 +453,7 @@ const jsonLd = {
     source={Astro.url.pathname}
     regarding={product.title}
     title="Need Help Selecting the Right Product?"
-    desc="Our engineering team provides free technical consultation, shop drawing support, and custom quotations. Tell us about your project and we'll recommend the optimal solution."
+    desc="Our engineering team provides technical consultation, shop drawing support, and custom quotations. Tell us about your project and we'll recommend the optimal solution."
   />
 </BaseLayout>
 
@@ -604,8 +617,8 @@ const jsonLd = {
 
   .pk-cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 1.75rem; }
   .pk-cta-row :global(.pk-cta-primary) { background-color: #69574a !important; padding: .7rem 1.5rem !important; font-size: 1rem !important; }
-  .pk-cta-row :global(.pk-cta-secondary) { background-color: transparent !important; color: #69574a !important; border: 2px solid #69574a !important; box-shadow: none !important; padding: .65rem 1.5rem !important; font-size: 1rem !important; }
-  .pk-cta-row :global(.pk-cta-secondary:hover) { background-color: #69574a !important; color: #fff !important; }
+  /* 描边胶囊样式已随第二个按钮一起下线（2026-10-27）：
+     现在右栏顶部只有一个主按钮。 */
 
   .pk-certs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
   .pk-cert-badge { display: inline-block; font-size: .72rem; font-weight: 600; color: #69574a; background: #f5f0eb; border: 1px solid #e2d6c8; border-radius: 4px; padding: 3px 10px; }

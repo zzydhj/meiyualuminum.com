@@ -5,17 +5,16 @@ import MobileMenu from "../components/MobileMenu.astro";
 import InquiryButton from "../components/InquiryButton.astro";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import { MULTILINGUAL_ENABLED } from "../lib/i18n";
-import { companyFacts } from "../lib/companyProfile";
+import { whatsappUrl } from "../lib/companyProfile";
 
 /** transparent: 首页传入 true，桌面端 header 初始透明覆盖在 hero 上，滚动后变白 */
 const { transparent = false } = Astro.props;
 
-// 页眉 CTA 直接走 WhatsApp（2026-10-25 用户指定）：号码从 companyFacts.phone 派生，
-// 与页脚 / 悬浮按钮单一事实源一致；wa.me 只收纯数字。BaseLayout 全局监听 wa.me 上报 GA4。
-const waNumber = companyFacts.phone.replace(/[^\d]/g, "");
-const waHref = `https://wa.me/${waNumber}?text=${encodeURIComponent(
+// 页眉 CTA 直接走 WhatsApp（2026-10-25 用户指定）：号码与链接构造统一走
+// companyProfile.whatsappUrl（唯一来源 companyFacts.phone）；BaseLayout 全局监听 wa.me 上报 GA4。
+const waHref = whatsappUrl(
     "Hi, I'd like to get a quote for aluminium panels — can you help?",
-)}`;
+);
 ---
 
 <header class:list={[{ transparent }]}>

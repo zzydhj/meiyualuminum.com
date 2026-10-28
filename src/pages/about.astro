@@ -31,7 +31,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import { supabase } from "../lib/supabase";
 import { isSelfHostedVideo, firstFrameSrc } from "../lib/videoSource";
-import { companyFacts, certBadges } from "../lib/companyProfile";
+import {
+    companyFacts,
+    certBadges,
+    whatsappUrl as waUrl,
+} from "../lib/companyProfile";
 
 // SSR：本页 Factory Tour 区块读 videos 表，转静态会让“上传新视频”必须跟着一次重建部署。
 export const prerender = false;
@@ -40,14 +44,12 @@ const CDN = "https://file.meiyualuminum.com/";
 const IMG_STORY = `${CDN}home/custom-aluminum-single-panel-design-factory-installation-building-facade.webp`;
 const IMG_TEAM = `${CDN}home/meiyu-engineer-architectural-3d-modeling-laser-scanner-construction-site.webp`;
 
-/** WhatsApp 与 FloatingWhatsApp 同一号码；BaseLayout 已全局埋 whatsapp_click 事件 */
-const WHATSAPP_NUMBER = "8613509838008";
-const waUrl = (msg: string) =>
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+// WhatsApp 链接统一走 companyProfile.whatsappUrl（号码唯一来源是 companyFacts.phone），
+// 本页沿用 waUrl 这个短名；BaseLayout 全局监听 wa.me 上报 GA4 whatsapp_click。
 
-// BaseLayout 会把标题拼成 `{pageTitle} | Meiyu Aluminum`（后缀 17 字），所以这里必须按
-// 「总长 ≤ 60」反推：42 + 17 = 59。品牌名不写在 pageTitle 里，后缀已经带了，
-// 否则就是「MEIYU … | Meiyu Aluminum」双重品牌（/technical-documentation/ 就撞在这个坑上）。
+// BaseLayout 会把标题拼成 `{pageTitle} | MEIYU`（后缀 8 字），所以这里必须按
+// 「总长 ≤ 60」反推：42 + 8 = 50。品牌名不写在 pageTitle 里，后缀已经带了，
+// 否则就是「MEIYU … | MEIYU」双重品牌。
 // 描述同理控制在 160 字内——这两个字段以前分别是 73 和 274 字，一直超标，
 // 而 docs/seo-audit.py 只查数据库页、不查静态页，所以从来没被报出来。
 const pageTitle = "About Our Aluminium Ceiling & Facade Plant";
@@ -424,7 +426,7 @@ const tourHooks = [
             class="ab-btn ab-btn--light"
             data-open-inquiry-modal
         >
-            Get a Free Quote
+            Get a Quote
             <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -1073,7 +1075,7 @@ const tourHooks = [
                             class="ab-btn ab-btn--light ab-btn--lg"
                             data-open-inquiry-modal
                         >
-                            Get a Free Quote
+                            Get a Quote
                             <svg
                                 viewBox="0 0 24 24"
                                 fill="none"
@@ -1088,12 +1090,12 @@ const tourHooks = [
                         <a
                             class="ab-btn ab-btn--outline-light ab-btn--lg"
                             href={waUrl(
-                                "Hi, I'd like a free sample and a quote for my project",
+                                "Hi, I'd like sample panels and a quote for my project",
                             )}
                             target="_blank"
                             rel="noopener noreferrer"
                             data-wa-source="about_cta"
-                            >Free Sample on WhatsApp</a
+                            >Sample Panels on WhatsApp</a
                         >
                     </div>
                 </div>
