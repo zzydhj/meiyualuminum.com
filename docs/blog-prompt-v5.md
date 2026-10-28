@@ -358,7 +358,11 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
   EN 13501-1 Class B-s1。自有 QC 测试：涂层附着力、盐雾、抗 sag（标准环境模拟）；
   报告编号报价阶段应索提供，不公开。
 【产品线】metal ceiling tiles；strip linear ceiling panels；aluminum wall cladding panels；
-  perforated acoustic ceiling panels。
+  perforated acoustic ceiling panels；insulated facade panels（铝皮 + 矿棉/PU 芯由本厂复合，
+  factory-bonded——业主 2026-10-28 确认）。⚠ 该条只授权“复合工艺本身”：芯材厚度档位、导热系数、
+  密度、成品 U 值均无本厂自测数据 → 行业数字一律标 [vendor-typical]，防火只按【认证】现有口径写
+  （ASTM E84 Class A / EN 13501-1 B-s1），不得写 A2-s1,d0（无报告）；保温层与面板的组装热工性能
+  归为“按项目测试/建模”，不给单值。
 【定制】厚度 0.8–1.5mm（3003/5052 铝合金）；标准尺寸 300×300mm 至 600×1200mm、可按项目图纸定制；
   穿孔 round/square/slot、孔径 1.5–6mm、开孔率 10%–30%（按 NRC 需求计算）；
   表面 PE、PVDF、powder coating、anodizing、wood-grain transfer、brushed/mirror；

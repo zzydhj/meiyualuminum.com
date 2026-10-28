@@ -799,4 +799,80 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         ],
         certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 Class B-s1"],
     },
+
+    // ═══════════════════════════════════════════════════════
+    // Facade & Exterior Cladding（幕墙家族级条目）
+    //     注意与上面各叶子条目的分工：本条目描述的是整个外挂家族的共同事实
+    //     （板材、节点、龙骨、涂层、防火口径），而不是某一个产品的参数。
+    //     只有一级分类直挂在 facade-exterior-cladding 下、没有叶子分类的产品会命中它
+    //     （现在是 insulated-facade-panel）。产品专属参数一律走 enriched_specs 覆盖。
+    //     数值来源标注：[calculated] = 按物理常数算术推出；[vendor-typical] = 行业典型值，
+    //     不是本厂实测；[standard] = 标准条文要求。公司值只取附录 A。
+    // ═══════════════════════════════════════════════════════
+    "facade-exterior-cladding": {
+        categorySlug: "facade-exterior-cladding",
+        categoryName: "Facade & Exterior Cladding",
+        overview:
+            "The exterior cladding family shares one logic: an aluminium skin carries the weather, the UV and the colour; a subframe carries the wind load and absorbs the building's movement; and the joint between panels is a designed detail rather than a gap left by the fixer. What differs across the family is what sits between the skin and the subframe — nothing (solid veneer cassettes), a stiffening honeycomb core where flatness over a large module is the problem, a thermal core where the wall must insulate and reclad in one operation, or a formed rib where texture is the design intent. Panels are cut and formed to the project drawing, so the elevation, not a catalogue, sets the module size.",
+        keyFeatures: [
+            "Cut and formed to the setting-out drawing — facade work is drawn, not picked off a shelf of stock sizes",
+            "Our standard sheet range 0.8–1.5 mm in 3003 / 5052; heavier facade gauges are produced to the specified drawing rather than held as stock",
+            "Rear fixing provision — brackets, cleats and hanging ears — formed or welded with the panel and shown on the shop drawing",
+            "Open or closed joint is a system decision taken before manufacture: it changes the build-up, the membrane line and the cost",
+            "PVDF coating at the AAMA 2605 performance tier — 15-year standard-offer warranty",
+            "Non-combustible metal surface; our declarations are ASTM E84 Class A and EN 13501-1 B-s1,d0 for the coated product",
+            "Insulated build-ups are factory-bonded over a mineral wool or polyurethane core; the core ladder and its lambda are set per project, because they follow from the wall's thermal and fire targets",
+            "A drained, back-ventilated cavity is the default exterior detail — the weather line sits behind the panels, not on them",
+        ],
+        technicalSpecs: [
+            { label: "Material", value: "AA3003 / AA5005 aluminium; our standard sheet range 0.8–1.5 mm, heavier facade gauges to the specified drawing" },
+            { label: "Panel Format", value: "Cut to the project drawing; 300 × 300 to 600 × 1200 mm is our standard working envelope, larger modules are a project decision" },
+            { label: "Edge / Form", value: "Cassette folds, welded returns and square-corner mitres per the elevation; curved panels formed to the model" },
+            { label: "Weight", value: "gauge (mm) × 2.7 kg/m² — 1.0 mm ≈ 2.7, 1.5 mm ≈ 4.05 kg/m² of skin [calculated at 2 700 kg/m³]; add core and rear layer for a sandwich" },
+            { label: "Fire", value: "Aluminium is not a fuel. Our declarations are ASTM E84 Class A and EN 13501-1 B-s1,d0; a cored build-up is classified as an assembly, and an A2 declaration needs a test report for that exact construction — we do not quote a class we have not tested" },
+            { label: "Thermal", value: "A U-value belongs to the assembled wall, not to a panel. Core resistance is R = d / λ using the λ published for the specified core [vendor-typical]; the cavity, brackets and cut edges are the facade engineer's part of the sum" },
+            { label: "Thermal Movement", value: "2.4 × 10⁻⁵ per °C — allow roughly 3 mm per metre of span per 100 °C of surface swing [calculated]; the subframe and joint absorb it, the skin cannot" },
+            { label: "Wind Load", value: "Engineered and tested per project against the design pressure and the actual module size — not a fixed product rating" },
+            { label: "Dissimilar Metals", value: "Aluminium separated from carbon steel at every contact by gasket, coating or stainless fastener; a galvanised steel subframe belongs behind the insulation line" },
+            { label: "Tolerance & Flatness", value: "Agreed on the shop drawing per gauge, format and joint, and verified on the first article before series production" },
+            { label: "Acoustics", value: "A perforated skin over a core is an assembly, and any NRC or Rw figure belongs to a tested build-up including the cavity — not to the sheet" },
+        ],
+        surfaceOptions: [
+            { name: "PVDF (Fluorocarbon)", description: "The exterior grade for facades and soffits. Two, three or four-coat systems at the AAMA 2605 resin tier — the choice that survives UV, coastal salt and industrial air without chalking.", thickness: "25–40 µm total film", warranty: "15-year standard offer", suitableFor: ["Exterior facades", "Coastal and high-salt sites", "Entrance soffits and canopies", "Landmark elevations"] },
+            { name: "Powder Coating (Polyester)", description: "Electrostatic thermoset polyester, baked after forming, so folds, returns and welded corners are covered as well as the face. Wide RAL range and the usual interior choice.", thickness: "60–80 µm film", warranty: "Standard offer — confirm at quotation", suitableFor: ["Interior linings", "Covered elevations", "Column wraps and bulkheads", "Budget-conscious facades"] },
+            { name: "Coil / Roller Coating (PE)", description: "Pre-finished aluminium coil, rolled and cut, so colour is perfectly even across a long run and the price is the lowest on the page. The coating stops where the sheet is cut or folded — legs and ends are bare metal.", thickness: "18–25 µm polyester", warranty: "10-year standard offer (PE tier)", suitableFor: ["Large uniform runs", "Soffits behind the joint line", "Interior feature planes", "Cost-managed cladding"] },
+            { name: "Wood-Grain Transfer or Film", description: "Timber appearance on aluminium, sublimation-printed into the coating or bonded as a laminate film. The species names on every chart — oak, teak, walnut — are marketing labels, not a botanical grade, so approve a physical sample and check the film's exterior rating.", thickness: "Film or transfer system over base coat", warranty: "Standard offer — confirm at quotation", suitableFor: ["Hotels and restaurants", "Lobbies", "Warm-elevation facades", "Retrofits over cladding frames"] },
+            { name: "Anodised, Brushed or PVD", description: "Integral oxide, optionally with a brushed grain or a PVD metallic tone. Genuine metal depth with no film to break at the fold, and the only finish that reads correctly under raking daylight on a flat plane.", thickness: "10–25 µm oxide layer", warranty: "Outside the coating warranty schedule; the oxide is UV-stable", suitableFor: ["Interior feature walls", "Low-rise elevations", "Lift lobbies and joinery", "Minimalist metallic design"] },
+        ],
+        standardSizes: [
+            { label: "Standard Working Envelope", value: "300 × 300 mm to 600 × 1200 mm; anything larger is a project decision, not a catalogue step" },
+            { label: "Facade Cassettes", value: "Cut and folded to the elevation — module size follows the setting-out drawing and the joint pattern" },
+            { label: "Curved Panels", value: "Formed to the model; cold roll-forming is commonly held to a radius of about 5 × sheet thickness [vendor-typical], and double curvature is project-specific" },
+            { label: "Perforated Skins", value: "Ø1.5–6 mm, open area 10–30% (our stated capability range), calculated against the acoustic target" },
+            { label: "Insulated Build-Up", value: "Skin + thermal core + rear layer; core type and thickness are set per project — see the insulated facade panel product page" },
+            { label: "Accessories", value: "Matching trims, reveals, shadow-line carriers, edge profiles and fixing brackets in the same finish" },
+        ],
+        installationSteps: [
+            { step: 1, title: "Survey and Setting-Out", description: "Check the substrate against the drawing — existing structures never match the as-designed record. Set the finished facade line, the floor-line reveals and the joint pattern, and record where the brackets and cut panels will fall before anything is fabricated." },
+            { step: 2, title: "Subframe / Batten Line", description: "Fix the aluminium or galvanised steel batten line to the substrate with the anchorage the structural engineer has specified for this wall and this loading. Level and plumb it properly: a cladding skin repeats every deviation instead of hiding it." },
+            { step: 3, title: "Weather Barrier and Insulation", description: "Lap and tape the breather membrane over the line, then install the insulation layer — or receive it already bonded to the panel on an insulated build-up. The membrane, not the panel, is the weather line in an open-jointed system." },
+            { step: 4, title: "Bracket Line and Adjustment", description: "Set the panel brackets or cleats to the drawing, with the travel needed to take the bracket line out of true and the movement allowance the span requires. Separate dissimilar metals at every contact." },
+            { step: 5, title: "Panel Hanging", description: "Hang from the bottom up on the established datum, working outward from the main sight line. Check the joint width at every course rather than only at the end of a bay — cumulative error in a cladding run shows up as a visible taper at the parapet." },
+            { step: 6, title: "Joint Closure and Protection", description: "Close the joint as specified: gasket, backer rod and sealant, or leave it deliberately open on a drained cavity. Treat site cuts as a drawing item and seal the exposed edge. Remove the coating protection only at handover." },
+        ],
+        installationTips: [
+            "Decide the joint before manufacture, not on the scaffold — open and closed systems need different panel edges, different membrane details and different tolerances",
+            "Photograph the bracket line, the membrane laps and the insulation continuity before they are covered; that record is the submittal evidence and the future maintenance map",
+            "Keep bonded panels with a mineral core stored flat and dry — insulation that gets wet before installation does not return to the lambda it was quoted on",
+            "Do not cut the cavity's drainage path at sills, reveals and the base of the run; a blocked weep line turns a rainscreen into a water tank",
+            "Leave the coating protection in place until handover. A PVDF face scratched by a scaffold bracket on site is not a factory defect and will not be replaced as one",
+        ],
+        applications: [
+            { type: "Commercial Facades and Podiums", whyUse: "Cassette-folded aluminium panels give a hard, weather-tight elevation with the colour held in the coating rather than applied to it, and the module can follow the grid the architecture was drawn on.", recommendedProducts: ["Flat aluminium veneer cassettes, PVDF 25–40 µm", "Fluted exterior cladding for texture"], keyBenefit: "Designed module with a 15-year coating tier" },
+            { type: "Over-Cladding Retrofits", whyUse: "Where a wall needs a thermal upgrade and a new exterior finish in one operation, a factory-bonded insulated panel puts both on the scaffold in a single pass instead of two sequential trades.", recommendedProducts: ["Insulated aluminium facade panels, mineral wool or PU core", "Matching trims and reveals"], keyBenefit: "Insulation and cladding arrive as one unit" },
+            { type: "Transit and Civic Linings", whyUse: "Stations, airports and public interiors need a surface that cleans, resists vandalism and answers a fire question — all-aluminium build-ups with a declared coating classification are the argument that gets metal specified overhead as well as on the wall.", recommendedProducts: ["Aluminium honeycomb facade panels", "Perforated skins over acoustic backing"], keyBenefit: "Cleanable, stiff, declared fire behaviour" },
+            { type: "Entrance Soffits, Canopies and Plant Screens", whyUse: "The soffit is the most-exposed horizontal in the building — sun on the face, water behind it, and every deviation visible from below. Formed aluminium with the right coating tier and a drained cavity is the combination that lasts.", recommendedProducts: ["PVDF-finished panels, bolted anti-wind fixings", "Perforated panels for screened plant"], keyBenefit: "Weather-tolerant plane with wind and drainage detailed" },
+        ],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 B-s1,d0"],
+    },
 };
