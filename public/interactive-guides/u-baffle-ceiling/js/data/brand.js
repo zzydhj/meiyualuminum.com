@@ -31,13 +31,14 @@ export const BRAND = {
   stencil: {
     word: 'MEIYU',
     tag: 'SAMPLE SECTION · MEIYU CEILINGS',
-    spec: 'Square tube 50×100×2.0 · carrier 30×30×1.0',
+    spec: 'U-baffle 50×100×1.0 · carrier 30×30×1.0',
   },
 
   facts: [
     {
       k: 'Manufacturer',
-      v: 'MEIYU Aluminum Co., Ltd. — established 2015, Dongguan City, Guangdong Province, China',
+      // 2026-10-28 同步 companyProfile.ts：成立年份 2015→2011，地址不再写城市（业主 2026-10-27 指令）。
+      v: 'MEIYU Aluminum Co., Ltd. — established 2011, Guangdong Province, China',
     },
     {
       k: 'Plant',
@@ -53,11 +54,12 @@ export const BRAND = {
     },
     {
       k: 'Lead time',
-      v: '20–25 working days for standard orders; 30–40 days for custom perforation or special finishes',
+      // 2026-10-28 同步：原写的「标准 20–25 / 定制 30–40 工作日」双档已于 2026-10-27 取消。
+      v: '7–10 working days for standard and custom orders alike, including perforation, formed work and special finishes, subject to order size and production schedule',
     },
     {
       k: 'MOQ',
-      v: '50 m² per item for standard profiles; 1,000 m² for custom perforation or profiles (tooling dependent)',
+      v: '50 m² per item for standard panels; 1,000 m² for custom perforation or profiles (tooling dependent)',
     },
   ],
 };

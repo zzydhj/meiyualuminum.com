@@ -273,7 +273,8 @@ function boot() {
     onHover: (id, x, y) => {
       highlighter.setHover(id);
       labels.setHover(id);
-      if (id && PART_MAP[id]) hoverTip.show(`${PART_MAP[id].name} · 工序 ${PART_MAP[id].step}`, x, y);
+      // 气泡跑在英文站上，文案不能混中文（业主 2026-10-28 指出）
+      if (id && PART_MAP[id]) hoverTip.show(`${PART_MAP[id].name} · Step ${PART_MAP[id].step}`, x, y);
       else hoverTip.hide();
     },
   });
@@ -421,5 +422,5 @@ try {
   console.error(err);
   dom.boot.classList.remove('is-hidden');
   dom.bootText.classList.add('is-error');
-  dom.bootText.textContent = `初始化失败：${err.message}`;
+  dom.bootText.textContent = `Initialisation failed: ${err.message}`;
 }

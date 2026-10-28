@@ -73,11 +73,16 @@ export function extrude(shape, depth, { bevel = false, curveSegments = 8 } = {})
 
 /**
  * 把截面挤出体按「外表面 / 内表面 + 端面」重排成两个材质组（必须在转向之前调用）。
- * 挤出空间里截面在 XY（x = 宽、y = 高）、长度沿 +Z，于是内侧面只有三种：
- * 法线 +y 的底板内面、法线朝中线的翼内壁、以及两个端面（切口露铝）。
- * 木纹热转印只上外表面，其余走铝本色，就是靠这个分组实现的。
+ * 挤出空间里截面在 XY（x = 宽、y = 高）、长度沿 +Z。
+ *
+ * 判据不是“面朝哪边”，而是“这个面是不是朝着 U 型槽的空腔”：把面沿自己的法线
+ * 往外挪 EPS，落进空腔 { |x| < innerHalfW，baseTop < y < top } 就是内表面。
+ * 规则一句话：整个内部全是铝，整个外部全是木纹。
+ *
+ * 之前的“法线朝上就算内侧”是错的：回勾下表面（朝下、但面对槽内）会被判成外表面而上了木纹，
+ * 而翼板顶端与回勾上表面（外侧那层皮绕过去的）反而成了铝本色（业主 2026-10-28 指出）。
  */
-export function splitByFacing(geo) {
+export function splitByFacing(geo, { innerHalfW, baseTop, top }) {
   const pos = geo.attributes.position;
   const src = geo.index ? Array.from(geo.index.array) : null;
   const total = src ? src.length : pos.count;
@@ -89,6 +94,8 @@ export function splitByFacing(geo) {
   const n = new THREE.Vector3();
   const outer = [];
   const inner = [];
+  const EPS = 1e-3; // 0.1 mm：只要够跨过分隔两个区的边就行
+  const facesVoid = (x, y) => Math.abs(x) < innerHalfW && y > baseTop && y < top;
 
   for (let t = 0; t < total; t += 3) {
     const i0 = src ? src[t] : t;
@@ -101,10 +108,10 @@ export function splitByFacing(geo) {
     ac.subVectors(c, a);
     n.crossVectors(ab, ac).normalize();
     const cx = (a.x + b.x + c.x) / 3;
+    const cy = (a.y + b.y + c.y) / 3;
 
-    const isCap = Math.abs(n.z) > 0.5; // 端面（切口）
-    const intoChannel = n.y > 0.5 || (Math.abs(n.x) > 0.5 && n.x * cx < 0);
-    (isCap || intoChannel ? inner : outer).push(i0, i1, i2);
+    const isCap = Math.abs(n.z) > 0.5; // 端面（切口）露铝
+    (isCap || facesVoid(cx + n.x * EPS, cy + n.y * EPS) ? inner : outer).push(i0, i1, i2);
   }
 
   geo.setIndex(outer.concat(inner));
@@ -116,7 +123,8 @@ export function splitByFacing(geo) {
 
 /**
  * U 型方通截面（开口朝上，三边等厚 t）
- * 顶点顺序与 DXF 完全一致：
+ * 拓扑顺序与 DXF 一致；下面括号里那串坐标是 DXF 原件按 t=2 量的，只用来对照走线，
+ * 实际顶点由参数 t 推导（本厂辊轧方通取 t=1.0，见 spec.js 的 BAFFLE.thickness）：
  *   (0,100)(0,0)(50,0)(50,100)(42,100)(42,98)(48,98)(48,2)(2,2)(2,98)(8,98)(8,100)
   * 回勾在翼顶端向『内』折 hook 长，正好卡进龙骨侧壁的燕尾槽（见 keelWallProfile）。
  * 局部坐标：u = 宽度方向（±w/2），v = 高度方向（v=0 即完成面）。

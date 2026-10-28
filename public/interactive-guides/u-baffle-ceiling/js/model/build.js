@@ -21,7 +21,7 @@ export function buildCeilingNode() {
 
   PARTS.forEach((spec) => {
     const factory = BUILDERS[spec.id];
-    if (!factory) throw new Error(`部件 ${spec.id} 没有对应的模型构造函数`);
+    if (!factory) throw new Error(`No model builder for part ${spec.id}`);
 
     const kit = { id: spec.id, m: (kind, overrides) => materialFactory.forPart(spec.id, kind, overrides) };
     const content = factory(kit);

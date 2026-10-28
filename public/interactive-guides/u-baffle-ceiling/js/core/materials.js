@@ -187,7 +187,7 @@ export function createMaterialFactory() {
       if (cache.has(key)) return cache.get(key);
 
       const template = KINDS[kind];
-      if (!template) throw new Error(`未定义的材料种类：${kind}`);
+      if (!template) throw new Error(`Undefined material kind: ${kind}`);
 
       const base = { ...template(), ...overrides };
       const repeat = base.repeat;

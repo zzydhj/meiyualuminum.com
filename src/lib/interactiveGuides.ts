@@ -39,18 +39,48 @@ export const interactiveGuides: InteractiveGuide[] = [
         categorySlug: "u-shaped-aluminum-square-tube",
         title: "U-Shaped Aluminum Square Tube Ceiling",
         summary:
-            "A to-scale 3D build-up of the open-cell baffle ceiling: toothed carrier with dovetail slots, baffles clipped in by hand, and the nine site operations from setting-out to handover.",
-        stepCount: 9,
+            "A to-scale 3D build-up of the open-cell baffle ceiling: toothed carrier with dovetail slots, baffles clipped in by hand, and the eight site operations from setting-out to handover.",
+        stepCount: 8,
         // 品类卡的 4 步是压缩口径：Carrier Installation / Level Carriers 对应 3D 里的
-        // 吊杆与载板安装（第 3、4 道工序），Clip Baffles 与 Splice Long Runs 一一对应。
+        // 吊杆与载板安装（第 3、4 道工序），Clip Baffles 对第 5 道，
+        // Details and Service Openings 对第 6 道。
+        // 原本第 4 步是 Splice Long Runs（对第 6 道“Splices and End Caps”）——
+        // 业主 2026-10-28 明确方通不接长、不配堵头，那道工序已从模型里删除。
         stepMap: { 1: 3, 2: 4, 3: 5, 4: 6 },
         highlights: [
             "Toothed carrier, dovetail slot pitch punched at the factory",
             "Baffles clipped in with the opening facing upward — no visible fixings",
-            "Rod plumb, camber over 4 m spans, splice engagement",
+            "Rod plumb, camber over 4 m spans, service openings cut from the back panel",
             "Each step lists tools, materials, method and acceptance criteria",
         ],
-        updated: "2026-10-27",
+        updated: "2026-10-28",
+    },
+    {
+        slug: "strip-ceiling",
+        // 条扣吊顶产品（id=203 aluminum-strip-ceiling）的分类链：
+        // aluminum-strip-panel ← aluminum-ceilings，所以挂叶子类目。
+        // 包内 js/data/brand.js 的 productPage 也指同一个类目页，两处必须一致。
+        categorySlug: "aluminum-strip-panel",
+        title: "Aluminium Strip Panel Ceiling",
+        summary:
+            "A to-scale 3D build-up of the closed clip-in strip ceiling: toothed carrier with dovetail slots, narrow aluminium strips snapped in side by side on a 90 mm module, and the eight site operations from setting-out to handover.",
+        stepCount: 8,
+        // 品类卡的 6 步是压缩口径，对应关系按动作而不是标题字面：
+        //   1 Datum and Run Direction      → 工序 1 Marking Out
+        //   2 Anchor and Hang the Main Carrier → 工序 3 Threaded Rods（与 u-baffle 同一对应逻辑）
+        //   3 Set Out the Strip Carriers   → 工序 4 Carriers: Lift, Level, Camber
+        //   4 Install the Strips           → 工序 5 Laying In the Strip Panels
+        //   5 Perimeter, Splices, Joints   → 工序 6 Details and Service Openings
+        //   6 Sight, Level, Cut in Services → 工序 7 Final Levelling and Cleaning
+        // 工序 2（钻孔与膨胀螺栓）与 8（验收交接）在品类卡里没有对应行，不链。
+        stepMap: { 1: 1, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7 },
+        highlights: [
+            "Closed, flush ceiling: strips snap into the carrier wall dovetails, no visible fixings",
+            "Smooth-arc clip-in edge with an inward fishhook that hangs on the slot shoulder",
+            "Independent panels — a wrong one lifts straight back out for service access",
+            "Each step lists tools, materials, method and acceptance criteria",
+        ],
+        updated: "2026-10-28",
     },
 ];
 

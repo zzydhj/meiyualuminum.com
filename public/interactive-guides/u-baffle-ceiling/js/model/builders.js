@@ -6,7 +6,7 @@
 import { buildSlab, buildLayoutLine } from './parts/substructure.js';
 import { buildAnchorBolt, buildHangerRod, buildHangerNut } from './parts/suspension.js';
 import { buildCarrier } from './parts/framework.js';
-import { buildBaffle, buildConnectorSleeve, buildEndCap } from './parts/finish.js';
+import { buildBaffle } from './parts/finish.js';
 
 export const BUILDERS = {
   slab: buildSlab,
@@ -16,6 +16,4 @@ export const BUILDERS = {
   'hanger-nut': buildHangerNut,
   carrier: buildCarrier,
   baffle: buildBaffle,
-  'connector-sleeve': buildConnectorSleeve,
-  'end-cap': buildEndCap,
 };

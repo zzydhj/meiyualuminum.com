@@ -43,7 +43,10 @@ export function createStage({ canvas, camera, quality }) {
 
   const scene = new THREE.Scene();
   scene.background = gradientBackground(STAGE.bgColor);
-  scene.fog = new THREE.Fog(new THREE.Color(STAGE.bgColor[1]), 42, 96);
+  // 雾只给远处的地面网格做纵深衰减，绝不能吃到模型本身：
+  // CONTROLS.maxDistance 是 78，而这里起点曾经写 42——用户一缩小就掉进雾里，
+  // 整幅被背景色糊掉（业主 2026-10-28 反馈“缩小就雾蒙蒙”）。起点推到操作范围之外。
+  scene.fog = new THREE.Fog(new THREE.Color(STAGE.bgColor[1]), 90, 300);
 
   const size = new THREE.Vector2(canvas.clientWidth, canvas.clientHeight);
   const rt = new THREE.WebGLRenderTarget(size.x, size.y, {

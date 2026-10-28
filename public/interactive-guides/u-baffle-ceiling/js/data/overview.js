@@ -8,7 +8,7 @@ export const SYSTEM = {
   params: [
     { k: 'Demo module', v: '1200 × 800 mm (1 scene unit = 100 mm)' },
     { k: 'System', v: 'Single toothed carrier + clip-in baffles (no screws)' },
-    { k: 'Finish', v: 'U-channel aluminium baffle 50×100×2.0, wood grain, opening upward, 90 mm pitch, 8 pieces' },
+    { k: 'Finish', v: 'U-channel aluminium baffle 50×100×1.0, wood grain, opening upward, 90 mm pitch, 8 pieces' },
     { k: 'Lip at the flange tip', v: 'Folded 90° inwards, 6 mm, clipped into the dovetail slot in the carrier wall' },
     { k: 'Toothed carrier', v: 'U channel 30×30×1.0, black powder coating, 3 runs across the short span, opening downward' },
     { k: 'Dovetail slot', v: 'Punched in the free edge: mouth 9.5 / neck 4.5 / chamber 18.5; 22.5 pitch runs denser than the baffles (about half stay empty)' },
@@ -34,13 +34,13 @@ export const SYSTEM = {
     'GB 50300 Unified standard for acceptance of construction quality',
   ],
   disclaimer:
-    'This is a construction visualisation demo: the model is a representative node built at 1:100 (1 scene unit = 100 mm). Both sections come from measured DXF — the baffle from U_tube_50x100x2_hook6 (W50 / H100 / t2 / 6 mm inward lip), the toothed carrier from keel_P22.5_500x30x30 (U channel 30×30×1.0 / dovetail slot pitch 22.5 / hanger holes φ8 @ 250). Anchor pull-out values, camber ratios and the like are stated as common industry experience ranges; an actual project must follow the design documents, structural verification and the current valid edition of the codes. Document by MEIYU Aluminum Co., Ltd. — meiyualuminum.com.',
+    'This is a construction visualisation demo: the model is a representative node built at 1:100 (1 scene unit = 100 mm). The baffle outline and its 6 mm inward lip follow the measured DXF U_tube_50x100x2_hook6 (W50 / H100); the wall gauge drawn here is 1.0 mm, our usual roll-formed thickness for this format (published range 0.6 / 0.8 / 1.0 / 1.2 mm), not the 2.0 mm in that filename, which is an extruded closed-tube gauge. The toothed carrier comes from keel_P22.5_500x30x30 (U channel 30×30×1.0 / dovetail slot pitch 22.5 / hanger holes φ8 @ 250). Anchor pull-out values, camber ratios and the like are stated as common industry experience ranges; an actual project must follow the design documents, structural verification and the current valid edition of the codes. Document by MEIYU Aluminum Co., Ltd. — meiyualuminum.com.',
 };
 
 export const GUIDE = [
   {
     title: 'An installation guide that moves',
-    desc: 'Nine build-up steps on the left, a true-scale ceiling node in the middle. Click a step or press → to assemble it stage by stage: each part flies in from the direction it is actually installed from, and parts not yet fitted stay as ghost outlines so the layering reads clearly.',
+    desc: 'Eight build-up steps on the left, a true-scale ceiling node in the middle. Click a step or press → to assemble it stage by stage: each part flies in from the direction it is actually installed from, and parts not yet fitted stay as ghost outlines so the layering reads clearly.',
   },
   {
     title: 'The load path of this system',
@@ -59,7 +59,7 @@ export const GUIDE = [
 /** 键盘快捷键（同时用于底部脚注渲染，与 ui/hotkeys.js 的绑定保持一致） */
 export const HOTKEYS = [
   { keys: ['←', '→'], desc: 'Previous / next step' },
-  { keys: ['1~9'], desc: 'Jump to step N' },
+  { keys: ['1~8'], desc: 'Jump to step N' },
   { keys: ['Space'], desc: 'Auto play' },
   { keys: ['E'], desc: 'Install all / explode all' },
   { keys: ['L'], desc: 'Toggle labels' },

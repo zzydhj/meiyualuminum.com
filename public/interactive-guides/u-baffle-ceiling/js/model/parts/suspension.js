@@ -63,7 +63,9 @@ export function buildAnchorBolt(kit) {
   return g;
 }
 
-/** 全牙吊杆：上端拧入膨胀螺栓内螺纹，下端穿过龙骨冲孔由螺母承托 */
+/** 全牙吊杆：上端拧入膨胀螺栓内螺纹，下端穿过龙骨冲孔由螺母承托。
+ *  整根下料，不画接长套筒（业主 2026-10-28）：本节点吊空只有 300 mm，
+ *  一根到底就行；现场真需要接长时用的是专用套筒，但那是另一种做法，不在本模型里示范。 */
 export function buildHangerRod(kit) {
   const g = new THREE.Group();
   const zinc = kit.m('zinc', { color: '#ccd5de', roughness: 0.36 });
@@ -75,9 +77,8 @@ export function buildHangerRod(kit) {
   const rod = cyl(HANGER.rodR, HANGER.rodR, len, 14);
   const thread = threadHelix(len, HANGER.threadR, 0.05, 0.009);
   const nut = hex(HANGER.nutR, HANGER.nutT);
-  const coupling = cyl(0.072, 0.072, 0.24, 14);
 
-  HANGER.positions.forEach(([x, z], i) => {
+  HANGER.positions.forEach(([x, z]) => {
     const r = new THREE.Mesh(rod, zinc);
     r.position.set(x, mid, z);
     g.add(r);
@@ -90,13 +91,6 @@ export function buildHangerRod(kit) {
     const un = new THREE.Mesh(nut, zinc);
     un.position.set(x, LEVEL.upperNut, z);
     g.add(un);
-
-    // 接长只能用专用套筒：在其中一根上示意
-    if (i === 1) {
-      const cp = new THREE.Mesh(coupling, steel);
-      cp.position.set(x, mid + 0.35, z);
-      g.add(cp);
-    }
   });
 
   return g;

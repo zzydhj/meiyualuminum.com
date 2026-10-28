@@ -96,8 +96,8 @@ export const CARRIER = {
   mouthW: 0.095,
   mouthH: 0.025, // 自由端 45° 倒角段
   pitch: 0.225, // 槽间距 22.5
-  phase: 0, // 相位：P22.5 与 50 宽方通天然对不齐（两翼中心距 48 = 2.13 倍齿距），
-            // 取 0 让两侧翼板对称地各错开 1.5 mm 落在颈口，靠铝翼弹性顶入
+  phase: 0, // 相位：P22.5 与 50 宽方通天然对不齐（两翼中心距 49 = 2.18 倍齿距），
+            // 取 0 让两侧翼板对称地各错开 2 mm 落在颈口，靠铝翼弹性顶入
   /* 底板吊杆孔 */
   holeR: 0.045, // φ9（螺杆 φ8 留调节余量）
   holePitch: 2.5,
@@ -106,50 +106,37 @@ export const CARRIER = {
 
 /**
  * U 型铝方通（饰面主体，开口朝上）
- * 截面尺寸来自 DXF：U_tube_50x100x2_hook6.dxf（W=50 / H=100 / t=2 / hook=6）
-  * 要点：三边等厚 2 mm；回勾在翼顶端向『内』折 6 mm（不是向外），所以它卡进龙骨侧壁的燕尾槽。
+ * 截面外形与回勾来自 DXF：U_tube_50x100x2_hook6.dxf（W=50 / H=100 / hook=6）。
+ * 要点：回勾在翼顶端向『内』折 6 mm（不是向外），所以它卡进龙骨侧壁的燕尾槽。
+ * 壁厚取 1.0 mm：本厂这种规格公布的壁厚档位是 0.6 / 0.8 / 1.0 / 1.2 mm（见 productKnowledge
+ * 的 u-shaped 条目），与上面那份 DXF 的 2.0 mm 不同——2.0 是挤压闭口方管的壁厚，
+ * 放在辊轧 U 型槽上会明显偏厚（业主 2026-10-28 指出“切面看起来厚”）。
  */
 export const BAFFLE = {
   width: 0.5, // 50 mm（外沿）
   height: LEVEL.baffleTop - LEVEL.baffleBottom, // 100 mm
-  thickness: 0.02, // 2 mm —— DXF 实测真实壁厚
+  thickness: 0.01, // 1.0 mm —— 本厂辊轧方通常用壁厚（三边等厚，未为可见性加粗）
   hook: 0.06, // 6 mm —— 翼顶端向内 90° 回勾
   span: 0.9, // 间距 90 mm = 齿距 22.5 的 4 倍（必须是整数倍，否则回勾对不上槽）
   count: 8,
   firstZ: -3.15,
   length: 11.6, // 定尺：两端始终到墙边（收边条与它在现场的关系不在本模型内表达）
   bottomY: LEVEL.baffleBottom, // 底板外表面 = 完成面
-  splitZ: -0.45, // 演示超长接长的那一根（必须是实际排布位）
-  splitX: 1.0, // 接缝中心 x
-  shortRows: [-3.15, 3.15], // 遇灯槽/窗帘盒不到墙的两根，端头露明配堵头
-  shortLength: 9.6,
-  shortEndX: 3.8,
+  // 曾经这里有 splitZ / splitX / shortRows / shortLength / shortEndX 五项，
+  // 用来演示“一根断成两段加内置套筒接长”和“两根短料配端头堵头”。
+  // 业主 2026-10-28 明确：实际施工不会用短料、也不接长、两头也不装封口件，
+  // 宁可多买料——所以模型改成 8 根全通长，不再演示这三种做法。
 };
 
-/** 截面派生尺寸：全部由上面的 DXF 实测值推导，模型与龙骨燕尾槽共用同一来源 */
-export const SECTION = {
-  halfW: BAFFLE.width / 2, // 0.250 翼外沿
-  innerFace: BAFFLE.width / 2 - BAFFLE.thickness, // 0.230 翼内壁
-  hookTip: BAFFLE.width / 2 - BAFFLE.thickness - BAFFLE.hook, // 0.170 回勾内端
-  topV: BAFFLE.height, // 1.000 翼顶
-  hookUnderV: BAFFLE.height - BAFFLE.thickness, // 0.980 回勾下表面
-  channelGap: 2 * (BAFFLE.width / 2 - BAFFLE.thickness - BAFFLE.hook), // 0.340 两回勾之间净空
-};
-
-/** 方通接长连接件（内置套筒，贴在底板内侧面） */
-export const CONNECTOR = {
-  width: 0.42, // 小于两翼内壁间距 0.46
-  height: 0.16,
-  length: 0.9,
-  gap: 0.12, // 两根方通端头留缝 12 mm
-};
-
-/** 端头堵头：插在两翼内壁之间，顶到回勾下表面为止，不与向内回勾发生干涉 */
-export const END_CAP = {
-  width: SECTION.innerFace * 2 - 0.006,
-  height: SECTION.hookUnderV - BAFFLE.thickness - 0.004, // 到回勾下方留 0.4 mm 间隙
-  thickness: 0.05,
-};
+/**
+ * 截面派生尺寸：历史上这里是一个 export 的 SECTION 常量块，里面把内壁 / 回勾内端 /
+ * 回勾下表面 / 两回勾净空四个值各写了一份手算 mm 注释。全包没人 import 它，
+ * 而壁厚从 2.0 改成 1.0 时那四行注释当场过期（数字与代码说的不是同一个模型）。
+ * 所以现在只留公式，不留手算结果：
+ *   翼内壁 |u| = width/2 − thickness；回勾内端 |u| = width/2 − thickness − hook；
+ *   回勾上表面在 v = height，下表面在 v = height − thickness；
+ *   翼板中线距龙骨最近齿心的横向偏置 = width/2 − thickness/2 对 pitch 取余（壁厚变了它就变）。
+ */
 
 /** 标高控制线 / 分档线（可视化辅助） */
 export const LAYOUT = {
@@ -162,13 +149,11 @@ export const LAYOUT = {
 };
 
 /**
- * 厂家标识（单位 100 mm）：真实工程里型材与端盖都会带厂标。
+ * 厂家标识（单位 100 mm）：真实工程里型材会带厂标。
  * 位置选在“不会装错也不会影响锁合”的地方，尺寸取现场常见值；
- * 朝下的完成面不放标识（理由见 parts/finish.js），品牌位开在侧翼、堵头、龙骨与板底喷字上。
+ * 朝下的完成面不放标识（理由见 parts/finish.js），品牌位开在侧翼、龙骨与板底喷字上。
  */
 export const BRAND_MARK = {
-  /** 堵头端面的小标 */
-  cap: { length: 0.32, width: 0.08 },
   /**
    * 两翼外露面（就是从楼下透过 40 mm 缝看到的那两张竖直面）上的印标。
    * 演示样板段只有 1160 mm 长，所以步距取半段 = 每面两枚；
