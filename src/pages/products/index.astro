@@ -16,6 +16,7 @@ export const prerender = false;
 import { supabase } from "../../lib/supabase";
 import { currentLang, loc, SUPPORTED_LANGS } from "../../lib/i18n";
 import { PAGE_SIZE } from "../../lib/pagination";
+import { PRODUCT_LIST_DESCRIPTION } from "../../lib/pageCopy";
 
 // 当前语言（[lang] 包装会写入 locals.lang；无前缀根路由为 'en'）
 const lang = currentLang(Astro.locals);
@@ -83,10 +84,20 @@ const UI = {
   },
 } as const;
 const t = UI[lang as keyof typeof UI] ?? UI.en;
-const pageTitle = t.products;
+// UI.products 继续给面包屑与 hero 用；<title> 单独写一句。
+// 以前 pageTitle 直接用 "Products"，渲染后就是「Products | MEIYU」17 字 ——
+// 这一页在 sitemap 里，标题位完全没人挖。BaseLayout 拼的后后缀占 8 字，
+// 所以这里按「总长 ≤ 60」反推：41 + 8 = 49。
+const pageTitle =
+  lang === "en" ? "Aluminium Ceiling & Facade Panel Products" : t.products;
 ---
 
-<BaseLayout pageTitle={pageTitle} lang={lang} hideTitle>
+<BaseLayout
+  pageTitle={pageTitle}
+  description={PRODUCT_LIST_DESCRIPTION}
+  lang={lang}
+  hideTitle
+>
   <PageHero
     imageAlt={t.products}
     titleWhite={t.heroWhite}

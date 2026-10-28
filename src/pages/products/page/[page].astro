@@ -13,6 +13,7 @@ import PaginationNav from "../../../components/PaginationNav.astro";
 import { supabase } from "../../../lib/supabase";
 import { currentLang, loc } from "../../../lib/i18n";
 import { PAGE_SIZE, resolvePage } from "../../../lib/pagination";
+import { PRODUCT_LIST_DESCRIPTION } from "../../../lib/pageCopy";
 
 // SSR：新增/下线产品会改变总页数，转静态会让第 2 页停在旧总数上。
 export const prerender = false;
@@ -66,7 +67,12 @@ for (const cat of allCategories ?? []) {
 }
 ---
 
-<BaseLayout pageTitle={`Products - Page ${currentPage}`} lang={lang} hideTitle>
+<BaseLayout
+    pageTitle={`Products - Page ${currentPage}`}
+    description={PRODUCT_LIST_DESCRIPTION}
+    lang={lang}
+    hideTitle
+>
     <PageHero
         slim
         imageAlt={`Products - Page ${currentPage}`}

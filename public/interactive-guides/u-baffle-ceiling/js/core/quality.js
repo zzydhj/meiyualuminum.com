@@ -39,11 +39,16 @@ export function detectRenderer() {
 }
 
 /**
- * 自动选档。判定顺序：
- * 1. 屏幕物理像素量 —— 4K/Retina 上 pixelRatio 2 意味着 4 倍像素，最容易掉帧；
+ * 自动选档。判定只看真实负载信号，按顺序：
+ * 1. 屏幕物理像素量 —— 高分屏上 pixelRatio 2 意味着数倍像素，最容易掉帧；
  * 2. CPU 线程数与内存档位 —— 粗略但有效的低端信号；
  * 3. 触屏 + 小屏按移动设备处理（手机 GPU 跑不动 Bloom 的十来个全屏 pass）。
  * 拿不准时往低一档走：宁可边缘软一点，也不要让客户觉得页面卡。
+ *
+ * 2026-10-28 删掉原来第 4 条「refresh > 75 也算低端」：高刷新率是显示器属性，
+ * 与 GPU 算力无关，而现实中配旗舰显卡的人恰恰最可能在用 144Hz+ 屏——这条规则
+ * 系统性地给性能最强的一批设备降了档。而且 balanced 与 high 之间唯一可见的差别
+ * 是关掉 4× MSAA（边缘锯齿），并不是掉帧，用刷新率当降级理由本身就对不上。
  */
 export function autoQuality(renderer) {
   const nav = navigator || {};
@@ -53,11 +58,8 @@ export function autoQuality(renderer) {
   const mem = nav.deviceMemory || 4;
   const mobile = window.matchMedia('(pointer: coarse)').matches && Math.min(window.innerWidth, window.innerHeight) < 900;
 
-  // 高刷屏（>60Hz）同样按更保守的档处理：帧预算只有一半
-  const refresh = Math.max(60, Math.round(window.screen?.refreshRate || 60));
-
   if (mobile || renderer.software || cores <= 4 || mem <= 4) return 'lite';
-  if (px * dpr * dpr > 4.2e6 || refresh > 75 || cores <= 8) return 'balanced';
+  if (px * dpr * dpr > 4.2e6 || cores <= 8) return 'balanced';
   return 'high';
 }
 

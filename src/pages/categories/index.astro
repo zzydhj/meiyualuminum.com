@@ -3,9 +3,12 @@ import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
 import { getChildCategoryIds, type CategoryNode } from "../../lib/categoryPath";
+import { currentLang } from "../../lib/i18n";
 
 // SSR：分类树读 categories / products 两张表，改库即生效，不需要重建部署。
 export const prerender = false;
+
+const lang = currentLang(Astro.locals);
 
 const { data: allCategories, error } = await supabase
   .from("categories")
@@ -23,10 +26,13 @@ const rootCategories = categories.filter((c) => !c.parent_id);
 const childCategories = categories.filter((c) => c.parent_id);
 
 // Get product counts per category
+// 同样必须按 lang 过滤（与分类详情页同一原因）：这里的数既当每个分类后面的
+// 「N products」显示，也当页头「Products Listed」的总数，混进中文行就是虚高。
 const { data: allProducts } = await supabase
   .from("products")
   .select("id, category_ids")
-  .eq("status", "published");
+  .eq("status", "published")
+  .eq("lang", lang);
 
 const products = allProducts ?? [];
 
@@ -42,9 +48,13 @@ function getProductCount(categoryId: number): number {
   }).length;
 }
 
-const pageTitle = "Categories";
+// 标题与描述都得重写：以前 description 是建站模板留下的「brake systems, engine parts,
+// filters」——我们是铝幕墙/铝吊顶厂，与汽车配件毫无关系，而这句话会直接出现在搜索结果的
+// 摘要行上（/blog/ 那两处同类残留早在 lib/pageCopy.ts 里记下已清）。以前标题就是
+// "Categories"，渲染后 18 字，在 sitemap 里却没占到一个像样的标题位。
+const pageTitle = "Aluminium Ceiling & Facade Product Categories";
 const pageDescription =
-  "Browse our product categories including brake systems, engine parts, filters and more.";
+  "Browse our aluminium ceiling, facade and wall panel families — each links to its product list with specifications, finishes and installation guidance.";
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>

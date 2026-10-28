@@ -7,10 +7,13 @@ import {
   getChildCategoryIds,
   type CategoryNode,
 } from "../../lib/categoryPath";
+import { currentLang } from "../../lib/i18n";
 
 // SSR：分类页是全站关键词价值最高的着陆页。转静态时新发布一个产品，
 // 它所属分类页不会自动列出这个产品，必须重建部署 —— 改库即生效才对。
 export const prerender = false;
+
+const lang = currentLang(Astro.locals);
 
 // select 必须带上 seo_title / seo_description / keywords：下面渲染 meta 时要读这三列。
 // 以前漏选过，导致数据库里填好的 14 条分类 SEO 文案从未生效、也不报错。
@@ -45,10 +48,16 @@ const children = allCategories.filter(
 );
 
 // Query products that belong to any of the category IDs in the tree
+// 必须按 lang 过滤：products 表里躺着多语言版本（现在只有 id=8 的铝墙板 zh 行），
+// 而 /zh/ 前缀路由已被 i18n 的 MULTILINGUAL_ENABLED=false 停发，中文行在英文站上
+// 没有对应页面。不滤的话它会在 /categories/aluminum-wall-panels/ 里多出
+// 一张中文卡片并把「Products (N)」的计数一起带错。products 的各个列表路由都有这个过滤，
+// 以前只有这一页漏了。
 const { data: allProducts, error } = await supabase
   .from("products")
   .select("*")
   .eq("status", "published")
+  .eq("lang", lang)
   .order("created_at", { ascending: false });
 
 if (error) {

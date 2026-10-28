@@ -15,3 +15,11 @@
  */
 export const BLOG_LIST_DESCRIPTION =
     "Technical notes on aluminum ceiling systems, facade panels and surface treatments, written from our own production floor in Guangdong.";
+
+/**
+ * 产品列表（/products/ 与 /products/page/N/）的 meta description。
+ * 与博客同一个道理：第 1 页与第 N 页是一个栏目，两处各写一份迟早会漂移。
+ * 这两个页以前根本没传 description —— Google 只能自己从页内文本里掘一句当摘要。
+ */
+export const PRODUCT_LIST_DESCRIPTION =
+    "Aluminium ceiling tiles, baffle and blade systems, facade and wall panels, skirting and trim profiles — published specifications from our Guangdong plant.";
