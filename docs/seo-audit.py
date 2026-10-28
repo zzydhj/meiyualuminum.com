@@ -102,15 +102,8 @@ def effective_title(row: dict, title_col: str) -> str:
     return (row.get("seo_title") or "").strip() or (row.get(title_col) or "")
 
 
-def fetch(table: str, retries: int = 5) -> list[dict]:
-    """拉一张表。该 Supabase 域偶发 TLS 握手中断（UNEXPECTED_EOF），必须退避重试。"""
-    cfg = TABLES[table]
-    cols = ["slug", cfg["title_col"], "seo_title", "seo_description", "keywords"]
-    if cfg["has_status"]:
-        cols.append("status")
-    if cfg["has_lang"]:
-        cols.append("lang")
-    url = f"{BASE}/rest/v1/{table}?select={','.join(cols)}&order=slug"
+def _get(url: str, what: str, retries: int = 5) -> list[dict]:
+    """发一次只读请求。该 Supabase 域偶发 TLS 握手中断（UNEXPECTED_EOF），必须退避重试。"""
     last = None
     for i in range(retries):
         try:
@@ -120,7 +113,70 @@ def fetch(table: str, retries: int = 5) -> list[dict]:
         except Exception as e:            # noqa: BLE001
             last = e
             time.sleep(1.2 * (i + 1))
-    raise SystemExit(f"[!] 读取 {table} 失败（已重试 {retries} 次）：{last}")
+    raise SystemExit(f"[!] 读取 {what} 失败（已重试 {retries} 次）：{last}")
+
+
+def fetch(table: str) -> list[dict]:
+    """拉一张表的 SEO 字段。"""
+    cfg = TABLES[table]
+    cols = ["slug", cfg["title_col"], "seo_title", "seo_description", "keywords"]
+    if cfg["has_status"]:
+        cols.append("status")
+    if cfg["has_lang"]:
+        cols.append("lang")
+    url = f"{BASE}/rest/v1/{table}?select={','.join(cols)}&order=slug"
+    return _get(url, table)
+
+
+# ── 薄分类（已退出索引，不再参与抢词判定）─────────────────────────
+def _read_thin_max() -> int:
+    """从渲染层读阈值，不在此重抄一份数字（与 titleSuffix 同一做法）。"""
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       "..", "src", "lib", "categoryPath.ts")
+    try:
+        m = re.search(r"export const THIN_CATEGORY_MAX\s*=\s*(\d+)",
+                      open(src, encoding="utf-8").read())
+    except OSError:
+        m = None
+    if not m:
+        sys.exit("[!] 读不到 src/lib/categoryPath.ts 里的 THIN_CATEGORY_MAX，无法判定薄分类")
+    return int(m.group(1))
+
+
+THIN_CATEGORY_MAX = _read_thin_max()
+
+
+def thin_category_slugs() -> set:
+    """子树（含自身与后代）里已发布英文产品 <= THIN_CATEGORY_MAX 的分类 slug。
+
+    这些页在 categories/[slug].astro 里自己标了 noindex、也不进 sitemap：
+    只有一个产品的分类页实质就是那个产品页的目录页，两边填的又是同一个主攻词，
+    所以让产品页承接、分类页退出。这是有意分工，所以【4】【5】不再把它们算作冲突。
+    往这类分类里补上第二个产品，它们会自动重新回到抢词监测里。
+    """
+    cats = _get(f"{BASE}/rest/v1/categories?select=id,slug,parent_id", "categories(分类树)")
+    prods = _get(f"{BASE}/rest/v1/products?select=slug,category_ids"
+                 f"&lang=eq.en&status=eq.published", "products(分类归属)")
+
+    kids: dict = {}
+    for c in cats:
+        kids.setdefault(c.get("parent_id"), []).append(c["id"])
+
+    def subtree(cid: int) -> set:
+        ids = {cid}
+        for k in kids.get(cid, []):
+            ids |= subtree(k)
+        return ids
+
+    sub_ids = {c["id"]: subtree(c["id"]) for c in cats}   # 先算一次，别在循环里递归
+    count = {cid: 0 for cid in sub_ids}
+    for p in prods:
+        pids = {int(i) for i in (p.get("category_ids") or [])}
+        for cid, ids in sub_ids.items():
+            if pids & ids:
+                count[cid] += 1
+
+    return {c["slug"] for c in cats if count[c["id"]] <= THIN_CATEGORY_MAX}
 
 
 def norm(s: str) -> str:
@@ -161,6 +217,15 @@ def main() -> int:
         rows = [r for r in rows if r["lang"] == a.lang]
 
     pub = [r for r in rows if r["status"] == "published"]
+
+    # 薄分类页（子树里只剩一个产品）在渲染层自己标了 noindex、也不进 sitemap，
+    # 所以【4】【5】不把它们算作抢词冲突：让产品页承接主攻词是有意分工。
+    # 但长度检查照旧跑它们：页面照常有人读，标题被截断仍是问题。
+    thin = thin_category_slugs()
+    for r in rows:
+        r["noindex"] = r["table"] == "categories" and r["slug"] in thin
+    compete = [r for r in pub if not r["noindex"]]
+
     print("=" * 78)
     print("SEO 体检报告")
     print("=" * 78)
@@ -200,8 +265,9 @@ def main() -> int:
 
     # ── 主攻词冲突 ──
     print("\n【4】主攻词冲突（keywords 第一个词 = 该页想排名的词）")
+    print(f"     已排除 {len([r for r in pub if r['noindex']])} 个薄分类页（已标 noindex，见注三）")
     by_primary: dict[str, list[dict]] = {}
-    for r in pub:
+    for r in compete:
         if r["keywords"]:
             by_primary.setdefault(norm(r["keywords"][0]), []).append(r)
     clash = {k: v for k, v in by_primary.items() if k and len(v) > 1}
@@ -214,8 +280,8 @@ def main() -> int:
 
     # ── 关键词集合重叠 ──
     print("\n【5】关键词集合高度重叠（同一对页面共享 ≥3 个关键词）")
-    keys = {norm(k) for r in pub for k in r["keywords"]}
-    sets = {f"{r['type']}|{r['url']}": {norm(k) for k in r["keywords"]} for r in pub}
+    keys = {norm(k) for r in compete for k in r["keywords"]}
+    sets = {f"{r['type']}|{r['url']}": {norm(k) for k in r["keywords"]} for r in compete}
     names = list(sets)
     pairs = []
     for i in range(len(names)):
@@ -232,9 +298,9 @@ def main() -> int:
         print(f"  … 另有 {len(pairs) - 15} 对")
 
     # ── 标题重复 ──
-    print("\n【6】seo_title 完全相同")
+    print("\n【6】seo_title 完全相同（同样只比参与索引的页）")
     by_title: dict[str, list[str]] = {}
-    for r in pub:
+    for r in compete:
         if r["seo_title"].strip():
             by_title.setdefault(norm(r["seo_title"]), []).append(r["url"])
     dup = {k: v for k, v in by_title.items() if len(v) > 1}
@@ -246,11 +312,12 @@ def main() -> int:
     if a.csv:
         with open(a.csv, "w", newline="", encoding="utf-8-sig") as f:
             w = csv.writer(f)
-            w.writerow(["类型", "语言", "URL", "状态", "实际标题",
+            w.writerow(["类型", "语言", "URL", "状态", "收录", "实际标题",
                         "渲染后 title 字符数", "seo_description", "desc 字符数",
                         "主攻词", "全部关键词"])
             for r in sorted(pub, key=lambda x: (x["type"], x["url"])):
                 w.writerow([r["type"], r["lang"], r["url"], r["status"],
+                            "noindex" if r["noindex"] else "收录",
                             effective_title(r, "title"),
                             len(rendered_title(effective_title(r, "title"))),
                             r["seo_description"], len(r["seo_description"]),
@@ -263,6 +330,13 @@ def main() -> int:
           "\n      工具页）的 SEO 写在 .astro 源码里，不在数据库，因此不在本报告内。")
     print("      这部分只能拿渲染后的页面查（拼 sitemap 逐 URL 读 <title>），"
           "\n      2026-10-27 就是这么查出 54 页超标的。改完数据库标题后建议再跑一次线上核对。")
+    print("注三：薄分类 = 子树（含自身与后代）里已发布英文产品 ≤"
+          f" {THIN_CATEGORY_MAX} 个的分类页。\n"
+          "      这种页实质就是那个产品页的目录页，而两边填的是同一个主攻词，"
+          "\n      所以渲染层（categories/[slug].astro）已给它们标 noindex、sitemap 也不收，"
+          "\n      让产品页承接排名。【4】【5】【6】因此把它们排除了 —— 这是有意分工，不是缺陷。"
+          "\n      阈值唯一写在 src/lib/categoryPath.ts 的 THIN_CATEGORY_MAX，本脚本从那里读；"
+          "\n      往这类分类里补上第二个产品，它会自动重新回到抢词监测里，不用改脚本。")
     return 0
 
 

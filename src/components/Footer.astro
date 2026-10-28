@@ -100,8 +100,9 @@ const year = new Date().getFullYear();
         </p>
       </div>
 
-      <!-- Products：全部指向真实存在的分类页。以前六行文案不同但 href 全指 /products/，
-           对买家是误导（看着像六个入口，点进去是同一个页），对 Google 是六个重复链接。 -->
+      {/* Products：全部指向真实存在的分类页。以前六行文案不同但 href 全指 /products/，
+          对买家是误导（看着像六个入口，点进去是同一个页），对 Google 是六个重复链接。
+          用表达式注释而不是 HTML 注释：后者会随页面源码发给访客。 */}
       <div class="my-ft-col">
         <h4>Products</h4>
         <ul>
@@ -187,10 +188,11 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <!-- 认证徽章：只渲染 companyProfile.certBadges（对齐附录 A）。
+    {/* 认证徽章：只渲染 companyProfile.certBadges（对齐附录 A）。
          原先硬写的 “SGS Tested” 与 “15+ Years Experience” 已删：前者无报告依据，
          后者当时与 2015 年成立不符。成立年份 2026-10-27 已改为 2011（至今约 15 年），
-         但不自动恢复该徽章：年限属营销措辞，要写就写可核对的 “Established 2011”。 -->
+         但不自动恢复该徽章：年限属营销措辞，要写就写可核对的 “Established 2011”。
+         这整段是内部修订记录，不能出现在公开源码里，所以用表达式注释。 */}
     <div class="my-ft-certs">
       {certBadges.map((badge) => <span class="my-ft-badge">✓ {badge}</span>)}
     </div>

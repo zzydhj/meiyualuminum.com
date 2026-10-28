@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import {
   getCategoryChain,
   getChildCategoryIds,
+  isThinCategory,
   type CategoryNode,
 } from "../../lib/categoryPath";
 import { currentLang } from "../../lib/i18n";
@@ -76,6 +77,13 @@ const products = (allProducts ?? []).filter((p) => {
 const pageDescription = category.seo_description || category.description || "";
 const pageTitle = category.seo_title || category.name;
 const keywords = category.keywords ?? [];
+
+// 薄分类退出索引：子树里只剩一个产品时，这一页实质就是那个产品页的目录页，
+// 而两边填的是同一个主攻词（mesh 那组连 seo_title 都一字不差），等于自己跟自己抢排名。
+// noindex 仍是 follow：页面照常被读到，产品页也照常被这一页发现与传递权重。
+// 阈值与 sitemap.xml.ts 共用 lib/categoryPath 一份 —— 以后往这一类分类里补上第二个
+// 产品，两页不再重复，分类页自动恢复收录，不需要再回来改代码或手工维护名单。
+const thinCategory = isThinCategory(products.length);
 ---
 
 <BaseLayout
@@ -84,6 +92,7 @@ const keywords = category.keywords ?? [];
   description={pageDescription}
   keywords={keywords}
   hideTitle
+  noindex={thinCategory}
 >
   <PageHero
     imageAlt={category.name}

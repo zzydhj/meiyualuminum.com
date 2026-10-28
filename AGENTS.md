@@ -37,6 +37,16 @@ Content lives in Supabase (`products`, `posts`, `pages`, `videos`, `categories`)
 PostgREST endpoint using `PUBLIC_SUPABASE_URL` + `PUBLIC_SUPABASE_ANON_KEY` from `.env`. Note that
 `categories` uses `name` and has no `status` / `lang` column, unlike the other four tables.
 
+Any query that lists `products` for an English page must filter `lang`. The table holds parked
+translations, and `src/lib/i18n.ts` sets `MULTILINGUAL_ENABLED = false`, so there is no `/zh/` site —
+an unfiltered list renders a Chinese card and inflates every count that reads it. Two category
+routes had this bug before 2026-10-28; the visible symptom was `Products (2)` on a category with
+one English product.
+
+The anon key can UPDATE/DELETE `products`, `pages`, `categories` and `videos`, but **not** `posts`:
+a PATCH on `posts` returns 204 and changes nothing. Generate SQL for the owner instead of assuming
+a 2xx status means the write landed — always read the row back.
+
 ## SEO
 
 Run the read-only audit before touching SEO, and after any bulk change:
@@ -49,6 +59,17 @@ It reports missing `seo_title` / `seo_description` / `keywords`, titles over 60 
 160 characters (Google truncates these), duplicate `seo_title`, primary-keyword collisions between
 pages (cannibalisation) and heavily overlapping keyword sets. `keywords[0]` is the page's target
 term by convention. Static pages keep their SEO in the `.astro` source, so they are not covered.
+
+`<title>` is rendered as `{pageTitle} | {titleSuffix}` by `src/layouts/BaseLayout.astro`, and the
+audit reads that suffix from the source so it measures the real length — comparing the DB field
+against 60 by itself let every 44–52 character title pass while 54 of 109 pages were truncated.
+
+A category whose subtree (self + descendants) holds at most `THIN_CATEGORY_MAX` published English
+products is a directory page for a single product that competes with that product for the same
+target term, so it is `noindex, follow` and left out of the sitemap: the product page takes the
+ranking. The threshold lives only in `src/lib/categoryPath.ts`, and the page, `sitemap.xml.ts` and
+the audit all read it from there — add a second product and the category comes back to the index on
+its own. Do not "fix" these collisions by rewriting category keywords.
 
 ## Images: real photos vs AI renders
 
@@ -81,6 +102,15 @@ fasteners to avoid galvanic corrosion, and warnings to isolate aluminium from ca
 AI images arrive with a "Qoder AI 生成" watermark in the bottom-right corner. Post-process before
 upload: crop to `(0, 0, 920, 920)`, resize back to 1024×1024, save webp q85. Prompts must always
 request no text, labels, numbers or arrows — rendered lettering comes out garbled.
+
+## Template comments
+
+`<!-- ... -->` inside an Astro template is emitted into the delivered HTML — view-source on any
+page shows it, in Chinese, to every buyer and competitor. Roughly 100 of these existed before
+2026-10-28, including notes admitting that an unsupported "SGS Tested" badge had been removed.
+Maintainer notes belong in `{/* ... */}` (compile-time, never emitted) or in the frontmatter `---`
+block. Never write a literal `*/}` inside such a note — it closes the comment and breaks the
+template. Files under `public/` are served verbatim and have no compile-time comment form.
 
 ## Verification
 

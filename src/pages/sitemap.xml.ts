@@ -11,6 +11,11 @@ import { supabase } from "../lib/supabase";
 import { interactiveGuides, guidePath } from "../lib/interactiveGuides";
 import { ACTIVE_LANGS, loc, type Lang } from "../lib/i18n";
 import { fetchAllTagPosts, groupPostsByTag } from "../lib/tagPosts";
+import {
+    thinCategoryIds,
+    type CategoryNode,
+    type CategoryProductRow,
+} from "../lib/categoryPath";
 import { fetchAllVideos, groupVideosByTag } from "../lib/videoTags";
 import {
     CATEGORY_MAP,
@@ -121,13 +126,30 @@ export const GET: APIRoute = async ({ site }) => {
 
     // 分类页：/categories/<slug>/ 全部 200 且是关键词价值最高的着陆页，
     // 之前一条都没进 sitemap。注意 categories 表没有 status / lang 列，不能套 collect()。
+    // 但薄分类不收：子树里只剩一个产品的那几页自己标了 noindex，再列进清单就是
+    // 一边递清单一边叫 Google 别收（与 /thank-you/ 同一做法）。判定与
+    // categories/[slug].astro 共用 lib/categoryPath 一份：往这一类分类里补上第二个产品，
+    // 它下一请求就自动回到清单里，不需要改代码。
     try {
-        const res = await supabase.from("categories").select("slug");
-        if (res.error) {
-            console.error("[sitemap] categories query error:", res.error.message);
+        const [catRes, prodRes] = await Promise.all([
+            supabase.from("categories").select("id, name, slug, parent_id"),
+            supabase
+                .from("products")
+                .select("slug, category_ids")
+                .eq("lang", "en")
+                .eq("status", "published"),
+        ]);
+        if (catRes.error || prodRes.error) {
+            console.error(
+                "[sitemap] categories query error:",
+                catRes.error?.message ?? prodRes.error?.message,
+            );
         } else {
-            for (const row of (res.data ?? []) as Array<{ slug: string }>) {
-                addEntry(`/categories/${row.slug}/`);
+            const cats = (catRes.data ?? []) as CategoryNode[];
+            const prods = (prodRes.data ?? []) as CategoryProductRow[];
+            const thin = thinCategoryIds(cats, prods);
+            for (const row of cats) {
+                if (!thin.has(row.id)) addEntry(`/categories/${row.slug}/`);
             }
         }
     } catch (e) {
