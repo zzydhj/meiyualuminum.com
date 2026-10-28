@@ -9,7 +9,7 @@
  *   4 What You Can Verify（证据索引表 · 回应 B2B 采购评审缺口 1、2）
  *   5 What Arrives With an Export Order（出口文档包 · 回应缺口 3、6）
  *   6 Team & Support（工程与下单支持）
- *   7 How an Order Runs（下单到出货 5 步）
+ *   7 How an Order Runs（8 个交付节点 + 责任划分表 + 商务条款，数据在 lib/orderProcess.ts，与首页同源）
  *   8 Quality & Certification（标准卡 + 自有 QC 试验）
  *   9 Why Buy Direct（6 张理由卡）
  *  10 What We Make（产品族卡片 → 分类页）
@@ -29,6 +29,7 @@
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
+import OrderProcess from "../components/OrderProcess.astro";
 import { supabase } from "../lib/supabase";
 import { isSelfHostedVideo, firstFrameSrc } from "../lib/videoSource";
 import {
@@ -122,33 +123,9 @@ const productCards = [
 ];
 
 /* ── 下单到出货 ── */
-const processSteps = [
-    {
-        n: "01",
-        t: "Enquiry & Drawings",
-        d: "Send architectural drawings, a BOQ or simply a room size. We come back with a specification recommendation and a quotation.",
-    },
-    {
-        n: "02",
-        t: "Sample & Approval",
-        d: "Colour, perforation and surface are confirmed on physical samples before tooling or mass production starts.",
-    },
-    {
-        n: "03",
-        t: "Production",
-        d: "Forming, perforation and coating run on our own 15 lines — typically 7–10 working days.",
-    },
-    {
-        n: "04",
-        t: "QC & Packing",
-        d: "Each lot is inspected, then packed for export: panels flat in cartons on pallets, carriers and trim boxed separately.",
-    },
-    {
-        n: "05",
-        t: "Shipment & Support",
-        d: "Export documentation, container loading plan and installation guidance; perforated, formed and special-finish work runs on the same 7–10 working-day schedule.",
-    },
-];
+/* ── 交付流程节点已移到 lib/orderProcess.ts（首页与 About 共用一份），
+   原先本地的 processSteps 5 步数组删除：它回答不了采购评审要的四个问题，
+   而且与首页各写一份必然分叉。渲染见 components/OrderProcess.astro。── */
 
 /* ── 认证与自有检测（附录 A 口径，不写证书编号）── */
 const certCards = [
@@ -837,36 +814,20 @@ const tourHooks = [
     </section>
 
     <!-- ══════ 7. How an Order Runs ══════ -->
-    <section class="ab-band ab-band--dark">
-        <div class="ab-wrap">
-            <div class="ab-head">
-                <span class="ab-eyebrow ab-eyebrow--gold"
-                    >How an Order Runs</span
-                >
-                <div class="ab-head-rule"></div>
-                <h2 class="ab-h2 ab-h2--light">
-                    From Drawing to <span class="ab-hl-gold"
-                        >Loaded Container</span
-                    >
-                </h2>
-            </div>
-            <ol class="ab-steps">
-                {
-                    processSteps.map((s) => (
-                        <li class="ab-step">
-                            <span class="ab-step-n">{s.n}</span>
-                            <strong>{s.t}</strong>
-                            <span class="ab-step-d">{s.d}</span>
-                        </li>
-                    ))
-                }
-            </ol>
-            <p class="ab-note ab-note--light">
-                Lead times and MOQ above are our standard offer; final figures
-                are confirmed against your project at quotation.
-            </p>
-        </div>
-    </section>
+    {
+        /* 数据单一来源 lib/orderProcess.ts，首页渲染同一组件的精简版。
+       原本是 5 步 ab-steps + 本地 processSteps 数组：交期起算、打样报审闸口、
+       分批发货、补板周期这四件采购评审点名的要求一件都没回答，而且与首页各写一份
+       必然口径分叉。深色带改为组件自带浅带：每节点四行细字压在 #110e0b 上可读性差。 */
+    }
+    <OrderProcess
+        variant="about"
+        id="how-an-order-runs"
+        eyebrow="How an Order Runs"
+        titleA="From Drawing to"
+        titleB="Loaded Container"
+        intro="Every stage below names what you supply, what comes back from us, who signs it off, and where the clock starts — because the questions that decide a supplier are rarely about the panel."
+    />
 
     <!-- ══════ 8. Quality & Certification ══════ -->
     <section class="ab-band">

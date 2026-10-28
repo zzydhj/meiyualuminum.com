@@ -1,0 +1,488 @@
+---
+/**
+ * OrderProcess.astro —— 交付流程节点版面（首页与 About 共用）
+ *
+ * 设计约束（来自《网站采购体验评估》的整改要求，不是审美偏好）：
+ *   1. 全部服务端渲染成 HTML 文本。买方的审查工具读的是页面源码，写在图片里的字、
+ *      靠 JS 注入的列表都等于「网站没有提供」——首页那张项目地图就是后一种。
+ *   2. 每个节点回答四个采购必问：你给什么 / 我们交什么 / 谁签字与责任边界 / 时间从哪算。
+ *      报告点名的缺口（交期起算、打样报审、分批发货、补板周期）都落在这四列里。
+ *   3. 数据不在本文件，在 src/lib/orderProcess.ts；两处引用同一份，口径不会分叉。
+ *
+ * variant（两者都是同一套手风琴，只差默认展开状态）：
+ *   "home"  —— 8 个节点折叠，默认只展开第一条（业主 10-28：全展开会把首页压得太长）
+ *   "about" —— 默认全部展开，另渲染责任划分表与商务条款（这两块只该有一份完整口径）
+ *
+ * 折叠用原生 <details>/<summary>，不用 JS 手风琴：折叠态的正文本来就在交付的 HTML 里，
+ * 谷歌和不执行 JS 的 AI 抓取器拿到的都是全文；禁用 JavaScript 的访客也还能手动展开。
+ * 省的是屏幕高度，不省一个字。
+ */
+import {
+    COMMERCIAL_TERMS,
+    PROCESS_NODES,
+    RESPONSIBILITY_MATRIX,
+} from "../lib/orderProcess";
+
+interface Props {
+    /** 版面所在的 eyebrow 文案与详略程度 */
+    variant?: "home" | "about";
+    /** 锚点 id，供跨页定位 */
+    id?: string;
+    eyebrow: string;
+    titleA: string;
+    titleB: string;
+    intro: string;
+}
+
+const {
+    variant = "home",
+    id = "delivery-process",
+    eyebrow,
+    titleA,
+    titleB,
+    intro,
+} = Astro.props;
+const full = variant === "about";
+/* About 是深读页，默认全开；首页只开第一条。两者都可手动开合。 */
+const openAll = variant === "about";
+---
+
+<section class="op-section" id={id}>
+    <div class="op-inner">
+        <header class="op-head">
+            <span class="op-eyebrow">{eyebrow}</span>
+            <div class="op-rule" aria-hidden="true"></div>
+            <h2 class="op-h2">{titleA} <span class="op-hl">{titleB}</span></h2>
+            <p class="op-sub">{intro}</p>
+        </header>
+
+        {
+            /* 折叠后得告诉人这一行是可以点的；About 版默认全开，不需要这句。 */
+            !full && (
+                <p class="op-hint">
+                    Every stage is a row — open one to see what we need from
+                    you, what comes back, who signs it off, and where the clock
+                    starts.
+                </p>
+            )
+        }
+
+        {
+            /* 8 个节点 = 8 行手风琴。标题行本身就是阶段总览，所以不再单独挂一条
+            rail——同一页把 8 个标题列两遍是冗余，折叠后垂直列表已经一眼看完。 */
+        }
+        <ol class="op-nodes">
+            {
+                PROCESS_NODES.map((s, i) => (
+                    <li class="op-node">
+                        <details open={openAll || i === 0 ? true : undefined}>
+                            <summary class="op-node-top">
+                                <span class="op-node-n">{s.n}</span>
+                                <h3 class="op-node-t">{s.t}</h3>
+                                <span class="op-plus" aria-hidden="true" />
+                            </summary>
+                            <div class="op-node-body">
+                                <p class="op-node-s">{s.s}</p>
+                                <dl class="op-kv">
+                                    <div class="op-kv-row">
+                                        <dt>You provide</dt>
+                                        <dd>{s.you}</dd>
+                                    </div>
+                                    <div class="op-kv-row">
+                                        <dt>We return</dt>
+                                        <dd>{s.ours}</dd>
+                                    </div>
+                                    <div class="op-kv-row">
+                                        <dt>Sign-off and boundary</dt>
+                                        <dd>{s.gate}</dd>
+                                    </div>
+                                    <div class="op-kv-row op-kv-row--clock">
+                                        <dt>Timings</dt>
+                                        <dd>{s.clock}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </details>
+                    </li>
+                ))
+            }
+        </ol>
+
+        {
+            full && (
+                <div class="op-blocks">
+                    <div class="op-block">
+                        <h3 class="op-h3">Who owns each piece</h3>
+                        <p class="op-block-lead">
+                            The part that decides whether a project runs is
+                            rarely the panel — it is the line where our
+                            responsibility stops and yours starts. This is that
+                            line, stated before an order rather than during a
+                            dispute.
+                        </p>
+                        <div class="op-table-wrap">
+                            <table class="op-table">
+                                <caption class="op-sr">
+                                    Responsibility split between MEIYU and the
+                                    buyer
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Item</th>
+                                        <th scope="col">Usually whose</th>
+                                        <th scope="col">What we do</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {RESPONSIBILITY_MATRIX.map((r) => (
+                                        <tr>
+                                            <th scope="row">{r.task}</th>
+                                            <td>{r.who}</td>
+                                            <td>{r.ours}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="op-block">
+                        <h3 class="op-h3">Commercial terms, stated plainly</h3>
+                        <dl class="op-terms">
+                            {COMMERCIAL_TERMS.map((t) => (
+                                <div class="op-term">
+                                    <dt>{t.t}</dt>
+                                    <dd>{t.d}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </div>
+                </div>
+            )
+        }
+
+        <p class="op-note">
+            Figures shown are our standard offer and are confirmed against your
+            project at quotation. Where a number is not yet fixed — a drawing
+            turnaround, a revision allowance, a replacement batch — it is stated
+            on the quotation rather than assumed here.
+            {
+                !full && (
+                    <a class="op-link" href="/about/#how-an-order-runs">
+                        See the responsibility split and the commercial terms in
+                        full →
+                    </a>
+                )
+            }
+        </p>
+    </div>
+</section>
+
+<style>
+    /* 令牌与 about 的 .ab-* 带一致：#c0a882 檀金 / #c09020 eyebrow / #f8f6f3 浅带 /
+       1200px wrap / clamp 内距。不复用它们的类名是因为 Astro 作用域样式跨组件不生效。 */
+    .op-section {
+        padding: clamp(56px, 7vw, 88px) clamp(16px, 4vw, 40px);
+        background: #f8f6f3;
+        color: #1e293b;
+    }
+    .op-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .op-head {
+        max-width: 780px;
+        margin: 0 auto clamp(20px, 3vw, 30px);
+        text-align: center;
+    }
+    .op-hint {
+        max-width: 780px;
+        margin: 0 auto clamp(24px, 3.4vw, 34px);
+        text-align: center;
+        font-size: 0.82rem;
+        line-height: 1.6;
+        color: #8b7f74;
+    }
+    .op-eyebrow {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #c09020;
+        margin-bottom: 0.7rem;
+    }
+    .op-rule {
+        width: 48px;
+        height: 3px;
+        background: #c0a882;
+        margin: 0 auto 20px;
+        border-radius: 2px;
+    }
+    .op-h2 {
+        margin: 0 0 0.9rem;
+        font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+        line-height: 1.25;
+        letter-spacing: -0.4px;
+        color: #1e293b;
+    }
+    .op-hl {
+        color: #69574a;
+    }
+    .op-sub {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.75;
+        color: #475569;
+    }
+
+    /* 节点手风琴：单列，标题行常驻，正文折叠 */
+    .op-nodes {
+        list-style: none;
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+    }
+    .op-node {
+        background: #fff;
+        border: 1px solid #e6ded2;
+        border-left: 3px solid #c0a882;
+        border-radius: 10px;
+    }
+    /* 标题行就是 <summary>：去掉浏览器默认三角，换成右侧自画的 +/− */
+    .op-node-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: clamp(14px, 2vw, 18px) clamp(16px, 2.4vw, 24px);
+        margin: 0;
+        cursor: pointer;
+        list-style: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .op-node-top::-webkit-details-marker {
+        display: none;
+    }
+    .op-node-top:focus-visible {
+        outline: 2px solid #c0a882;
+        outline-offset: -3px;
+        border-radius: 9px;
+    }
+    .op-node-n {
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #c0a882;
+        font-variant-numeric: tabular-nums;
+        flex: none;
+    }
+    .op-node-t {
+        flex: 1 1 auto;
+        margin: 0;
+        font-size: 1.02rem;
+        line-height: 1.35;
+        letter-spacing: -0.2px;
+        color: #1e293b;
+        font-weight: 600;
+    }
+    .op-plus {
+        position: relative;
+        flex: none;
+        width: 22px;
+        height: 22px;
+        border: 1px solid #e6ded2;
+        border-radius: 50%;
+        background: #f8f6f3;
+    }
+    .op-plus::before,
+    .op-plus::after {
+        content: "";
+        position: absolute;
+        background: #c09020;
+        transition: opacity 0.18s ease;
+    }
+    /* 横线常驻 */
+    .op-plus::before {
+        left: 5px;
+        right: 5px;
+        top: 50%;
+        height: 1.5px;
+        transform: translateY(-50%);
+    }
+    /* 竖线：叠上去是「+」，展开时淡出就变成「−」 */
+    .op-plus::after {
+        top: 5px;
+        bottom: 5px;
+        left: 50%;
+        width: 1.5px;
+        transform: translateX(-50%);
+    }
+    details[open] > .op-node-top .op-plus::after {
+        opacity: 0;
+    }
+    .op-node-body {
+        padding: clamp(14px, 2vw, 18px) clamp(16px, 2.4vw, 24px)
+            clamp(18px, 2.4vw, 26px);
+        border-top: 1px solid #f0e9df;
+    }
+    .op-node-s {
+        margin: 0 0 14px;
+        font-size: 0.92rem;
+        line-height: 1.65;
+        color: #69574a;
+    }
+    .op-kv {
+        margin: 0;
+        display: grid;
+        gap: 9px;
+    }
+    .op-kv-row {
+        display: grid;
+        grid-template-columns: 132px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+    }
+    .op-kv dt {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #8b7f74;
+        padding-top: 2px;
+    }
+    .op-kv dd {
+        margin: 0;
+        font-size: 0.86rem;
+        line-height: 1.65;
+        color: #475569;
+    }
+    .op-kv-row--clock dt {
+        color: #c09020;
+    }
+    .op-kv-row--clock dd {
+        color: #334155;
+    }
+
+    /* About 版独有的两块 */
+    .op-blocks {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(16px, 2.4vw, 24px);
+        margin-top: clamp(28px, 4vw, 40px);
+    }
+    .op-block {
+        background: #fff;
+        border: 1px solid #e6ded2;
+        border-radius: 10px;
+        padding: clamp(18px, 2.4vw, 26px);
+    }
+    .op-h3 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        letter-spacing: -0.2px;
+        color: #1e293b;
+    }
+    .op-block-lead {
+        margin: 0 0 14px;
+        font-size: 0.86rem;
+        line-height: 1.65;
+        color: #69574a;
+    }
+    .op-table-wrap {
+        overflow-x: auto;
+    }
+    .op-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+    }
+    .op-table th,
+    .op-table td {
+        text-align: left;
+        padding: 9px 10px;
+        border-bottom: 1px solid #eee7dc;
+        vertical-align: top;
+        line-height: 1.55;
+    }
+    .op-table thead th {
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #8b7f74;
+        border-bottom: 1px solid #ddd3c4;
+    }
+    .op-table tbody th {
+        font-weight: 600;
+        color: #1e293b;
+        white-space: nowrap;
+    }
+    .op-table td {
+        color: #475569;
+    }
+    .op-terms {
+        margin: 0;
+        display: grid;
+        gap: 12px;
+    }
+    .op-term dt {
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 3px;
+    }
+    .op-term dd {
+        margin: 0;
+        font-size: 0.82rem;
+        line-height: 1.65;
+        color: #475569;
+    }
+    .op-sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+    .op-note {
+        margin: clamp(24px, 3vw, 34px) auto 0;
+        max-width: 860px;
+        text-align: center;
+        font-size: 0.82rem;
+        line-height: 1.7;
+        color: #69574a;
+    }
+    .op-link {
+        display: inline-block;
+        margin-left: 6px;
+        font-weight: 700;
+        color: #c09020;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(192, 144, 32, 0.35);
+    }
+    .op-link:hover {
+        color: #69574a;
+        border-bottom-color: #69574a;
+    }
+
+    @media (max-width: 1000px) {
+        .op-blocks {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 560px) {
+        .op-kv-row {
+            grid-template-columns: 1fr;
+            gap: 2px;
+        }
+        /* 窄屏上标题与 + 靠得紧，编号不再占独立一列 */
+        .op-node-top {
+            gap: 10px;
+        }
+        .op-node-n {
+            font-size: 1.1rem;
+        }
+    }
+</style>

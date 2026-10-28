@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FactoryTourRail from "../components/FactoryTourRail.astro";
+import OrderProcess from "../components/OrderProcess.astro";
 
 // SSR：多语言 rewrite 目标页必须是 server-rendered（/en/ /zh/ 内部重写到 /）
 export const prerender = false;
@@ -1223,6 +1224,21 @@ const websiteJsonLd = {
       </div>
     </div>
   </div>
+
+  <!-- ===== Delivery Process Section ===== -->
+  {
+    /* 首页也要能被“AI 审查”读到交付细节，所以这里不是缩略图也不是 JS 注入，
+     而是与 About 同一数据源（lib/orderProcess.ts）的服务端渲染文本。
+     责任划分表与商务条款只在 About 渲染一次（variant="about"），避免两处口径漂移。 */
+  }
+  <OrderProcess
+    variant="home"
+    id="delivery-process"
+    eyebrow="Order to Delivery"
+    titleA="How an Order Runs,"
+    titleB="Stage by Stage"
+    intro="A buyer's risk is rarely the panel itself — it is the process around it. Every stage below states what you provide, what comes back from us, who signs it off and where the clock starts, including the parts a brochure usually skips: drawing freeze, sample approval, staged despatch and replacement batches."
+  />
 
   <!-- ===== Certificates Section ===== -->
   <section class="certificates-section">

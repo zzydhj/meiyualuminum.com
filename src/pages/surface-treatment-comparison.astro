@@ -62,13 +62,38 @@ const pageDescription =
                         <td>18–25 μm</td>
                         <td>Film on base coat</td>
                     </tr>
+                    {
+                        /* 原先这里只有一行 “Color Warranty / 25 years”，把行业对这个标准的通常做法
+                        写成了看起来像本厂的质保。附录 A 只授权 PVDF 15 年 / PE 10 年，
+                        所以拆成两行：市场惯例（带标准号）与本厂标准 offer 各一行。 */
+                    }
                     <tr>
-                        <th>Color Warranty</th>
+                        <th
+                            >Colour warranty — typical market practice against
+                            the standard</th
+                        >
                         <td><strong>25 years</strong> (AAMA 2605)</td>
                         <td>10–15 years (AAMA 2604)</td>
                         <td>20+ years</td>
                         <td>10 years</td>
                         <td>10 years</td>
+                    </tr>
+                    <tr>
+                        <th>MEIYU standard offer</th>
+                        <td><strong>15 years</strong></td>
+                        <td
+                            >Not in the standard schedule — stated on your
+                            quotation</td
+                        >
+                        <td
+                            >Outside the coating schedule; the oxide itself is
+                            UV-stable</td
+                        >
+                        <td><strong>10 years</strong></td>
+                        <td
+                            >Not in the standard schedule — stated on your
+                            quotation</td
+                        >
                     </tr>
                     <tr>
                         <th>UV Resistance</th>
@@ -129,6 +154,20 @@ const pageDescription =
                 </tbody>
             </table>
         </div>
+        {
+            /* 采购评审 F02 要的不只是“多少年”，而是适用条件、起算点与免责范围。
+           这两句把上面两行质保的关系说清楚：行业惯例那一行是市面做法，
+           本厂那一行才是可以写进合同的 offer。 */
+        }
+        <p class="stg-table-note">
+            The market-practice row is what coatings to that standard are
+            commonly warranted for in this industry; the MEIYU row is what we
+            actually put in writing. Our figures are a standard offer under
+            normal atmospheric exposure — the date they run from, and the
+            exclusions, are set out on your quotation, because coastal and
+            high-salt exposure can require a different coating specification
+            rather than a longer promise.
+        </p>
     </section>
 
     <!-- ══════ DETAILED CARDS ══════ -->
@@ -153,7 +192,11 @@ const pageDescription =
                     <li>
                         Exterior facades in coastal or industrial environments
                     </li>
-                    <li>Projects requiring 25+ year color warranties</li>
+                    <li>
+                        Projects whose specification names a 25-year colour
+                        warranty to AAMA 2605 — our standard offer is 15 years,
+                        so raise it at enquiry rather than after award
+                    </li>
                     <li>
                         Metallic, pearlescent, or custom colors with long-term
                         stability
@@ -311,7 +354,8 @@ const pageDescription =
                 <h4>Exterior Facade (Coastal / High UV)</h4>
                 <p class="stg-rec">→ PVDF Coating</p>
                 <p>
-                    Maximum UV and salt-spray resistance with 25-year warranty.
+                    Maximum UV and salt-spray resistance; our standard colour
+                    warranty on PVDF is 15 years.
                 </p>
             </div>
             <div class="stg-guide-item">
@@ -382,6 +426,16 @@ const pageDescription =
     .stg-table-wrap {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+    }
+    .stg-table-note {
+        margin: 1rem 0 0;
+        padding: 12px 16px;
+        background: #f8f6f3;
+        border-left: 3px solid #c0a882;
+        border-radius: 6px;
+        font-size: 0.86rem;
+        line-height: 1.7;
+        color: #475569;
     }
     .stg-table {
         border-collapse: collapse;

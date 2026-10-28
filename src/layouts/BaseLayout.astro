@@ -305,23 +305,5 @@ const orgJsonLd = {
 
     <!-- Global inquiry modal — triggered from any [data-open-inquiry-modal] button -->
     <InquiryModal />
-
-    <!--Start of Tawk.to Script-->
-    <!-- Tawk.to 在线客服聊天（第三方，全站生效）。
-         is:inline 确保脚本原样输出、按序执行，不被 Astro 打包处理。 -->
-    <script is:inline type="text/javascript">
-      var Tawk_API = Tawk_API || {},
-        Tawk_LoadStart = new Date();
-      (function () {
-        var s1 = document.createElement("script"),
-          s0 = document.getElementsByTagName("script")[0];
-        s1.async = true;
-        s1.src = "https://embed.tawk.to/6ac7ad4579143d34c40cc4be/1k4dvpmq3";
-        s1.charset = "UTF-8";
-        s1.setAttribute("crossorigin", "*");
-        s0.parentNode.insertBefore(s1, s0);
-      })();
-    </script>
-    <!--End of Tawk.to Script-->
   </body>
 </html>

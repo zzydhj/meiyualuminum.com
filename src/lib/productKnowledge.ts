@@ -195,7 +195,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { step: 2, title: "Anchor and Hang the Main Carrier", description: "Fix hanger rods to the slab on expansion or chemical anchors at the spacing the structure allows, and hang the main carrier level. Level it properly before anything else goes near it: strips will not correct a carrier that is out of plane, they will repeat its error along every metre of the run." },
             { step: 3, title: "Set Out the Strip Carriers", description: "Clip or screw the strip carriers below the main carrier at the centres on the setting-out drawing, perpendicular to the run. This is the step where closed-joint and open-joint ceilings part company — the carrier decides the joint — so confirm which one is being built before the first carrier is fixed. There is no default pitch to fall back on." },
             { step: 4, title: "Install the Strips", description: "Slide or hook each strip into the carrier, working from one end of the room to the other. Strips are independent, so a wrong one lifts straight back out; do not drag a strip along the carrier, which marks the finish. Check the joint width with a feeler at intervals rather than by eye." },
-            { step: 5, title: "Perimeter, Splices and Movement Joints", description: "Close the perimeter with the angle or shadow-line trim the detail calls for, join carrier and strip runs with the matching splices, and place movement joints where the drawing shows them. On long or externally exposed runs, agree the joint positions with us before manufacture rather than finding them on site." },
+            { step: 5, title: "Perimeter, Carrier Splices and Movement Joints", description: "Close the perimeter with the angle or shadow-line trim the detail calls for. Carrier runs are joined with the matching carrier splice — a strip is not: strips are ordered and cut to the run so the visible face carries no butt joint, and where a plan is longer than one length the break is designed as a shadow gap, a pelmet or a change of direction rather than butted in the middle of a field. Place movement joints where the drawing shows them; on long or externally exposed runs, agree the joint positions with us before manufacture rather than finding them on site." },
             { step: 6, title: "Sight, Level, then Cut in Services", description: "Look along the ceiling from the end of the run and from the entry — that is where a wandering line, an uneven gap or a bowed strip shows; adjust hanger nuts until the face reads straight. Only then cut in luminaires, diffusers and sprinkler collars, and re-seal any cut edge whose coating was broken." },
         ],
         installationTips: [
@@ -219,45 +219,69 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
     // 3–8: 其余品类数据结构相同，此处用精简版填充框架
     // ═══════════════════════════════════════════════════════════
 
+    // U 型方通（家族级条目）——本条目只服务 /products/powder-coated-u-baffle-ceiling/ 与
+    // /products/wood-grain-u-baffle-ceiling/ 两页（已核：全站只有这两个产品的取值链末级落在本分类）。
+    //     ⚠ categorySlug 是 3D 装配指南的挂靠键（interactiveGuides.ts 的 u-baffle-ceiling 用它 join），
+    //       改 slug 会让两个产品页和清单页的 3D 入口一起掉，只能改文案不能改键。
+    //     ⚠ installationSteps 的 4 个标题与顺序被 interactiveGuides.ts 的 stepMap {1:3,2:4,3:5,4:6} 依赖，
+    //       且产品页只在“步骤来自品类级”时才渲染 #step=N 深链——两页都不要在 enriched_specs 里覆盖步骤。
+    //     数值来源标注：[calculated] 本文件自算 / [vendor-typical] 同行普遍值 / [standard] 标准条款。
+    //     公司值只取附录 A；附录 A 没有的一律写成不带数字的能力句。
+    //     2026-10-28 依据 20 家同行 listing 研读（made-in-china，alibaba 验证墙按红线未试）重写：
+    //       断面/壁厚/长度的同行口径、以及“0 家披露接长件与端盖、0 家给涂层 μm 与安装效率”一并写进口径。
     "u-shaped-aluminum-square-tube": {
         categorySlug: "u-shaped-aluminum-square-tube",
         categoryName: "U-Shaped Aluminum Square Tube",
-        overview: "U-shaped aluminum square tubes (baffle ceiling) are open-cell linear elements creating bold architectural aesthetics. The open design promotes ventilation and provides visual depth. Widely used in airports, malls, atriums, and contemporary commercial spaces.",
-        keyFeatures: ["Open-cell ventilation", "Deep visual depth", "Multiple depths and spacing", "Individual removal", "Integrated LED lighting", "Wood grain option", "Spans up to 2400mm"],
+        overview: "U-shaped baffles are open aluminium channels hung in a row, blade-like, with the opening facing up into the carrier so the visible face is the flat base: the ceiling reads as a grid of shadow lines and the plenum above stays visible and reachable. They are roll-formed or extruded sections on a toothed carrier, chosen where a service-rich slab has to be read as a design feature instead of being closed off — concourses, atria, retail aisles, transit halls. Two finish families share the exact same section: a solid polyester powder coat, and a wood-effect transfer over that coat. The section and the carrier are the family's business; the finish is where the two products part.",
+        keyFeatures: [
+            "Open channel — sprinklers, smoke detectors, lights and ducts stay reachable without panels coming down",
+            "Depth is the stiffness lever: a 50 mm and a 200 mm baffle off the same coil behave very differently over a long run [engineering judgement]",
+            "Clipped into a toothed carrier by hand; no visible fasteners on the exposed faces",
+            "Supplied and installed as full lengths — the run is ordered to size rather than butting two pieces together on site",
+            "Variable depths and spacing read as a wave or a rhythm — the effect is set out on the drawing, not on site",
+            "Two finish families on one section: solid polyester powder coat, or wood-effect transfer over the same base coat",
+            "Aluminium through the thickness, so the fire conversation is about the coating, never about a plastic core",
+        ],
         technicalSpecs: [
-            { label: "Material", value: "AA3003 / AA6063 Aluminum" },
-            { label: "Wall Thickness", value: "0.6 / 0.8 / 1.0 / 1.2mm" },
-            { label: "Width (Face)", value: "30 / 40 / 50 / 60 / 80 / 100mm" },
-            { label: "Depth", value: "50 / 80 / 100 / 120 / 150 / 200mm" },
-            { label: "Length", value: "Up to 6000mm" },
-            { label: "Spacing", value: "50–300mm center-to-center, set by the design intent" },
-            { label: "Fire Rating", value: "Non-combustible aluminium substrate; classification of the finished board is tested per build-up" },
-            { label: "Acoustic NRC", value: "Open baffles absorb little on their own; any NRC figure belongs to a tested assembly" },
+            { label: "Material", value: "Roll-formed sections from AA3003-type sheet; extruded sections in AA6063-T5 [standard]. Alloy and temper are stated on the submittal, not inferred from a datasheet" },
+            { label: "Wall Thickness", value: "0.6 / 0.8 / 1.0 / 1.2 mm as our published steps; listings quote 0.5–1.5 mm overall [vendor-typical], and the word \"thickness\" is used loosely across the market for face, wall and panel gauge alike" },
+            { label: "Width (Face)", value: "30 / 40 / 50 / 60 / 80 / 100 mm — the market also sells 25 mm and 250 mm faces, so confirm the number you are being quoted is the visible face, not the carrier footprint" },
+            { label: "Depth", value: "50 / 80 / 100 / 120 / 150 / 200 mm" },
+            { label: "Length", value: "Ordered to the run and installed one piece per line; where a plan is longer than a single length the break is designed in (a shadow gap, a pelmet or a change of direction) rather than butted and sleeved. Bent or curved pieces are a different conversation: the market keeps them under roughly 4 m per piece because longer radii distort [vendor-typical]" },
+            { label: "Spacing", value: "50–300 mm centre-to-centre, but the achievable pitch is bounded by the carrier's punched slot spacing — ask what pitch the carrier is actually punched to before fixing a rhythm on the drawing" },
+            { label: "Fire Performance", value: "Bare aluminium is a non-combustible material, which is not the same as a finished-product classification. Our declarations are ASTM E84 Class A and EN 13501-1 B-s1,d0 for the coated product; an A2-s1,d0 line needs a test report naming that build-up" },
+            { label: "Acoustic NRC", value: "An open baffle absorbs very little on its own surface. Any single-number NRC belongs to a tested assembly — perforated faces, fleece or a backed cavity — and is not comparable without the test standard" },
+            { label: "Flatness and Deflection", value: "No supplier in the 20 listings we studied published a flatness tolerance or a deflection limit. If the run is long, ask for the span, the thickness and the carrier pitch as one set of numbers" },
         ],
         surfaceOptions: [
-            { name: "Powder Coating", description: "Uniform matte/gloss across all surfaces.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Lobbies", "Malls", "Exhibition halls"] },
-            { name: "Wood Grain Transfer", description: "Timber appearance, zero maintenance.", thickness: "Film layer", warranty: "Standard offer per quotation", suitableFor: ["Hotels", "Restaurants", "Cultural venues"] },
-            { name: "PVDF", description: "For semi-exposed soffit applications.", thickness: "25–40 μm", warranty: "15-year standard offer", suitableFor: ["Exterior soffits", "Canopies", "Stadiums"] },
+            { name: "Powder Coating (Polyester)", description: "Thermoset polyester, the interior workhorse: full RAL and Pantone range, consistent across batches when the plant colour-matches by system.", thickness: "60–80 μm [vendor-typical]", warranty: "10-year coating warranty under standard atmospheric exposure", suitableFor: ["Lobbies", "Malls", "Transit halls", "Offices"] },
+            { name: "Wood Grain Transfer", description: "A timber pattern developed into a coating over the same base coat — the wood look on a metal section, with no grain-direction maintenance.", thickness: "Pattern layer over the base coat", warranty: "Follows the coating system beneath the grain; quoted with the build-up", suitableFor: ["Hotels", "Restaurants", "Cultural venues", "Retail aisles"] },
+            { name: "PVDF", description: "Fluorocarbon for soffit, canopy and semi-exposed positions where UV and coastal air do the work.", thickness: "25–40 μm [vendor-typical]", warranty: "15-year coating warranty under standard atmospheric exposure", suitableFor: ["Exterior soffits", "Canopies", "Covered walkways"] },
         ],
         standardSizes: [
-            { label: "30×50mm (Slim)", value: "0.6mm wall, lightweight baffles" },
-            { label: "50×100mm (Standard)", value: "0.8mm wall, most common" },
-            { label: "50×150mm (Deep)", value: "1.0mm wall, dramatic depth" },
-            { label: "80×200mm (Extra Deep)", value: "1.2mm wall, large spans" },
+            { label: "30×50 mm (Slim)", value: "0.6 mm wall — a light rhythm at close pitch, for low ceilings and corridors" },
+            { label: "50×100 mm (Standard)", value: "0.8 mm wall — the most specified format; reads as a blade without swallowing the room height" },
+            { label: "50×150 mm (Deep)", value: "1.0 mm wall — deeper shadow line, more of the plenum hidden behind the face" },
+            { label: "80×200 mm (Extra Deep)", value: "1.2 mm wall — for tall atria, where the baffle has to be legible from the floor below" },
         ],
         installationSteps: [
-            { step: 1, title: "Carrier Installation", description: "Install main carriers perpendicular to baffle direction, 1200–1800mm spacing." },
-            { step: 2, title: "Level Carriers", description: "Laser-level, tolerance ±2mm over 10m." },
-            { step: 3, title: "Clip Baffles", description: "Push into carrier slots until spring clip clicks." },
-            { step: 4, title: "Splice Long Runs", description: "Use internal splice connectors at carrier locations." },
+            { step: 1, title: "Carrier Installation", description: "Carriers run perpendicular to the baffle direction, hung from the structure on rods at the pitch the drawing sets — typically 1200–1800 mm [vendor-typical]. Where the ceiling is open to wind or to a soffit, ask for the anti-wind clip variant." },
+            { step: 2, title: "Level Carriers", description: "Level and set the camber before anything clips in: the usual site tolerance is ±2 mm over 10 m [vendor-typical], and a long run without a shallow camber reads as a sag." },
+            { step: 3, title: "Clip Baffles", description: "Baffles push into the carrier's toothed slots by hand, opening facing up, until the spring clip takes. No visible fasteners on the exposed faces, and one piece comes back out for access." },
+            { step: 4, title: "Details and Service Openings", description: "Cut lights, diffusers, sprinklers and detectors from the back panel with the opening still up, support each opening edge, and keep the baffle beyond the last carrier within a short cantilever — hang nothing on it." },
         ],
-        installationTips: ["Tighter spacing = more visual density + better acoustics", "Align with primary viewing direction", "Coordinate LED slots before carrier install", "Variable depths create wave effects"],
+        installationTips: [
+            "Close spacing and deep sections together are what make a baffle ceiling read as architecture; either one alone just looks like slats",
+            "Density is a trade, not a virtue: tight pitch hides the plenum better but blocks more of the air and sprinkler pattern",
+            "Set the LED, sprinkler and detector grid out before the carriers go in — a baffle field has no place to hide an off-grid fitting",
+            "On wood-effect pieces the grain direction has to be fixed on the drawing before manufacture; see the wood-grain page",
+        ],
         applications: [
-            { type: "Airport Terminals", whyUse: "Open-cell allows HVAC air return.", recommendedProducts: ["50×150mm metallic silver"], keyBenefit: "HVAC integration, fire-rated" },
-            { type: "Shopping Malls", whyUse: "Variable depths create dynamic effects.", recommendedProducts: ["Mixed depths, alternating colors"], keyBenefit: "Design flexibility" },
-            { type: "Exhibition Halls", whyUse: "Deep baffles conceal overhead services.", recommendedProducts: ["80×200mm matte black"], keyBenefit: "Service concealment" },
+            { type: "Transit concourses and stations", whyUse: "The open channel lets return air, sprinkler spray and signage fixings pass through the ceiling line instead of fighting it.", keyBenefit: "Services stay workable above a public floor", recommendedProducts: ["Deep sections at a wide pitch", "Metallic or dark solid colours"] },
+            { type: "Retail aisles and food courts", whyUse: "A run of identical baffles turns a long aisle into a direction; ordering each line as one length keeps that direction unbroken by a joint.", keyBenefit: "Unbroken lines along the length of the plan", recommendedProducts: ["Standard sections at close pitch", "Two-colour runs"] },
+            { type: "Atria and double-height lobbies", whyUse: "From the floor below, only a deep section stays legible; the baffle field reads as the ceiling rather than as overhead clutter.", keyBenefit: "Depth gives the pattern presence at height", recommendedProducts: ["Extra deep sections", "Mixed depths for a wave"] },
         ],
-        certifications: ["ISO 9001", "CE", "ASTM E84 Class A"],
+        certifications: ["ISO 9001", "CE", "ASTM E84 Class A", "EN 13501-1 B-s1,d0"],
     },
 
     "aluminum-honeycomb-core-panel": {
@@ -627,7 +651,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Flatness & Tolerances", value: "Face flatness to about ±0.2 mm and edge straightness within a few millimetres on a production board; the tolerance must be declared on the submittal, because flatness is the reason this product is chosen [industry typical]" },
             { label: "Edge Detail", value: "Four-side folded edge forming a cassette that hooks onto concealed carriers; open or sealed joints to the design" },
             { label: "Suspension", value: "Aluminium carriers with concealed hook-on clips, or an aluminium channel sub-frame on adjustable hangers; spacing set by board span and imposed load" },
-            { label: "Fire Reaction", value: "Aluminium skins and core are non-combustible; the laminated board is normally declared A2-s1,d0 to EN 13501-1, with the adhesive system and any backing material forming part of the claim [standard]" },
+            { label: "Fire Reaction", value: "The skins and the core are each non-combustible, but it is the assembled board that gets classified, and the adhesive system and any backing are part of that build-up. What we declare is ASTM E84 Class A and EN 13501-1 Class B-s1 for the coated product; an A2-s1,d0 classification for a laminated board requires a test report naming that exact build-up, and we will not state one without it" },
             { label: "Acoustic Performance", value: "A solid honeycomb board reflects sound — it is a barrier, not an absorber. Perforated-face acoustic boards use the core cells as a resonator behind the perforated skin, but any NRC or αw figure must be tested to EN ISO 354 on the exact build-up before it is quoted" },
             { label: "Thermal Behaviour", value: "The sealed core cells restrict air movement inside the panel, giving a honeycomb board more thermal resistance than a single metal sheet — useful where a soffit sees sun [industry typical]" },
             { label: "Standard / Test Basis", value: "EN 13964 (suspended ceiling systems); EN 13501-1 (reaction to fire); EN ISO 354 / 11654 (sound absorption); ASTM E84; ASTM E3090/E3090M for suspension-system load testing" },

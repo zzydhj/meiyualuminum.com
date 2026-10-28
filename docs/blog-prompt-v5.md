@@ -357,12 +357,30 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
 【认证】ISO 9001；CE；防火：ASTM E84 Class A（Flame Spread Index 0–25，Steiner Tunnel 法）、
   EN 13501-1 Class B-s1。自有 QC 测试：涂层附着力、盐雾、抗 sag（标准环境模拟）；
   报告编号报价阶段应索提供，不公开。
+  另有 AAMA / QUALICOAT / SGS / TÜV / LEED / BREEAM 相关资质或合作
+  （业主 2026-10-28 确认「这些都有的」，首页 trust-logo 条据此保留）。
+  ⚠ 该次确认只覆盖「具备」这一个事实，未给证书形式与编号。因此在拿到扫描件之前：
+  不得在任何页面新增 “certified to X / X 认证”这类完成句式，不得放第三方机构 logo 图片，
+  也不得把这一行当成可以把 25 年质保等数字抬高到依据的理由。
 【产品线】metal ceiling tiles；strip linear ceiling panels；aluminum wall cladding panels；
   perforated acoustic ceiling panels；insulated facade panels（铝皮 + 矿棉/PU 芯由本厂复合，
   factory-bonded——业主 2026-10-28 确认）。⚠ 该条只授权“复合工艺本身”：芯材厚度档位、导热系数、
   密度、成品 U 值均无本厂自测数据 → 行业数字一律标 [vendor-typical]，防火只按【认证】现有口径写
   （ASTM E84 Class A / EN 13501-1 B-s1），不得写 A2-s1,d0（无报告）；保温层与面板的组装热工性能
   归为“按项目测试/建模”，不给单值。
+【方通与条形吊顶下料】（适用范围：U 型方通 / 条形扣板一类**卡入龙骨的吊顶系统**）
+  按现场排布尺寸开料、**一根到底**：不用上一排的余料接短料，不做内置套筒接长，
+  两头也不配端头封口件——宁可多买料，也不在饰面带留可见接头（业主 2026-10-28 确认）。
+  ⚠ 因此吊顶类页面不得把“可接长 / splice sleeve / end cap”写成本厂做法或工序；
+  超长平面的断开只能写成设计手段（阴影缝、窗帘盒、转向），不能写成现场对接。
+  ⚠ 不在本条范围内的：钢龙骨（carrier）自身的标准段接长（行业常规，可写）；
+  闭口方管做幕墙 fins / 包柱时的开口端封头（另一种产品，尚未向业主确认同一口径）。
+  例：productKnowledge.ts 的 aluminum-square-tube 条目第 4 步仍是 End Caps，属后者，不得据本条删除。
+  全牙吊杆同口径（业主 2026-10-28 追加）：按层高与孔深一次下料、**整根使用**，
+  不用连接套筒（coupler）接长，所以 3D 模型与工序里都不出现“吊杆接长”。
+  ⚠ 只写“本厂整根下料”，不得写成“吊杆不能接长”——接长工艺在深吊空项目里确实存在，
+  否定它属于超出事实。u-baffle-ceiling 包的 suspension.js（已删 coupling 网格）、
+  parts.js 的 Extension 行、steps.js 工序 3 第四行均按此口径，不得回改。
 【定制】厚度 0.8–1.5mm（3003/5052 铝合金）；标准尺寸 300×300mm 至 600×1200mm、可按项目图纸定制；
   穿孔 round/square/slot、孔径 1.5–6mm、开孔率 10%–30%（按 NRC 需求计算）；
   表面 PE、PVDF、powder coating、anodizing、wood-grain transfer、brushed/mirror；
