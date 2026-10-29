@@ -1,0 +1,305 @@
+/* =====================================================================
+   overlay.css —— 3D 覆盖层：部件标注卡片、SVG 引线、悬停提示、操作引导、快捷键
+   颜色一律取自 base.css 的 :root 变量
+   ===================================================================== */
+
+.leaders,
+.labels {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 12;
+}
+
+.leaders {
+    width: 100%;
+    height: 100%;
+}
+
+.leader {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.1;
+    stroke-dasharray: 4 3;
+    opacity: 0.75;
+}
+
+.leader.is-current {
+    stroke: var(--accent-step);
+    stroke-width: 1.8;
+    stroke-dasharray: none;
+    opacity: 1;
+}
+
+.leader.is-done {
+    stroke: var(--accent-ok);
+    opacity: 0.5;
+}
+
+.leader-dot {
+    fill: #fff;
+    stroke: var(--accent);
+    stroke-width: 1.4;
+}
+
+.leader-dot.is-current {
+    stroke: var(--accent-step);
+}
+
+/* ---------- 标注卡片 ---------- */
+.label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    min-width: 128px;
+    max-width: 216px;
+    padding: 6px 10px 7px 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 6px 18px rgba(30, 64, 90, 0.12);
+    pointer-events: auto;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.22s, border-color 0.22s, box-shadow 0.22s;
+}
+
+.label.is-visible {
+    opacity: 1;
+}
+
+.label:hover {
+    border-color: var(--accent);
+    box-shadow: var(--glow);
+}
+
+.label.is-current {
+    border-color: var(--accent-step);
+    box-shadow: 0 6px 20px rgba(232, 115, 12, 0.22);
+}
+
+.label.is-done {
+    border-color: rgba(22, 160, 106, 0.5);
+}
+
+.label-top {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.label-index {
+    font: 700 10px/1 var(--font-mono);
+    color: var(--accent);
+}
+
+.label-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.label-spec {
+    display: block;
+    margin-top: 3px;
+    font: 400 10px/1.45 var(--font-mono);
+    color: var(--text-faint);
+}
+
+.label-step {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 1px 6px;
+    border-radius: 7px;
+    font-size: 9.5px;
+    letter-spacing: 0.4px;
+    color: var(--accent-step);
+    background: rgba(232, 115, 12, 0.1);
+    border: 1px solid rgba(232, 115, 12, 0.28);
+}
+
+.label-group {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+    background: currentColor;
+}
+
+/* ---------- 悬停提示 ---------- */
+.hover-tip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 4px 9px;
+    border-radius: 7px;
+    font-size: 11.5px;
+    color: var(--accent-step);
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 4px 14px rgba(30, 64, 90, 0.12);
+    transform: translate(14px, 14px);
+    opacity: 0;
+    transition: opacity 0.14s;
+    white-space: nowrap;
+}
+
+.hover-tip.is-visible {
+    opacity: 1;
+}
+
+/* ---------- 操作引导 ---------- */
+.guide {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(226, 234, 242, 0.78);
+    backdrop-filter: blur(3px);
+    z-index: 40;
+}
+
+.guide[hidden] {
+    display: none;
+}
+
+.guide-card {
+    width: min(440px, calc(100vw - 48px));
+    padding: 22px 24px 20px;
+    border: 1px solid var(--line-strong);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(30, 64, 90, 0.2);
+    animation: guide-in 0.4s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes guide-in {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+}
+
+.guide-kicker {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent-step);
+}
+
+.guide-card h3 {
+    margin: 8px 0 6px;
+    font-size: 18px;
+}
+
+.guide-card>p:not(.guide-kicker) {
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--text-dim);
+}
+
+.guide-dots {
+    display: flex;
+    gap: 7px;
+    margin: 18px 0 16px;
+}
+
+.guide-dots li {
+    flex: 1;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--line);
+    transition: background 0.25s;
+}
+
+.guide-dots li.is-done {
+    background: var(--accent-step);
+}
+
+.guide-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.guide-hint {
+    position: absolute;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--accent-step);
+    background: #fff;
+    border: 1px solid rgba(232, 115, 12, 0.4);
+    box-shadow: var(--glow-step);
+    pointer-events: none;
+    z-index: 41;
+}
+
+.guide-hint[hidden] {
+    display: none;
+}
+
+/* ---------- 快捷键脚注 ---------- */
+.hotkeys {
+    position: absolute;
+    left: 16px;
+    bottom: 8px;
+    font: 400 10.5px/1 var(--font-mono);
+    color: var(--text-faint);
+    z-index: 14;
+    pointer-events: none;
+}
+
+kbd {
+    padding: 1px 5px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text-dim);
+    font-family: inherit;
+}
+
+@media (max-width: 1280px) {
+    .hotkeys {
+        display: none;
+    }
+}
+
+/* ---------- 品牌水印 ----------
+   放在“右侧面板以左、操作台以上”的空域，不压构件也不拦鼠标 */
+.stage-mark {
+    position: absolute;
+    right: calc(var(--panel-w) + 40px);
+    bottom: calc(var(--toolbar-h) + 34px);
+    width: 132px;
+    opacity: 0.2;
+    pointer-events: none;
+    user-select: none;
+}
+
+@media (max-width: 900px) {
+    .stage-mark {
+        display: none;
+    }
+}
+
+/* ---------- 软件渲染提示 ----------
+   只在探测到 CPU 模拟显卡时由 main.js 去掉 hidden；放在操作台上方居中，
+   不挡构件也不挡面板。这种卡顿换档救不了，必须让访问者去改浏览器设置。 */
+.gpu-note {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(var(--toolbar-h) + 22px);
+    max-width: min(620px, calc(100vw - 48px));
+    padding: 10px 14px;
+    border: 1px solid rgba(198, 147, 26, 0.5);
+    border-radius: var(--r-md);
+    background: rgba(255, 251, 243, 0.94);
+    box-shadow: var(--shadow-md);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    line-height: 1.5;
+}

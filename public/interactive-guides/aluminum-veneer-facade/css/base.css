@@ -1,0 +1,542 @@
+/* =====================================================================
+   base.css —— 设计变量（唯一配色来源）/ 重置 / 布局骨架 / 顶栏 / 操作台 / 启动遮罩
+   面板内部样式见 panels.css，3D 覆盖层样式见 overlay.css
+   配色约定：所有颜色只在 :root 定义，其余文件一律引用变量
+   ===================================================================== */
+
+:root {
+    /* 亮色工程图纸底 */
+    --bg-0: #eef3f8;
+    --bg-hatch: rgba(11, 111, 184, 0.07);
+    --panel-bg: rgba(255, 255, 255, 0.84);
+    --surface: rgba(236, 243, 249, 0.92);
+    --surface-soft: rgba(20, 74, 118, 0.045);
+    --line: rgba(20, 74, 118, 0.14);
+    --line-strong: rgba(11, 111, 184, 0.38);
+
+    --text: #14202c;
+    --text-dim: #4a5f72;
+    --text-faint: #7c8d9c;
+
+    --accent: #0b6fb8;
+    --accent-step: #e8730c;
+    --accent-ok: #16a06a;
+    --accent-2: #6b4fd8;
+
+    /* MEIYU 品牌金：只用于品牌位（顶栏、面板收口、水印），不参与工序语义色 */
+    --brand-gold: #c09020;
+    --brand-gold-dark: #a87a18;
+
+    --glow: 0 0 16px rgba(11, 111, 184, 0.2);
+    --glow-step: 0 0 16px rgba(232, 115, 12, 0.22);
+    --shadow: 0 14px 34px rgba(30, 64, 90, 0.14);
+
+    --topbar-h: 66px;
+    --toolbar-h: 84px;
+    --panel-w: 300px;
+    --radius: 12px;
+
+    --font-ui: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono: "Cascadia Mono", "Consolas", "JetBrains Mono", ui-monospace, monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    font-family: var(--font-ui);
+    color: var(--text);
+    background:
+        radial-gradient(1100px 680px at 18% 6%, rgba(11, 111, 184, 0.1), transparent 70%),
+        radial-gradient(900px 620px at 88% 88%, rgba(232, 115, 12, 0.08), transparent 70%),
+        var(--bg-0);
+    -webkit-font-smoothing: antialiased;
+}
+
+button {
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+li,
+dl,
+dd,
+dt {
+    margin: 0;
+    padding: 0;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+/* ---------- 布局骨架 ---------- */
+#app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+#viewport {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+/* 背景装饰：淡蓝坐标纸网格（纯 CSS，不拦截 canvas 事件） */
+.stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--bg-hatch) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bg-hatch) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at 50% 45%, #000 20%, transparent 84%);
+    pointer-events: none;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.44) 72%, transparent);
+    pointer-events: none;
+    z-index: 20;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: var(--glow);
+    text-decoration: none;
+}
+
+.brand-logo img {
+    display: block;
+    width: auto;
+    height: 22px;
+    object-fit: contain;
+}
+
+.brand-text h1 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.brand-text h1 em {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--accent);
+}
+
+.brand-text p {
+    margin-top: 3px;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    letter-spacing: 0.2px;
+}
+
+.topbar-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 74px;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+}
+
+.meta-item span {
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 1px;
+}
+
+.meta-item b {
+    font: 600 14px/1 var(--font-mono);
+    color: var(--accent);
+}
+
+/* 语言切换链接（中 / EN 两个专题互跳） */
+.meta-item .lang-link {
+    font: 600 14px/1 var(--font-mono);
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.meta-item .lang-link:hover {
+    text-decoration: underline;
+}
+
+/* ---------- 通用按钮 ---------- */
+.icon-btn {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 14px;
+    transition: color 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.icon-btn:hover {
+    color: var(--accent);
+    border-color: var(--line-strong);
+    box-shadow: var(--glow);
+}
+
+.primary-btn,
+.ghost-btn {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 9px;
+    font-size: 12.5px;
+    letter-spacing: 0.4px;
+    border: 1px solid var(--line);
+    transition: all 0.18s;
+}
+
+.primary-btn {
+    color: #fff;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-step), #f79a3f);
+    border-color: transparent;
+}
+
+.primary-btn:hover {
+    box-shadow: 0 0 18px rgba(232, 115, 12, 0.34);
+    transform: translateY(-1px);
+}
+
+.ghost-btn {
+    background: var(--surface);
+    color: var(--text-dim);
+}
+
+.ghost-btn:hover {
+    color: var(--accent);
+    border-color: var(--line-strong);
+}
+
+.ghost-btn:disabled,
+.primary-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ---------- 底部操作台 ---------- */
+.toolbar {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 11px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
+    z-index: 20;
+    max-width: calc(100vw - 40px);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tool-block {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.tool-label {
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    color: var(--text-faint);
+    white-space: nowrap;
+}
+
+.range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 132px;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent) var(--fill, 0%), var(--line) var(--fill, 0%));
+    outline: none;
+}
+
+.range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--accent);
+    box-shadow: 0 1px 6px rgba(30, 64, 90, 0.25);
+    cursor: grab;
+}
+
+.range::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--accent);
+    cursor: grab;
+}
+
+.range-out {
+    font: 600 12px/1 var(--font-mono);
+    color: var(--accent);
+    min-width: 38px;
+    text-align: right;
+}
+
+.seg {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    overflow: hidden;
+    background: var(--surface);
+}
+
+.seg-btn {
+    padding: 6px 11px;
+    font-size: 12px;
+    border: 0;
+    background: transparent;
+    color: var(--text-faint);
+    transition: all 0.16s;
+    white-space: nowrap;
+}
+
+.seg-btn+.seg-btn {
+    border-left: 1px solid var(--line);
+}
+
+.seg-btn:hover {
+    color: var(--text);
+}
+
+.seg-btn.is-active {
+    color: #fff;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), #3aa4e2);
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 6px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+}
+
+.stepper .ghost-btn {
+    height: 26px;
+    width: 26px;
+    padding: 0;
+    font-size: 14px;
+}
+
+.stepper .ghost-btn.is-play {
+    color: var(--accent-step);
+    border-color: rgba(232, 115, 12, 0.45);
+}
+
+.step-text {
+    font: 600 12px/1 var(--font-mono);
+    color: var(--text-dim);
+    white-space: nowrap;
+}
+
+.step-text b {
+    color: var(--accent-step);
+}
+
+.chip {
+    height: 29px;
+    padding: 0 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text-faint);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    transition: all 0.16s;
+}
+
+.chip:hover {
+    color: var(--text);
+    border-color: var(--line-strong);
+}
+
+.chip.is-active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(11, 111, 184, 0.1);
+    font-weight: 600;
+}
+
+.tool-actions {
+    padding-left: 18px;
+    border-left: 1px solid var(--line);
+}
+
+/* ---------- 启动遮罩 ---------- */
+.boot {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: var(--bg-0);
+    z-index: 60;
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+.boot.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.boot-inner {
+    text-align: center;
+}
+
+.boot-ring {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    border-top-color: var(--accent-step);
+    animation: spin 0.9s linear infinite;
+}
+
+.boot-text {
+    font: 600 12px/1 var(--font-mono);
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.boot-mark {
+    display: block;
+    width: 168px;
+    height: 34px;
+    margin: 0 auto 18px;
+    object-fit: contain;
+}
+
+.boot-brand {
+    margin-top: 14px;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    color: var(--text-faint);
+}
+
+.boot-text.is-error {
+    color: #d33a4e;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---------- 响应式 ---------- */
+/* 窄屏下操作台换行变高，主程序会用实测高度覆盖 --toolbar-h */
+@media (max-width: 1280px) {
+    :root {
+        --panel-w: 262px;
+        --toolbar-h: 132px;
+    }
+
+    .range {
+        width: 96px;
+    }
+
+    .brand-text p {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    :root {
+        --panel-w: 214px;
+        --toolbar-h: 190px;
+    }
+
+    .tool-actions {
+        padding-left: 0;
+        border-left: 0;
+    }
+
+    .meta-item {
+        display: none;
+    }
+}

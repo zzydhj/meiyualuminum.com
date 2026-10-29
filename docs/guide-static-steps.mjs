@@ -19,12 +19,20 @@
  * 文案不手写：直接从各包的 steps.js import 出来生成，杜绝两处文字打架。
  * 重复执行会整块重建（占位正则能匹配已生成的块，因为块内没有嵌套 div）。
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 
 const ROOT = process.cwd();
-const SLUGS = ['strip-ceiling', 'u-baffle-ceiling'];
+const GUIDES = join(ROOT, 'public', 'interactive-guides');
+// 包列表从目录读，不写死：写死的清单会让第四份指南悄悄漏掉静态文案
+const SLUGS = existsSync(GUIDES)
+  ? readdirSync(GUIDES).filter((d) => statSync(join(GUIDES, d)).isDirectory()).sort()
+  : [];
+if (!SLUGS.length) {
+  console.error('public/interactive-guides 下没找到任何指南包');
+  process.exit(1);
+}
 const MARK = 'st-list';
 
 const esc = (s) =>
@@ -106,10 +114,18 @@ const CSS = `
 }
 `;
 
+/**
+ * 字段归一化：各包的形状不完全一致——条扣与方通的 check 是数组，
+ * 铝单板包的 screwPanel() 把 check 写成了三元后的字符串。
+ * 不归一就是一份新模板变体把整块静态文案打断（arr.map is not a function）。
+ */
+const list = (v) =>
+  Array.isArray(v) ? v.filter(Boolean) : v === undefined || v === null || v === '' ? [] : [v];
+
 function stepHtml(s) {
-  const tools = s.tools.filter((t) => t && t !== '—').join(' · ');
-  const materials = s.materials.filter((t) => t && t !== '—').join(' · ');
-  const li = (arr) => arr.map((x) => `    <li>${esc(x)}</li>`).join('\n');
+  const tools = list(s.tools).filter((t) => t && t !== '—').join(' · ');
+  const materials = list(s.materials).filter((t) => t && t !== '—').join(' · ');
+  const li = (arr) => list(arr).map((x) => `    <li>${esc(x)}</li>`).join('\n');
   const method = li(s.method);
   const check = li(s.check);
   const rows = [

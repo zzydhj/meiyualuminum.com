@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <title>Aluminium Veneer Façade · 3D Build-Up Guide | MEIYU</title>
+    <meta name="description"
+        content="A to-scale interactive 3D breakdown of an aluminium veneer rainscreen façade: 12 build-up steps from steel-subframe setting-out to handover, with tools, materials, method and acceptance criteria. By MEIYU Aluminum Co., Ltd." />
+    <meta name="author" content="MEIYU Aluminum Co., Ltd." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="MEIYU Aluminum" />
+    <meta property="og:title" content="Aluminium Veneer Façade · 3D Build-Up Guide" />
+    <meta property="og:description"
+        content="Interactive, true-scale 3D installation breakdown: steel subframe, aluminium veneer panels hung on ears, sealed joints, 12 sequenced steps." />
+    <meta property="og:image" content="https://file.meiyualuminum.com/home/logo-1.png" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="https://www.meiyualuminum.com/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://www.meiyualuminum.com/interactive-guides/aluminum-veneer-facade/" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/panels.css" />
+    <link rel="stylesheet" href="./css/overlay.css" />
+    <script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/"
+  }
+}
+</script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- ===== 3D viewport ===== -->
+        <div class="stage">
+            <canvas id="viewport"></canvas>
+            <svg id="leaders" class="leaders" aria-hidden="true"></svg>
+            <div id="labels" class="labels"></div>
+            <div id="hoverTip" class="hover-tip"></div>
+            <!-- brand watermark: the same logo-clear.png used across the site's imagery; decorative, never intercepts pointer events -->
+            <img class="stage-mark" src="https://file.meiyualuminum.com/logo-clear.png" alt="" aria-hidden="true"
+                tabindex="-1" />
+            <!-- only rendered when software rendering (CPU-emulated GPU) is detected: the stutter is not model weight, the browser is not using the GPU -->
+            <div id="gpuNote" class="gpu-note" hidden></div>
+        </div>
+
+        <!-- ===== Top bar ===== -->
+        <header class="topbar">
+            <div class="brand">
+                <!-- header brand slot: same logo as the site header, links back to the site root -->
+                <a class="brand-logo" href="https://www.meiyualuminum.com/" title="MEIYU Aluminum">
+                    <img src="https://file.meiyualuminum.com/home/logo-1.png" alt="MEIYU Aluminum" />
+                </a>
+                <div class="brand-text">
+                    <h1>Aluminium Veneer Façade <em>· 3D Build-Up Guide</em></h1>
+                    <p>MEIYU Aluminum · Technical document library · 12 build-up steps, model generated in code
+                        (no external 3D assets)
+                    </p>
+                </div>
+            </div>
+            <div class="topbar-meta">
+                <div class="meta-item"><span>Current step</span><b id="metaStep">1/12</b></div>
+                <div class="meta-item"><span>Component</span><b id="metaParts">--</b></div>
+                <div class="meta-item"><span>Panel module</span><b>1000×1000 mm</b></div>
+                <button id="btnGuide" class="icon-btn" title="Replay the interactive guide">?</button>
+                <!-- site wiring: back to the 3D guide index, complementary to the header logo (site root) -->
+                <a id="btnBack" class="icon-btn" href="/interactive-guides/" title="All MEIYU 3D build-up guides">‹</a>
+            </div>
+        </header>
+
+        <!-- ===== Left: build-up sequence ===== -->
+        <aside class="panel panel-left" id="stepsPanel">
+            <div class="panel-head">
+                <h2>Build-Up Sequence</h2>
+                <button id="btnCollapseLeft" class="icon-btn" title="Collapse panel">«</button>
+            </div>
+            <div class="panel-body" id="stepsList">
+              <!-- Static copy of the eight operations, for crawlers that do not run JavaScript
+                   and for visitors with JS disabled. js/ui/stepsPanel.js empties this container
+                   before building the interactive list, so nothing is ever shown twice.
+                   Generated from js/data/steps.js - do not edit by hand. -->
+              <p class="st-lead">The eight site operations, with the tools, materials, method and
+                acceptance check for each. The interactive viewer beside this list plays the same
+                sequence on a to-scale model.</p>
+              <ol class="st-list-wrap">
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">1</span>Survey &amp; Setting Out</h3>
+                  <p class="st-short">As-built wall survey + panel module grid on the wall</p>
+                  <p class="st-row"><b>Duration</b> 1 day / 2 people</p>
+                  <p class="st-row"><b>Tools</b> Laser level / plumb laser · 5 m tape · Chalk line · Rebar / service detector</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Check the wall is solid and can take anchors; detect and mark rebar and services.</li>
+                    <li>Survey the as-built face (flatness, plumb) and record deviations.</li>
+                    <li>Establish the façade face datum and snap the vertical / horizontal module grid on the wall, tied to the building control lines.</li>
+                    <li>Snap every panel joint centreline — the grid tubes will be fixed on these same lines, so the panel ears land on a tube.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Wall sound, services located and avoided</li>
+                    <li>Grid square, setting-out deviation ≤ 2 mm</li>
+                    <li>No edge panel narrower than 1/3 of a full panel</li>
+                  </ul>
+                  <p class="st-note">The tube grid and the panel ears share these lines — setting out here fixes both where the anchors go and that every ear lands on a tube.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">2</span>Fix Steel Grid to Wall</h3>
+                  <p class="st-short">Expansion anchors on the grid lines, then the RHS tube mesh</p>
+                  <p class="st-row"><b>Duration</b> 2–3 days / team</p>
+                  <p class="st-row"><b>Tools</b> Hammer drill · Torque wrench · Plumb laser · 2 m straight edge · Weld / bolt set</p>
+                  <p class="st-row"><b>Materials</b> M10 expansion anchor bolts · RHS 40×40×3 galvanised tubes · Insulating pads</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Drill through the tube back wall into the concrete on the marked crossings, clean the holes and set the expansion anchors — one bolt per crossing, its hex head bearing on the tube back.</li>
+                    <li>Erect the vertical and horizontal tubes on the anchors, the mesh matching the panel module exactly (tubes on the joint / edge centrelines).</li>
+                    <li>Plumb and level each run, true the whole face, then lock the grid crossings (bolted or welded).</li>
+                    <li>Touch up galvanising breaks with zinc-rich paint.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Anchors no movement by hand; torque verified</li>
+                    <li>Mesh on module and on the datum plane; face straight, no wave</li>
+                    <li>Every panel ear position has a tube behind it</li>
+                  </ul>
+                  <p class="st-note">This is the load path and the setting-out in one layer — the wall tolerance is taken up at the anchors, never at the panel face.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">3</span>Place Panel 1</h3>
+                  <p class="st-short">Set panel 1 on the grid so its 8 integral ears lie flat on the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, team + suction cups</p>
+                  <p class="st-row"><b>Tools</b> Suction cups / hoist · Level · Shims · Plumb laser</p>
+                  <p class="st-row"><b>Materials</b> Aluminium veneer panel (ears bent on in the shop)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Take the first panel from the fixed corner; it sets the datum for the whole group.</li>
+                    <li>Bring it to the grid so all 8 integral ears sit flat on the tubes behind — no gap under any ear.</li>
+                    <li>Set its level, joint width and face flush; hold with shims. Do not screw yet — the next step drives the screws.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Panel 1 resting on the grid with all 8 ears flat on the tubes</li>
+                    <li>Level, joint width and face set against the setting-out lines</li>
+                    <li>Held securely, not yet fixed</li>
+                  </ul>
+                  <p class="st-note">Placing and screwing are separate steps on purpose: first you see the panel land on its ears, then the screws that hold it go in.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">4</span>Screw Panel 1</h3>
+                  <p class="st-short">Drive 8 self-tapping screws through panel 1's ears into the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, drill-driver</p>
+                  <p class="st-row"><b>Tools</b> Drill-driver / torque driver · Magnetic bit · Safety glasses</p>
+                  <p class="st-row"><b>Materials</b> 8 self-tapping screws to steel (stainless / coated)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>With panel 1 held on the grid, drive one self-tapping screw through each of the 8 ear holes into the steel tube behind.</li>
+                    <li>Screws go perpendicular to the panel face — this is what actually fixes the panel to the subframe.</li>
+                    <li>Re-check flush and joint width after screwing, then release the suction cups and move to the next panel.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>All 8 screws seated, panel does not rock, ear tabs flat on the tubes</li>
+                  </ul>
+                  <p class="st-note">Nothing is screwed through the visible face — the panel is held only by these 8 ear screws, so any single panel can come back off.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">5</span>Place Panel 2</h3>
+                  <p class="st-short">Set panel 2 on the grid so its 8 integral ears lie flat on the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, team + suction cups</p>
+                  <p class="st-row"><b>Tools</b> Suction cups / hoist · Level · Shims · Plumb laser</p>
+                  <p class="st-row"><b>Materials</b> Aluminium veneer panel (ears bent on in the shop)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Place panel 2 against the panels already hung, keeping the running joint line straight.</li>
+                    <li>Bring it to the grid so all 8 integral ears sit flat on the tubes behind — no gap under any ear.</li>
+                    <li>Set its level, joint width and face flush; hold with shims. Do not screw yet — the next step drives the screws.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Panel 2 resting on the grid with all 8 ears flat on the tubes</li>
+                    <li>Level, joint width and face set against the setting-out lines</li>
+                    <li>Held securely, not yet fixed</li>
+                  </ul>
+                  <p class="st-note">Placing and screwing are separate steps on purpose: first you see the panel land on its ears, then the screws that hold it go in.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">6</span>Screw Panel 2</h3>
+                  <p class="st-short">Drive 8 self-tapping screws through panel 2's ears into the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, drill-driver</p>
+                  <p class="st-row"><b>Tools</b> Drill-driver / torque driver · Magnetic bit · Safety glasses</p>
+                  <p class="st-row"><b>Materials</b> 8 self-tapping screws to steel (stainless / coated)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>With panel 2 held on the grid, drive one self-tapping screw through each of the 8 ear holes into the steel tube behind.</li>
+                    <li>Screws go perpendicular to the panel face — this is what actually fixes the panel to the subframe.</li>
+                    <li>Re-check flush and joint width after screwing, then release the suction cups and move to the next panel.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>All 8 screws seated, panel does not rock, ear tabs flat on the tubes</li>
+                  </ul>
+                  <p class="st-note">Nothing is screwed through the visible face — the panel is held only by these 8 ear screws, so any single panel can come back off.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">7</span>Place Panel 3</h3>
+                  <p class="st-short">Set panel 3 on the grid so its 8 integral ears lie flat on the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, team + suction cups</p>
+                  <p class="st-row"><b>Tools</b> Suction cups / hoist · Level · Shims · Plumb laser</p>
+                  <p class="st-row"><b>Materials</b> Aluminium veneer panel (ears bent on in the shop)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Place panel 3 against the panels already hung, keeping the running joint line straight.</li>
+                    <li>Bring it to the grid so all 8 integral ears sit flat on the tubes behind — no gap under any ear.</li>
+                    <li>Set its level, joint width and face flush; hold with shims. Do not screw yet — the next step drives the screws.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Panel 3 resting on the grid with all 8 ears flat on the tubes</li>
+                    <li>Level, joint width and face set against the setting-out lines</li>
+                    <li>Held securely, not yet fixed</li>
+                  </ul>
+                  <p class="st-note">Placing and screwing are separate steps on purpose: first you see the panel land on its ears, then the screws that hold it go in.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">8</span>Screw Panel 3</h3>
+                  <p class="st-short">Drive 8 self-tapping screws through panel 3's ears into the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, drill-driver</p>
+                  <p class="st-row"><b>Tools</b> Drill-driver / torque driver · Magnetic bit · Safety glasses</p>
+                  <p class="st-row"><b>Materials</b> 8 self-tapping screws to steel (stainless / coated)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>With panel 3 held on the grid, drive one self-tapping screw through each of the 8 ear holes into the steel tube behind.</li>
+                    <li>Screws go perpendicular to the panel face — this is what actually fixes the panel to the subframe.</li>
+                    <li>Re-check flush and joint width after screwing, then release the suction cups and move to the next panel.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>All 8 screws seated, panel does not rock, ear tabs flat on the tubes</li>
+                  </ul>
+                  <p class="st-note">Nothing is screwed through the visible face — the panel is held only by these 8 ear screws, so any single panel can come back off.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">9</span>Place Panel 4</h3>
+                  <p class="st-short">Set panel 4 on the grid so its 8 integral ears lie flat on the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, team + suction cups</p>
+                  <p class="st-row"><b>Tools</b> Suction cups / hoist · Level · Shims · Plumb laser</p>
+                  <p class="st-row"><b>Materials</b> Aluminium veneer panel (ears bent on in the shop)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Place panel 4 against the panels already hung, keeping the running joint line straight.</li>
+                    <li>Bring it to the grid so all 8 integral ears sit flat on the tubes behind — no gap under any ear.</li>
+                    <li>Set its level, joint width and face flush; hold with shims. Do not screw yet — the next step drives the screws.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Panel 4 resting on the grid with all 8 ears flat on the tubes</li>
+                    <li>Level, joint width and face set against the setting-out lines</li>
+                    <li>Held securely, not yet fixed</li>
+                  </ul>
+                  <p class="st-note">Placing and screwing are separate steps on purpose: first you see the panel land on its ears, then the screws that hold it go in.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">10</span>Screw Panel 4</h3>
+                  <p class="st-short">Drive 8 self-tapping screws through panel 4's ears into the tubes</p>
+                  <p class="st-row"><b>Duration</b> per panel, drill-driver</p>
+                  <p class="st-row"><b>Tools</b> Drill-driver / torque driver · Magnetic bit · Safety glasses</p>
+                  <p class="st-row"><b>Materials</b> 8 self-tapping screws to steel (stainless / coated)</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>With panel 4 held on the grid, drive one self-tapping screw through each of the 8 ear holes into the steel tube behind.</li>
+                    <li>Screws go perpendicular to the panel face — this is what actually fixes the panel to the subframe.</li>
+                    <li>This closes the group — re-check the whole 2 × 2 face for flatness, joints and diagonals.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Group complete, all 32 ear screws driven; joints even within ±2 mm; face flat</li>
+                  </ul>
+                  <p class="st-note">Nothing is screwed through the visible face — the panel is held only by these 8 ear screws, so any single panel can come back off.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">11</span>Seal the Joints</h3>
+                  <p class="st-short">After the group is hung: backer rod + weatherseal</p>
+                  <p class="st-row"><b>Duration</b> After panel alignment</p>
+                  <p class="st-row"><b>Tools</b> Cleaning cloths · Backer-rod wheel · Caulking gun · Masking tape · Tooling bead</p>
+                  <p class="st-row"><b>Materials</b> Closed-cell backer rod · Neutral-cure silicone weatherseal</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Once all four panels are hung and screwed and the joints are even, clean both bond faces and let them dry; mask both edges.</li>
+                    <li>Set the backer rod to depth so the sealant is about half the joint width.</li>
+                    <li>Apply and tool the sealant to a smooth concave bead before it skins; remove masking while wet.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Bead continuous, straight, evenly tooled</li>
+                    <li>No voids, no three-sided bond</li>
+                    <li>No smearing on the panel face</li>
+                  </ul>
+                  <p class="st-note">Sealing is done after the panels are set as a group, so the joint width is already even and the bead comes out straight.</p>
+                </li>
+                <li class="st-item">
+                  <h3 class="st-name"><span class="st-no">12</span>Inspection &amp; Handover</h3>
+                  <p class="st-short">Peel film, final line-and-level, record</p>
+                  <p class="st-row"><b>Duration</b> 0.5 day / team</p>
+                  <p class="st-row"><b>Tools</b> Straight edge · Tape · Visual inspection kit</p>
+                  <p class="st-h">Method</p>
+                  <ol class="st-list">
+                    <li>Peel the protection film, clean the faces and inspect for scratches, dents and colour difference.</li>
+                    <li>Re-check joint width, face flatness and the overall line against the setting-out drawing.</li>
+                    <li>Verify every ear screw and anchor is tightened; touch-up any coating breaks.</li>
+                    <li>Record the as-built and hand over the access / replacement panel schedule.</li>
+                  </ol>
+                  <p class="st-h">Acceptance</p>
+                  <ul class="st-checks">
+                    <li>Face flat, joints even, no visible defect</li>
+                    <li>All fixings tightened and marked</li>
+                    <li>As-built record and spares handed over</li>
+                  </ul>
+                  <p class="st-note">A single-panel-demountable façade only works if the fixing record and spare panels are handed over with it.</p>
+                </li>
+              </ol>
+            </div>
+            <div class="panel-foot">
+                <div class="legend">
+                    <span class="legend-title">Layer legend</span>
+                    <ul id="layerLegend"></ul>
+                </div>
+                <p class="panel-credit">
+                    <a href="https://www.meiyualuminum.com/installation-guides/" rel="noopener">MEIYU · Installation
+                        Guides</a>
+                </p>
+            </div>
+        </aside>
+
+        <!-- ===== Right: step notes / component detail ===== -->
+        <aside class="panel panel-right" id="detailPanel">
+            <div class="panel-head">
+                <h2 id="detailTitle">Step Notes</h2>
+                <button id="btnCollapseRight" class="icon-btn" title="Collapse panel">»</button>
+            </div>
+            <div class="tabs" role="tablist">
+                <button class="tab is-active" data-tab="step" role="tab">Step Notes</button>
+                <button class="tab" data-tab="part" role="tab">Component</button>
+                <button class="tab" data-tab="spec" role="tab">System Data</button>
+            </div>
+            <div class="panel-body" id="detailBody"><!-- rendered by js/ui/detailPanel.js --></div>
+        </aside>
+
+        <!-- ===== Bottom toolbar ===== -->
+        <footer class="toolbar" id="toolbar">
+            <div class="tool-block">
+                <label class="tool-label">Mode</label>
+                <div class="seg" role="group" aria-label="Presentation mode">
+                    <button class="seg-btn is-active" data-mode="sequence">Step Sequence</button>
+                    <button class="seg-btn" data-mode="explode">Exploded View</button>
+                </div>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label">Step</label>
+                <div class="stepper">
+                    <button id="btnPrevStep" class="ghost-btn" title="Previous step (←)">‹</button>
+                    <span class="step-text"><b id="stepNow">1</b>/<span id="stepTotal">12</span></span>
+                    <button id="btnNextStep" class="ghost-btn" title="Next step (→)">›</button>
+                    <button id="btnPlay" class="ghost-btn is-play" title="Auto play (Space)">▶</button>
+                </div>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label" for="explodeRange">Explode amount</label>
+                <input id="explodeRange" class="range" type="range" min="0" max="100" value="0" step="1" />
+                <output id="explodeValue" class="range-out">0%</output>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label">View</label>
+                <div class="seg" role="group" aria-label="Camera preset">
+                    <button class="seg-btn" data-view="front">Front</button>
+                    <button class="seg-btn" data-view="side">Side</button>
+                    <button class="seg-btn" data-view="section">Section</button>
+                    <button class="seg-btn is-active" data-view="iso">45°</button>
+                </div>
+            </div>
+
+            <div class="tool-block">
+                <label class="tool-label">Quality</label>
+                <div class="seg" role="group" aria-label="Render quality">
+                    <button class="seg-btn" data-quality="high" title="Full resolution + 4× MSAA + bloom">High</button>
+                    <button class="seg-btn" data-quality="balanced" title="1.5× pixel ratio, no MSAA">
+                        Balanced
+                    </button>
+                    <button class="seg-btn" data-quality="lite" title="1× pixel ratio, bloom off">
+                        Lite
+                    </button>
+                </div>
+            </div>
+
+            <div class="tool-block tool-switches">
+                <label class="tool-label">Display</label>
+                <button class="chip" data-toggle="labels" title="Show every component callout (L)">Labels</button>
+                <button class="chip is-active" data-toggle="ghost"
+                    title="Not-yet-installed parts shown as ghost outlines">Ghost parts</button>
+                <button class="chip" data-toggle="grid" title="Level reference grid at the top">Grid</button>
+                <button class="chip" data-toggle="orbit" title="Auto orbit">Orbit</button>
+            </div>
+
+            <div class="tool-block tool-actions">
+                <button id="btnAllParts" class="primary-btn" title="Show every component at once (E)">Install
+                    All</button>
+                <button id="btnRestore" class="ghost-btn" title="Back to step 1 (R)">Reset Steps</button>
+                <button id="btnHome" class="ghost-btn" title="Reset camera">Reset View</button>
+            </div>
+        </footer>
+
+        <!-- ===== Interactive guide ===== -->
+        <div class="guide" id="guide" hidden>
+            <div class="guide-card">
+                <p class="guide-kicker">MEIYU · Interactive guide</p>
+                <h3 id="guideTitle"></h3>
+                <p id="guideDesc"></p>
+                <ol class="guide-dots" id="guideDots"></ol>
+                <div class="guide-actions">
+                    <button id="guideSkip" class="ghost-btn">Skip</button>
+                    <button id="guideNext" class="primary-btn">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Boot overlay ===== -->
+        <div class="boot" id="boot">
+            <div class="boot-inner">
+                <img class="boot-mark" src="https://file.meiyualuminum.com/home/logo-1.png" alt="MEIYU Aluminum" />
+                <div class="boot-ring"></div>
+                <p class="boot-text">Generating the façade node model…</p>
+                <p class="boot-brand">MEIYU Aluminum Co., Ltd. · meiyualuminum.com</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>

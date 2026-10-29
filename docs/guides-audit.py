@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""3D 指南包与站内接线的一致性校验（两份包一起查）。
+"""3D 指南包与站内接线的一致性校验（public/ 下有几份就查几份）。
 
 用法：先起 dev server（默认 http://localhost:4323，可跟一个端口号参数），
 再在仓库根跑 `python docs/guides-audit.py [port]`。退出码非 0 表示有 ❌，
@@ -7,8 +7,13 @@
 
 为什么按 slug 循环而不是写死一份包：注册表里每加一条指南，旧写法就只查到
 第一条，等于对新包完全不设防。现在注册表、包内数据、index.html 三方对齐才算过。
+工序与部件数量不数源码、走运行时 import（见 steps_dump），因为新包的工序
+是函数生成的，数源码会得出一个看起来很正常的错数。
 """
+import html
+import json
 import re
+import subprocess
 import sys
 import urllib.request
 from pathlib import Path
@@ -19,6 +24,14 @@ GUIDES = ROOT / "public" / "interactive-guides"
 BASE = "http://localhost:%s" % (sys.argv[1] if len(sys.argv) > 1 else "4323")
 
 fails = []
+skips = []
+
+
+def skip(label, why):
+    """本次查不了就要明说查不了。当成 ✅ 是假绿，当成 ❌ 是假红，
+       两种都会让人下一轮不看这条。"""
+    print("  ⚠️  %s  跳过：%s" % (label, why))
+    skips.append(label)
 
 
 def check(label, ok, detail=""):
@@ -55,6 +68,30 @@ def registry_block(slug):
     return m.group(0) if m else ""
 
 
+_DUMPS = {}
+
+
+def steps_dump(pkg):
+    """工序与部件数据取运行时真实值，不数源码。
+
+    铝单板包的工序与部件 id 都是函数 / spread 生成的：源码里只有 2 个 name:
+    字面量，运行时是 12 道工序。用正则数源码会把每一条步数一致性检查带偏，
+    而且错得看起来很正常。所以直接 import 那个包（docs/guide-steps-dump.mjs）。
+    """
+    key = pkg.name
+    if key not in _DUMPS:
+        out = subprocess.run(
+            ["node", str(Path(__file__).with_name("guide-steps-dump.mjs")), str(pkg)],
+            capture_output=True, text=True, encoding="utf-8", timeout=180, cwd=str(ROOT))
+        try:
+            _DUMPS[key] = json.loads(out.stdout)
+        except Exception as e:  # noqa: BLE001
+            check("%s 的工序数据能导入" % key, False, (out.stderr or out.stdout)[:130])
+            _DUMPS[key] = {"count": 0, "orders": [], "names": [], "partSteps": [],
+                           "partIds": [], "builderKeys": None}
+    return _DUMPS[key]
+
+
 # ── 每个包 ──────────────────────────────────────────────────────────────
 for pkg in sorted(GUIDES.iterdir()):
     if not pkg.is_dir():
@@ -74,9 +111,12 @@ for pkg in sorted(GUIDES.iterdir()):
         continue
     check("注册表里有这一条", True)
 
-    orders = [int(n) for n in re.findall(r"^\s*order:\s*(\d+),", steps_src, re.M)]
-    n = len(orders)
+    dump = steps_dump(pkg)
+    orders = dump["orders"]
+    n = dump["count"]
     check("steps.js 工序号连续从 1 开始", orders == list(range(1, n + 1)), str(orders))
+    check("steps.js 导出的 STEP_COUNT 与数组长度一致",
+          dump["declaredCount"] in (None, n), "%s vs %d" % (dump["declaredCount"], n))
 
     step_count = int(re.search(r"stepCount:\s*(\d+)", block).group(1))
     check("注册表 stepCount == STEPS.length", step_count == n, "%d vs %d" % (step_count, n))
@@ -89,8 +129,8 @@ for pkg in sorted(GUIDES.iterdir()):
     claims = set(re.findall(r"(\d+)\s+(?:sequenced|build-up)\s+steps", html_src))
     check("HTML 文案中写死的步数一致", claims <= {str(n)}, str(claims or "无"))
 
-    part_ids = re.findall(r"^\s{4}id:\s*'([^']+)'", parts_src, re.M)
-    builder_ids = re.findall(r"^\s{2}'?([a-z-]+)'?:\s*build", builders_src, re.M)
+    part_ids = dump["partIds"]
+    builder_ids = dump["builderKeys"] or []
     check("部件 ↔ 构造器一一对应", sorted(part_ids) == sorted(builder_ids),
           "parts=%d builders=%d" % (len(part_ids), len(builder_ids)))
     only_p = set(part_ids) - set(builder_ids)
@@ -100,7 +140,7 @@ for pkg in sorted(GUIDES.iterdir()):
     if only_b:
         check("  构造器无部件", False, str(sorted(only_b)))
 
-    part_steps = [int(x) for x in re.findall(r"^\s{4}step:\s*(\d+),", parts_src, re.M)]
+    part_steps = dump["partSteps"]
     check("部件引用的工序号都在范围内", all(1 <= s <= n for s in part_steps),
           str(sorted(set(part_steps))))
 
@@ -118,8 +158,11 @@ for pkg in sorted(GUIDES.iterdir()):
     # 静态工序文案：不执行 JS 的抓取器只能读到 index.html 里这一份，
     # 所以它必须存在、必须齐 8 条，而且必须与 steps.js 逐字一致——
     # 两边一旦漂了，爬虫看到的就和真人看到的不是一回事。
-    js_names = re.findall(r"^\s*name:\s*'([^']+)'", steps_src, re.M)
-    html_names = re.findall(r'<span class="st-no">\d+</span>([^<]+)</h3>', html_src)
+    js_names = dump["names"]
+    # HTML 实体必须还原后再比：工序名里带 &（Survey & Setting Out）时，
+    # index.html 写的是 &amp;，不还原就会报出一个假差异。
+    html_names = [html.unescape(x) for x in
+                  re.findall(r'<span class="st-no">\d+</span>([^<]+)</h3>', html_src)]
     check("index.html 预置了全部 %d 道工序的静态文案" % len(js_names),
           bool(js_names) and js_names == html_names,
           "steps.js %d / HTML %d%s" % (len(js_names), len(html_names),
@@ -173,7 +216,18 @@ def get(path):
         return r.status, r.read().decode("utf-8", "replace")
 
 
-for slug in ("u-baffle-ceiling", "strip-ceiling"):
+# 包列表从目录读，不写死——写死的清单会让第四份指南悄悄漏检。
+# 注册表与目录的一一对应单独查：漏挂入口或漏建目录都会红。
+disk_slugs = sorted(p.name for p in GUIDES.iterdir() if p.is_dir())
+reg_src = read(ROOT / "src" / "lib" / "interactiveGuides.ts")
+reg_slugs = sorted(re.findall(r'slug:\s*"([^"]+)"', reg_src))
+# slug → 工序数：卡片徽章的期望值从注册表取，不写死 8。
+# 上一版写死了 8，第四份指南（12 道）一接进来就假失败。
+REG_STEPS = {s: int(n) for s, n in re.findall(r'slug:\s*"([^"]+)"[\s\S]*?stepCount:\s*(\d+)', reg_src)}
+check("注册表与 public/ 包一一对应", disk_slugs == reg_slugs,
+      "目录 %s / 注册表 %s" % (disk_slugs, reg_slugs))
+
+for slug in disk_slugs:
     try:
         code, html = get("/interactive-guides/%s/" % slug)
         check("GET /interactive-guides/%s/" % slug, code == 200, "HTTP %d" % code)
@@ -181,6 +235,11 @@ for slug in ("u-baffle-ceiling", "strip-ceiling"):
         check("GET /interactive-guides/%s/" % slug, False, str(e)[:70])
         continue
     check("  main.js 有 #step=N 深链", "stepFromLocation" in read(GUIDES / slug / "js/main.js"))
+    # 卡片徽章上的数来自注册表，工序正文来自包内 steps.js：两处不一致就是骗访客
+    n_pkg = steps_dump(GUIDES / slug)["count"]
+    n_reg = re.search(r'slug:\s*"%s"[\s\S]*?stepCount:\s*(\d+)' % re.escape(slug), reg_src)
+    check("  注册表 stepCount = 包内工序数", bool(n_reg) and int(n_reg.group(1)) == n_pkg,
+          "注册表 %s / 运行时 %d 道" % (n_reg.group(1) if n_reg else "缺", n_pkg))
 
 try:
     code, ig = get("/installation-guides/")
@@ -204,10 +263,13 @@ try:
         badge = badge.group(1) if badge else "?"
         listed = "ig-card-steps" in c
         if has3d:
-            check("3D 卡「%s」徽章数=8 Stages、不列步骤、无 #step= 深链"
+            m = re.search(r'href="/interactive-guides/([^"/]+)/"', c)
+            want = REG_STEPS.get(m.group(1)) if m else None
+            check("3D 卡「%s」徽章数=注册表工序数、不列步骤、无 #step= 深链"
                   % name[:28],
-                  badge == "8 Stages" and not listed and "#step=" not in c,
-                  "徽章=%s 列表=%s" % (badge, listed))
+                  want is not None and badge == "%d Stages" % want
+                  and not listed and "#step=" not in c,
+                  "徽章=%s 期望=%s 列表=%s" % (badge, want, listed))
         else:
             check("非 3D 卡「%s」保持原样（N Steps + 步骤列表）" % name[:28],
                   badge.endswith("Steps") and listed,
@@ -219,15 +281,23 @@ except Exception as e:  # noqa: BLE001
 try:
     code, prod = get("/products/aluminum-strip-ceiling/")
     check("GET /products/aluminum-strip-ceiling/", code == 200, "HTTP %d" % code)
-    steps = sorted({int(x) for x in re.findall(r'/interactive-guides/strip-ceiling/#step=(\d+)', prod)})
-    check("产品页带逐工序 #step=N 深链", len(steps) >= 5, "工序号 %s" % steps)
+    if "pk-step-num" not in prod:
+        # 产品页是 SSR：连不上数据库时 dev server 会发一个兜底的 200 页，
+        # 整页没有步骤块。这时候判「深链丢了」是假红，必须计成跳过。
+        skip("产品页带逐工序 #step=N 深链",
+             "这一页没渲染出来（SSR 背的数据库本次不可达），不能拿兜底页判深链")
+    else:
+        steps = sorted({int(x) for x in re.findall(r'/interactive-guides/strip-ceiling/#step=(\d+)', prod)})
+        check("产品页带逐工序 #step=N 深链", len(steps) >= 5, "工序号 %s" % steps)
 except Exception as e:  # noqa: BLE001
     check("产品页带逐工序 #step=N 深链", False, str(e)[:70])
 
 print("\n══ 结果 ══")
+if skips:
+    print("⚠️  %d 项本次没查到（不是通过，是没查）：%s" % (len(skips), "、".join(skips)))
 if fails:
     print("❌ %d 项未过：" % len(fails))
     for f in fails:
         print("   -", f)
     sys.exit(1)
-print("✅ 全部通过")
+print("✅ 全部通过" + ("（但有 %d 项跳过，见上）" % len(skips) if skips else ""))

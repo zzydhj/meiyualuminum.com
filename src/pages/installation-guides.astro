@@ -20,7 +20,11 @@ const pageDescription =
 // 有 3D 指南的卡片上那块自转小预览的注册表：只有列在这里的指南才渲染预览。
 // 键必须与下方 <script> 里 MODELS 的键一致——新增一个 3D 指南时两处一起加，
 // 漏了不会报错，只是那张卡片不显示预览（比画一个不相干的几何体好）。
-const previewModels = new Set(["u-baffle-ceiling", "strip-ceiling"]);
+const previewModels = new Set([
+    "u-baffle-ceiling",
+    "strip-ceiling",
+    "aluminum-veneer-facade",
+]);
 ---
 
 <BaseLayout pageTitle={pageTitle} description={pageDescription} hideTitle>
@@ -833,6 +837,47 @@ const previewModels = new Set(["u-baffle-ceiling", "strip-ceiling"]);
                 add(0, -0.7035, z, 12, 0.09, 0.78, 0.86); // 底板 = 朝下可见的完成面
             }
             for (const x of [-3.5, 3.5]) add(x, 0.6, 0, 0.08, 2.1, 0.08, 0.44);
+            return { boxes };
+        },
+        /**
+         * 铝单板幕墙：墙 → 锚栓 → 方管网格 → 挂耳 → 板 → 胶缝，从外往里五个层次。
+         * 尺寸取自包内 js/model/spec.js（1 单位 = 100 mm）：板 1000×1000、板缝 15、
+         * 网格管位 ±10.075 与 0、方管 40×40、管心 z=-0.5、墙面 z=-0.8。
+         *
+         * 两处必要的取舍，都不是图纸：
+         * 1) 只画 2 列 × 1 行。正式模型是 2×2（正方形），而预览框是 360×132（≈2.7:1），
+         *    整幅立面会被上下裁掉；取一横条才能把层次看清楚。
+         * 2) 整套坐标乘一个 S。共用的取景（dist=27、f=0.078w）是按“宽而扁”的吊顶断面调的，
+         *    幕墙立面太高，不缩就溢出画布。等比缩放，根数、间距、层次关系不变。
+         * 3) 板厚 3 mm 不足 1 px，自转时会闪成断线，画到 15 mm（与吊顶预览同一处理）。
+         */
+        "aluminum-veneer-facade": () => {
+            const boxes = [];
+            const S = 0.38; // 等比缩进预览框
+            const add = (cx, cy, cz, w, h, d, tone) =>
+                boxes.push({
+                    cx: cx * S,
+                    cy: cy * S,
+                    cz: cz * S,
+                    w: w * S,
+                    h: h * S,
+                    d: d * S,
+                    tone,
+                });
+            const gx = [-10.075, 0, 10.075]; // 竖管位（= 板缝与板边中线）
+            const gy = [-5.075, 5.075]; // 横管位
+            add(0, 0, -1.8, 22, 11.6, 2, 0.62); // 水泥墙基层
+            for (const x of gx) add(x, 0, -0.5, 0.4, 11.6, 0.4, 0.46); // 竖方管
+            for (const y of gy) add(0, y, -0.5, 21.5, 0.4, 0.4, 0.52); // 横方管
+            for (const x of gx)
+                for (const y of gy) add(x, y, -1.05, 0.5, 0.5, 0.55, 0.34); // 锚栓头
+            for (const cx of [-5.075, 5.075]) {
+                add(cx, 0, -0.075, 10, 10, 0.15, 0.9); // 见光板面
+                for (const cy of gy)
+                    for (const dx of [-3, 3])
+                        add(cx + dx, cy, -0.32, 0.4, 0.05, 0.2, 0.72); // 挂耳脚平贴管壁
+            }
+            add(0, 0, -0.04, 0.15, 10, 0.08, 0.4); // 竖缝耐候胶
             return { boxes };
         },
     };

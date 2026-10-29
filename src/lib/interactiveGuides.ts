@@ -82,6 +82,33 @@ export const interactiveGuides: InteractiveGuide[] = [
         ],
         updated: "2026-10-28",
     },
+    {
+        slug: "aluminum-veneer-facade",
+        // 铝单板幕墙两个产品页（flat / curved veneer）的分类链叶子都是 aluminum-veneer，
+        // 包内 js/data/brand.js 的 productPage 指同一个类目页，两处必须一致。
+        categorySlug: "aluminum-veneer",
+        title: "Aluminium Veneer Façade",
+        summary:
+            "A to-scale 3D build-up of an aluminium veneer rainscreen on a concrete wall: an anchor-fixed galvanised RHS grid set on the panel module, 3.0 mm formed panels hung on integral bent ears and driven with eight self-tapping screws per panel, then backer rod and weatherseal — twelve site operations from as-built survey to handover.",
+        stepCount: 12,
+        // 品类卡的 6 步按动作对应，不按标题字面：
+        //   1 Subframe Installation      → 工序 2 Fix Steel Grid to Wall（第 1 道是放线，不是装骨架）
+        //   3 Panel Positioning          → 工序 3 Place Panel 1
+        //   4 Fixing                     → 工序 4 Screw Panel 1
+        //   5 Joint Sealing              → 工序 11 Seal the Joints
+        //   6 Protection Film Removal    → 工序 12 Inspection & Handover（正文就是撕膜起始）
+        // 品类第 2 步 Waterproof Membrane 不链：模型里没有防潮层这一层，
+        // 链过去会把人送到一个不相干的画面。要么补模型，要么改品类文案。
+        stepMap: { 1: 2, 3: 3, 4: 4, 5: 11, 6: 12 },
+        highlights: [
+            "Galvanised RHS 40×40×3 grid anchored on the module lines — wall tolerance is taken at the anchors, never at the panel face",
+            "Ears are bent on to the sheet in the shop and sit flat on the tube; nothing is screwed through the visible face",
+            "Eight self-tapping screws per panel, so any single panel can come back off for access or replacement",
+            "Adjacent panels' ears are staggered where they share a tube, so the two sets do not overlap",
+            "Each step lists tools, materials, method and acceptance criteria",
+        ],
+        updated: "2026-10-28",
+    },
 ];
 
 /** 指南地址；传 step 时深链到指定工序（包内 main.js 读 #step=N） */
