@@ -32,8 +32,10 @@ const year = new Date().getFullYear();
         />
       </div>
 
-      {/* 只保留已核实的真实账号。宁可不放，也不要留一排 href="#" 的空图标：
-           买家点半天没反应，读作“这个站没人维护”。加账号在下方添一个 <a> 即可。 */}
+      {
+        /* 只保留已核实的真实账号。宁可不放，也不要留一排 href="#" 的空图标：
+           买家点半天没反应，读作“这个站没人维护”。加账号在下方添一个 <a> 即可。 */
+      }
       <div class="my-ft-socials">
         <a
           class="soc--yt"
@@ -47,8 +49,10 @@ const year = new Date().getFullYear();
             ></path></svg
           ></a
         >
-        {/* LinkedIn：当前给的是个人档案（/in/）。若以后建了公司主页（/company/），
-             只需换 href，图标不动。 */}
+        {
+          /* LinkedIn：当前给的是个人档案（/in/）。若以后建了公司主页（/company/），
+             只需换 href，图标不动。 */
+        }
         <a
           class="soc--li"
           href="https://www.linkedin.com/in/william-wei-meiyu-aluminum/"
@@ -139,6 +143,11 @@ const year = new Date().getFullYear();
           <li><a href="/about/">About MEIYU</a></li>
           <li><a href="/manufacturing/">Manufacturing</a></li>
           <li><a href="/certifications/">Certifications</a></li>
+          {
+            /* 2026-10-30 新增售后页：买家在页脚找的就是 warranty / support 这类行，
+              而这一栏本身已经堆了六个公关页，所以只加一行而不拆新栏。 */
+          }
+          <li><a href="/after-sales/">After-Sales &amp; Warranty</a></li>
           <li><a href="/project-gallery/">Project Gallery</a></li>
           <li><a href="/blog/">Blog &amp; News</a></li>
           <li><a href="/careers/">Careers</a></li>

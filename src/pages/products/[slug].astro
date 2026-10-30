@@ -201,6 +201,11 @@ const jsonLd = {
           }
         </table>
         <p class="pk-terms-note">{termsNote}</p>
+        {/* 2026-10-30：质保行只给了年限，买家接下来要问的是「怎么用」。
+            售后页（保障范围 / 提报要带什么 / 总经理升级入口）从这一块接过去。 */}
+        <a class="pk-terms-link" href="/after-sales/">
+          How this is handled after shipment — after-sales &amp; warranty
+        </a>
       </div>
     </div>
   </div>
@@ -614,6 +619,8 @@ const jsonLd = {
   .pk-terms-table th { color: #64748b; font-weight: 500; width: 25%; white-space: nowrap; }
   .pk-terms-table td { color: #334155; line-height: 1.55; }
   .pk-terms-note { margin: .55rem 0 0; font-size: .76rem; line-height: 1.6; color: #94a3b8; }
+  .pk-terms-link { display: inline-block; margin-top: .5rem; font-size: .8rem; font-weight: 600; color: #69574a; text-decoration: none; border-bottom: 1px solid #e2d6c8; }
+  .pk-terms-link:hover { color: #0d0950; border-bottom-color: #c09020; }
 
   .pk-cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 1.75rem; }
   .pk-cta-row :global(.pk-cta-primary) { background-color: #69574a !important; padding: .7rem 1.5rem !important; font-size: 1rem !important; }

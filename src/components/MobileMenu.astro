@@ -548,6 +548,14 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
                   >Procurement Guide</a
                 >
               </li>
+              {
+                /* 与桌面端 Navigation.astro 的 Resource 下拉同位置：采购指南之后 */
+              }
+              <li>
+                <a class="m-link" href="/after-sales/"
+                  >After-Sales &amp; Warranty</a
+                >
+              </li>
               <li>
                 <a class="m-link" href="/technical-documentation/"
                   >Technical Documentation</a

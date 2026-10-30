@@ -1,0 +1,794 @@
+---
+/**
+ * after-sales.astro — 售后政策页（业主 2026-10-30 指令：单开一页讲清售后 + 总经理直达入口）
+ *
+ * ★ 口径（业主同日第二轮指令，覆盖了第一版）：这一页**只讲框架，不讲条款细节**。
+ *   第一版把质保年限、涂层体系、责任划分表都从 lib 取过来渲染过，业主看完要求改成
+ *   笼统的归属说明（材料问题 / 安装问题 / 责任边界）+ 流程 + 联系渠道。
+ *   原因不只是简洁：年限在每个产品页的 Ordering & Terms 里已经有一份，报价单上又有一份，
+ *   售后页再复述就是第三个副本 —— 将来改口径漏掉任意一处，买家会在同一个站上看到两个数字。
+ *   所以本页一个质保数字都不写，只给「具体年限看报价单与产品页」的指向句。
+ *   唯一保留的数字是全站统一的询盘首复时效（responseTime），页脚与询盘弹窗本来就都在承诺它，
+ *   这页沉默反而自相矛盾。
+ *
+ * 数据红线（docs/blog-prompt-v5.md【附录 A】+ src/lib/companyProfile.ts）：
+ *   附录 A 授权过的数字才写死；本页一个都不用 —— 只写不含数字的归属与机制。
+ *   不新增任何承诺（客诉解决天数、赔付比例、上门维修、免费补板、退换全无授权，一律不写）。
+ *
+ * 模板注释一律用表达式注释或 frontmatter：Astro 的 <!-- --> 会随 HTML 发给访客。
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import { companyFacts, responseTime, whatsappUrl } from "../lib/companyProfile";
+
+const pageTitle = "After-Sales & Warranty";
+// ≤160 字符（BaseLayout 拼 `{pageTitle} | MEIYU`；description 只量本体）
+const description =
+    "How MEIYU handles problems after shipment: what we stand behind, what belongs to the site team, how to raise an issue, and the direct escalation line.";
+
+const escalationWa = whatsappUrl(
+    "After-sales escalation — I would like to speak with the general manager about an order.",
+);
+const escalationMail = `mailto:${companyFacts.email}?subject=${encodeURIComponent(
+    "After-sales escalation",
+)}`;
+const telHref = `tel:${companyFacts.phone.replace(/\s/g, "")}`;
+
+/** 三个归属桶：只写「谁的」，不写年限与条件 */
+const COVERS = [
+    {
+        t: "Material and workmanship",
+        d: "Anything that came off our line wrong — the alloy, the gauge, the forming, the perforation, the cut, the assembly. It is ours, and we do not argue about it.",
+    },
+    {
+        t: "The finish we supplied",
+        d: "The coating system you were quoted, for the exposure it was specified for. Colour is judged against the sample you approved, not against a screen or a photograph.",
+    },
+    {
+        t: "Support after delivery",
+        d: "English-language installation guidance, our numbering schedule read against your drawings, remote support, and a written position on the batch — the same records we keep for every order.",
+    },
+];
+
+/** 三件要带上的东西：流程的具体度是可以给的，它不是承诺 */
+const RAISE = [
+    {
+        t: "Photographs, in place",
+        d: "The panel as it sits on the building, then the detail — edge, joint, fixing or surface — with something in frame for scale.",
+    },
+    {
+        t: "The panel number",
+        d: "Every panel is labelled against the schedule that doubles as the packing list, so one number puts it in a batch, on a line, under a release record.",
+    },
+    {
+        t: "The drawing reference",
+        d: "The revision you built to. Production runs off the signed revision, so a difference between revisions reads like a defect when it is not one.",
+    },
+];
+
+/** 四步流程：登记 → 读记录 → 给书面判断 → 处理 */
+const FLOW = [
+    {
+        n: "1",
+        t: "Logged and answered",
+        d:
+            "A first reply within " +
+            responseTime +
+            " on whichever channel you used, with the message read as an after-sales case rather than a new enquiry.",
+    },
+    {
+        n: "2",
+        t: "Checked against the record",
+        d: "Panel number, drawing revision and the release record for that batch, read together. That is what makes the answer evidence rather than opinion.",
+    },
+    {
+        n: "3",
+        t: "A written position",
+        d: "We state plainly what is ours, what sits with the site installation, and what belongs to the project engineer — including when the answer is that it is not ours.",
+    },
+    {
+        n: "4",
+        t: "Then the remedy",
+        d: "Where it is ours, we agree the fix with you. A replacement or follow-up batch is quoted on its own quantity rather than inheriting the original order's minimum, so a small site correction does not become a dispute.",
+    },
+];
+---
+
+<BaseLayout pageTitle={pageTitle} description={description} hideTitle>
+    <PageHero
+        eyebrow="After despatch"
+        titleWhite="After-Sales"
+        titleGold="Policy"
+        subtitle="What we stand behind once a container has left, how to tell us about a problem so it can be settled from records rather than argument, and who to contact directly if you are not satisfied with the answer."
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "After-Sales & Warranty", url: "/after-sales/" },
+            ],
+        }}
+    >
+        <a href="#coverage" class="as-hero-btn as-hero-btn--ghost">
+            What we stand behind</a
+        >
+        <a href="#escalate" class="as-hero-btn">
+            Escalate to the general manager</a
+        >
+    </PageHero>
+
+    {/* ── 我们管什么：三个桶，不含年限 ── */}
+    <section class="as-band" id="coverage">
+        <div class="as-inner as-narrow">
+            <span class="as-eyebrow">What we stand behind</span>
+            <div class="as-rule" aria-hidden="true"></div>
+            <h2 class="as-h2">
+                Three things are ours,
+                <span class="as-hl"> and we say which</span>
+            </h2>
+            <p class="as-lead">
+                After-sales usually turns on one question: whose piece is this.
+                So the split is written down before the order, not negotiated
+                after a photograph arrives.
+            </p>
+
+            <div class="as-cards">
+                {
+                    COVERS.map((c) => (
+                        <div class="as-card">
+                            <h3>{c.t}</h3>
+                            <p>{c.d}</p>
+                        </div>
+                    ))
+                }
+            </div>
+
+            <div class="as-callout">
+                <p>
+                    <strong>
+                        The figures that apply to your panels are on your
+                        quotation.
+                    </strong>{" "}
+                    Coating life, the defect period and the conditions attached to
+                    both are stated there, and repeated in the Ordering &amp; Terms
+                    block on every product page. We deliberately do not restate them
+                    on this page: a policy page that carries its own copy of a number
+                    is how a site ends up with two different answers.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    {/* ── 不归我们管的（笼统三条） ── */}
+    <section class="as-band as-band--quiet" id="not-covered">
+        <div class="as-inner as-narrow">
+            <span class="as-eyebrow">Where the line sits</span>
+            <div class="as-rule" aria-hidden="true"></div>
+            <h2 class="as-h2">
+                What belongs
+                <span class="as-hl"> to someone else</span>
+            </h2>
+            <p class="as-lead">
+                Not excuses — the same boundary the delivery process and the
+                responsibility list draw on every other page of this site.
+            </p>
+            <ul class="as-list">
+                <li>
+                    <strong>Installation.</strong> The fitting is done by your crew.
+                    Guidance, the schedule and remote support are ours; the work on
+                    the scaffold is not.
+                </li>
+                <li>
+                    <strong>Structure and the substrate.</strong> Load paths, the
+                    supporting frame and the calculations behind them stay with the
+                    project engineer of record. We design the panel and its fixing
+                    detail, not your building.
+                </li>
+                <li>
+                    <strong>What happens after handover.</strong> Damage caused by
+                    later trades, or a finish put in an exposure it was not specified
+                    for, is not a manufacturing defect.
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    {/* ── 怎么告诉我们 ── */}
+    <section class="as-band" id="raise">
+        <div class="as-inner">
+            <div class="as-head">
+                <span class="as-eyebrow">Telling us about it</span>
+                <div class="as-rule" aria-hidden="true"></div>
+                <h2 class="as-h2">
+                    Three things, and
+                    <span class="as-hl"> we can act on it</span>
+                </h2>
+                <p class="as-lead as-lead--center">
+                    A message that says “some panels look wrong” cannot be
+                    checked against anything. These three can.
+                </p>
+            </div>
+
+            <div class="as-steps">
+                {
+                    RAISE.map((s, i) => (
+                        <div class="as-step">
+                            <span class="as-step-no">{i + 1}</span>
+                            <h3>{s.t}</h3>
+                            <p>{s.d}</p>
+                        </div>
+                    ))
+                }
+            </div>
+
+            <p class="as-foot-note">
+                No paperwork to hand on site today? Send the photographs and say
+                which zone it is — we will pull the schedule from our side.
+            </p>
+        </div>
+    </section>
+
+    {/* ── 流程四步 ── */}
+    <section class="as-band as-band--quiet" id="flow">
+        <div class="as-inner as-narrow">
+            <span class="as-eyebrow">How it runs</span>
+            <div class="as-rule" aria-hidden="true"></div>
+            <h2 class="as-h2">
+                From your message to
+                <span class="as-hl"> an answer</span>
+            </h2>
+
+            <div class="as-flow">
+                {
+                    FLOW.map((f) => (
+                        <div class="as-flow-row">
+                            <span class="as-flow-no">{f.n}</span>
+                            <div>
+                                <h3>{f.t}</h3>
+                                <p>{f.d}</p>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+
+            <p class="as-p as-quiet-note">
+                We do not settle an after-sales question by whoever is loudest,
+                and we do not make a claim we cannot support with a record. That
+                is why the records exist.
+            </p>
+        </div>
+    </section>
+
+    {/* ── 升级：直接找总经理 ── */}
+    <section class="as-escalate" id="escalate">
+        <div class="as-inner as-narrow">
+            <span class="as-eyebrow as-eyebrow--gold">Escalation</span>
+            <h2 class="as-es-h2">Not satisfied with the answer?</h2>
+            <p class="as-es-lead">
+                An after-sales disagreement should not have to travel back
+                through the same inbox that quoted the job. Take it straight to
+                the general manager — the number below is the one every page of
+                this site already carries.
+            </p>
+
+            <div class="as-es-cards">
+                <a class="as-es-card" href={telHref}>
+                    <span class="as-es-tag">Call</span>
+                    <strong>{companyFacts.phone}</strong>
+                    <small>General manager's direct line</small>
+                </a>
+                <a
+                    class="as-es-card"
+                    href={escalationWa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-wa-source="after-sales-escalation"
+                >
+                    <span class="as-es-tag">WhatsApp</span>
+                    <strong>Send the photographs</strong>
+                    <small>Prefilled as an escalation</small>
+                </a>
+                <a class="as-es-card" href={escalationMail}>
+                    <span class="as-es-tag">Email</span>
+                    <strong>{companyFacts.email}</strong>
+                    <small>Marked After-sales escalation</small>
+                </a>
+            </div>
+
+            <p class="as-es-what">
+                <strong>Worth including:</strong> the order or proforma number, the
+                panel number, the photographs, and the outcome you are asking for.
+            </p>
+            <p class="as-es-sla">
+                A first reply within {responseTime}, the same commitment this
+                site makes on every other message.
+            </p>
+
+            <div class="as-es-alt">
+                Prefer the form? Use the{" "}
+                <a href="/contact/">contact page</a>
+                {" "}
+                and write “escalation” in the message — it reaches the same desk.
+            </div>
+        </div>
+    </section>
+
+    {/* ── 相关页 ── */}
+    <section class="as-band">
+        <div class="as-inner as-narrow">
+            <h2 class="as-h2 as-h2--small">Read alongside this</h2>
+            <ul class="as-links">
+                <li>
+                    <a href="/about/#how-an-order-runs">
+                        <strong>The delivery stages</strong>
+                        <span>
+                            Where after-sales sits in the order, and what each
+                            stage hands over.
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/procurement-guide/">
+                        <strong>Procurement guide</strong>
+                        <span>
+                            What a quotation should state before you compare two
+                            suppliers.
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/installation-guides/">
+                        <strong>Installation guides</strong>
+                        <span>
+                            English-language build-up guidance, section by
+                            section.
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+</BaseLayout>
+
+<style>
+    /* 站点既有语言：#c09020 金 / #c0a882 浅金 / #f8f6f3 米带 / #e6ded2 卡边 /
+       #0d0950–#1e293b 标题 / #475569 正文 / Inter。不引新色、不引新字体。 */
+    .as-band {
+        padding: clamp(48px, 6vw, 76px) clamp(16px, 4vw, 40px);
+        color: #475569;
+        background: #fff;
+    }
+
+    .as-band--quiet {
+        background: #f8f6f3;
+    }
+
+    .as-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .as-narrow {
+        max-width: 880px;
+    }
+
+    .as-head {
+        max-width: 780px;
+        margin: 0 auto clamp(26px, 3.4vw, 38px);
+        text-align: center;
+    }
+
+    .as-eyebrow {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #c09020;
+        margin-bottom: 0.7rem;
+    }
+
+    .as-rule {
+        width: 56px;
+        height: 3px;
+        background: #c0a882;
+        border-radius: 2px;
+        margin: 0 auto 20px;
+    }
+
+    .as-band > .as-inner > .as-eyebrow + .as-rule {
+        margin-left: 0;
+    }
+
+    .as-h2 {
+        margin: 0 0 0.8rem;
+        color: #1e293b;
+        font-size: clamp(1.5rem, 3vw, 2.05rem);
+        line-height: 1.25;
+        letter-spacing: -0.4px;
+    }
+
+    .as-h2--small {
+        font-size: 1.15rem;
+        letter-spacing: 0;
+        margin-bottom: 1.2rem;
+    }
+
+    .as-hl {
+        color: #69574a;
+    }
+
+    .as-lead {
+        margin: 0 0 1.4rem;
+        font-size: 1.02rem;
+        line-height: 1.8;
+        color: #475569;
+    }
+
+    .as-lead--center {
+        margin: 0 auto;
+        max-width: 720px;
+    }
+
+    .as-p {
+        margin: 0 0 1rem;
+        line-height: 1.8;
+    }
+
+    .as-list {
+        margin: 0;
+        padding-left: 1.1rem;
+        line-height: 1.8;
+    }
+
+    .as-list li {
+        margin-bottom: 0.7rem;
+    }
+
+    .as-list strong {
+        color: #1e293b;
+    }
+
+    .as-foot-note {
+        max-width: 780px;
+        margin: clamp(24px, 3vw, 34px) auto 0;
+        padding: 0.9rem 1.1rem;
+        background: #fffaf0;
+        border-left: 3px solid #c09020;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.92rem;
+        line-height: 1.75;
+        color: #69574a;
+    }
+
+    /* 归属三卡 */
+    .as-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+        margin-bottom: 1.6rem;
+    }
+
+    .as-card {
+        padding: 24px 22px;
+        background: #fff;
+        border: 1px solid #e6ded2;
+        border-radius: 12px;
+    }
+
+    .as-band--quiet .as-card {
+        background: #fdfbf9;
+    }
+
+    .as-card h3 {
+        margin: 0 0 0.55rem;
+        color: #1e293b;
+        font-size: 1.02rem;
+        line-height: 1.4;
+    }
+
+    .as-card p {
+        margin: 0;
+        font-size: 0.92rem;
+        line-height: 1.78;
+        color: #64748b;
+    }
+
+    /* 「数字在报价单上」指向块：本页唯一谈到年限的地方，一个数字都不给 */
+    .as-callout {
+        margin: 0 0 1.6rem;
+        padding: 1rem 1.15rem;
+        background: #fffaf0;
+        border-left: 3px solid #c0a882;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .as-callout p {
+        margin: 0;
+        font-size: 0.92rem;
+        line-height: 1.8;
+    }
+
+    .as-callout strong {
+        color: #1e293b;
+    }
+
+    /* 提报三卡 */
+    .as-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+    }
+
+    .as-step {
+        padding: 26px 22px 24px;
+        background: #fff;
+        border: 1px solid #e6ded2;
+        border-radius: 12px;
+    }
+
+    .as-step-no {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin-bottom: 0.9rem;
+        border-radius: 50%;
+        background: #0d0950;
+        color: #f0c96a;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .as-step h3 {
+        margin: 0 0 0.55rem;
+        color: #1e293b;
+        font-size: 1rem;
+    }
+
+    .as-step p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.75;
+        color: #64748b;
+    }
+
+    /* 流程四行 */
+    .as-flow {
+        margin: 0 0 1.6rem;
+    }
+
+    .as-flow-row {
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        gap: 16px;
+        padding: 1.15rem 0;
+        border-bottom: 1px solid #eee6dc;
+    }
+
+    .as-flow-row:first-child {
+        border-top: 1px solid #eee6dc;
+    }
+
+    .as-flow-no {
+        display: inline-flex;
+        align-items: flex-start;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid #c0a882;
+        color: #69574a;
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .as-flow-row h3 {
+        margin: 0 0 0.35rem;
+        color: #1e293b;
+        font-size: 1rem;
+    }
+
+    .as-flow-row p {
+        margin: 0;
+        font-size: 0.93rem;
+        line-height: 1.8;
+    }
+
+    .as-quiet-note {
+        color: #8b7f74;
+        font-size: 0.92rem;
+    }
+
+    /* 升级带 */
+    .as-escalate {
+        padding: clamp(52px, 7vw, 84px) clamp(16px, 4vw, 40px);
+        background:
+            radial-gradient(
+                900px 320px at 50% -10%,
+                rgba(192, 168, 130, 0.22),
+                rgba(17, 14, 11, 0) 70%
+            ),
+            #1a1008;
+        color: rgba(255, 255, 255, 0.82);
+        text-align: center;
+    }
+
+    .as-eyebrow--gold {
+        color: #f0c96a;
+    }
+
+    .as-es-h2 {
+        margin: 0 0 1rem;
+        color: #fff;
+        font-size: clamp(1.55rem, 3.2vw, 2.2rem);
+        line-height: 1.25;
+        letter-spacing: -0.4px;
+    }
+
+    .as-es-lead {
+        max-width: 720px;
+        margin: 0 auto 2rem;
+        font-size: 1rem;
+        line-height: 1.85;
+    }
+
+    .as-es-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 1.8rem;
+    }
+
+    .as-es-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 22px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(192, 168, 130, 0.34);
+        border-radius: 12px;
+        /* 不给 color 的话 <a> 会回到 UA 默认蓝，卡里任何没被子元素上色的字就脏了 */
+        color: inherit;
+        text-decoration: none;
+        transition:
+            background 0.25s ease,
+            transform 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .as-es-card:hover {
+        background: rgba(240, 201, 106, 0.1);
+        border-color: #f0c96a;
+        transform: translateY(-3px);
+    }
+
+    .as-es-tag {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #c0a882;
+    }
+
+    .as-es-card strong {
+        color: #fff;
+        font-size: 1.02rem;
+        line-height: 1.4;
+        word-break: break-word;
+    }
+
+    .as-es-card small {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.8rem;
+    }
+
+    .as-es-what {
+        max-width: 720px;
+        margin: 0 auto 0.8rem;
+        font-size: 0.92rem;
+        line-height: 1.8;
+    }
+
+    .as-es-what strong {
+        color: #f0c96a;
+    }
+
+    .as-es-sla {
+        max-width: 720px;
+        margin: 0 auto 1.6rem;
+        font-size: 0.88rem;
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.66);
+    }
+
+    .as-es-alt {
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.66);
+    }
+
+    .as-es-alt a {
+        color: #f0c96a;
+    }
+
+    /* 相关页 */
+    .as-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .as-links a {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        padding: 1rem 1.1rem;
+        background: #fff;
+        border: 1px solid #e6ded2;
+        border-radius: 10px;
+        color: inherit;
+        text-decoration: none;
+        transition: border-color 0.2s ease;
+    }
+
+    .as-band--quiet .as-links a {
+        background: #fff;
+    }
+
+    .as-links a:hover {
+        border-color: #c0a882;
+    }
+
+    .as-links strong {
+        color: #1e293b;
+        font-size: 0.95rem;
+    }
+
+    .as-links span {
+        color: #8b7f74;
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+
+    /* 页头 CTA（PageHero 的 default slot，样式随本页作用域带回） */
+    .as-hero-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.7rem 1.4rem;
+        border-radius: 999px;
+        background: #f0c96a;
+        color: #1a1008;
+        font-size: 0.88rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .as-hero-btn:hover {
+        background: #ffd873;
+        transform: translateY(-2px);
+    }
+
+    .as-hero-btn--ghost {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        color: #fff;
+    }
+
+    .as-hero-btn--ghost:hover {
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    @media (max-width: 640px) {
+        .as-flow-row {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+    }
+</style>

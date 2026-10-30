@@ -61,9 +61,11 @@ import MegaMenu from "./MegaMenu.astro";
   </div>
 
   <div class="has-dropdown">
-    {/* Resource 本身没有着陆页（子项才有），所以不给 href：
+    {
+      /* Resource 本身没有着陆页（子项才有），所以不给 href：
          带 href="#" 时点一下会把页面弹回顶部，看起来像菜单坏了。
-         不给 href 的 <a> 不是链接也不可聚焦，下拉仍由 hover/focus 触发。 */}
+         不给 href 的 <a> 不是链接也不可聚焦，下拉仍由 hover/focus 触发。 */
+    }
     <a tabindex="-1" aria-disabled="true">
       Resource
       <svg
@@ -114,6 +116,11 @@ import MegaMenu from "./MegaMenu.astro";
       <a href="/installation-guides/">Installation Guides</a>
       <a href="/interactive-guides/">3D Build-Up Guides</a>
       <a href="/procurement-guide/">Procurement Guide</a>
+      {
+        /* 2026-10-30 业主指令单开的售后页：放在采购指南后面（两者都是「下单前要看
+          的商业文件」），不新开一级菜单——顶栏再加一栏会把 Products 的全宽面板挤窄。 */
+      }
+      <a href="/after-sales/">After-Sales &amp; Warranty</a>
       <a href="/technical-documentation/">Technical Documentation</a>
     </div>
   </div>
