@@ -10,6 +10,9 @@
  *   Facade & Exterior Cladding / Skirting & Trims），右侧卡片 = 该线下的
  *   二级系列或形态，全部链向现有分类/产品页。调整时保持「一级=产品线、
  *   卡片=系列」两级语义，不要改回按形态与话术混排的旧 6 组。
+ *   2026-10-29 业主加第 5 栏「Non-Standard & Bespoke」（非标品定制）。它与前四栏
+ *   不是同一级语义：前四条按工程部位分产品，这一条按交付方式分能力，所以它的
+ *   卡片不是二级系列而是非标件示例，目前只有一张占位卡（见数组末尾的说明）。
  *   - label      : 左侧菜单项文字
  *   - cards[]    : 该项对应的右侧卡片（img / title / href）
  * 面板开合仍由 Navigation.astro 的 .has-mega 悬停控制（纯 CSS）。
@@ -26,6 +29,18 @@
  * 对买家是“这站没建完”，对 Google 是每个页面都自指一次。
  * 以后给某个产品建好页，把 "#" 换成真路径即可，卡片自动恢复可点。
  */
+/**
+ * 分组说明块。只给「卡片填不满 4 列网格」的组用（目前只有 Non-Standard &
+ * Bespoke 一组）：可见 pane 的网格改成「1 张宽卡 + 1 个说明块」各占两列，
+ * 填满脚本锁定的面板高度，不留 3/4 宽的空白。
+ * 文案规则与站内其他对外声明一致：附录 A 没写的数字一律不写，只写能力句。
+ */
+interface MegaGroupNote {
+  heading: string;
+  lines: string[];
+  cta: { text: string; href: string };
+}
+
 interface MegaCardItem {
   img: string;
   title: string;
@@ -35,6 +50,7 @@ interface MegaCardItem {
 interface MegaGroup {
   label: string;
   cards: MegaCardItem[];
+  note?: MegaGroupNote;
 }
 
 const MENU: MegaGroup[] = [
@@ -160,6 +176,36 @@ const MENU: MegaGroup[] = [
       },
     ],
   },
+  {
+    // 非标品定制（业主 2026-10-29 要求新增第 5 栏）。这一栏语义与前四栏不同：
+    // 前四条是「按工程部位分的产品线」，这一条是「按交付方式分的能力」——
+    // 买家手里是一张图、不是一个型号，所以它不该混进上面任何一组。
+    //
+    // ★ 现在这张卡是占位卡，不是这一栏的最终内容：业主只要求「先随便拿一个
+    //   非标品占位」。挑的是站内真实存在、且没在别的组出现过的产品页
+    //   （fire-rated honeycomb 按指定构造出，属于典型非标下单件），
+    //   图与链接都验过 HTTP 200，不留 href="#" 的空卡。
+    //   等业主给出这一栏到底要放哪几类（双曲/分面柱、特异穿孔、异形截面、
+    //   一次性加工件…）再逐张替换；卡数变多时网格自动折行，不用改样式。
+    label: "Non-Standard & Bespoke",
+    cards: [
+      {
+        img: "https://file.meiyualuminum.com/renders/fire-rated-honeycomb-panel/transit-platform-scene-e0c8c4.webp",
+        title: "Fire-Rated Honeycomb Panels",
+        href: "/products/fire-rated-honeycomb-panel/",
+      },
+    ],
+    // 两句都取自 src/lib/orderProcess.ts 的既有口径（01 报价 / 03 深化图），
+    // 不新增任何数字，也不承诺「什么都能做」。
+    note: {
+      heading: "Ordered from the drawing",
+      lines: [
+        "Curved, faceted, deeply perforated and one-off sections are quoted as project work. A full drawing set is not required to start — what you already have is enough to price.",
+        "Production does not start on a drawing nobody has signed.",
+      ],
+      cta: { text: "Send a drawing", href: "/contact/" },
+    },
+  },
 ];
 ---
 
@@ -204,7 +250,7 @@ const MENU: MegaGroup[] = [
         {
           MENU.map((m, i) => (
             <div class="mega-pane" id={`mega-pane-${i}`} hidden={i !== 0}>
-              <div class="mega-grid">
+              <div class:list={["mega-grid", { "mega-grid--split": !!m.note }]}>
                 {m.cards.map((c, j) => {
                   // 没有真实目标就不给 href：<a> 不带 href 时浏览器不把它当链接、
                   // 也不可聚焦，比 href="#" 诚实；同时不用拆两套 markup，
@@ -230,6 +276,32 @@ const MENU: MegaGroup[] = [
                     </a>
                   );
                 })}
+                {/* 卡片填不满整行的组：右侧给一块能力说明，不留空网格。
+                    可见文本全部写在数据里，这里只做结构。 */}
+                {m.note && (
+                  <div class="mega-note">
+                    <span class="mega-note-heading">{m.note.heading}</span>
+                    {m.note.lines.map((l) => (
+                      <p class="mega-note-line">{l}</p>
+                    ))}
+                    <a class="mega-note-cta" href={m.note.cta.href}>
+                      <span>{m.note.cta.text}</span>
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           ))
@@ -454,6 +526,63 @@ const MENU: MegaGroup[] = [
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 22px;
+  }
+
+  /* 单卡组（现在只有 Non-Standard & Bespoke）：卡占两列，另两列给说明块。
+     跨两列的宽 = 2 格 + 1 个 gap = 519px，配 aspect-ratio 1:1 正好等于脚本锁定的
+     内容高度（最高组 6 卡折 2 行），所以切到这一组时面板外框不变形，
+     也不用给这一组单独算高度。 */
+  .mega-grid--split .mega-card {
+    grid-column: span 2;
+  }
+
+  .mega-note {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    padding: 28px 30px;
+    border: 1px solid rgba(192, 168, 130, 0.22);
+    border-radius: 10px;
+    background: linear-gradient(
+      160deg,
+      rgba(192, 168, 130, 0.08),
+      rgba(17, 14, 11, 0.6)
+    );
+  }
+
+  .mega-note-heading {
+    color: var(--brand-gold);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .mega-note-line {
+    margin: 0;
+    color: #b9b2a7;
+    font-size: 13.5px;
+    line-height: 1.62;
+  }
+
+  .mega-note-cta {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    color: var(--brand-gold-bright);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+  }
+
+  .mega-note-cta:hover {
+    transform: translateX(3px);
   }
 
   /* Card */

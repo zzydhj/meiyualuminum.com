@@ -57,8 +57,10 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
       <!-- Home -->
       <li><a class="m-link" href="/">Home</a></li>
 
-      {/* Aluminum Solutions：删项。它没有子菜单也没有对应页面，
-           与下面的 Products 完全重叠，留着只会多一个点不动的行。 */}
+      {
+        /* Aluminum Solutions：删项。它没有子菜单也没有对应页面，
+           与下面的 Products 完全重叠，留着只会多一个点不动的行。 */
+      }
 
       {/* Products（三级结构） */}
       <li class="m-acc">
@@ -85,9 +87,13 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
         </div>
         <div class="m-panel">
           <div class="m-panel-in">
-            {/* 2026-10-26 与用户 18 系列口径表对齐：二级 = 4 条产品线（不可点行，
+            {
+              /* 2026-10-26 与用户 18 系列口径表对齐：二级 = 4 条产品线（不可点行，
                  线级分类页无产品挂载不放链接），三级 = 18 个系列真链接，
-                 与桌面端 MegaMenu 同口径同目标。 */}
+                 与桌面端 MegaMenu 同口径同目标。
+                 2026-10-29 加第 5 个二级组「Non-Standard & Bespoke」（见下方注释），
+                 所以现在是 5 组 / 18+1 个系列链接 + 1 个送图入口。 */
+            }
             <ul class="m-list m-l2">
               <li class="m-acc">
                 <div class="m-row">
@@ -337,6 +343,54 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
                   </div>
                 </div>
               </li>
+              {
+                /* 2026-10-29 与桌面端 MegaMenu 同步的第 5 组「Non-Standard &
+                  Bespoke」（非标品定制）。语义与前四条不同：前四条按工程部位
+                  分产品，这一条按交付方式分能力。子项只有1 个占位产品
+                  + 1 个送图入口，等业主给出这一栏真正要列哪几类再补。 */
+              }
+              <li class="m-acc">
+                <div class="m-row">
+                  <a class="m-link" tabindex="-1" aria-disabled="true"
+                    >Non-Standard &amp; Bespoke</a
+                  >
+                  <button
+                    type="button"
+                    class="m-toggle"
+                    aria-expanded="false"
+                    aria-label="Toggle Non-Standard and Bespoke submenu"
+                  >
+                    <svg
+                      class="m-chevron"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      ><path d="M6 9l6 6 6-6"></path></svg
+                    >
+                  </button>
+                </div>
+                <div class="m-panel">
+                  <div class="m-panel-in">
+                    <ul class="m-list m-l3">
+                      <li>
+                        <a
+                          class="m-link"
+                          href="/products/fire-rated-honeycomb-panel/"
+                          >Fire-Rated Honeycomb Panels</a
+                        >
+                      </li>
+                      <li>
+                        <a class="m-link" href="/contact/">Send a drawing</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -388,11 +442,15 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
         </div>
       </li>
 
-      {/* Distributor：删项。全站没有经销商相关页面，href="#" 的死行不如不放；
-           真要开经销商招募，建完 /distributors/ 再加回来。 */}
+      {
+        /* Distributor：删项。全站没有经销商相关页面，href="#" 的死行不如不放；
+           真要开经销商招募，建完 /distributors/ 再加回来。 */
+      }
 
-      {/* Resource：子项都是真页面，但父项本身没有着陆页。
-           不给 href 的 <a> 不是链接也不可聚焦，展开仍由旁边的按钮负责。 */}
+      {
+        /* Resource：子项都是真页面，但父项本身没有着陆页。
+           不给 href 的 <a> 不是链接也不可聚焦，展开仍由旁边的按钮负责。 */
+      }
       <li class="m-acc">
         <div class="m-row">
           <a class="m-link" tabindex="-1" aria-disabled="true">Resource</a>
