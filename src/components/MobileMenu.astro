@@ -525,6 +525,12 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
                 </div>
               </li>
               <li><a class="m-link" href="/blog/">Blog</a></li>
+              {
+                /* 与桌面端 Navigation.astro 的 Resource 下拉同位置：Blog 之后 */
+              }
+              <li>
+                <a class="m-link" href="/inspiration/">Design Inspiration</a>
+              </li>
               <li><a class="m-link" href="/categories/">Categories</a></li>
               <li><a class="m-link" href="/tags/">Tags</a></li>
               <li><a class="m-link" href="/faq/">FAQ</a></li>

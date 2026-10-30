@@ -1,0 +1,717 @@
+---
+/**
+ * inspiration.astro — 设计灵感画廊（业主 2026-10-30 指令：像 Instagram 那样有得逛，
+ * 分组摆开，往下不停加载，鼠标滑上去出现「联系我们定制」）
+ *
+ * 数据不在这里：图与分类全在 src/lib/inspirationGallery.ts（一份，生成后手工维护）。
+ * 本页只做渲染与交互，不写任何公司数字，所以没有口径漂移的风险。
+ *
+ * 版式演进（三轮业主反馈，别再改回去）：
+ * 1. 分类从顶部横排改成**左侧竖排侧栏，贴浏览器左沿**。理由不是审美：横排到 20 个
+ *    分类时后面的要靠横向滚动条才看得到，而网页里的横向滚动条几乎没人拖；
+ *    侧栏占的是本来就有富余的纵向空间，分类再多也只是侧栏自己内部滚。
+ * 2. 图片一律 1:1 方卡（业主口径：不要有的方有的扁）。非正方的原图不在这里裁——
+ *    已在桶里生成正方副本（inspiration/<分类>/<名>-sq.webp，按背景色补边），
+ *    所以卡片上的 object-fit:cover 实际不切任何内容。方卡就不需要瀑布多列，
+ *    换成 CSS Grid —— 顺带修掉了多列布局「先列后行」的阅读顺序问题。
+ *
+ * 五条实现上的取舍：
+ * 3. 不做「分批显示 18 张」的假分页。往末尾追加卡片会让版面重排，用户正看的那张会跳走。
+ *    全部卡片一次写进 HTML，「不停加载」交给 loading=lazy 与滚动渐显：抓取器和禁用 JS
+ *    的人都拿到全部画廊，版面一次不跳。张数不写在注释里（会过期），自检脚本对着数据文件核。
+ * 4. 侧栏 sticky 必须让开站点头（header 也是 sticky，桌面 72px / 窄屏约 58px）。
+ *    CSS 给默认值，JS 再用 header 实测高度写 --site-header-h，两头都不会错。
+ * 5. 贴左沿的出血不能用 calc(50% - 50vw)：100vw 含竖向滚动条，而容器居中用的
+ *    clientWidth 不含，1600 宽下实测差 7.5px（出血只推到 -7.5），再叠上容器左内边距
+ *    就变成距左沿 18px —— 看着就是「没贴住」。改由 JS 写 --inner-w（documentElement
+ *    .clientWidth），CSS 优先用它，没 JS 时退回 100%（等于不出血、居中，也不会溢出）。
+ *    右端同样要出血：业主口径是「右边全宽依次放」，只出血左边会被 1400 容器截住，
+ *    1600 宽下实测右边空 108.5px、1920 上空 268px —— 那部分正好是「5 列会不会太小」的答案。
+ * 6. 列数不定死，按「单卡不低于 ~240px」分档：这页的图看的是孔径、木纹、条扣间距，
+ *    低于 220px 就只看得出「是天花板」看不出「是什么板」；hover 胶囊本身约 190px 宽，
+ *    卡片再小就顶到边。1440×900 笔记本是 B2B 主力屏，它只能吃 4 列（271px），5 列就跌到 215。
+ * 7. 卡片上不印「示意图」角标（业主口径），但导语里一句话说清这些是本厂产品图与
+ *    视觉方案、不是工程业绩清单。整页一句诚实话，比每张图一个小灰标既好看又站得住。
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import { whatsappUrl } from "../lib/companyProfile";
+import { INSPO_ITEMS, INSPO_TABS } from "../lib/inspirationGallery";
+
+const pageTitle = "Design Inspiration";
+// ≤160 字符；BaseLayout 只给 title 拼后缀，description 原样输出
+const description =
+    "Browse aluminium ceiling, facade, wall and perforation ideas by theme — every piece shown is a system we fabricate, with a direct line to customise it.";
+
+/** 首屏那几张直接取图，其余滚动到附近再取 */
+const EAGER = 12;
+const tiles = INSPO_ITEMS.map((it, i) => ({ ...it, idx: i }));
+
+const counts: Record<string, number> = { all: tiles.length };
+for (const t of INSPO_TABS) {
+    if (t.id === "all") continue;
+    counts[t.id] = tiles.filter((x) =>
+        (x.cats as string[]).includes(t.id),
+    ).length;
+}
+---
+
+<BaseLayout pageTitle={pageTitle} description={description} hideTitle>
+    <PageHero
+        eyebrow="Ideas, sorted"
+        titleWhite="Design"
+        titleGold="Inspiration"
+        subtitle="Ceilings, facades, walls and perforation — browsed by look rather than by catalogue code. Every image here is a system we fabricate: our own product photography and our own visualisations of a build-up, not a portfolio of completed sites."
+        crumb={{
+            items: [
+                { name: "Home", url: "/" },
+                { name: "Design Inspiration", url: "/inspiration/" },
+            ],
+        }}
+    />
+
+    <section class="ins-shell">
+        {
+            /* 左：分类侧栏。竖排、贴左沿、内部可滚，分类加到 20 个也只是它自己变长 */
+        }
+        <aside class="ins-side" id="ins-side" aria-label="Inspiration themes">
+            <h2 class="ins-side-title">Browse by theme</h2>
+            <div
+                class="ins-side-list"
+                role="tablist"
+                aria-orientation="vertical"
+            >
+                {
+                    INSPO_TABS.map((t, i) => (
+                        <button
+                            type="button"
+                            role="tab"
+                            class:list={["ins-tab", { active: i === 0 }]}
+                            data-cat={t.id}
+                            data-label={t.label}
+                            aria-selected={i === 0 ? "true" : "false"}
+                        >
+                            <span class="ins-tab-label">{t.label}</span>
+                            <span class="ins-tab-n">{counts[t.id] ?? 0}</span>
+                        </button>
+                    ))
+                }
+            </div>
+            <p class="ins-side-note">
+                One panel can sit in several themes; it is counted in each.
+            </p>
+        </aside>
+
+        {/* 右：方卡网格，占满剩下的宽度 */}
+        <div class="ins-main">
+            <p class="ins-count">
+                <span id="ins-total">{tiles.length}</span>
+                ideas
+                <span class="ins-count-sep">·</span>
+                <span id="ins-cat">Everything</span>
+            </p>
+
+            <div class="ins-grid" id="ins-grid">
+                {
+                    tiles.map((t) => (
+                        <a
+                            class="ins-tile"
+                            href={whatsappUrl(
+                                `I saw this on your Design Inspiration gallery — can you make something like it? (${t.alt})`,
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-wa-source="inspiration-tile"
+                            data-cats={t.cats.join(" ")}
+                        >
+                            <img
+                                src={t.src}
+                                alt={t.alt}
+                                width={t.w}
+                                height={t.h}
+                                loading={t.idx < EAGER ? "eager" : "lazy"}
+                                decoding="async"
+                            />
+                            <span class="ins-veil" aria-hidden="true" />
+                            <span class="ins-cta">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    width="14"
+                                    height="14"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.9a8.5 8.5 0 1 1 16.1-.6z" />
+                                </svg>
+                                Contact us to customise
+                            </span>
+                            <span class="ins-chip">
+                                {t.cats[0].replace("-", " ")}
+                            </span>
+                        </a>
+                    ))
+                }
+            </div>
+
+            <p class="ins-end">
+                That is the whole library for now — new work gets added here.
+                Nothing here quite matches your job? Send the drawing, a
+                photograph, or just the dimension and the look you are after:
+                {" "}
+                <a href="/contact/">talk to us</a>.
+            </p>
+        </div>
+    </section>
+
+    <section class="ins-band">
+        <div class="ins-foot">
+            <div>
+                <h2>
+                    Formed, perforated and custom colour are normal business
+                </h2>
+                <p>
+                    A quotation comes back with the exclusions written out
+                    rather than left to be discovered on site, and shop drawings
+                    go out for your signature before anything is produced.
+                </p>
+            </div>
+            <a class="ins-foot-btn" href="/contact/">Talk to us</a>
+        </div>
+    </section>
+</BaseLayout>
+
+<script>
+    const header = document.querySelector("header");
+    const side = document.getElementById("ins-side");
+    const shell = document.querySelector<HTMLElement>(".ins-shell");
+    const listBox = document.querySelector<HTMLElement>(".ins-side-list");
+    const grid = document.getElementById("ins-grid");
+    const totalOut = document.getElementById("ins-total");
+    const catOut = document.getElementById("ins-cat");
+
+    /* 侧栏与顶部条都要让开站点头：CSS 里写的是默认值，实测更准
+       （字体没加载完、或以后头改高时不会悄悄被挡住）。
+       --inner-w 同理：clientWidth 才是不含滚动条的那个宽度，50vw 含。 */
+    const syncOffset = () => {
+        if (header) {
+            document.documentElement.style.setProperty(
+                "--site-header-h",
+                `${header.offsetHeight}px`,
+            );
+        }
+        document.documentElement.style.setProperty(
+            "--inner-w",
+            `${document.documentElement.clientWidth}px`,
+        );
+    };
+    syncOffset();
+    addEventListener("resize", syncOffset);
+
+    if (grid && listBox && side && shell && totalOut && catOut) {
+        const tiles = Array.from(
+            grid.querySelectorAll<HTMLElement>(".ins-tile"),
+        );
+
+        /* 换分组后把画廊滚回视线内。业主 2026-10-30 报的 bug：在 Everything 里
+           拉到很下面再点「More」（只 3 张），版面瞬间变矮，浏览器把滚动位置
+           夹到新文档的底部 —— 于是正好落在页尾，而侧栏是 sticky 在 .ins-shell
+           里的，视口一旦跑到 shell 下方就跟着消失，看起来像「菜单不见了」。
+           已经在上方（含首屏 hero）时不主动往下滚，只把人从下面带回来。 */
+        const revealGallery = () => {
+            const headH = header ? header.offsetHeight : 0;
+            const target = Math.max(
+                0,
+                window.scrollY + shell.getBoundingClientRect().top - headH - 12,
+            );
+            if (window.scrollY > target + 1) {
+                window.scrollTo({ top: target, behavior: "smooth" });
+            }
+        };
+
+        listBox.addEventListener("click", (e) => {
+            const btn = (e.target as HTMLElement).closest<HTMLElement>(
+                ".ins-tab",
+            );
+            if (!btn) return;
+            listBox.querySelectorAll(".ins-tab").forEach((b) => {
+                b.classList.remove("active");
+                b.setAttribute("aria-selected", "false");
+            });
+            btn.classList.add("active");
+            btn.setAttribute("aria-selected", "true");
+
+            const cat = btn.dataset.cat ?? "all";
+            let n = 0;
+            tiles.forEach((t) => {
+                const hit =
+                    cat === "all" ||
+                    (t.dataset.cats ?? "").split(" ").includes(cat);
+                t.hidden = !hit;
+                if (hit) n++;
+            });
+            // 分母跟着筛选走：固定写全站总数会让「24 / 126」这类数字自相矛盾
+            totalOut.textContent = String(n);
+            catOut.textContent = btn.dataset.label ?? "";
+            revealGallery();
+
+            // 窄屏时侧栏变成顶部横滑条，把选中的那个滑回视野中间（只动容器自己）
+            if (listBox.scrollWidth > listBox.clientWidth) {
+                listBox.scrollTo({
+                    left: Math.max(
+                        0,
+                        btn.offsetLeft -
+                            listBox.clientWidth / 2 +
+                            btn.clientWidth / 2,
+                    ),
+                    behavior: "smooth",
+                });
+            }
+        });
+    }
+
+    /* 滚动渐显：卡片本来就在版面里且可见，动画只是滚到时补一层 fade-up。
+       不用 JS 的人看不到动画，但一张图都不会少。 */
+    if (grid && "IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((en) => {
+                    if (!en.isIntersecting) return;
+                    en.target.classList.add("ins-in");
+                    io.unobserve(en.target);
+                });
+            },
+            { rootMargin: "200px 0px" },
+        );
+        grid.querySelectorAll(".ins-tile").forEach((t) => io.observe(t));
+    }
+</script>
+
+<style>
+    /* 站点既有语言：金 #c09020 / 浅金 #c0a882 / 深蓝 #0d0950 / 米带 #f8f6f3 /
+       卡边 #e6ded2 / 深色带 #110e0b / Inter。侧栏行的写法沿用 MegaMenu 左列
+       （左描边 + 文字 + 右侧计数），不另起一套视觉。 */
+    :root {
+        --site-header-h: 72px;
+    }
+
+    /* 两端同时出血：main.container 限宽 1400 + 居中，负 margin 把这块拉到视口摆边。
+       宽度取 JS 实测的 --inner-w（不含滚动条），否则 50vw 会多算出半个滚动条；
+       没 JS 时退回 100% → 负 margin 为 0，不出血也不溢出。
+       左内边距归零，侧栏才是真的贴住边；右端留一点呼吸，卡片不贴窗口边。 */
+    .ins-shell {
+        display: flex;
+        align-items: flex-start;
+        gap: clamp(18px, 2.4vw, 34px);
+        margin-left: calc(50% - (var(--inner-w, 100%) / 2));
+        margin-right: calc(50% - (var(--inner-w, 100%) / 2));
+        padding: clamp(18px, 2.6vw, 30px) clamp(14px, 1.8vw, 28px)
+            clamp(34px, 5vw, 56px) 0;
+        background: #f8f6f3;
+        max-width: 100vw;
+        box-sizing: border-box;
+        /* 至少给满一屏：只看 3 张图的分组，卡片下面不至于空得直接接上页尾，
+           侧栏（sticky 在本块里）也能在这一屏内一直钉着。dvh 负手机地址栏跳动，
+           前一行为不支持 dvh 的浏览器留的退回值。 */
+        min-height: calc(100vh - var(--site-header-h));
+        min-height: calc(100dvh - var(--site-header-h));
+    }
+
+    /* ── 左侧栏：左沿齐平的导轨，所以只圆右边两个角 ── */
+    .ins-side {
+        position: sticky;
+        top: calc(var(--site-header-h) + 14px);
+        width: 236px;
+        flex-shrink: 0;
+        max-height: calc(100vh - var(--site-header-h) - 28px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        padding: 14px 12px 12px;
+        background: #110e0b;
+        border-radius: 0 14px 14px 0;
+    }
+
+    .ins-side-title {
+        margin: 0 0 12px;
+        padding-left: 12px;
+        color: #c0a882;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .ins-side-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .ins-tab {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-left: 3px solid transparent;
+        border-radius: 0 8px 8px 0;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.74);
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        text-align: left;
+        cursor: pointer;
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .ins-tab:hover {
+        color: #fff;
+        border-left-color: rgba(192, 168, 130, 0.6);
+    }
+
+    .ins-tab.active {
+        background: rgba(240, 201, 106, 0.14);
+        border-left-color: #f0c96a;
+        color: #fff;
+    }
+
+    .ins-tab-label {
+        min-width: 0;
+    }
+
+    .ins-tab-n {
+        flex-shrink: 0;
+        color: #f0c96a;
+        font-size: 0.76rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        opacity: 0.85;
+    }
+
+    .ins-side-note {
+        margin: 12px 0 0;
+        padding-left: 12px;
+        color: rgba(255, 255, 255, 0.42);
+        font-size: 0.72rem;
+        line-height: 1.6;
+    }
+
+    /* ── 右侧网格 ── */
+    .ins-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ins-count {
+        margin: 0 0 14px;
+        color: #8b7f74;
+        font-size: 0.8rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .ins-count span {
+        color: #69574a;
+        font-weight: 700;
+    }
+
+    .ins-count-sep {
+        margin: 0 5px;
+        color: #c9bdad;
+    }
+
+    /* 方卡网格：业主口径全部 1:1，所以用 grid 而不是多列瀑布。
+       列数按「单卡 ≥ 240px」分档（数字来处见顶部注释第 6 条）：
+       1300–1579 → 4 列（241–295），1580–1899 → 5 列（242–281），
+       ≥1900 → 6 列（251–291），≤1299 → 3 列（287–343）。
+       卡片宽度 = 列宽，高度由 aspect-ratio 定 → 零跳版。 */
+    .ins-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    @media (min-width: 1580px) {
+        .ins-grid {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+    }
+
+    @media (min-width: 1900px) {
+        .ins-grid {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 1299px) {
+        .ins-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 620px) {
+        .ins-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+    }
+
+    .ins-tile {
+        position: relative;
+        display: block;
+        aspect-ratio: 1 / 1;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #e6ded2;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .ins-tile[hidden] {
+        display: none;
+    }
+
+    .ins-tile img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .ins-tile:hover img,
+    .ins-tile:focus-visible img {
+        transform: scale(1.06);
+    }
+
+    .ins-veil {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to top,
+            rgba(10, 8, 5, 0.82) 0%,
+            rgba(10, 8, 5, 0.22) 42%,
+            rgba(10, 8, 5, 0) 68%
+        );
+        opacity: 0;
+        transition: opacity 0.28s ease;
+    }
+
+    .ins-tile:hover .ins-veil,
+    .ins-tile:focus-visible .ins-veil {
+        opacity: 1;
+    }
+
+    /* hover 才出现的 CTA；触屏上整张卡本身就是链接，点下去就是同一条询盘 */
+    .ins-cta {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #f0c96a;
+        color: #1a1008;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+            opacity 0.28s ease,
+            transform 0.28s ease;
+    }
+
+    .ins-tile:hover .ins-cta,
+    .ins-tile:focus-visible .ins-cta {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .ins-chip {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: rgba(17, 14, 11, 0.62);
+        color: rgba(255, 255, 255, 0.86);
+        font-size: 0.64rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        opacity: 0;
+        transition: opacity 0.28s ease;
+    }
+
+    .ins-tile:hover .ins-chip,
+    .ins-tile:focus-visible .ins-chip {
+        opacity: 1;
+    }
+
+    /* 滚到才播的渐显：基态是完全可见，所以禁用 JS 也不会少一张图 */
+    .ins-in {
+        animation: ins-rise 0.5s ease both;
+    }
+
+    @keyframes ins-rise {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .ins-end {
+        margin: clamp(22px, 3vw, 34px) 0 0;
+        color: #8b7f74;
+        font-size: 0.92rem;
+        line-height: 1.8;
+    }
+
+    .ins-end a {
+        color: #69574a;
+        font-weight: 600;
+    }
+
+    .ins-band {
+        padding: 0 clamp(14px, 3vw, 28px) clamp(48px, 6vw, 72px);
+        background: #f8f6f3;
+    }
+
+    .ins-foot {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: clamp(22px, 3vw, 30px);
+        background: #fff;
+        border: 1px solid #e6ded2;
+        border-radius: 14px;
+    }
+
+    .ins-foot h2 {
+        margin: 0 0 0.4rem;
+        color: #1e293b;
+        font-size: 1.2rem;
+    }
+
+    .ins-foot p {
+        margin: 0;
+        max-width: 640px;
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.75;
+    }
+
+    .ins-foot-btn {
+        padding: 12px 24px;
+        border-radius: 999px;
+        background: #0d0950;
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background 0.2s ease;
+    }
+
+    .ins-foot-btn:hover {
+        background: #1a1566;
+    }
+
+    /* 窄屏：侧栏放不下就横过来贴在内容上方（分类再多也只是横向滑，
+       不再换行成 3–4 排把卡片挤下去） */
+    @media (max-width: 900px) {
+        .ins-shell {
+            flex-direction: column;
+            gap: 14px;
+            /* 窄屏不做负出血：横条要完整落在屏幕里，贴边反而会被切掉几像素 */
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: clamp(14px, 1.6vw, 26px);
+            padding-top: 14px;
+        }
+
+        .ins-side {
+            position: sticky;
+            top: var(--site-header-h);
+            z-index: 40;
+            width: 100%;
+            max-height: none;
+            overflow: hidden;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .ins-side-title,
+        .ins-side-note {
+            display: none;
+        }
+
+        .ins-side-list {
+            flex-direction: row;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .ins-side-list::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+        .ins-tab {
+            width: auto;
+            flex-shrink: 0;
+            border-left: 1px solid rgba(192, 168, 130, 0.34);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.84rem;
+            white-space: nowrap;
+        }
+
+        .ins-tab.active {
+            background: #f0c96a;
+            border-left-color: #f0c96a;
+            color: #1a1008;
+        }
+
+        .ins-tab.active .ins-tab-n {
+            color: #1a1008;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ins-tile img,
+        .ins-cta,
+        .ins-veil,
+        .ins-chip {
+            transition: none;
+        }
+
+        .ins-in {
+            animation: none;
+        }
+    }
+</style>

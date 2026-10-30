@@ -83,6 +83,9 @@ export const GET: APIRoute = async ({ site }) => {
         // /after-sales/ 要收：它是买家会主动搜的页面（aluminum ceiling warranty / after sales），
         // 与下面那两个没人搜的政策页不同类。
         "/after-sales/",
+        // /inspiration/ 要收：这页是给人逛的，也是「aluminium ceiling design ideas」
+        // 那一类搜索词唯一真正对得上的着陆页。
+        "/inspiration/",
         // /privacy-policy/ 与 /terms-of-use/ 故意不收：它们要能被抓到（页脚全页都有链），
         // 但没人会搜索一个厂商的隐私条款，列进清单只是把抓取配额花在无竞争价值的页面上。
     ];
