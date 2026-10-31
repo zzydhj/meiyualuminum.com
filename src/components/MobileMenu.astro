@@ -391,6 +391,16 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
                   </div>
                 </div>
               </li>
+              {
+                /* 与桌面端 MegaMenu 底栏同一条：上面 5 组列的是主推分类，全站分类比这多一倍，
+                   剩下那些（含 aluminum-ceilings 这种 12 个产品的父页）在菜单层只有
+                   /categories/ 这一个入口，所以以前它挂在 Resource 里、现在挂回 Products 尾部。 */
+              }
+              <li class="m-all">
+                <a class="m-link" href="/categories/"
+                  >Browse all product categories</a
+                >
+              </li>
             </ul>
           </div>
         </div>
@@ -531,7 +541,10 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
               <li>
                 <a class="m-link" href="/inspiration/">Design Inspiration</a>
               </li>
-              <li><a class="m-link" href="/categories/">Categories</a></li>
+              {
+                /* /categories/ 从 Resource 拿掉（与桌面端 Navigation.astro 同步）：
+                   它是产品浏览页不是阅读资源，入口在 Products 面板尾部那条。 */
+              }
               <li><a class="m-link" href="/tags/">Tags</a></li>
               <li><a class="m-link" href="/faq/">FAQ</a></li>
               <li>
@@ -692,6 +705,18 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
     font-size: 14px;
     font-weight: 600;
     color: #3d3d3d;
+  }
+
+  /* Products 面板尾那条「看全部分类」：它不是第 6 个产品线，得用分隔线分开。
+     选择器多带一层 .m-l2 才压得住上面那条 .m-l2 > li > .m-link。 */
+  .m-all {
+    margin-top: 6px;
+    border-top: 1px solid #e6ded2;
+  }
+
+  .m-l2 > .m-all > .m-link {
+    color: #0d0950;
+    font-weight: 700;
   }
   /* 三级样式 */
   .m-l3 > li > .m-link {

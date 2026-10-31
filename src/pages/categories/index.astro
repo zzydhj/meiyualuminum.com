@@ -2,7 +2,11 @@
 import PageHero from "../../components/PageHero.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { supabase } from "../../lib/supabase";
-import { getChildCategoryIds, type CategoryNode } from "../../lib/categoryPath";
+import {
+  countSubtreeProducts,
+  type CategoryNode,
+  type CategoryProductRow,
+} from "../../lib/categoryPath";
 import { currentLang } from "../../lib/i18n";
 
 // SSR：分类树读 categories / products 两张表，改库即生效，不需要重建部署。
@@ -21,31 +25,46 @@ if (error) {
 
 const categories = (allCategories ?? []) as CategoryNode[];
 
-// Separate root categories (parent_id = null) and children
-const rootCategories = categories.filter((c) => !c.parent_id);
-const childCategories = categories.filter((c) => c.parent_id);
-
 // Get product counts per category
 // 同样必须按 lang 过滤（与分类详情页同一原因）：这里的数既当每个分类后面的
 // 「N products」显示，也当页头「Products Listed」的总数，混进中文行就是虚高。
 const { data: allProducts } = await supabase
   .from("products")
-  .select("id, category_ids")
+  .select("slug, category_ids")
   .eq("status", "published")
   .eq("lang", lang);
 
-const products = allProducts ?? [];
+const products = (allProducts ?? []) as CategoryProductRow[];
 
+/* 薄分类（子树英文已发布产品 ≤ 1）这里照样列。2026-10-31 一度把它们过滤掉，
+   理由是「本页被收录，不该给 noindex 页发链」——那个理由是错的：那些页是
+   noindex, follow，本来就是「不收录但欢迎被链被爬」，产品页靠它们被发现；
+   而且 Mega Menu 现在就在链其中的 mesh / honeycomb / open-cell。买家找
+   「Mesh Ceilings」时这是一个真实存在的产品线，从「全部分类」里删掉只会让人少看到。
+   子树计数用共用的 countSubtreeProducts：以前本页自己写了一份 getProductCount，
+   与 lib 里那份逻辑一模一样，改一处就会漏另一处。 */
+
+/* 分类树不止两层。2026-10-31 查到：aluminum-ceilings → baffle-blade-ceilings →
+   aluminum-square-tube / u-shaped-aluminum-square-tube 是第三层，而旧模板只渲染
+   「根 + 直接子级」，那两个页（各 2 个产品）从来就没在这页出现过 —— 它们也不在
+   菜单里，等于只剩产品页面包屑一条路。所以改成递归展开，不再写死层数。 */
+type Entry = { node: CategoryNode; depth: number };
+function descendantsOf(rootId: number, depth = 1): Entry[] {
+  const out: Entry[] = [];
+  for (const k of categories) {
+    if (k.parent_id !== rootId) continue;
+    out.push({ node: k, depth });
+    out.push(...descendantsOf(k.id, depth + 1));
+  }
+  return out;
+}
+
+// Separate root categories (parent_id = null)
+const rootCategories = categories.filter((c) => !c.parent_id);
+
+// 遍历子树要用全量 categories（含第三层），否则厚页会少算孙辈的产品
 function getProductCount(categoryId: number): number {
-  // Get all descendant IDs (including self) for recursive counting
-  const allIds = getChildCategoryIds(categoryId, categories);
-  return products.filter((p) => {
-    if (!p.category_ids) return false;
-    // category_ids may be string[] or number[] from Supabase JSON column
-    return (p.category_ids as (string | number)[]).some((id) =>
-      allIds.includes(Number(id)),
-    );
-  }).length;
+  return countSubtreeProducts(categoryId, categories, products);
 }
 
 // 标题与描述都得重写：以前 description 是建站模板留下的「brake systems, engine parts,
@@ -81,9 +100,7 @@ const pageDescription =
     ) : (
       <div class="category-tree">
         {rootCategories.map((root) => {
-          const children = childCategories.filter(
-            (c) => c.parent_id === root.id,
-          );
+          const descendants = descendantsOf(root.id);
           return (
             <div class="category-group">
               <a href={`/categories/${root.slug}/`} class="category-root">
@@ -91,12 +108,18 @@ const pageDescription =
                 {root.description && <p>{root.description}</p>}
                 <span class="count">{getProductCount(root.id)} products</span>
               </a>
-              {children.length > 0 && (
+              {descendants.length > 0 && (
                 <div class="subcategories">
-                  {children.map((child) => (
-                    <a href={`/categories/${child.slug}/`} class="subcategory">
-                      {child.name}
-                      <span class="count">{getProductCount(child.id)}</span>
+                  {descendants.map(({ node, depth }) => (
+                    <a
+                      href={`/categories/${node.slug}/`}
+                      class:list={[
+                        "subcategory",
+                        { "subcategory--deep": depth > 1 },
+                      ]}
+                    >
+                      {node.name}
+                      <span class="count">{getProductCount(node.id)}</span>
                     </a>
                   ))}
                 </div>
@@ -175,5 +198,11 @@ const pageDescription =
 
   .subcategory:hover {
     background-color: #e2e8f0;
+  }
+
+  /* 第三层及更深：左边一条竖线标出层级，不另开一种颜色 */
+  .subcategory--deep {
+    border-left: 2px solid #cbd5e1;
+    padding-left: 0.6rem;
   }
 </style>

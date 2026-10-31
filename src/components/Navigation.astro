@@ -114,7 +114,11 @@ import MegaMenu from "./MegaMenu.astro";
           不占顶栏一级位——Products 的全宽面板已经把顶栏挤满了。 */
       }
       <a href="/inspiration/">Design Inspiration</a>
-      <a href="/categories/">Categories</a>
+      {
+        /* /categories/ 从这一栏拿掉（2026-10-31）：它是产品浏览页，不是阅读资源，
+          而 Resource 里其余全是工具 / 文章 / 指南 / 商业文件。入口换到 Products
+          的 Mega Menu 底栏（MegaMenu.astro 的 .mega-foot）——那里才是找分类的人会在的位置。 */
+      }
       <a href="/tags/">Tags</a>
       <a href="/faq/">FAQ</a>
       <a href="/surface-treatment-comparison/">Surface Treatment Guide</a>

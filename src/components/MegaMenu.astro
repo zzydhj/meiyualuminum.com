@@ -308,6 +308,36 @@ const MENU: MegaGroup[] = [
         }
       </div>
     </div>
+
+    {
+      /* 底栏：本面板只列主推的那几个分类，而全站分类比这里多一倍（2026-10-31 查：
+       菜单与页脚去重共链 9 个，另有 8 个「子树 ≥2 个英文已发布产品」的分类页
+       在菜单层根本进不去，包括 aluminum-ceilings（12 个产品）这类父页。
+       它们以前唯一的入口是 Resource 下拉里的「Categories」——可那是产品浏览页不是
+       阅读资源，放在那里买家看不到。所以从 Resource 挪到这里。 */
+    }
+    <div class="mega-foot">
+      <a class="mega-foot-link" href="/categories/">
+        <svg
+          class="mega-foot-icon"
+          viewBox="0 0 24 24"
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+        </svg>
+        <span>Browse all product categories</span>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -443,6 +473,34 @@ const MENU: MegaGroup[] = [
     text-transform: uppercase;
     color: var(--brand-gold);
     opacity: 0.85;
+  }
+
+  /* 底栏与左菜单的分割线同一条颜色，不另起一套视觉 */
+  .mega-foot {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(240, 201, 106, 0.16);
+  }
+
+  .mega-foot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--brand-gold);
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      opacity 0.2s ease;
+    opacity: 0.9;
+  }
+
+  .mega-foot-link:hover,
+  .mega-foot-link:focus-visible {
+    color: var(--brand-gold-bright);
+    opacity: 1;
   }
 
   /* ===== 双栏：左菜单 + 右面板 ===== */
