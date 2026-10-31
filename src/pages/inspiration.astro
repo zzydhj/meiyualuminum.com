@@ -32,6 +32,12 @@
  *    卡片再小就顶到边。1440×900 笔记本是 B2B 主力屏，它只能吃 4 列（271px），5 列就跌到 215。
  * 7. 卡片上不印「示意图」角标（业主口径），但导语里一句话说清这些是本厂产品图与
  *    视觉方案、不是工程业绩清单。整页一句诚实话，比每张图一个小灰标既好看又站得住。
+ * 8. 窄屏（≤900）的分类不常驻：同一个 aside 变成底部抽屉，入口是左下角悬浮球。
+ *    原先是贴在头上的一条横滑条，两个问题：sticky 常吃 55px 高度；20 个分类时一屏
+ *    只看得见 4–5 个。球上写当前主题名而不是 "Menu"（这本质是筛选不是导航，叫 Menu
+ *    会和站点汉堡菜单混淆），且抽屉收起时也能看到自己在看哪一组。右下角已被 WhatsApp
+ *    FAB（bottom 44px）与 BackToTop 底座（bottom 0）占住，所以球放左下。
+ *    分类按钮只有一份（不复制一套进抽屉），否则计数与选中态迟早漂移。
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
@@ -76,6 +82,25 @@ for (const t of INSPO_TABS) {
         }
         <aside class="ins-side" id="ins-side" aria-label="Inspiration themes">
             <h2 class="ins-side-title">Browse by theme</h2>
+            <button
+                type="button"
+                class="ins-close"
+                id="ins-close"
+                aria-label="Close theme list"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                >
+                    <path d="M6 6l12 12M18 6L6 18"></path>
+                </svg>
+            </button>
             <div
                 class="ins-side-list"
                 role="tablist"
@@ -167,6 +192,36 @@ for (const t of INSPO_TABS) {
         </div>
     </section>
 
+    {
+        /* 窄屏专用：左下角悬浮球 + 底部抽屉。右下角已经被 WhatsApp FAB（bottom 44px）
+           与 BackToTop 底座（bottom 0）占住，左边才是空位。球上不写 "Menu" 而写当前
+           主题名：这本质是筛选不是导航，叫 Menu 会和站点的汉堡菜单混淆，而名字本身
+           能让抽屉收起时也看得到自己在看哪一组。 */
+    }
+    <button
+        type="button"
+        class="ins-fab"
+        id="ins-filter"
+        aria-expanded="false"
+        aria-controls="ins-side"
+    >
+        <svg
+            class="ins-fab-icon"
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="M4 6h16M7 12h10M10 18h4"></path>
+        </svg>
+        <span class="ins-fab-label" id="ins-filter-label">Everything</span>
+    </button>
+    <div class="ins-mask" id="ins-mask" hidden></div>
+
     <section class="ins-band">
         <div class="ins-foot">
             <div>
@@ -210,7 +265,6 @@ for (const t of INSPO_TABS) {
     };
     syncOffset();
     addEventListener("resize", syncOffset);
-
     if (grid && listBox && side && shell && totalOut && catOut) {
         const tiles = Array.from(
             grid.querySelectorAll<HTMLElement>(".ins-tile"),
@@ -231,6 +285,52 @@ for (const t of INSPO_TABS) {
                 window.scrollTo({ top: target, behavior: "smooth" });
             }
         };
+
+        /* 窄屏抽屉：同一个 aside 在桌面是左侧导轨、在窄屏是底部抽屉，
+           不复制一份 tab 按钮 —— 两处按钮迟早会漂移（计数、选中态、分类名）。 */
+        const fab = document.getElementById("ins-filter");
+        const fabLabel = document.getElementById("ins-filter-label");
+        const mask = document.getElementById("ins-mask");
+        const closeBtn = document.getElementById("ins-close");
+        const mq = window.matchMedia("(max-width: 900px)");
+        const sheetOpen = () => side.classList.contains("open");
+        const setSheet = (open) => {
+            side.classList.toggle("open", open);
+            if (mask) mask.hidden = !open;
+            if (fab) {
+                // 抽屉（z 1200）会把球（z 1150）盖住，“再点一次球收起”其实点不到（浏览器实测）；
+                // 与其把球提到抽屉之上（它会压在列表首行上），不如展开时直接收掉球，
+                // 关闭交给 X / 遮罩 / Esc 三条路径。hidden 同时把它移出 tab 序与读屏列表。
+                fab.hidden = open;
+                fab.setAttribute("aria-expanded", open ? "true" : "false");
+            }
+            // 抽屉开着时背后可滚会让这层在 iOS 上“穿透”，锁掉 body
+            document.body.style.overflow = open ? "hidden" : "";
+            if (open) {
+                const cur =
+                    side.querySelector<HTMLElement>(".ins-tab.active") ??
+                    side.querySelector<HTMLElement>(".ins-tab");
+                cur?.focus();
+            } else if (mq.matches && fab) {
+                fab.focus();
+            }
+        };
+        if (fab) fab.addEventListener("click", () => setSheet(!sheetOpen()));
+        if (mask) mask.addEventListener("click", () => setSheet(false));
+        if (closeBtn) closeBtn.addEventListener("click", () => setSheet(false));
+        addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && sheetOpen()) setSheet(false);
+        });
+        // 转到桌面宽度时抽屉必须收起：导轨自己会显示，不收起会留下锁住的 body 滚动。
+        mq.addEventListener("change", (e) => {
+            if (!e.matches && sheetOpen()) setSheet(false);
+        });
+        /* 同一个兜底再挂一次 resize：matchMedia 的 change 在部分环境不派发（本机隐藏
+           视图里实测一条都收不到），而失败后果是 body 被永久锁滚。两个事件都接，
+           setSheet 幂等，重复调用无副作用。 */
+        addEventListener("resize", () => {
+            if (!mq.matches && sheetOpen()) setSheet(false);
+        });
 
         listBox.addEventListener("click", (e) => {
             const btn = (e.target as HTMLElement).closest<HTMLElement>(
@@ -256,9 +356,13 @@ for (const t of INSPO_TABS) {
             // 分母跟着筛选走：固定写全站总数会让「24 / 126」这类数字自相矛盾
             totalOut.textContent = String(n);
             catOut.textContent = btn.dataset.label ?? "";
+            if (fabLabel) fabLabel.textContent = btn.dataset.label ?? "";
+            // 窄屏：选完就收抽屉，否则抽屉盖着刚筛出来的卡片
+            if (mq.matches && sheetOpen()) setSheet(false);
             revealGallery();
 
-            // 窄屏时侧栏变成顶部横滑条，把选中的那个滑回视野中间（只动容器自己）
+            // 选中的项滚回视野中间：窄屏是竖排抽屉（靠 scrollTop），桌面导轨不满足
+            // scrollWidth > clientWidth 这个条件，所以只会在一维滚动时生效
             if (listBox.scrollWidth > listBox.clientWidth) {
                 listBox.scrollTo({
                     left: Math.max(
@@ -318,6 +422,14 @@ for (const t of INSPO_TABS) {
            前一行为不支持 dvh 的浏览器留的退回值。 */
         min-height: calc(100vh - var(--site-header-h));
         min-height: calc(100dvh - var(--site-header-h));
+    }
+
+    /* 悬浮球、遮罩、抽屉关闭钮只在窄屏出现；桌面用左侧导轨，两套不同时在场。
+       默认隐藏而不是条件渲染，是为了不在 JS 里复制一份分类按钮。 */
+    .ins-fab,
+    .ins-mask,
+    .ins-close {
+        display: none;
     }
 
     /* ── 左侧栏：左沿齐平的导轨，所以只圆右边两个角 ── */
@@ -639,13 +751,14 @@ for (const t of INSPO_TABS) {
         background: #1a1566;
     }
 
-    /* 窄屏：侧栏放不下就横过来贴在内容上方（分类再多也只是横向滑，
-       不再换行成 3–4 排把卡片挤下去） */
+    /* 窄屏：分类从「顶部一条横滑」改成「左下角悬浮球 + 底部抽屉」。
+       横滑条两个问题：它 sticky 在头上要常吃 55px 高度；而 20 个分类时一屏只看得见
+       4–5 个，后面的全靠拖。抽屉里是竖排全量 + 计数，拇指也够得着。 */
     @media (max-width: 900px) {
         .ins-shell {
             flex-direction: column;
             gap: 14px;
-            /* 窄屏不做负出血：横条要完整落在屏幕里，贴边反而会被切掉几像素 */
+            /* 窄屏不做负出血：卡片要完整落在屏幕里 */
             margin-left: 0;
             margin-right: 0;
             padding-left: clamp(14px, 1.6vw, 26px);
@@ -653,52 +766,136 @@ for (const t of INSPO_TABS) {
         }
 
         .ins-side {
-            position: sticky;
-            top: var(--site-header-h);
-            z-index: 40;
-            width: 100%;
-            max-height: none;
-            overflow: hidden;
-            padding: 10px;
-            border-radius: 12px;
-        }
-
-        .ins-side-title,
-        .ins-side-note {
-            display: none;
-        }
-
-        .ins-side-list {
-            flex-direction: row;
-            gap: 8px;
-            overflow-x: auto;
-            scrollbar-width: none;
+            position: fixed;
+            inset: auto 0 0 0;
+            z-index: 1200;
+            width: auto;
+            max-height: min(76dvh, 620px);
+            overflow-y: auto;
+            padding: 18px 14px calc(18px + env(safe-area-inset-bottom));
+            border-radius: 18px 18px 0 0;
+            box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(102%);
+            visibility: hidden;
+            transition:
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0.3s;
             -webkit-overflow-scrolling: touch;
         }
 
-        .ins-side-list::-webkit-scrollbar {
-            width: 0;
-            height: 0;
+        .ins-side.open {
+            transform: none;
+            visibility: visible;
+        }
+
+        /* 抽屉里标题与那句「一块板可属多个主题」都要露出来（横滑条时代只能藏掉） */
+        .ins-side-title {
+            display: block;
+            padding-left: 4px;
+        }
+
+        .ins-side-note {
+            display: block;
+            padding-left: 4px;
+        }
+
+        .ins-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+        }
+
+        .ins-close:hover,
+        .ins-close:focus-visible {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        .ins-side-list {
+            flex-direction: column;
+            gap: 2px;
+            overflow: visible;
         }
 
         .ins-tab {
-            width: auto;
+            width: 100%;
             flex-shrink: 0;
-            border-left: 1px solid rgba(192, 168, 130, 0.34);
-            border-radius: 999px;
-            padding: 8px 14px;
-            font-size: 0.84rem;
-            white-space: nowrap;
+            border-left: 3px solid transparent;
+            border-radius: 0 10px 10px 0;
+            padding: 13px 12px;
+            font-size: 0.98rem;
+            white-space: normal;
         }
 
         .ins-tab.active {
-            background: #f0c96a;
+            background: rgba(240, 201, 106, 0.14);
             border-left-color: #f0c96a;
-            color: #1a1008;
+            color: #fff;
         }
 
         .ins-tab.active .ins-tab-n {
-            color: #1a1008;
+            color: #f0c96a;
+        }
+
+        .ins-mask {
+            position: fixed;
+            inset: 0;
+            display: block;
+            background: rgba(10, 8, 5, 0.58);
+            z-index: 1190;
+        }
+
+        .ins-mask[hidden] {
+            display: none;
+        }
+
+        /* 右下角是 WhatsApp FAB（bottom 44px）+ BackToTop 底座（bottom 0），所以球放左下 */
+        .ins-fab {
+            position: fixed;
+            left: 14px;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            z-index: 1150;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            max-width: calc(100vw - 112px);
+            padding: 13px 18px;
+            border: none;
+            border-radius: 999px;
+            background: #110e0b;
+            color: #f0c96a;
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+            cursor: pointer;
+        }
+
+        .ins-fab:active {
+            transform: scale(0.97);
+        }
+
+        .ins-fab-label {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 上面 JS 会把球置为 hidden；而本块里的 display:inline-flex 会压过浏览器的
+           [hidden] 默认值，不补这一条球会隐不掉。 */
+        .ins-fab[hidden] {
+            display: none;
         }
     }
 
@@ -706,7 +903,8 @@ for (const t of INSPO_TABS) {
         .ins-tile img,
         .ins-cta,
         .ins-veil,
-        .ins-chip {
+        .ins-chip,
+        .ins-side {
             transition: none;
         }
 
