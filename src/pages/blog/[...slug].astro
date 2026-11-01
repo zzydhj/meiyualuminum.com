@@ -389,16 +389,41 @@ const articleContent = (post.content || "").replace(
     padding: 48px 44px;
   }
 
-  /* 防止数据库 HTML 中的图片擑破窄栏 */
+  /* 防止数据库 HTML 中的图片撑破窄栏 */
   .article-content :global(img) {
     max-width: 100%;
     height: auto;
   }
 
+  /* 正文里的表格同理：表格实用宽度有个地板 = min-content，光 width:100% 挡不住宽表，
+     顶穿容器那一段会被 body{overflow-x:clip} 裁掉而且没有可横滑的祖先（内容直接不可达）。
+     让表自己成为能横滑的那一层：窄表仍然按包含块全宽渲染，看不出差别；
+     不给单元格加 overflow-wrap:anywhere，那是把长词拆行断字，比滑一下难读。 */
+  .article-content :global(table) {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  /* 同上，这里防的是数据库 HTML 里的多列网格：库里 10 篇有 5 篇写了
+     style="display:grid;grid-template-columns:repeat(4,1fr)" 的事实卡行。1fr 的下限就是
+     min-content（实测四列要 395px），375 宽的手机上整篇文章被顶宽、右边 36px 被
+     body{overflow-x:clip} 裁掉且没有可横滑的祖先 —— 页级 scrollWidth 看起来正常，
+     只有逐元素量矩形才看得见。内联样式只能靠 !important 压住；窄屏强制两列并把下限
+     锁 0，卡片折成 2×2 仍然完整可读，宽屏保持作者原本的四列设计不动。
+     （posts 表的 anon key 写不进去；就算由业主改了数据，下一篇文章还会再写一遍） */
+  @media (max-width: 700px) {
+    .article-content :global([style*="grid-template-columns"]) {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+
   /* < 1024px：单栏，侧栏落到文章下方 */
   @media screen and (max-width: 1023px) {
     .blog-layout {
-      grid-template-columns: 1fr;
+      /* minmax(0,1fr) 而不是 1fr：1fr 的下限是 min-content，正文里任何一个不肯折行的
+         宽元素（上面那条事实卡就是）都会把整栏顶宽，右侧被 body 裁掉且滑不到 */
+      grid-template-columns: minmax(0, 1fr);
       gap: 32px;
     }
     .blog-sidebar {
@@ -476,7 +501,7 @@ const articleContent = (post.content || "").replace(
     }
     .toc-rail {
       transform: none;
-      /* 浮轨要落在 1400 容器左边的空隔里。position:fixed 的包含块是不含滚动条的
+      /* 浮轨要落在 1400 容器左边的空隙里。position:fixed 的包含块是不含滚动条的
          可视区，而 100vw 含滚动条，所以旧写法会把轨往右推半条滚动条（实测 7.5px），
          与正文左缘的对齐就好看不准。宽度走 global.css 的 --inner-w（= clientWidth）。 */
       left: calc((var(--inner-w) - 1400px) / 2 - 236px);

@@ -517,7 +517,12 @@ const jsonLd = {
   /* minmax(0,1fr) 而非 1fr：1fr 的下限是 min-content，当右栏文字很长或左栏图片有 intrinsic 宽度时
      两栏会被撑成不等宽（实测 lay-in 页 772 / 559）；锁 0 下限后永远对分。 */
   .pk-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; margin-bottom: 2.5rem; }
-  @media (max-width: 768px) { .pk-hero { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .pk-hero { grid-template-columns: minmax(0, 1fr); } }
+  /* 上一行以前写的是 1fr = minmax(auto,1fr)，跟双栏那行不一致：桌面那行早就锁了 0
+     下限、窄屏这行漏了，于是 .pk-hero-info 的自动最小尺寸把轨道顶到 461px，375 宽的
+     手机上整页溢出 102px（page code / 描述 / 规格表右半被 body{overflow-x:clip} 裁掉，
+     且没有任何可横滑的祖先）。同一个坑在本文件里摔过两次。窄屏要折行的那条规则写在
+     下面 .pk-specs-jump-list 之后 —— 作用域样式里两条特异性相同，谁在后面谁赢。 */
   /* 画廊内部：缩略图竖排在左 + 大图在右（对齐 Alibaba/Amazon 的商品图布局）。
      1:1 大图单独占满整列时高度达 608px，会把缩略图整个顶到折叠线以下，
      买家首屏看不出“还有很多张图”；改成左侧 72px 竖排后大图降到 ~516px，首屏能同时装下两者。
@@ -609,6 +614,11 @@ const jsonLd = {
     text-overflow: ellipsis;
   }
   .pk-specs-jump-arrow { flex: none; color: #c09020; font-weight: 600; }
+  /* 窄屏允许预告行折行：nowrap 那句实测让这一格自己就要 313px，轨道锁 0 之后它不再撑爆
+     页面，但 375 宽上仍会把"· Face Width · +11 more"截成省略号（可见 19/48 字符）。
+     单列布局下已经没有"右栏不能比左栏高"的约束（那只是双栏时的事），折行只多一行高。
+     必须放在上面那条基规则之后：Astro 给两边都补 cid，特异性相同，后写的才赢。 */
+  @media (max-width: 768px) { .pk-specs-jump-list { white-space: normal; text-overflow: clip; } }
   .pk-specs-label { font-size: .78rem; font-weight: 600; color: #c09020; margin: 0 0 6px; text-transform: uppercase; letter-spacing: .5px; }
 
   /* 公司级标准条款（MOQ / 交期 / 质保）：右栏最后一块，作为“规格→交易条件”的收尾；
@@ -667,6 +677,14 @@ const jsonLd = {
   .pk-spec-table { border-collapse: collapse; width: 100%; }
   .pk-spec-table th, .pk-spec-table td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: .88rem; }
   .pk-spec-table th { color: #64748b; font-weight: 500; width: 32%; background: #fafafa; }
+  /* 值列里有 18 字符不带空格的长词（humidity-sensitive / Centre-to-centre / moiré-sensitive…），
+     auto 布局下表格的 min-content = 各行「标签列最小 + 值列最小」的最大值，实测 444px；
+     375 宽的手机上容器只有 343，表格就把整页顶出 85px（perforated-aluminum-panel 实测），
+     右边那截被 body{overflow-x:clip} 裁掉又滑不到。能改 min-content 的只有
+     overflow-wrap:anywhere —— break-word 只在已经超宽时才断词，不参与最小尺寸计算。
+     长词只在实在放不下时才断，桌面与平板看不出差别。 */
+  .pk-spec-table th, .pk-spec-table td { overflow-wrap: anywhere; }
+  .pk-terms-table td { overflow-wrap: anywhere; }
   .pk-spec-table tr:hover { background: #fafbfc; }
 
   /* Surface cards */
@@ -759,7 +777,14 @@ const jsonLd = {
   .pk-db-content li { font-size: .93rem; line-height: 1.75; color: #475569; margin-bottom: 4px; }
   .pk-db-content strong { color: #334155; }
   .pk-db-content a { color: #c09020; }
-  .pk-db-content table { border-collapse: collapse; width: 100%; margin: 0 0 1.25rem; }
+  /* 表格：display:block + overflow-x:auto 是让宽表“自己横滑”而不是“把页面顶宽”。
+     表格的实用宽度有个地板：min-content，所以光写 width:100% 挡不住 —— 库里正文的
+     规格表 min-content 实测 386~523px，390 宽的手机上 10/19 个产品页因此溢出最多 149px，
+     右边那截被 body{overflow-x:clip} 裁掉又滑不到（只有这一条路径能量到，因为盒子真的变宽了）。
+     改成块级容器后，内部的匿名表格仍然按包含块全宽渲染（窄表与之前一模一样），
+     只有真的放不下的宽表会超出容器并在表内横滑；不给表格加 overflow-wrap:anywhere 是因为
+     那会把 Centre-to-centre 这类长词拆行断字，比滑一下难读。 */
+  .pk-db-content table { display: block; overflow-x: auto; max-width: 100%; border-collapse: collapse; width: 100%; margin: 0 0 1.25rem; }
   .pk-db-content th, .pk-db-content td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: .88rem; }
   .pk-db-content thead th { background: #f5f0eb; color: #69574a; font-weight: 600; border-bottom: 1px solid #e2d6c8; }
   .pk-db-content tbody th { color: #64748b; font-weight: 500; width: 32%; background: #fafafa; }

@@ -497,7 +497,7 @@ const openAll = variant === "about";
     }
     @media (max-width: 560px) {
         .op-kv-row {
-            /* 同理：dt/dd 竖排后轨道也不该被 min-content 顶开（长 URL 会撞爆列） */
+            /* 同理：dt/dd 竖排后轨道也不该被 min-content 顶开（长 URL 会把列撑爆） */
             grid-template-columns: minmax(0, 1fr);
             gap: 2px;
         }
