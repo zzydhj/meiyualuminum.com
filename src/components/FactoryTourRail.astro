@@ -263,15 +263,13 @@ const waHref = whatsappUrl(
   .ft {
     position: relative;
     /* 全宽出血：BaseLayout 的 <main class="container"> 是 1400 限宽容器，
-       不逃逸的话深色带两侧会露出白边（2560 屏实测缺陷）；轨道内边距又按 100vw
+       不逃逸的话深色带两侧会露出白边（2560 屏实测缺陷）；轨道内边距又按屏宽
        计算首卡对齐，被箍在容器里时内边距会反吃掉内容宽度、卡片缩成一小条。
-       手法与首页 .trust-section 等既有全宽区块一致；html 已有 overflow-x: clip
-       兜住 100vw 与滚动条的差值。 */
-    width: 100vw;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+       宽度走 global.css 的 --inner-w（= clientWidth，不含滚动条）+ --bleed：
+       原先的 width:100vw / left:50% / margin-left:-50vw 会比可视区宽一条滚动条，
+       把 html 横向撑出 8px（现只留 body{overflow-x:clip} 做禁用 JS 时的兜底）。 */
+    width: var(--inner-w);
+    margin-left: var(--bleed);
     background: #110e0b;
     color: #fff;
     padding: 3.5rem 0 3rem;
@@ -388,7 +386,7 @@ const waHref = whatsappUrl(
   .ft-rail {
     display: flex;
     gap: 14px;
-    padding: 0 max(1rem, calc((100vw - 1400px) / 2 + 1rem));
+    padding: 0 max(1rem, calc((var(--inner-w) - 1400px) / 2 + 1rem));
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;

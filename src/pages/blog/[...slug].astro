@@ -476,7 +476,10 @@ const articleContent = (post.content || "").replace(
     }
     .toc-rail {
       transform: none;
-      left: calc((100vw - 1400px) / 2 - 236px);
+      /* 浮轨要落在 1400 容器左边的空隔里。position:fixed 的包含块是不含滚动条的
+         可视区，而 100vw 含滚动条，所以旧写法会把轨往右推半条滚动条（实测 7.5px），
+         与正文左缘的对齐就好看不准。宽度走 global.css 的 --inner-w（= clientWidth）。 */
+      left: calc((var(--inner-w) - 1400px) / 2 - 236px);
       top: 96px;
       width: 212px;
       background: transparent;

@@ -632,7 +632,9 @@ const tourHooks = [
         </div>
     </section>
 
-    {/* ══════ 4. What You Can Verify（证据索引 · 回应采购评审缺口 1、2） ══════ */}
+    {
+        /* ══════ 4. What You Can Verify（证据索引 · 回应采购评审缺口 1、2） ══════ */
+    }
     <section class="ab-band ab-band--alt">
         <div class="ab-wrap">
             <div class="ab-head">
@@ -695,7 +697,9 @@ const tourHooks = [
         </div>
     </section>
 
-    {/* ══════ 5. What Arrives With an Export Order（回应采购评审缺口 3、6 ） ══════ */}
+    {
+        /* ══════ 5. What Arrives With an Export Order（回应采购评审缺口 3、6 ） ══════ */
+    }
     <section class="ab-band">
         <div class="ab-wrap">
             <div class="ab-head">
@@ -1075,17 +1079,17 @@ const tourHooks = [
         深色带的金一律用檀金 #c0a882，与首页暗色带同色，亮金 #f0c96a 已弃用）。
      ============================================================ */
 
-    /* 全幅色带靠 100vw + calc(50% - 50vw) 冲出容器，而 100vw 含滚动条宽度，
-     会让 html 多出约 8px 可横向拖动（PageHero 同款 breakout 的全站既有副作用）。
-     沿用首页 index.astro 的既有做法，仅在本页把 html 横向裁掉。 */
+    /* 色带出血已改走 global.css 的 --bleed（宽度取不含滚动条的 clientWidth），
+     不再把 html 撑出那 8px。这行留作兜底：禁用 JS 时 --inner-w 退回 100vw，
+     多出的半条滚动条仍然需要被裁掉（body 上的 overflow-x:clip 是同一条保险）。 */
     :global(html) {
         overflow-x: hidden;
     }
 
     /* ---------- 版式骨架 ---------- */
     .ab-band {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
+        width: var(--inner-w);
+        margin-left: var(--bleed);
         padding: clamp(56px, 7vw, 88px) clamp(16px, 4vw, 40px);
     }
     .ab-band--tight {

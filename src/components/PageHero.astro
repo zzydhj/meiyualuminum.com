@@ -10,7 +10,8 @@
  *   crumb prop 直接透传 Breadcrumb 的 props（items 或 root/middleItems/current/currentUrl）。
  * - H1 由本组件输出 → 接入页面必须给 BaseLayout 传 hideTitle，保证全页仅一个 H1。
  * - 全幅 breakout：main.container 限宽 1400px + 1rem padding，本组件用负 margin 冲出容器；
- *   依赖 global.css 的 body{overflow-x:clip} 吸收 100vw 与滚动条宽度差。
+ *   算法走 global.css 的 --bleed（宽度取不含滚动条的 clientWidth），所以不会溢出；
+ *   body{overflow-x:clip} 只剩禁用 JS 时的兜底作用。
  * - slim=true：分页 / 长尾页用瘦身版（更矮、不渲染数据行），避免每页背大图+推下首屏。
  * - eyebrow（可选）：标题上方的小胶囊徽章；default slot（可选）：副标题下方的 CTA 按钮行。
  *   badges slot（可选）：数据行下方的认证徽章行（由页面自带样式，随 slot 作用域带回）。
@@ -144,12 +145,14 @@ const {
 </section>
 
 <style>
-    /* 冲出 main.container 实现全幅；-1rem 让页头紧贴页眉下沿，不留白缝 */
+    /* 冲出 main.container 实现全幅；-1rem 让页头紧贴页眉下沿，不留白缝。
+       左右用 global.css 的 --bleed = calc(50% - var(--inner-w)/2)：原先写死的
+       calc(50% - 50vw) 里的 50vw 含半条滚动条，会把 html 横向撑出 8px。 */
     .page-hero {
         position: relative;
         overflow: hidden;
         isolation: isolate;
-        margin: -1rem calc(50% - 50vw) 2.5rem;
+        margin: -1rem var(--bleed) 2.5rem;
         background: #10131a;
         color: #fff;
     }

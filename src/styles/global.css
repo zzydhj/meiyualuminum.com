@@ -13,6 +13,26 @@ html {
   }
 }
 
+/* ── 全幅出血的唯一算法 ─────────────────────────────────────────────
+   页头、首页色带、About 深色带、灵感页导轨都要冲到可视区两边，而 .container 是
+   max-width 1400 的居中容器 —— 负 margin 里的 50% 按容器内容盒算，减掉的“半屏”
+   却只有 clientWidth 才对得齐。
+
+   为什么不能直接用 50vw：100vw 含竖向滚动条，而 .container 的居中按不含滚动条的
+   clientWidth 算，所以 calc(50% - 50vw) 每次都比可视区宽一条滚动条，左右各溢出半个
+   （Windows Chrome 15px → 各 7.5px；实测 html 的 scrollWidth 比 clientWidth 大 8px）。
+   溢出被下面的 body{overflow-x:clip} 裁掉，肉眼看不见，但它是真实的横向溢出：
+   任何读 scrollWidth 的判断（横向滚动检测、轮播库）都会被它误导。
+
+   --inner-w 由 src/scripts/innerWidth.js 写成 documentElement.clientWidth。
+   默认值留 100vw 是刻意的：脚本没跑（禁用 JS）时色带仍铺满，只是回到改动前的行为，
+   不会两侧露白。修正时画面一动不动 —— 被裁掉的那 7.5px 本来就在屏幕外。 */
+:root {
+  --inner-w: 100vw;
+  /* 负 margin 用：从居中容器冲到可视区左/右沿（50% 在使用处按元素自身的包含块解析） */
+  --bleed: calc(50% - var(--inner-w) / 2);
+}
+
 body {
   margin: 0;
   width: 100%;
@@ -20,7 +40,7 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.5;
-  /* 吸收全幅组件（PageHero）100vw breakout 与滚动条宽度差，避免横向滚动条。
+  /* 兜底：吸收上面 --inner-w 尚未写入时（禁用 JS）100vw 溢出的半条滚动条。
      用 clip 而非 hidden：不产生滚动容器，不影响 sticky 页眉。 */
   overflow-x: clip;
 }
