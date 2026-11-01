@@ -115,6 +115,17 @@ template. Files under `public/` are served verbatim and have no compile-time com
 ## Verification
 
 - `astro build` must pass after any change.
+- Full-bleed sections use one algorithm: `--bleed` and `--inner-w` in `src/styles/global.css`,
+  where `src/scripts/innerWidth.js` writes `--inner-w` as `documentElement.clientWidth`. Never
+  write `calc(50% - 50vw)`: `100vw` includes the vertical scrollbar while the centred
+  `.container` does not, so the band overflows by half a scrollbar per side. That is invisible
+  (`body{overflow-x:clip}` absorbs it) but it inflates `html.scrollWidth` by 8px, which
+  misleads anything that measures.
+- Run the read-only bleed gate after `astro build` and after any bulk style change:
+  `python docs/bleed-gate.py`. It scans built CSS, the CSS/JS Astro inlines into HTML and the
+  SSR chunks together: no `50vw` may survive, every bleed selector it lists must resolve
+  through `--bleed`, and every bleeding page must load the writer. Both failure modes are
+  silent, which is why the gate exists. Adding a bleed site → add its selector to `NEED` there.
 - Product and blog pages are SSR (`prerender = false`) so database edits show on refresh.
   About is also SSR (its Factory Tour block reads `videos`), so its copy changes need a
   rebuild and redeploy — but a `pages`-table row is never used for it, because the literal
