@@ -486,12 +486,19 @@ const openAll = variant === "about";
 
     @media (max-width: 1000px) {
         .op-blocks {
-            grid-template-columns: 1fr;
+            /* 必须是 minmax(0,1fr)，不能写 1fr：1fr 就是 minmax(auto,1fr)，
+               单列轨道的最小尺寸会被 .op-table 的 min-content（实测 468px）顶起来，
+               375 宽的手机上整块撑到 506px，而 .op-table-wrap 的 overflow-x:auto 是孙元素，
+               救不了父轨 —— 结果是责任分工表右边 163px 被裁掉又滑不到（html 溢出为 0，
+               因为被 body{overflow-x:clip} 裁了，所以不会报横向滚动条）。桌面那行本来就写的 minmax(0,1fr)。
+               改后表格降到父轨宽度、自己变成可横滑的那一层，内容重新可达。 */
+            grid-template-columns: minmax(0, 1fr);
         }
     }
     @media (max-width: 560px) {
         .op-kv-row {
-            grid-template-columns: 1fr;
+            /* 同理：dt/dd 竖排后轨道也不该被 min-content 顶开（长 URL 会撞爆列） */
+            grid-template-columns: minmax(0, 1fr);
             gap: 2px;
         }
         /* 窄屏上标题与 + 靠得紧，编号不再占独立一列 */
