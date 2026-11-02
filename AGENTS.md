@@ -47,6 +47,22 @@ The anon key can UPDATE/DELETE `products`, `pages`, `categories` and `videos`, b
 a PATCH on `posts` returns 204 and changes nothing. Generate SQL for the owner instead of assuming
 a 2xx status means the write landed — always read the row back.
 
+Superseded numbers do not delete themselves: they sit in body text and JSON columns across all five
+tables. After any change to 附录 A or to product data, run the read-only
+`python docs/stale-figure-gate.py`. It scans every row of the five tables for banned/stale figures
+(retired contact details, competitor-derived profile formats, quotation-bundled accessory dosages,
+any `US$`, banned city names, unreported fire or cost claims) and exits non-zero on an unexpected
+hit. A hit is only silenced by an entry in its `ALLOW` dict, which must carry a *reason* — that map
+is where "we deliberately kept 10–30% on the facade line" survives, so a later round does not
+"fix" it. The same script also lists published English products whose own `enriched_specs.specs`
+shadow the category layer in `src/lib/productKnowledge.ts`: editing the category changes nothing on
+those pages, so the page must be updated in the table instead.
+
+Only universal product parameters may come from a price list. Accessory dosages (hanger points per
+m², grid metres per m², nuts per point) and waste percentages are bundled with that quotation, not
+attributes of the product, so they stay off the site — write a capability sentence without a number
+and let the quotation carry the figures (owner's rule, 2026-11-02).
+
 ## SEO
 
 Run the read-only audit before touching SEO, and after any bulk change:
@@ -126,6 +142,10 @@ template. Files under `public/` are served verbatim and have no compile-time com
   SSR chunks together: no `50vw` may survive, every bleed selector it lists must resolve
   through `--bleed`, and every bleeding page must load the writer. Both failure modes are
   silent, which is why the gate exists. Adding a bleed site → add its selector to `NEED` there.
+- Three gates, three layers: `docs/bleed-gate.py` (measured geometry), `docs/dist-leak-gate.py`
+  (what the delivered HTML/CSS/JS exposes), `docs/stale-figure-gate.py` (what the database
+  asserts). Run all three after a bulk change; only the last one reads the live tables, so it is
+  the one that catches content drift.
 - Product and blog pages are SSR (`prerender = false`) so database edits show on refresh.
   About is also SSR (its Factory Tour block reads `videos`), so its copy changes need a
   rebuild and redeploy — but a `pages`-table row is never used for it, because the literal
