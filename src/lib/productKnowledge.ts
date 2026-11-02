@@ -174,8 +174,8 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Openness & Joint Width", value: "No supplier publishes a standard joint width or openness ratio, because both follow from the section and the carrier chosen. Specify the gap on the drawing; anything quoted back as a catalogue figure is a guess" },
             { label: "Fire Reaction", value: "Bare or anodised aluminium is A1 to EN 13501-1; a coated assembly is graded on that build-up, not on the metal. AS 1530.1 non-combustibility is the test Australian specifications ask for. Third-party certificates are issued per project on request" },
             { label: "Acoustic Behaviour", value: "Perforation with a geotextile or fleece backing is the only route to absorption; a solid strip reflects. Our perforated strip ceiling is supplied with black acoustic non-woven bonded at the factory; hole diameter, pattern and open area are project choices quoted from the drawing — an NRC or αw figure requires an EN ISO 354 test on that exact assembly, and none is claimed here" },
-            // 本厂下料与报价口径，是买家从面积换算米数时真正需要的那一行。
-            { label: "Take-off & Waste", value: "Ordered by the linear metre, cut to the run. Converting from an area: total metres = area ÷ strip face width (120 m² at 150 mm → 800 m), then allow about 5% waste. Perimeter trim is counted on the room perimeter, and the suspension grid is one hanger point per m² on M8 rod with a carrier metre for every square metre" },
+            // 只留通用算术：面积换米数是几何关系，不随报价变；损耗与配件数量已剔掉。
+            { label: "Take-off Basis", value: "Ordered by the linear metre, cut to the run. Converting from an area is arithmetic, not a quotation: total metres = area ÷ strip face width (120 m² at 150 mm → 800 m), and perimeter trim is counted on the room perimeter. Cut surplus and the accessory set follow the chosen carrier and the site, so they are itemised on the quotation rather than assumed here" },
             { label: "Finish Route", value: "Powder, PE or PVDF coil coating, wood-grain transfer or applied film, anodised, brushed or PVD. Coil-coated stock is finished before forming and leaves bare metal at the cut edge and leg; post-form powder coats the whole section" },
             { label: "Standard / Test Basis", value: "EN 13964 (factory-made suspended ceilings, incl. humidity and corrosion classes) · EN 13501-1 · AS 1530.1 · EN ISO 354 / EN ISO 11654 · ASTM E84 · ASTM E3090/E3090M (suspension load testing)" },
         ],
@@ -348,8 +348,10 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { label: "Fire Rating", value: "Bare aluminium is non-combustible; our coated product is declared ASTM E84 Class A and EN 13501-1 Class B-s1" },
             { label: "NRC", value: "Perforated + fleece tiles are quoted in the 0.5–0.75 region by suppliers [vendor-typical]; the rating belongs to the tested assembly, cavity included" },
             { label: "Humidity", value: "Up to 100% RH" },
-            // 公司资料给出的标配用量，是买家算配套报价时真正缺的那一行。
-            { label: "Suspension & Grid Material", value: "One hanger point per m² on M8 threaded rod (3 000 mm lengths); 300 × 300 and 300 × 600 tiles need 3.3 m of triangular grid per m² at 300 mm centres, 600 × 600 and 600 × 1200 tiles 1.7 m per m² at 600 mm centres, plus 1 m of main runner per m²; 3 nuts and 1 expansion set per point; perimeter angle trimmed to the room perimeter. Allow about 4% waste on a panel order" },
+            // 2026-11-01 只写通用参数：报价单里的「标配用量」（每平米几个吊点、每平米几米龙骨、
+            // 预留几个百分点损耗）是随那份报价走的成套约定，不是产品属性，也不该变成站内承诺，
+            // 所以这里只写能力句不带数字（业主 2026-11-02 口径）。
+            { label: "Suspension & Grid Material", value: "Tiles are quoted as a system — carrier grid, main runner, threaded hanger rod, perimeter angle and the fixing accessories go with the panel order. Grid layout, hanger pitch and accessory count are set on your ceiling plan rather than taken from a catalogue figure, so send the layout and the whole set comes back itemised" },
         ],
         surfaceOptions: [
             { name: "Powder Coating", description: "Standard RAL colors.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Offices", "Schools", "Hospitals"] },
