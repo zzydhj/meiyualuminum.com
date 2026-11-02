@@ -2,7 +2,8 @@
  * data/brand.js —— 品牌与商务信息（面板内品牌块的唯一来源）
  *
  * 取值对齐 meiyualuminum.com 的 src/lib/companyProfile.ts，那边改了要同步过来；
- * 该公司红线是「附录 A 没有的数字一律不写」，所以这里只放已确认的事实。
+ * 该公司红线是「公司事实里没有的数字一律不写」，所以这里只放已确认的事实。
+ * 本目录下的注释用中文（业主自己维护的源码，闸门只拦 HTML 里的注释与可见文本）。
  *
  * 分工（避免同一句话在两处漂移）：
  *   index.html  —— 顶栏 logo、视口水印、启动遮罩、SEO 元信息（无 JS 也必须可见）
@@ -10,16 +11,17 @@
  */
 export const BRAND = {
   name: 'MEIYU',
-  legalName: 'MEIYU Aluminum Co., Ltd.',
+  legalName: 'MEIYU Aluminum Industry Co., Ltd.',
   site: 'https://www.meiyualuminum.com/',
-  // 条扣板类目已确认：/categories/aluminum-strip-panel/（200，该类目只 1 个英文产品所以 noindex，
-  // 但作为导航入口有效）；产品 203 aluminum-strip-ceiling 的分类链就经它，
-  // 所以注册表里的 categorySlug 也是这个，两边必须一致。
+  // 条扣板类目：/categories/aluminum-strip-panel/（该类目只 1 个英文产品所以 noindex，
+  // 但作为导航入口有效）；本行必须与 src/lib/interactiveGuides.ts 的 categorySlug 一致。
   productPage:
     'https://www.meiyualuminum.com/categories/aluminum-strip-panel/',
   contactPage: 'https://www.meiyualuminum.com/contact/',
-  email: 'info@meiyualuminum.com',
-  phone: '+86 135 0983 8008',
+  // 2026-11-01 业主指令：对外邮箱改 william@，电话改 139 段（本字段只做 tel: 链接）；
+  // WhatsApp 是另一个号码，不写在本站静态页上。
+  email: 'william@meiyualuminum.com',
+  phone: '+86 139 2214 1133',
   responseTime: '1 hour',
 
   blockTitle: 'Manufacturer & commercial terms',
@@ -40,8 +42,8 @@ export const BRAND = {
   facts: [
     {
       k: 'Manufacturer',
-      // 同步 companyProfile.ts：成立年份 2015→2011，对外地址不写城市（业主 2026-10-27 指令）。
-      v: 'MEIYU Aluminum Co., Ltd. — established 2011, Guangdong Province, China',
+      // 同步 companyProfile.ts：成立 2011，对外地址不写城市，全称含 Industry。
+      v: 'MEIYU Aluminum Industry Co., Ltd. — established 2011, Guangdong Province, China',
     },
     {
       k: 'Plant',

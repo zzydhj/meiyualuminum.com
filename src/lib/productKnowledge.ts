@@ -161,18 +161,21 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             "Perforated strip plus fleece backing is the acoustic version of the same part; a solid strip is a finish and a reflector, not an absorber",
         ],
         technicalSpecs: [
-            { label: "Material", value: "AA1100 / AA1100-H24 and AA3003 where the strip is roll-formed from pre-finished coil; AA6063-T5 where it is an extruded section. Aluminium throughout [industry typical]" },
+            // 2026-11-01 公司资料：本厂 G 型与 C 型条扣都是纯铝卷轧，表面氟碳底漆 + 热转印木纹。
+            { label: "Material", value: "Roll-formed from pure aluminium sheet (1000 series, AA1100 / AA1100-H24) on our G-type and C-type strip lines; AA3003 where a pre-finished coil is used and AA6063-T5 where the section is extruded. Aluminium throughout" },
             { label: "Forming Route", value: "Roll-formed from coil (the common route, cheapest, and genuinely flat on shallow sections) or extruded (crisper arris, stiffer leg, better straightness on wide faces). The two behave differently over a long run, so state which is required" },
-            { label: "Face Width", value: "100 / 150 / 200 / 300 mm is what the trade actually stocks; 50 and 400 mm to order. Mixed widths in one ceiling are normal, not an upcharge exception [industry typical]" },
+            { label: "Face Width", value: "100 / 150 / 200 / 250 / 300 mm as our catalogue steps; 50 and 400 mm to order. Mixed widths in one ceiling are normal, not an upcharge exception" },
             { label: "Section Height", value: "Two distinct families: a shallow strip about 14–16 mm deep, and a deeper baffle-type strip from 30 to 80 mm. Height is what buys the shadow line and the rigidity — it is the variable that changes the look most [industry typical]" },
-            { label: "Sheet / Wall Gauge", value: "0.5–1.2 mm across the trade, with 0.6–1.0 mm the usual specification. Wider faces and longer unsupported spans belong at the thicker end [industry typical]" },
+            { label: "Sheet / Wall Gauge", value: "G-type: 0.5 / 0.6 / 0.7 / 0.8 / 0.9 mm on 100 and 150 mm faces, 0.6–0.9 mm on 200 mm, 0.8 / 0.9 mm on 250 and 300 mm. C-type: 0.5–0.8 mm on 100 and 150 mm, 0.6–0.8 mm on 200 mm, 0.8 / 0.9 mm on 250 and 300 mm. Wider faces and longer unsupported spans belong at the thicker end" },
             { label: "Strip Length", value: "Cut to the run; 6 000 mm is the practical maximum before a joint [industry typical]" },
             { label: "Edge & Joint Type", value: "Bevel (chamfered) edge closes up to a near-invisible joint; a square or L-angle edge, or a deliberate gap, makes a shadow line. The trade also distinguishes C-type and G-type strip edges, which differ in how the strip is retained and whether it slides in or hooks up — confirm on the section, because listings apply these labels inconsistently" },
             { label: "Carrier & Suspension", value: "Threaded hanger rod off the slab to a main carrier, a strip carrier clipped or hooked below it, and a perimeter angle at the wall; the assembly is completed with carrier splices, panel/end splices, retaining (fixing) clips and a joint profile at the seam. Wind-resistant carriers and extra clips are used on soffits and exposed elevations. Carrier profile and spacing are published by no supplier and are set per project on span, gauge and wind exposure [industry typical]" },
             { label: "Metal Per Square Metre", value: "≈ (developed width ÷ cover width) × gauge × 2.7. A 100 mm face with 15 mm legs at 0.6 mm lands near 2.1 kg/m² of ceiling — light, but not weightless, and the carrier grid has to carry it [derived]" },
             { label: "Openness & Joint Width", value: "No supplier publishes a standard joint width or openness ratio, because both follow from the section and the carrier chosen. Specify the gap on the drawing; anything quoted back as a catalogue figure is a guess" },
             { label: "Fire Reaction", value: "Bare or anodised aluminium is A1 to EN 13501-1; a coated assembly is graded on that build-up, not on the metal. AS 1530.1 non-combustibility is the test Australian specifications ask for. Third-party certificates are issued per project on request" },
-            { label: "Acoustic Behaviour", value: "Perforation with a geotextile or fleece backing is the only route to absorption; a solid strip reflects. Hole diameter, pattern and open area are project choices quoted from the drawing — an NRC or αw figure requires an EN ISO 354 test on that exact assembly, and none is claimed here" },
+            { label: "Acoustic Behaviour", value: "Perforation with a geotextile or fleece backing is the only route to absorption; a solid strip reflects. Our perforated strip ceiling is supplied with black acoustic non-woven bonded at the factory; hole diameter, pattern and open area are project choices quoted from the drawing — an NRC or αw figure requires an EN ISO 354 test on that exact assembly, and none is claimed here" },
+            // 本厂下料与报价口径，是买家从面积换算米数时真正需要的那一行。
+            { label: "Take-off & Waste", value: "Ordered by the linear metre, cut to the run. Converting from an area: total metres = area ÷ strip face width (120 m² at 150 mm → 800 m), then allow about 5% waste. Perimeter trim is counted on the room perimeter, and the suspension grid is one hanger point per m² on M8 rod with a carrier metre for every square metre" },
             { label: "Finish Route", value: "Powder, PE or PVDF coil coating, wood-grain transfer or applied film, anodised, brushed or PVD. Coil-coated stock is finished before forming and leaves bare metal at the cut edge and leg; post-form powder coats the whole section" },
             { label: "Standard / Test Basis", value: "EN 13964 (factory-made suspended ceilings, incl. humidity and corrosion classes) · EN 13501-1 · AS 1530.1 · EN ISO 354 / EN ISO 11654 · ASTM E84 · ASTM E3090/E3090M (suspension load testing)" },
         ],
@@ -184,8 +187,8 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { name: "Anodised, Brushed or PVD", description: "Integral oxide, optionally with a brushed grain or a PVD metallic tone. Genuine metal depth, no film to break at the fold, and the only finish that reads correctly under raking light along a long run.", thickness: "10–25 µm oxide layer", warranty: "Standard offer — confirm at quotation", suitableFor: ["Feature ceilings", "Lobbies", "Exhibition", "Boutique retail"] },
         ],
         standardSizes: [
-            { label: "Shallow Closed-Joint Strip", value: "100 / 150 / 200 mm face × 14–16 mm height at 0.6–0.8 mm — the near-seamless plane, most specified for offices" },
-            { label: "Deep Linear Strip", value: "100 / 150 / 200 / 300 mm face × 30–80 mm height at 0.8–1.2 mm — reads as a baffle line and stays stiff over a long span" },
+            { label: "Shallow Closed-Joint Strip", value: "100 / 150 / 200 mm face × 14–16 mm height at 0.5–0.8 mm — the near-seamless plane, most specified for offices" },
+            { label: "Deep Linear Strip", value: "100 / 150 / 200 / 250 / 300 mm face × 30–80 mm height at 0.8–0.9 mm — reads as a baffle line and stays stiff over a long span" },
             { label: "Narrow Feature Widths", value: "50 and 75 mm, used for perimeter bands, cornices and the odd width in a mixed-width layout" },
             { label: "Lengths", value: "Cut to the run, up to 6 000 mm; beyond that the run is jointed deliberately rather than butted and hoped for" },
             { label: "Custom", value: "Perforated with fleece backing, mixed-width setting-out, curved to radius, shadow-line carriers, special RAL colours and wood-grain" },
@@ -243,10 +246,12 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             "Aluminium through the thickness, so the fire conversation is about the coating, never about a plastic core",
         ],
         technicalSpecs: [
-            { label: "Material", value: "Roll-formed sections from AA3003-type sheet; extruded sections in AA6063-T5 [standard]. Alloy and temper are stated on the submittal, not inferred from a datasheet" },
-            { label: "Wall Thickness", value: "0.6 / 0.8 / 1.0 / 1.2 mm as our published steps; listings quote 0.5–1.5 mm overall [vendor-typical], and the word \"thickness\" is used loosely across the market for face, wall and panel gauge alike" },
-            { label: "Width (Face)", value: "30 / 40 / 50 / 60 / 80 / 100 mm — the market also sells 25 mm and 250 mm faces, so confirm the number you are being quoted is the visible face, not the carrier footprint" },
-            { label: "Depth", value: "50 / 80 / 100 / 120 / 150 / 200 mm" },
+            // 2026-11-01 公司资料：本厂方通确实是两条材质路线——纯铝（粉末喷涂与木纹两页）
+            // 与合金（高分子覆膜），旧口径只写了 3003 卷轧与 6063 挤压。
+            { label: "Material", value: "Two routes we actually run: roll-formed from pure aluminium sheet (1000 series) on the powder-coated and wood-grain lines, and aluminium alloy on the polymer-laminated line; extruded sections in AA6063-T5 where a crisper arris and a stiffer leg are wanted [standard]. Alloy and temper are stated on the submittal, not inferred from a datasheet" },
+            { label: "Wall Thickness", value: "Pure aluminium sections: 0.5 / 0.6 / 0.7 / 0.8 / 0.9 / 1.0 mm. Alloy sections: 0.4 / 0.5 / 0.6 mm. The word \"thickness\" is used loosely across the market for face, wall and panel gauge alike — confirm which one is being quoted" },
+            { label: "Width (Face)", value: "20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100 mm across our three catalogue groups; the market also sells 250 mm faces, so confirm the number you are being quoted is the visible face, not the carrier footprint" },
+            { label: "Depth", value: "25 to 105 mm, paired with the face width rather than chosen freely — see the format table below. A wider face carries a shallower side and vice versa, which is how one coil width covers several looks" },
             { label: "Length", value: "Ordered to the run and installed one piece per line; where a plan is longer than a single length the break is designed in (a shadow gap, a pelmet or a change of direction) rather than butted and sleeved. Bent or curved pieces are a different conversation: the market keeps them under roughly 4 m per piece because longer radii distort [vendor-typical]" },
             { label: "Spacing", value: "50–300 mm centre-to-centre, but the achievable pitch is bounded by the carrier's punched slot spacing — ask what pitch the carrier is actually punched to before fixing a rhythm on the drawing" },
             { label: "Fire Performance", value: "Bare aluminium is a non-combustible material, which is not the same as a finished-product classification. Our declarations are ASTM E84 Class A and EN 13501-1 B-s1,d0 for the coated product; an A2-s1,d0 line needs a test report naming that build-up" },
@@ -259,10 +264,12 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
             { name: "PVDF", description: "Fluorocarbon for soffit, canopy and semi-exposed positions where UV and coastal air do the work.", thickness: "25–40 μm [vendor-typical]", warranty: "15-year coating warranty under standard atmospheric exposure", suitableFor: ["Exterior soffits", "Canopies", "Covered walkways"] },
         ],
         standardSizes: [
-            { label: "30×50 mm (Slim)", value: "0.6 mm wall — a light rhythm at close pitch, for low ceilings and corridors" },
-            { label: "50×100 mm (Standard)", value: "0.8 mm wall — the most specified format; reads as a blade without swallowing the room height" },
-            { label: "50×150 mm (Deep)", value: "1.0 mm wall — deeper shadow line, more of the plenum hidden behind the face" },
-            { label: "80×200 mm (Extra Deep)", value: "1.2 mm wall — for tall atria, where the baffle has to be legible from the floor below" },
+            // 2026-11-01 按公司资料重写：以前这四个格式是从同行 listing 推的（50×150、80×200
+            // 根本不在本厂目录里），现在是本厂实际的三组底宽×侧高。
+            { label: "Shallow Group", value: "80×25 / 70×30 / 60×35 / 50×40 / 40×45 / 30×50 / 20×55 mm — a low-profile line for ceilings that cannot afford headroom" },
+            { label: "Mid Group", value: "100×40 / 90×45 / 80×50 / 70×55 / 60×60 / 50×65 / 40×70 / 30×75 / 20×80 mm — the workhorse band, and where a square-ish section reads as a blade" },
+            { label: "Deep Group", value: "100×65 / 90×70 / 80×75 / 70×80 / 60×85 / 50×90 / 40×95 / 30×100 / 20×105 mm — maximum shadow line and the stiffest option off one coil" },
+            { label: "Ordering Basis", value: "Priced and supplied by the linear metre, cut to the run; sections outside these three groups are made to the drawing" },
         ],
         installationSteps: [
             { step: 1, title: "Carrier Installation", description: "Carriers run perpendicular to the baffle direction, hung from the structure on rods at the pitch the drawing sets — typically 1200–1800 mm [vendor-typical]. Where the ceiling is open to wind or to a soffit, ask for the anti-wind clip variant." },
@@ -290,10 +297,10 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         overview: "Ultra-lightweight, high-rigidity composite panels with two aluminum face sheets bonded to hexagonal honeycomb core. Originally aerospace technology, now used for large-format facades, interior partitions, and applications requiring maximum flatness over large spans.",
         keyFeatures: ["Stiffness of a deep section at the mass of a thin sheet", "Flat over large spans — the reason it is specified where solid sheet would oil-can", "Formats cut to the project drawing", "All-aluminium build-up keeps the fire question on the adhesive line, not the metal", "A sealed sandwich is a sound barrier, not an absorber", "Thermal break across the thickness", "100% recyclable"],
         technicalSpecs: [
-            { label: "Face Sheet", value: "AA3003 / 5005; the market quotes 0.5–1.5 mm skins [vendor-typical], our standard sheet range is 0.8–1.5 mm" },
+            { label: "Face Sheet", value: "AA3003 / 5005 skins. Our catalogue wall boards run 0.25 mm on a 9 mm panel and 1.0 mm on an 18 mm panel; the market quotes 0.5–1.5 mm overall [vendor-typical] and our standard sheet range is 0.8–1.5 mm" },
             { label: "Core", value: "AA3003 hexagonal honeycomb" },
-            { label: "Cell Size", value: "6 / 10 / 15 / 20mm [vendor-typical]" },
-            { label: "Total Thickness", value: "10 / 15 / 20 / 25 / 50mm [vendor-typical]" },
+            { label: "Cell Size", value: "4 mm is our standard core on the boards we quote; the market also rolls 6 / 10 / 15 / 20 mm [vendor-typical]" },
+            { label: "Total Thickness", value: "9 mm and 18 mm are our catalogue wall panels; deeper builds up to 50 mm are quoted to the drawing [vendor-typical]" },
             // 2026-10-28 业主定为对外统一上限（附录 A【最大板幅】），所以不再标
             // [vendor-typical, unverified]：这是公司值，不是同行数据。
             { label: "Max Panel", value: "Up to 2 000 × 6 000 mm; beyond that a board is split and the joint designed in rather than made to arrive in one piece" },
@@ -308,7 +315,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         ],
         standardSizes: [
             { label: "Typical Build-Up", value: "Face + core + rear skin, e.g. 1.0 + 18 + 1.0 mm for a 20 mm panel [vendor-typical]" },
-            { label: "Formats", value: "Cut to project drawing — 1250 × 2500 mm and larger are quoted by suppliers [vendor-typical, unverified]" },
+            { label: "Formats", value: "Our wall panel comes off a 1 200 × 6 000 mm board and is cut to the project drawing; larger flats are quoted case by case [vendor-typical]" },
             { label: "Interior Lining", value: "Thinner skins with 6–25 mm totals are the market steps for walls, doors and furniture [vendor-typical]" },
         ],
         installationSteps: [
@@ -332,22 +339,27 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         keyFeatures: ["Standard modular sizes", "Lay-in or clip-in options", "Perforated acoustic options", "100% moisture-proof", "Adds to room brightness — the gain depends on gloss and colour, not on the metal alone", "Individual tile removable", "Recyclable"],
         technicalSpecs: [
             { label: "Material", value: "AA3003 / AA5005" },
-            { label: "Thickness", value: "Our standard range 0.8–1.5 mm; the market also quotes 0.5–0.7 mm tiles [vendor-typical]" },
+            // 2026-11-01 公司资料：本厂方形吊顶板的实际档位是 0.5–1.2 mm，按幅面分档；
+            // 旧口径写的「我司 0.8–1.5、市场才有 0.5–0.7」把我们的薄档当成了别人的东西。
+            { label: "Thickness", value: "0.5 / 0.6 / 0.7 / 0.8 mm on 300 × 300 and 300 × 600; 0.6 / 0.7 / 0.8 / 0.9 mm on 600 × 600; 1.0 / 1.1 / 1.2 mm on 600 × 1200. Perforated acoustic 600 × 600 runs 0.8 / 0.9 / 1.0 / 1.1 mm" },
             { label: "Sizes", value: "300×300 / 300×600 / 600×600 / 600×1200mm" },
             { label: "Edge Profile", value: "Lay-in / Tegular / Clip-in" },
             { label: "Weight", value: "≈ 2.2 kg/m² at 0.8 mm and 3.2 kg/m² at 1.2 mm (calculated at 2 700 kg/m³)" },
             { label: "Fire Rating", value: "Bare aluminium is non-combustible; our coated product is declared ASTM E84 Class A and EN 13501-1 Class B-s1" },
             { label: "NRC", value: "Perforated + fleece tiles are quoted in the 0.5–0.75 region by suppliers [vendor-typical]; the rating belongs to the tested assembly, cavity included" },
             { label: "Humidity", value: "Up to 100% RH" },
+            // 公司资料给出的标配用量，是买家算配套报价时真正缺的那一行。
+            { label: "Suspension & Grid Material", value: "One hanger point per m² on M8 threaded rod (3 000 mm lengths); 300 × 300 and 300 × 600 tiles need 3.3 m of triangular grid per m² at 300 mm centres, 600 × 600 and 600 × 1200 tiles 1.7 m per m² at 600 mm centres, plus 1 m of main runner per m²; 3 nuts and 1 expansion set per point; perimeter angle trimmed to the room perimeter. Allow about 4% waste on a panel order" },
         ],
         surfaceOptions: [
             { name: "Powder Coating", description: "Standard RAL colors.", thickness: "60–80 μm", warranty: "Standard offer per quotation", suitableFor: ["Offices", "Schools", "Hospitals"] },
             { name: "Roller Coating (PE)", description: "Cost-effective for large projects.", thickness: "18–25 μm", warranty: "10-year standard offer (PE)", suitableFor: ["Large-area ceilings", "Budget projects"] },
-            { name: "Perforated + Fleece", description: "Factory perforated with acoustic backing.", thickness: "Ø1.5–6mm, 10–30% open area (our range)", warranty: "Same as base coat", suitableFor: ["Open-plan offices", "Classrooms"] },
+            { name: "Perforated + Fleece", description: "Factory perforated with acoustic backing; black acoustic non-woven is the standard backing on this line.", thickness: "Ø1.5–6mm; 15–65% open area on the acoustic 600 × 600 tile (our range), 10–30% elsewhere", warranty: "Same as base coat", suitableFor: ["Open-plan offices", "Classrooms"] },
         ],
         standardSizes: [
-            { label: "300×300mm", value: "0.8–1.0mm, lay-in or clip-in" },
-            { label: "600×600mm", value: "0.8–1.2mm, most common" },
+            { label: "300×300mm", value: "0.5–0.8mm, lay-in or clip-in" },
+            { label: "300×600mm", value: "0.5–0.8mm, the plank format for corridors" },
+            { label: "600×600mm", value: "0.6–0.9mm solid, 0.8–1.1mm perforated acoustic — most common" },
             { label: "600×1200mm", value: "1.0–1.2mm, lay-in or tegular" },
         ],
         installationSteps: [
@@ -573,7 +585,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         technicalSpecs: [
             { label: "Material", value: "All-aluminium construction: AA1100 / AA3003 for expanded and woven mesh, AA5052 where a harder strand or more spring-back is needed. No steel or stainless mesh is supplied — where a brighter or harder-looking mesh is specified, the answer is a brighter anodised finish on aluminium, not a different metal" },
             { label: "Mesh Type", value: "Expanded metal (slit and stretched, diamond or rectangular openings) or woven / crimped wire mesh — the two behave differently and are quoted separately" },
-            { label: "Base Sheet Thickness (expanded)", value: "1.5–3.0 mm for architectural ceiling mesh; 0.3–1.0 mm foil mesh for feature and stretch applications [industry typical]" },
+            { label: "Base Sheet Thickness (expanded)", value: "1.5 mm is our standard expanded grade for ceiling and wall mesh; the market also works 2.0–3.0 mm for heavier architectural mesh and 0.3–1.0 mm foil mesh for feature applications [industry typical]" },
             { label: "Strand Width SW (expanded)", value: "10–30 mm commonly; the strand is the load-bearing rib of the mesh [industry typical]" },
             { label: "Aperture SWD × LWD (expanded)", value: "short way 25–100 mm × long way 60–200 mm — aperture sets openness and how much of the plenum reads through [industry typical]" },
             { label: "Wire Ø × Aperture (woven)", value: "wire 1.0–3.0 mm with apertures from about 10 mm upward; specified as mesh count, wire diameter and opening size [industry typical]" },
@@ -646,10 +658,12 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         technicalSpecs: [
             { label: "Panel Build-Up", value: "Face sheet + aluminium honeycomb core + back sheet, bonded under heat and pressure; a typical ceiling build is 1.0 mm face + 13 mm core + 0.7 mm back = 15 mm total [industry typical]" },
             { label: "Face / Back Sheet", value: "AA3003 / AA5005 / AA1100 aluminium; face 0.8–1.0 mm with a back skin of the same or a slightly lighter gauge (0.5–0.7 mm) for standard ceiling boards — equal-gauge skins on both sides are common and are not a defect, and heavier faces are used for long spans [industry typical]" },
-            { label: "Honeycomb Core", value: "AA3003 / AA5052 hexagonal core; cell side length 3 / 4 / 5 / 6 mm (≈1/8\"–1/4\") with foil 0.04–0.08 mm [industry typical]" },
-            { label: "Total Thickness", value: "10 / 15 / 20 / 25 mm standard for suspended ceilings; other thicknesses to order [industry typical]" },
+            { label: "Honeycomb Core", value: "AA3003 / AA5052 hexagonal core; a 4 mm cell is our standard on this line (the market also rolls 3 / 5 / 6 mm) with foil 0.04–0.08 mm [industry typical]" },
+            { label: "Total Thickness", value: "Our framed single-sided acoustic board is 7 mm total on 0.12 mm skins; frameless boards are built to the approved layout, commonly in the 10–25 mm band [industry typical]" },
             { label: "Weight", value: "Roughly 3.5–7 kg/m² over the 10–25 mm range — a 15 mm board with 1.0 mm faces is about 6 kg/m², well under an equivalent solid panel [industry typical]" },
-            { label: "Panel Size", value: "Folded-edge boards commonly up to 1 190 mm wide × 6 000 mm long; wider flats to special arrangement [industry typical]" },
+            { label: "Panel Size", value: "Frameless ceiling boards come 600 × 1200 / 600 × 1500 / 600 × 1800 mm; framed boards run 1 200 × 6 000 mm. Folded-edge boards are commonly worked up to about 1 190 mm wide × 6 000 mm long [industry typical]" },
+            // 公司资料里唯一那句算量前提，对买家比任何数字都有用。
+            { label: "Setting-out Required", value: "A honeycomb ceiling is quoted off a layout drawing, not an area: the board module, the perimeter border and the service cuts all have to be drawn before the quantity means anything. Send the reflected ceiling plan and we will return the board schedule" },
             { label: "Flatness & Tolerances", value: "Face flatness to about ±0.2 mm and edge straightness within a few millimetres on a production board; the tolerance must be declared on the submittal, because flatness is the reason this product is chosen [industry typical]" },
             { label: "Edge Detail", value: "Four-side folded edge forming a cassette that hooks onto concealed carriers; open or sealed joints to the design" },
             { label: "Suspension", value: "Aluminium carriers with concealed hook-on clips, or an aluminium channel sub-frame on adjustable hangers; spacing set by board span and imposed load" },

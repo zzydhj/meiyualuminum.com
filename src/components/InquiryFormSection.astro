@@ -9,7 +9,7 @@
  * - 暖色渐变带 + 圆角描边，与站点品牌色（棕 #69574a / 金 #c09020）协调
  */
 import InquiryForm from "./InquiryForm.astro";
-import { whatsappUrl } from "../lib/companyProfile";
+import { companyFacts, whatsappUrl } from "../lib/companyProfile";
 
 interface Props {
     /** 来源页路径，透传给 InquiryForm 的隐藏字段 */
@@ -29,7 +29,7 @@ const {
     desc = "Tell us about your project — our engineering team replies within 1 hour with pricing, specifications and recommendations.",
 } = Astro.props;
 
-// 号码不再硬写在本文件，走 companyProfile.whatsappUrl（唯一来源 companyFacts.phone）
+// 号码与邮箱不再硬写在本文件：WhatsApp 走 companyFacts.whatsappPhone（直拨号是另一个字段 phone）
 const WHATSAPP_URL = whatsappUrl(
     "Hi, I'm interested in your aluminum products",
 );
@@ -99,10 +99,10 @@ const WHATSAPP_URL = whatsappUrl(
                     </span>
                     <span class="ifs-direct-txt">
                         <strong>WhatsApp</strong>
-                        <small>+86 135 0983 8008</small>
+                        <small>{companyFacts.whatsappPhone}</small>
                     </span>
                 </a>
-                <a class="ifs-direct-row" href="mailto:info@meiyualuminum.com">
+                <a class="ifs-direct-row" href={`mailto:${companyFacts.email}`}>
                     <span class="ifs-ic" aria-hidden="true">
                         <svg
                             viewBox="0 0 24 24"
@@ -119,7 +119,7 @@ const WHATSAPP_URL = whatsappUrl(
                     </span>
                     <span class="ifs-direct-txt">
                         <strong>Email</strong>
-                        <small>info@meiyualuminum.com</small>
+                        <small>{companyFacts.email}</small>
                     </span>
                 </a>
             </div>

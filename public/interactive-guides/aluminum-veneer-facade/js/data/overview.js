@@ -36,7 +36,7 @@ export const SYSTEM = {
     'GB 5237 series Aluminium alloys for building profiles',
   ],
   disclaimer:
-    'This is a construction visualisation demo: the model is a representative façade node built at 1:100 (1 scene unit = 100 mm). Sections and dimensions follow common industry practice for an aluminium veneer rainscreen on a galvanised steel tube grid anchored to a concrete wall (3.0 mm formed panel, 30 mm returns, RHS 40×40×3 tube mesh on the panel module, 8 aluminium ears per panel self-tapped to the tubes, 15 mm sealed joint) and are placeholders to be calibrated against the project section drawings. Wind loads, anchor/bolt values, thermal movement and sealant class must follow the design documents, structural verification and the current valid edition of the codes. Document by MEIYU Aluminum Co., Ltd. — meiyualuminum.com.',
+    'This is a construction visualisation demo: the model is a representative façade node built at 1:100 (1 scene unit = 100 mm). Sections and dimensions follow common industry practice for an aluminium veneer rainscreen on a galvanised steel tube grid anchored to a concrete wall (3.0 mm formed panel, 30 mm returns, RHS 40×40×3 tube mesh on the panel module, 8 aluminium ears per panel self-tapped to the tubes, 15 mm sealed joint) and are placeholders to be calibrated against the project section drawings. Wind loads, anchor/bolt values, thermal movement and sealant class must follow the design documents, structural verification and the current valid edition of the codes. Document by MEIYU Aluminum Industry Co., Ltd. — meiyualuminum.com.',
 };
 
 export const GUIDE = [

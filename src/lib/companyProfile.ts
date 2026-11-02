@@ -18,7 +18,8 @@ export interface TermRow {
 
 /** 公司基础数据（About 页 Hero 数据条、页脚等处共用） */
 export const companyFacts = {
-    name: "MEIYU Aluminum Co., Ltd.",
+    // 2026-11-01 业主指令：对外全称按公司资料补上 Industry，本站长期用的是短版。
+    name: "MEIYU Aluminum Industry Co., Ltd.",
     brand: "MEIYU",
     // 2026-10-27 业主指令：成立年份由 2015 改为 2011，对外地址不再写城市（东莞/佛山禁用）。
     // 注意：由此推出的“约 15 年经验”仍不得写成 “15+ Years Experience”（页脚历史注释里有此红线）。
@@ -27,21 +28,26 @@ export const companyFacts = {
     plantArea: "15,000 m²",
     productionLines: "15",
     staff: "80",
-    email: "info@meiyualuminum.com",
-    phone: "+86 135 0983 8008",
+    // 2026-11-01 业主指令：对外邮箱换成主联系人邮箱（原 info@ 不再出现在站上）。
+    email: "william@meiyualuminum.com",
+    // 2026-11-01 起电话与 WhatsApp 是两个不同号码，必须分开存。此前两者共用 phone 一个字段，
+    // 改直拨号会连带把全站 WhatsApp 链接一起改掉——所以本次只动 phone，WhatsApp 保持旧号。
+    phone: "+86 139 2214 1133",
+    whatsappPhone: "+86 135 0983 8008",
 };
 
 /**
  * WhatsApp 链接的唯一构造入口。
  *
- * 号码仍然只存上面 companyFacts.phone 一处（wa.me 只收纯数字，所以剔掉符号）。
+ * 号码取自 companyFacts.whatsappPhone（不是 phone：那是直拨号，两者自 2026-11-01 起不同）。
+ * wa.me 只收纯数字，所以剔掉符号。
  * 以前页眉 / 页脚 / 悬浮按钮 / About / 采购须知 / 询盘区块各写一份，
- * 其中四处把 8613509838008 硬写在代码里，而号码换过一次（旧号 8617671728821 已作废），
+ * 其中四处把号码硬写在代码里，而号码换过一次（旧号 8617671728821 已作废），
  * 再换一次就得改六个地方。
  *
  * 带 data-wa-source 的埋点由 BaseLayout 全局监听 wa.me 上报 GA4，新加链接时记得传 waSource。
  */
-export const WHATSAPP_NUMBER = companyFacts.phone.replace(/[^\d]/g, "");
+export const WHATSAPP_NUMBER = companyFacts.whatsappPhone.replace(/[^\d]/g, "");
 export const whatsappUrl = (message: string): string =>
     `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 

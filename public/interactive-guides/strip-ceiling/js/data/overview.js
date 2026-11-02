@@ -35,7 +35,7 @@ export const SYSTEM = {
     'GB 50300 Unified standard for acceptance of construction quality',
   ],
   disclaimer:
-    'This is a construction visualisation demo: the model is a representative node built at 1:100 (1 scene unit = 100 mm). The strip panel section follows the smooth-arc clip-in generator (base + R corner + upright arc edge + ~4.5 mm inward fishhook); the toothed carrier comes from measured DXF keel_P22.5_500x30x30 (U channel 30×30×1.0 / dovetail slot pitch 22.5 / hanger holes φ8 @ 250). Anchor pull-out values, camber ratios and the like are stated as common industry experience ranges; an actual project must follow the design documents, structural verification and the current valid edition of the codes. Document by MEIYU Aluminum Co., Ltd. — meiyualuminum.com.',
+    'This is a construction visualisation demo: the model is a representative node built at 1:100 (1 scene unit = 100 mm). The strip panel section follows the smooth-arc clip-in generator (base + R corner + upright arc edge + ~4.5 mm inward fishhook); the toothed carrier comes from measured DXF keel_P22.5_500x30x30 (U channel 30×30×1.0 / dovetail slot pitch 22.5 / hanger holes φ8 @ 250). Anchor pull-out values, camber ratios and the like are stated as common industry experience ranges; an actual project must follow the design documents, structural verification and the current valid edition of the codes. Document by MEIYU Aluminum Industry Co., Ltd. — meiyualuminum.com.',
 };
 
 export const GUIDE = [

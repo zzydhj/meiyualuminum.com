@@ -2,7 +2,8 @@
  * data/brand.js —— 品牌与商务信息（面板内品牌块的唯一来源）
  *
  * 取值对齐 meiyualuminum.com 的 src/lib/companyProfile.ts，那边改了要同步过来；
- * 该公司红线是「附录 A 没有的数字一律不写」，所以这里只放已确认的事实。
+ * 该公司红线是「公司事实里没有的数字一律不写」，所以这里只放已确认的事实。
+ * 本目录下的注释用中文（业主自己维护的源码，闸门只拦 HTML 里的注释与可见文本）。
  *
  * 分工（避免同一句话在两处漂移）：
  *   index.html  —— 顶栏 logo、视口水印、启动遮罩、SEO 元信息（无 JS 也必须可见）
@@ -10,15 +11,17 @@
  */
 export const BRAND = {
   name: 'MEIYU',
-  legalName: 'MEIYU Aluminum Co., Ltd.',
+  legalName: 'MEIYU Aluminum Industry Co., Ltd.',
   site: 'https://www.meiyualuminum.com/',
-  // 铝单板幕墙挂在本站的 Aluminum Veneer 类目（id=101，叶子链：aluminum-veneer ← facade-exterior-cladding）。
-  // 本行必须与 src/lib/interactiveGuides.ts 的 categorySlug 一致，否则两处入口会指到不同页。
+  // 铝单板幕墙挂在本站的 Aluminum Veneer 类目；本行必须与
+  // src/lib/interactiveGuides.ts 的 categorySlug 一致，否则两处入口会指到不同页。
   productPage:
     'https://www.meiyualuminum.com/categories/aluminum-veneer/',
   contactPage: 'https://www.meiyualuminum.com/contact/',
-  email: 'info@meiyualuminum.com',
-  phone: '+86 135 0983 8008',
+  // 2026-11-01 业主指令：对外邮箱改 william@，电话改 139 段（本字段只做 tel: 链接）；
+  // WhatsApp 是另一个号码，不写在本站静态页上。
+  email: 'william@meiyualuminum.com',
+  phone: '+86 139 2214 1133',
   responseTime: '1 hour',
 
   blockTitle: 'Manufacturer & commercial terms',
@@ -30,8 +33,8 @@ export const BRAND = {
     'Figures above are our standard offer; final terms are confirmed with your quotation.',
 
   /** 厂标喷字文案（预留；现由板面 decal 走 brandWordmarkMap，此处仅存档）
-   *  截面尺寸必须等于 model/spec.js 的 STEEL_GRID（40×40）与 PANEL.thickness（3.0）：
-   *  原先写的 RHS 80×40 与模型不一致，买家量一下模型就会看到两处不同。 */
+   *  截面尺寸必须等于 model/spec.js 的 STEEL_GRID（40×40）与 PANEL.thickness（3.0）——
+   *  买家会在模型上量。 */
   stencil: {
     word: 'MEIYU',
     tag: 'SAMPLE SECTION · MEIYU FAÇADES',
@@ -41,8 +44,8 @@ export const BRAND = {
   facts: [
     {
       k: 'Manufacturer',
-      // 同步 companyProfile.ts：成立年份 2015→2011，地址不写城市（业主 2026-10-27 指令）。
-      v: 'MEIYU Aluminum Co., Ltd. — established 2011, Guangdong Province, China',
+      // 同步 companyProfile.ts：成立 2011，对外地址不写城市，全称含 Industry。
+      v: 'MEIYU Aluminum Industry Co., Ltd. — established 2011, Guangdong Province, China',
     },
     {
       k: 'Plant',
