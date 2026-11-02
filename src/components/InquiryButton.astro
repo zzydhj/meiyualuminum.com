@@ -12,7 +12,9 @@
  * id：    供页面脚本在运行时更新 data-inquiry-message（工具页就是这么用的）。
  */
 const {
-  label = "Get Quote",
+  // 默认值带 a：站内其余 CTA 全是 "Get a Quote"，这里少一个 a 会让以后不传 label 的
+  // 用法自动写错。（六个调用方目前都显式传了 label。）
+  label = "Get a Quote",
   class: className = "",
   id,
   message,
