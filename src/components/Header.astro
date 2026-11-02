@@ -92,7 +92,10 @@ const waHref = whatsappUrl(
   /* Desktop: fixed 72px height, logo on the left, nav on the right */
   /* 桌面/移动断点定在 1280px：实测桌面导航内在需求 1236px（字体回退到 Arial 时 1262px），
      原 1400px 白白把 160px 余量当成了移动端。与 Menu / Navigation / MegaMenu /
-     MobileMenu / LanguageSwitcher / 首页 hero 同步，改一处必改全部。 */
+     MobileMenu / LanguageSwitcher / 首页 hero 同步，改一处必改全部。
+     两个家族不对称会留死区：min-width 这边写 1280px，max-width 那边就必须写
+     1279.98px 而不是 1279px——浏览器缩放或高 DPR 会算出 1279.2 这类小数视口，
+     两条都不匹配时移动基础规则生效、这六条不生效，汉堡按钮和页眉 CTA 会同时出现。 */
   @media screen and (min-width: 1280px) {
     header {
       height: 72px;
@@ -177,7 +180,7 @@ const waHref = whatsappUrl(
 
   /* Mobile: hamburger top-left, logo truly centered.
      Header CTA is hidden — the floating inquiry FAB covers this on mobile. */
-  @media screen and (max-width: 1279px) {
+  @media screen and (max-width: 1279.98px) {
     nav :global(.menu) {
       position: absolute;
       left: 1rem;
