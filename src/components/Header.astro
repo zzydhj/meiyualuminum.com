@@ -20,9 +20,11 @@ const waHref = whatsappUrl(
 <header class:list={[{ transparent }]}>
     <nav>
         <Menu />
+        {/* width/height 必给：缺了它们浏览器在图到达前按默认 300×150 占位，
+            图一到导航整排横移（桌面冷启动 CLS 的最大一项）。两图同 1061×256。 */}
         <a class="logo" href="/">
-            <img class="logo-dark" src="https://file.meiyualuminum.com/home/logo-1.png" alt="MEIYU Aluminum" />
-            {transparent && <img class="logo-white" src="https://file.meiyualuminum.com/home/logo-white-2.png" alt="MEIYU Aluminum" />}
+            <img class="logo-dark" src="https://file.meiyualuminum.com/home/logo-1.png" alt="MEIYU Aluminum" width="1061" height="256" />
+            {transparent && <img class="logo-white" src="https://file.meiyualuminum.com/home/logo-white-2.png" alt="MEIYU Aluminum" width="1061" height="256" />}
         </a>
         <Navigation />
         <InquiryButton

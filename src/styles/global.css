@@ -78,6 +78,21 @@ h1 {
   height: 100%;
 }
 
+/* 水印 wrapper 在「绝对定位铺满」型容器里必须跟着铺满，不能只靠 :only-child：
+   hero 底图 / vg 封面 / 工序带封面这些容器里，wrapper 旁边还有 scrim/step/play/
+   title 等兄弟节点（vg 注入 <video> 后也不再是唯一子元素），命中不了 only-child
+   规则；而它唯一的 <img> 子元素被 absolute 移出文档流，wrapper 会塌陷成 0×0，
+   封面整张不可见（工序带 12 卡、首屏 hero 底图实测缺陷）。这里用绝对定位强制铺满。 */
+.video-hero>.img-watermark,
+.vg-cell>.img-watermark,
+.ft-cell>.img-watermark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .img-watermark>img {
   display: block;
 }

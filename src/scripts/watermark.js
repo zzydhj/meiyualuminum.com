@@ -36,18 +36,22 @@ function wrapImage(img) {
 function processImages(root = document) {
   root.querySelectorAll('img').forEach((img) => {
     if (shouldSkip(img)) return;
-    // 图片已加载：直接判断尺寸
-    if (img.complete && img.naturalWidth > 0) {
+    // 渲染盒已可测量（有 CSS 尺寸或 width/height 属性）：立即包裹，不等 load。
+    // 等 load 再搬移 img 节点会把该图已产生的 LCP 候选作废（hero 底图曾因此
+    // 全程无 LCP）；绘制前包裹则候选照常成立，且布局变化发生在首绘前不计 CLS。
+    const rect = img.getBoundingClientRect();
+    if (rect.width > 0 || rect.height > 0) {
+      if (rect.width > 0 && rect.width <= LOGO_MIN_SIZE) return;
+      if (rect.height > 0 && rect.height <= LOGO_MIN_SIZE) return;
+      wrapImage(img);
+      return;
+    }
+    // 尺寸未知（无属性无 CSS 的内联小图）：仍等 load 后用自然尺寸判断
+    img.addEventListener('load', () => {
+      if (shouldSkip(img)) return;
       if (img.naturalWidth <= LOGO_MIN_SIZE || img.naturalHeight <= LOGO_MIN_SIZE) return;
       wrapImage(img);
-    } else {
-      // 图片未加载：等 load 事件后再判断
-      img.addEventListener('load', () => {
-        if (shouldSkip(img)) return;
-        if (img.naturalWidth <= LOGO_MIN_SIZE || img.naturalHeight <= LOGO_MIN_SIZE) return;
-        wrapImage(img);
-      }, { once: true });
-    }
+    }, { once: true });
   });
 }
 
