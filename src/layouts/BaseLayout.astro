@@ -86,13 +86,8 @@ const SHARE_IMAGE_H = 630;
 const SHARE_IMAGE_ALT =
   "MEIYU Aluminum — custom aluminium ceiling and facade panels, direct factory in Guangdong, China.";
 
-// Google Analytics 衡量 ID：默认值就是本站正式 ID，PUBLIC_GA_ID 仅用于换属性时覆盖。
-// 以前 head 里一份硬编码、body 末尾一份 env 驱动，共两套；一旦真的设了 PUBLIC_GA_ID
-// 就会重复装载 gtag（pageview 计两遍），所以收成单一来源。
-// 2026-10-12 核对过 GA 后台数据流详情：meiyualuminum.com 的衡量 ID 是 G-MNY00M46JX；
-// 此前默认值写成了一个不相干的 G-DS2EV49TRD，所以 GA 一直显示“未收到数据”。
-// 这个写错的默认值比读不到 env 更险：它能让数据静默报到别人的 property 里。
-const gaId = import.meta.env.PUBLIC_GA_ID || "G-MNY00M46JX";
+// Google Analytics 已于 2026-11-06 应业主要求整体移除（不要 GA）。
+// 原 gaId / gtag 注入 / WhatsApp 点击上报一并删除；不再加载任何 googletagmanager 资源。
 
 // Organization JSON-LD (global, appears on every page)
 const orgJsonLd = {
@@ -122,40 +117,23 @@ const orgJsonLd = {
     />
 
     {
-      /* Google Analytics 4（单一来源：见上方 gaId）。
-         必须用 set:html：Astro 的 <script is:inline> 内容原样输出、不做 JSX 插值，
-         直接写花括号占位会被当字符串下发，gtag.js 能加载但一条 pageview 都不上报。
-         这里用 JSX 注释而不是 HTML 注释：HTML 注释会随页面下发，
-         注释里出现 config / noindex 之类字样会让自动检查误报。 */
+      /* Inter font — 异步加载，不阻塞首屏渲染。
+        display=optional 而非 swap：swap 会在字体到达那一刻替换字形，页眉导航与
+        hero 标题整排跳动（桌面冷启动 CLS 0.124 的组成部分）。optional 下首访
+        若字体没赶在首屏前到达，就整次会话用回退字体、零跳变；回访走缓存直接用 Inter。 */
     }
-    {
-      gaId && (
-        <>
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-          />
-          <script
-            is:inline
-            set:html={`window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', '${gaId}');`}
-          />
-        </>
-      )
-    }
-
-    {/* Inter font — 异步加载，不阻塞首屏渲染 */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=optional"
       media="print"
       onload="this.media='all'"
     />
     <noscript
       ><link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=optional"
       /></noscript
     >
 
@@ -270,42 +248,6 @@ const orgJsonLd = {
 
     <!-- Global back-to-top sticky tab — bottom of the floating stack, flush to window bottom -->
     <BackToTop />
-
-    {
-      /* WhatsApp 点击统计：任何 wa.me 链接被点击 → 记一次 GA4 事件 whatsapp_click。
-         wa.me 新开标签页，click 先于跳转触发；gtag 以 beacon 发送不丢失。
-         业务/运营在 GA4 → 报告 → 互动 → 事件 中查看 whatsapp_click。 */
-    }
-    <script>
-      document.addEventListener(
-        "click",
-        (e) => {
-          const target = e.target as Element | null;
-          const a = target?.closest?.(
-            'a[href^="https://wa.me/"], a[href^="https://api.whatsapp.com/"]',
-          );
-          if (!a) return;
-          const payload = {
-            wa_source: a.getAttribute("data-wa-source") || "inline_link",
-            page_path: window.location.pathname,
-            page_title: document.title,
-          };
-          const w = window as unknown as {
-            gtag?: (...args: unknown[]) => void;
-            dataLayer?: unknown[];
-          };
-          if (typeof w.gtag === "function") {
-            w.gtag("event", "whatsapp_click", payload);
-          } else {
-            (w.dataLayer = w.dataLayer || []).push({
-              event: "whatsapp_click",
-              ...payload,
-            });
-          }
-        },
-        true,
-      );
-    </script>
 
     <!-- Global inquiry modal — triggered from any [data-open-inquiry-modal] button -->
     <InquiryModal />
