@@ -18,8 +18,9 @@ export default defineConfig({
 
   // 保持静态：默认页面预渲染为静态文件，由 Workers 的 assets 直出（不计入 Worker 请求、不耗 CPU）；
   // 只读数据库、改库后必须自动反映的路由才显式标 prerender = false 走 Worker 按需渲染。
-  // 目前全部查库路由（首页 / 列表 / 详情 / 分类 / 标签 / 画廊 / 分页 / sitemap）已统一转 SSR，
-  // 改内容不再需要重新构建部署。
+  // 列表 / 详情 / 分类 / 标签 / 画廊 / 分页 / sitemap 等查库路由统一 SSR，改内容不用重新部署；
+  // 首页 2026-11-06 回退为预渲染：除构建时查一次的视频轨外全为写死常量，
+  // SSR 只换来冷缓存节点 4s+ 的 TTFB（理由见 index.astro 头部注释）。
   output: "static",
 
   // Cloudflare Workers adapter：为上面的 SSR 页面提供运行时（否则 astro build 报 NoAdapterInstalled）。
@@ -32,8 +33,9 @@ export default defineConfig({
   trailingSlash: "ignore",
   
   // ── SSR HTML 边缘缓存（Workers Cache）─────────────────────────────
-  // 背景：首页/产品/博客全 SSR，实测 TTFB 1–9s、偶发 5s 断连；Meta（WhatsApp /
+  // 背景：SSR 内容路由（产品/博客等）实测 TTFB 1–9s、偶发 5s 断连；Meta（WhatsApp /
   // Facebook 链接预览）抓取超时就会合成 418，卡片只剩域名没有图。
+  // 首页已预渲染、不在此列：边缘 assets 直出，天然快。
   // maxAge 60：新鲜窗 1 分钟，改库后最多 1 分钟反映（急着看就加 ?fresh=1 绕过，
   //   query 是缓存键的一部分，必然 MISS 重渲染）。
   // swr 86400：过期后仍立即回旧件、后台重渲染 —— 抓取器永远拿到快响应，
@@ -45,7 +47,6 @@ export default defineConfig({
   // 模式语法同文件路由（[param] / [...rest]，不支持 * 通配）。
   cache: { provider: cacheCloudflare() },
   routeRules: {
-    "/": PAGE_CACHE,
     "/products/[...rest]": PAGE_CACHE,
     "/blog/[...rest]": PAGE_CACHE,
     "/videos/[...rest]": PAGE_CACHE,
