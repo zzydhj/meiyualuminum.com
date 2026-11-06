@@ -9,19 +9,20 @@
  * 排序按 slug 升序 = 工序顺序（01→12），**不按 pub_date** —— 12 条同一天上传，
  * 按日期排等于随机取，工序顺序会整个乱掉。
  *
- * 性能策略（关键）：
- *   卡片初始 preload="none"，每张由自己的 IntersectionObserver 观察到才升级为
- *   metadata（自托管视频靠首帧当封面）。所以首屏只下载视口内那几张的元数据，
- *   而不是 12 条一起下。滚出视口即暂停并释放。
- *   prefers-reduced-motion 时完全不自动播，只留静态首帧 + 详情页链接。
+ * 性能策略（2026-11-06 业主定口径：全图片，零视频）：
+ *   卡片一律渲染 <img> 封面（ffmpeg 抽首帧、480w q70 webp，单张 18~30KB），
+ *   走普通 loading="lazy" 队列按 DOM 顺序加载，不再有任何视频请求；
+ *   想播视频 = 整卡新标签页跳 /videos/{slug}/ 详情页。首页 12 段视频流量归零。
  *
- * 卡片为什么是竖屏 9:16：工序视频本身是竖屏拍的，画面里烧录了工序字幕。
- * 横槽（16:9 / 1:1）+ object-fit:cover 只露出画面中部约三成高度，字幕必被裁掉；
- * 槽与视频同比例时整帧可见，字幕一行都不丢 —— 这比调 object-position「取中间」彻底。
+ * 卡片为什么是竖屏 9:16（业主 2026-11-07 口径：与项目视频画廊同形）：
+ * 源视频以 1080×720 非方形像素（SAR 3:8）编码，显示比例 DAR 是 9:16 竖版；
+ * 抽帧时按 DAR 还原即得满幅竖帧（.tmp-work/extract-factory-916.ps1），
+ * 字幕一行不裁不扁，卡片形状与 vg 六格完全一致。
  */
 import { supabase } from "../lib/supabase";
-import { firstFrameSrc, isSelfHostedVideo } from "../lib/videoSource";
+import { isSelfHostedVideo } from "../lib/videoSource";
 import { whatsappUrl } from "../lib/companyProfile";
+import { FACTORY_COVERS } from "../lib/videoCovers";
 
 const { data } = await supabase
   .from("videos")
@@ -35,11 +36,11 @@ const steps = (data ?? [])
   .map((v, i) => ({
     ...v,
     n: String(i + 1).padStart(2, "0"),
-    // 只前两段循环自播当「动态海报」，其余静止首帧 + 播放按钮（用户指定 2026-10-13）：
-    // 12 条同时自播既费流量又像弹窗广告，两段刚好让带子活起来而不吵。
-    auto: i < 2,
-    cover: firstFrameSrc(v.video_url!),
-  }));
+    // 封面 = R2 covers/ 下预生成的首帧 webp（slug 前两段做键，如 factory-01）。
+    // 缺映射时回退视频 URL 本身已无意义（不再渲染 <video>），直接过滤掉该卡。
+    cover: FACTORY_COVERS[v.slug.slice(0, 10)],
+  }))
+  .filter((v) => v.cover);
 
 const total = steps.length;
 
@@ -122,32 +123,32 @@ const waHref = whatsappUrl(
               target="_blank"
               rel="noopener noreferrer"
               data-ft-card
-              data-autoplay={s.auto ? "true" : undefined}
             >
               <div class="ft-cell">
-                <video
-                  muted
-                  loop
-                  playsinline
-                  preload="none"
-                  src={`${s.cover}`}
-                  aria-hidden="true"
+                {/* 纯图片封面：竖屏 480×854 webp（源视频第一帧按 SAR 还原，41~67KB），
+                    lazy 按滚动顺序加载。不再内嵌 <video>——播视频一律跳详情页
+                    （业主 2026-11-06 口径）。 */}
+                <img
+                  class="ft-cover"
+                  src={s.cover}
+                  alt={s.title}
+                  loading="lazy"
+                  decoding="async"
+                  width="480"
+                  height="854"
                 />
                 <span class="ft-scrim"></span>
                 <span class="ft-step">
                   <i>Step</i>
                   {s.n}
                 </span>
-                {/* 静止卡给居中播放按钮（与首页项目视频画廊同一款式）；
-                    自播的两段正在动，不再叠按钮 */}
-                {!s.auto && (
-                  <span class="ft-play" aria-hidden="true">
-                    <svg viewBox="0 0 48 48" width="44" height="44">
-                      <circle cx="24" cy="24" r="23" fill="rgba(0,0,0,0.55)"></circle>
-                      <path d="M19 15l14 9-14 9V15z" fill="#fff"></path>
-                    </svg>
-                  </span>
-                )}
+                {/* 全卡都是「点开新页播视频」，居中播放按钮一律显示 */}
+                <span class="ft-play" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" width="44" height="44">
+                    <circle cx="24" cy="24" r="23" fill="rgba(0,0,0,0.55)"></circle>
+                    <path d="M19 15l14 9-14 9V15z" fill="#fff"></path>
+                  </svg>
+                </span>
                 {/* 标题压在画面底部渐变上：整帧可见后，烧录字幕与卡片标题上下各占其位，互不裁切 */}
                 <span class="ft-title">{s.title}</span>
               </div>
@@ -178,8 +179,7 @@ const waHref = whatsappUrl(
 
 <script>
   /* 横向轨道：箭头按「一屏几张」整屏推进；到两端自动禁用。
-     卡片各自一个 IntersectionObserver：进视口才把 preload 从 none 升到 metadata
-     并起播，离开就暂停 —— 这样首屏不会一次拉 12 条视频。 */
+     卡片已全是 <img> 封面，没有视频生命周期要管——只剩滚动/箭头/计数器逻辑。 */
   const rail = document.querySelector<HTMLElement>('[data-ft-rail]');
   const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-ft-card]'));
   const prev = document.querySelector<HTMLButtonElement>('[data-ft-prev]');
@@ -226,32 +226,23 @@ const waHref = whatsappUrl(
       if (e.key === 'ArrowLeft') { e.preventDefault(); by(-1); }
     });
 
-    if (!reduceMotion) {
-      const io = new IntersectionObserver(
+    // 封面是普通 lazy <img>，但工序带在页面较深处，且横向轨道里右侧卡片不算
+    // 「进入视口」，原生 lazy 要等真正滚到/滑到才发请求——业主实测「很久不加载」。
+    // 整条带子临近视口（提前一整屏）时把 12 张封面一次性升 eager：单张仅 18~30KB、
+    // 合计 ~300KB，用这点提前量换「滚到就有图、横滑不空白」是值得的。
+    const covers = Array.from(rail.querySelectorAll<HTMLImageElement>('img.ft-cover'));
+    if (covers.length && 'IntersectionObserver' in window) {
+      const eagerIO = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            const card = entry.target as HTMLElement;
-            const v = card.querySelector('video');
-            if (!v) return;
-            if (entry.isIntersecting) {
-              // 首次进入才要元数据：这一步让封面首帧显形（静止卡也只到这一步）
-              if (v.preload === 'none') {
-                v.preload = 'metadata';
-                v.load();
-              }
-              // 只有前两段循环自播；其余保持静止首帧，由播放按钮暗示可点
-              if (card.dataset.autoplay === 'true') {
-                v.play().catch(() => { /* 浏览器可能拦自动播放，忽略即可 */ });
-              }
-            } else {
-              v.pause();
-            }
+            if (!entry.isIntersecting) return;
+            covers.forEach((img) => { img.loading = 'eager'; });
+            eagerIO.disconnect();
           });
         },
-        // 横向轨道：只要卡片进入横向可视区就该亮起来，rootMargin 给一点提前量
-        { threshold: 0.35, rootMargin: '0px 80px' },
+        { rootMargin: '100% 0px' }, // 上下各提前一整屏
       );
-      cards.forEach((c) => io.observe(c));
+      eagerIO.observe(rail);
     }
 
     sync();
@@ -399,8 +390,9 @@ const waHref = whatsappUrl(
     display: none;
   }
 
-  /* 一屏 6 张（桌面）。用 flex-basis 算而不是固定像素，窄屏逐级减到 4/3/1.4 张，
-     1.4 这种「半张露出」本身就是可滑动的提示。 */
+  /* 一屏 6 张（桌面），与项目视频画廊六格同形同密度；用 flex-basis 算而不是
+     固定像素，窄屏逐级减到 4/3/2/1.35 张，1.35 这种「半张露出」本身就是
+     可滑动的提示。 */
   .ft-card {
     flex: 0 0 calc((100% - 5 * 14px) / 6);
     scroll-snap-align: start;
@@ -427,7 +419,8 @@ const waHref = whatsappUrl(
 
   .ft-cell {
     position: relative;
-    /* 竖屏海报卡：与工序视频同比例，整帧入画（烧录字幕不被裁） */
+    /* 竖屏海报卡 9:16：与项目视频画廊 .vg-cell 同形（业主 2026-11-07 口径）；
+       封面本身已是竖屏包装，整卡铺满、不裁不扁 */
     aspect-ratio: 9 / 16;
     background: #211a15;
     border: 1px solid rgba(192, 168, 130, 0.16);
@@ -435,16 +428,17 @@ const waHref = whatsappUrl(
     overflow: hidden;
   }
 
-  .ft-cell video {
+  .ft-cell img.ft-cover {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
     transition: transform 0.45s ease;
   }
 
-  .ft-card:hover .ft-cell video {
+  .ft-card:hover .ft-cell img.ft-cover {
     transform: scale(1.045);
   }
 

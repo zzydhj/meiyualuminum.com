@@ -2,9 +2,14 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FactoryTourRail from "../components/FactoryTourRail.astro";
 import OrderProcess from "../components/OrderProcess.astro";
+import { VG_COVERS } from "../lib/videoCovers";
 
-// SSR：多语言 rewrite 目标页必须是 server-rendered（/en/ /zh/ 内部重写到 /）
-export const prerender = false;
+// 纯静态预渲染：首页除 FactoryTourRail（工厂视频轨，构建时查一次 videos 表）外
+// 全是下方写死的常量，没有按请求取数的内容。曾经 prerender = false 的理由是
+// 多语言 rewrite 目标（/en/ /zh/ 内部重写到 /），而 i18n 的 MULTILINGUAL_ENABLED
+// 已关、语言路由全 404，该理由不复存在。SSR 只让每个冷缓存的边缘节点先冷启动
+// Worker 再查一次库（实测 TTFB 4s+），静态化后 HTML 由边缘直出。
+// 代价：视频轨增删视频要重新部署才上首页（/about/ 仍 SSR，照常即时反映）。
 
 // 首页是纯代码页面：标题、副标题、SEO 信息全部写死在下方常量中，
 // 不依赖数据库 pages 表（home 记录已删除，/home/ 影子路由随之消失）。
@@ -103,13 +108,56 @@ const websiteJsonLd = {
   {/* 预连接 CDN，省去 DNS+TCP+TLS 握手时间 */}
   <Fragment slot="head">
     <link rel="preconnect" href="https://file.meiyualuminum.com" crossorigin />
+    {
+      /* hero 底图就是本页的 LCP 元素：放进 head 让预加载扫描器第一时间排队。
+        改前它挂在 .video-hero 的 background-image 上，要等 CSS 下载解析完才被发现，
+        冷启动实测 7~8s 才画出来，Lighthouse 桌面/移动双双报 NO_LCP。 */
+    }
+    <link
+      rel="preload"
+      as="image"
+      href="https://file.meiyualuminum.com/meiyu-video-4.webp"
+      fetchpriority="high"
+    />
   </Fragment>
 
   <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
 
   <!-- ===== Full-screen Video Hero Banner ===== -->
   <section class="video-hero">
-    <video class="video-hero-bg" muted loop playsinline preload="metadata">
+    {
+      /* LCP 元素：真实 <img> 垫在视频下面。视频帧不参与 LCP 候选，CSS 背景图又要等
+        CSS 到达才被发现；<img> 写在 HTML 里，扫描器解析到 body 第一行就排队。
+        视频首帧就绪后盖住它；视频失败时它就是兜底画面（取代旧的 CSS 背景）。
+        alt 必须非空：Chrome 把 alt="" 当装饰图排除出 LCP 候选，而这张底图
+        就是本页的 LCP 元素——空 alt 会让 DevTools/Lighthouse 报 NO_LCP。 */
+    }
+    <img
+      class="video-hero-poster"
+      src="https://file.meiyualuminum.com/meiyu-video-4.webp"
+      alt="Aluminum ceiling and facade projects by MEIYU"
+      width="1200"
+      height="620"
+      fetchpriority="high"
+      decoding="async"
+    />
+    {
+      /* markup 一律 preload="none"：HTML 解析阶段不发任何媒体请求，让 hero
+        底图独占首屏带宽（metadata 也要排队抢连接，移动端实测拖慢底图）；
+        下载时机由下方 JS 在 window load + 主线程空闲时接管。
+        poster 必须给：<video> 不带 poster 时 Chrome 用「首帧」当 LCP 候选，
+        而首帧要等整片下完才画——移动端实测被图片队列堵到 30s+，LCP 直接爆掉。
+        poster 与上方 <img> 同一 URL（已在 head preload 命中缓存），秒画，
+        LCP 候选因此锁定在首屏就绪那一刻，不再随视频下载时长漂移。 */
+    }
+    <video
+      class="video-hero-bg"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
+    >
       {
         /* 版本号是必需的，不是装饰：R2 自定义域名对这类文件回 `cache-control:
           max-age=31536000`（一年），而键名不变。业主 2026-10-28 重传了视频，
@@ -150,15 +198,28 @@ const websiteJsonLd = {
           real sites, not renders.
         </p>
       </div>
+      {
+        /* 六格一律先渲染 <img> 封面（竖屏 9:16 webp，39~63KB）：普通 lazy 队列
+          按 DOM 顺序加载，不会比后面章节的图更慢；视频地址挂在 data-vg-src 上，
+          首格进视口自播、其余点击才注入 <video> 全力加载（业主 2026-11-06 口径：
+          整站只剩 hero + 首格两个视频请求）。 */
+      }
       <div class="vg-grid">
-        <div class="vg-item">
+        <div
+          class="vg-item"
+          data-vg-src="https://file.meiyualuminum.com/video-project/xiamen-205e2-project.mp4#t=0.1"
+          data-vg-auto
+        >
           <div class="vg-cell">
-            <video muted loop playsinline preload="metadata">
-              <source
-                src="https://file.meiyualuminum.com/video-project/xiamen-205e2-project.mp4#t=0.1"
-                type="video/mp4"
-              />
-            </video>
+            <img
+              class="vg-cover"
+              src={VG_COVERS["vg-xiamen-205e2"]}
+              alt="Xiamen 205E2 aluminum facade project video cover"
+              loading="lazy"
+              decoding="async"
+              width="480"
+              height="854"
+            />
           </div>
           <button type="button" class="vg-play" data-vg-play>
             <svg
@@ -181,14 +242,20 @@ const websiteJsonLd = {
             <span class="vg-play-text">Play</span>
           </button>
         </div>
-        <div class="vg-item">
+        <div
+          class="vg-item"
+          data-vg-src="https://file.meiyualuminum.com/video-project/liangjiang-hub-project.mp4"
+        >
           <div class="vg-cell">
-            <video muted loop playsinline preload="metadata">
-              <source
-                src="https://file.meiyualuminum.com/video-project/liangjiang-hub-project.mp4"
-                type="video/mp4"
-              />
-            </video>
+            <img
+              class="vg-cover"
+              src={VG_COVERS["vg-liangjiang-hub"]}
+              alt="Liangjiang Hub aluminum ceiling project video cover"
+              loading="lazy"
+              decoding="async"
+              width="480"
+              height="854"
+            />
           </div>
           <button type="button" class="vg-play" data-vg-play>
             <svg
@@ -211,14 +278,20 @@ const websiteJsonLd = {
             <span class="vg-play-text">Play</span>
           </button>
         </div>
-        <div class="vg-item">
+        <div
+          class="vg-item"
+          data-vg-src="https://file.meiyualuminum.com/video-project/wuhan-gateway-trade-center.mp4"
+        >
           <div class="vg-cell">
-            <video muted loop playsinline preload="metadata">
-              <source
-                src="https://file.meiyualuminum.com/video-project/wuhan-gateway-trade-center.mp4"
-                type="video/mp4"
-              />
-            </video>
+            <img
+              class="vg-cover"
+              src={VG_COVERS["vg-wuhan-gateway-trade-center"]}
+              alt="Wuhan Gateway Trade Center facade project video cover"
+              loading="lazy"
+              decoding="async"
+              width="480"
+              height="854"
+            />
           </div>
           <button type="button" class="vg-play" data-vg-play>
             <svg
@@ -241,14 +314,20 @@ const websiteJsonLd = {
             <span class="vg-play-text">Play</span>
           </button>
         </div>
-        <div class="vg-item">
+        <div
+          class="vg-item"
+          data-vg-src="https://file.meiyualuminum.com/video-project/chengdu-cloud-plaza-canopy-project.mp4"
+        >
           <div class="vg-cell">
-            <video muted loop playsinline preload="metadata">
-              <source
-                src="https://file.meiyualuminum.com/video-project/chengdu-cloud-plaza-canopy-project.mp4"
-                type="video/mp4"
-              />
-            </video>
+            <img
+              class="vg-cover"
+              src={VG_COVERS["vg-chengdu-cloud-plaza-canopy"]}
+              alt="Chengdu Cloud Plaza canopy project video cover"
+              loading="lazy"
+              decoding="async"
+              width="480"
+              height="854"
+            />
           </div>
           <button type="button" class="vg-play" data-vg-play>
             <svg
@@ -271,14 +350,20 @@ const websiteJsonLd = {
             <span class="vg-play-text">Play</span>
           </button>
         </div>
-        <div class="vg-item">
+        <div
+          class="vg-item"
+          data-vg-src="https://file.meiyualuminum.com/video-project/hangzhou-gateway-tower-garage.mp4"
+        >
           <div class="vg-cell">
-            <video muted loop playsinline preload="metadata">
-              <source
-                src="https://file.meiyualuminum.com/video-project/hangzhou-gateway-tower-garage.mp4"
-                type="video/mp4"
-              />
-            </video>
+            <img
+              class="vg-cover"
+              src={VG_COVERS["vg-hangzhou-gateway-tower-garage"]}
+              alt="Hangzhou Gateway Tower garage facade project video cover"
+              loading="lazy"
+              decoding="async"
+              width="480"
+              height="854"
+            />
           </div>
           <button type="button" class="vg-play" data-vg-play>
             <svg
@@ -301,14 +386,20 @@ const websiteJsonLd = {
             <span class="vg-play-text">Play</span>
           </button>
         </div>
-        <div class="vg-item">
+        <div
+          class="vg-item"
+          data-vg-src="https://file.meiyualuminum.com/video-project/suzhou-starlight-gateway-project.mp4"
+        >
           <div class="vg-cell">
-            <video muted loop playsinline preload="metadata">
-              <source
-                src="https://file.meiyualuminum.com/video-project/suzhou-starlight-gateway-project.mp4"
-                type="video/mp4"
-              />
-            </video>
+            <img
+              class="vg-cover"
+              src={VG_COVERS["vg-suzhou-starlight-gateway"]}
+              alt="Suzhou Starlight Gateway project video cover"
+              loading="lazy"
+              decoding="async"
+              width="480"
+              height="854"
+            />
           </div>
           <button type="button" class="vg-play" data-vg-play>
             <svg
@@ -1386,10 +1477,17 @@ const websiteJsonLd = {
     height: calc(100vh - 60px);
     height: calc(100svh - 60px);
     overflow: hidden;
-    /* Fallback background image shown when the video fails to load */
-    background-image: url("https://file.meiyualuminum.com/meiyu-video-4.webp");
-    background-size: cover;
-    background-position: center;
+  }
+
+  /* LCP 底图：垫在视频下方的真实 <img>（视频失败时即兜底画面）。
+     绝对定位铺满 hero，width/height 属性只给宽高比 hint，不参与布局。 */
+  .video-hero-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
   }
 
   /* Hide the video element when it fails, revealing the fallback background */
@@ -1826,7 +1924,10 @@ const websiteJsonLd = {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   }
 
-  .vg-cell video {
+  /* 封面 <img> 与点击/自播后注入的 <video> 共用同一套铺满规则；
+     video 盖在 img 上层，首帧就绪前露出的就是封面，视觉不断档 */
+  .vg-cell video,
+  .vg-cell .vg-cover {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -2925,61 +3026,100 @@ const websiteJsonLd = {
       const p = heroVideo.play();
       if (p) {
         p.catch(() => {
-          // autoplay 被拦截，等用户触摸/点击后重试
+          // autoplay 被拦截，等用户任何一次交互后重试
           const onInteract = () => {
             heroVideo.play().catch(() => {});
             document.removeEventListener("touchstart", onInteract);
             document.removeEventListener("click", onInteract);
+            document.removeEventListener("pointerdown", onInteract);
+            document.removeEventListener("keydown", onInteract);
           };
           document.addEventListener("touchstart", onInteract, {
             once: true,
             passive: true,
           });
           document.addEventListener("click", onInteract, { once: true });
+          document.addEventListener("pointerdown", onInteract, {
+            once: true,
+            capture: true,
+          });
+          document.addEventListener("keydown", onInteract, { once: true });
         });
       }
     };
 
-    // 阶段 2：DOM 解析完即开始下载视频（不等图片/字体，提前 2-4s）
+    // 阶段 2（业主 2026-11-06 定口径）：先让整页能浏览，window load 之后才在
+    // 主线程空闲时默默下载视频——首屏有底图垫着，视觉不断档；慢网上几 MB 的
+    // 自动播放视频不再和首屏底图/CSS 抢带宽，也不会把 LCP 观测点拖到几十秒。
     const startLoad = () => {
       heroVideo.preload = "auto";
       heroVideo.load();
     };
+    const startLoadDeferred = () => {
+      const go = () => startLoad();
+      if (typeof requestIdleCallback === "function") {
+        requestIdleCallback(go, { timeout: 5000 });
+      } else {
+        setTimeout(go, 2000);
+      }
+      // 硬兜底：隐藏的预览面板/后台标签里 requestIdleCallback 可能一直不执行，
+      // 最迟 4s 也强制开始下载——首屏底图已就绪，此时拉视频不伤 LCP。
+      setTimeout(go, 4000);
+    };
 
-    // 阶段 3：视频可以播放时立即播放
-    heroVideo.addEventListener(
-      "canplay",
-      () => {
-        if (heroVideo.paused) tryPlay();
-      },
-      { once: true },
-    );
+    // 阶段 3：视频可以播放时立即播放（不设 once：canplay 可能早于监听器挂载）
+    heroVideo.addEventListener("canplay", () => {
+      if (heroVideo.paused) tryPlay();
+    });
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", startLoad, { once: true });
+    if (document.readyState === "complete") {
+      preloadLazyImages();
+      startLoadDeferred();
     } else {
-      startLoad();
+      window.addEventListener(
+        "load",
+        () => {
+          preloadLazyImages();
+          startLoadDeferred();
+        },
+        { once: true },
+      );
     }
 
-    // Safety net: 8s 后如果完全没加载到数据，显示 fallback
+    // Safety net: 8s 后如果完全没加载到数据，先强制再拉一次（覆盖 rIC/load
+    // 在隐藏面板里不执行的边界）；再 8s 仍无数据才判定真失败，显示兜底图
     setTimeout(() => {
-      if (heroVideo.readyState === 0 && heroVideo.networkState === 3) {
-        showFallback();
+      if (heroVideo.readyState === 0) {
+        startLoad();
+        setTimeout(() => {
+          if (heroVideo.readyState === 0) showFallback();
+        }, 8000);
       }
     }, 8000);
 
-    // ===== 阶段 4：视频开始播放后，空闲时预加载懒加载图片 =====
-    // playing 事件 = 视频已缓冲足够并真正开始播放，此时视频不会卡顿，
-    // 剩余带宽可用来预加载图片；decode() 后台线程解码，不影响视频和滚动
-    const preloadLazyImages = () => {
+    // ===== 阶段 4：整页 load 后空闲时，把「首屏附近」的懒加载图升为 eager =====
+    // 业主 2026-11-06 口径：图片先加载展示，才轮到视频后台下载。但「全部升级」
+    // 是错的：移动端实测会把 facade/mega-menu/factory 等 ~40 张屏外图一次性拉满，
+    // 从 load 一直堵到 30s+，反把 hero 视频首帧挤到最后（LCP 爆到 24s）。
+    // 正解＝只升「首屏 1.25 屏高以内」的图，屏外一律保持原生 lazy（滚到才加载，
+    // 天然从上往下），既不塞满连接、又让看得见的图先于视频落地。
+    // 用 function 声明是为了让上面的 load 钩子能先调用它。
+    function preloadLazyImages() {
       const idle =
         (window as any).requestIdleCallback ||
         ((cb: Function) => setTimeout(cb, 2000));
       idle(
         () => {
+          const limit = window.innerHeight * 1.25; // 首屏 + 一点提前量
           document
             .querySelectorAll<HTMLImageElement>('img[loading="lazy"]')
             .forEach((img) => {
+              // 隐藏 Tab 面板（display:none）里的图跳过：不点就不加载，
+              // 升 eager 会让 5 个 Tab 的图一起在后台抢带宽（业主明确不要）
+              if (img.closest(".gallery-panel:not(.active)")) return;
+              const rect = img.getBoundingClientRect();
+              // 无渲染盒（display:none）或落在首屏之外：保持 lazy，滚到再加载
+              if (!rect.height || rect.top > limit || rect.bottom < 0) return;
               img.loading = "eager";
               // 用 decode() 在后台线程解码，不阻塞主线程（避免滚动时卡顿）
               if (!img.complete) {
@@ -2989,9 +3129,7 @@ const websiteJsonLd = {
         },
         { timeout: 5000 },
       ); // 最多等 5s 空闲，超时也执行
-    };
-
-    heroVideo.addEventListener("playing", preloadLazyImages, { once: true });
+    }
   }
 
   document.querySelectorAll(".gallery-tab").forEach((tab) => {
@@ -3004,23 +3142,59 @@ const websiteJsonLd = {
       document
         .querySelectorAll(".gallery-panel")
         .forEach((p) => p.classList.remove("active"));
-      document
-        .querySelector(`.gallery-panel[data-panel="${target}"]`)
-        ?.classList.add("active");
+      const panel = document.querySelector(
+        `.gallery-panel[data-panel="${target}"]`,
+      );
+      panel?.classList.add("active");
+      // 切到的面板立即全力加载自己的图（用户动作 = 最高优先级）；
+      // 没切过的面板继续保持 lazy，一张都不多下（业主 2026-11-06 口径）
+      panel
+        ?.querySelectorAll<HTMLImageElement>('img[loading="lazy"]')
+        .forEach((img) => {
+          img.loading = "eager";
+        });
     });
   });
 
-  /* ===== Video Gallery: 吸引力封面 + 下方 Play 按钮，点击才播放 =====
-     - 默认静态封面（第一帧海报）；仅首格进入视口自动播放，其余点击才播
-     - 每列海报下方一个 Play 按钮：点击播放（静音循环），再点暂停
-     - 播放时按钮图标/文字切换为 Pause */
+  /* ===== Video Gallery: 静态封面图 + Play 点击才注入视频 =====
+     - 封面是普通 <img loading=lazy>（ markup 里没有任何 <video>），按 DOM 顺序
+       进懒加载队列，不会比后面章节的图更慢，也不跟 hero 底图抢带宽
+     - 点 Play 才创建 <video preload=auto> 盖在封面上全力下载（用户动作 =
+       最高优先级）；再点暂停，按钮文案 Play/Pause 同步
+     - 仅首格（data-vg-auto）在 window load + 进视口后自动注入并播——整站因此
+       只剩 hero + 首格两个视频请求（业主 2026-11-06 口径） */
   const vgSection = document.getElementById("videoGallery");
   if (vgSection) {
+    /** 首次调用才把 <video> 注入 .vg-cell（盖在封面 img 上层），之后复用 */
+    const ensureVideo = (item: HTMLElement): HTMLVideoElement | null => {
+      const existing = item.querySelector<HTMLVideoElement>("video");
+      if (existing) return existing;
+      const src = item.dataset.vgSrc;
+      const cell = item.querySelector<HTMLElement>(".vg-cell");
+      if (!src || !cell) return null;
+      const video = document.createElement("video");
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = "auto";
+      video.src = src;
+      // Astro scoped CSS 不会命中 JS 动态创建的 <video>（它没有 data-astro-cid
+      // 属性），.vg-cell video 的铺满规则对它无效——首格自播实测视频按原始尺寸
+      // 撑爆网格列。铺满样式必须内联写死，与封面 img 同一套定位。
+      video.style.position = "absolute";
+      video.style.inset = "0";
+      video.style.width = "100%";
+      video.style.height = "100%";
+      video.style.objectFit = "cover";
+      video.style.display = "block";
+      cell.appendChild(video);
+      return video;
+    };
+
     vgSection.querySelectorAll<HTMLElement>(".vg-item").forEach((item) => {
-      const video = item.querySelector("video");
       const btn = item.querySelector<HTMLButtonElement>("[data-vg-play]");
       const label = btn?.querySelector(".vg-play-text");
-      if (!video || !btn) return;
+      if (!btn) return;
 
       const sync = (playing: boolean) => {
         item.classList.toggle("playing", playing);
@@ -3028,53 +3202,82 @@ const websiteJsonLd = {
       };
 
       btn.addEventListener("click", () => {
+        const video = ensureVideo(item);
+        if (!video) return;
+        // 事件只绑一次：注入后播放/暂停都由 sync 刷按钮状态
+        if (!video.dataset.vgBound) {
+          video.dataset.vgBound = "1";
+          video.addEventListener("play", () => sync(true));
+          video.addEventListener("pause", () => sync(false));
+        }
         if (video.paused) {
-          // 首次点击才下载整片（此前仅 metadata 封面）
-          if (video.preload === "metadata" || video.preload === "none") {
-            video.preload = "auto";
-            video.load();
-          }
           video.play().catch(() => {});
         } else {
           video.pause();
         }
       });
-
-      video.addEventListener("play", () => sync(true));
-      video.addEventListener("pause", () => sync(false));
     });
 
-    // 首格默认自动播放：进入视口即播、离开即暂停；
-    // 用户手动点过该格按钮后交还手动控制；偏好减少动态时不自动播
+    // 业主 2026-11-07 口径：封面必须“滚到就有图、秒加载”。vg 整段在首屏
+    // 之下，原生 lazy 要等真正滚到才发请求，临近视口（提前一整屏）时把 6 张
+    // 封面一次性升 eager：单张 39~63KB、合计 ~300KB，换“滚到即满图”值得。
+    const vgCovers = Array.from(
+      vgSection.querySelectorAll<HTMLImageElement>("img.vg-cover"),
+    );
+    if (vgCovers.length && "IntersectionObserver" in window) {
+      const vgEagerIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            vgCovers.forEach((img) => {
+              img.loading = "eager";
+            });
+            vgEagerIO.disconnect();
+          });
+        },
+        { rootMargin: "100% 0px" },
+      );
+      vgEagerIO.observe(vgSection);
+    }
+
+    // 首格默认自动播放：window load 之后（封面图等静态资源先落地）+ 进视口才
+    // 注入并起播，离开视口即暂停；用户手动点过该格按钮后交还手动控制；
+    // 偏好减少动态时不自动播（封面图照常显示）
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const featured = vgSection.querySelector<HTMLElement>(".vg-item");
-    const fVideo = featured?.querySelector("video");
+    const featured = vgSection.querySelector<HTMLElement>(
+      ".vg-item[data-vg-auto]",
+    );
     const fBtn = featured?.querySelector<HTMLButtonElement>("[data-vg-play]");
     let manual = false;
     fBtn?.addEventListener("click", () => {
       manual = true;
     });
-    if (featured && fVideo && !reduceMotion) {
-      const featuredObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (manual) return;
-            if (entry.isIntersecting) {
-              if (fVideo.preload === "metadata" || fVideo.preload === "none") {
-                fVideo.preload = "auto";
-                fVideo.load();
+    if (featured && !reduceMotion) {
+      const startFeatured = () => {
+        const featuredObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (manual) return;
+              const video = ensureVideo(featured);
+              if (!video) return;
+              if (entry.isIntersecting) {
+                video.play().catch(() => {});
+              } else {
+                video.pause();
               }
-              fVideo.play().catch(() => {});
-            } else {
-              fVideo.pause();
-            }
-          });
-        },
-        { threshold: 0.35 },
-      );
-      featuredObserver.observe(featured);
+            });
+          },
+          { threshold: 0.35 },
+        );
+        featuredObserver.observe(featured);
+      };
+      if (document.readyState === "complete") {
+        startFeatured();
+      } else {
+        window.addEventListener("load", startFeatured, { once: true });
+      }
     }
   }
 
