@@ -11,15 +11,17 @@
  * 站内另有 19 处按钮能开 InquiryModal，产品页 / 博客页 / 视频页底部还有一整块
  * 询盘表单区块（InquiryFormSection）。
  *
- * 头像本体是 <a href={whatsappUrl(...)}>：
+ * 链接本体是最外层的 <a class="fa-stack" href={whatsappUrl(...)}>，气泡与头像都在它
+ * 里面（业主 2026-11-07：气泡也要能点，鼠标放上去要有反应）：
  * - 号码与链接一律走 lib/companyProfile.ts 的 whatsappUrl（唯一来源 whatsappPhone）
  * - 预填正文固定一句，不跟着气泡文案轮换：客户点开后看到的会话内容必须稳定可预期
  * - data-wa-source="floating_avatar" 标明来源位
+ * - hover 不自动跳转：鼠标扫过就弹 WhatsApp 会误触且关不掉，只做手型 + 反馈 + 点击跳转
  *
- * 气泡文案轮换：桌面端每 4.5s 换一条，纯装饰，整块 aria-hidden，可访问名字交给
- * 链接自己的 aria-label。窄屏（<1280px，与页眉桌面断点一致）整块隐藏只留头像——
- * 390 宽下气泡会横吃掉半屏并压住正文（业主明确选「只显示头像」）。
- * 尊重 prefers-reduced-motion：减弱动效时不轮换，只显第一条。
+ * 气泡文案轮换：桌面端每 4.5s 换一条，整块 aria-hidden（文案在轮换，不能当链接名，
+ * 否则读屏每次听到的都不一样），可访问名字交给链接自己的 aria-label。窄屏（<1280px，
+ * 与页眉桌面断点一致）整块隐藏只留头像——390 宽下气泡会横吃掉半屏并压住正文
+ * （业主明确选「只显示头像」）。尊重 prefers-reduced-motion：减弱动效时不轮换，只显第一条。
  *
  * 角标是绿色在线小圆点。参考站那个红色「1」「4」是假的未读消息数：本站没有任何
  * 消息系统，编一个未读计数等于对客户撒谎（数据诚实红线），所以不做。
@@ -60,7 +62,21 @@ const WA_URL = whatsappUrl(
 );
 ---
 
-<div class="fa-stack">
+<a
+    class="fa-stack"
+    href={WA_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-wa-source="floating_avatar"
+    aria-label="Chat with MEIYU on WhatsApp"
+>
+    {
+        /* 气泡与头像共用一个链接（业主 2026-11-07）：整块都显示手型、都有 hover
+        反馈、点哪儿都跳同一个 WhatsApp。以前只有头像可点，气泡是 pointer-events:none，
+        鼠标放上去没任何反应，客户看不出它能点。
+        气泡整块 aria-hidden，可访问名字来自链接自己的 aria-label（文案在轮换，
+        不能当链接名用，否则读屏每次听到的都不一样）。 */
+    }
     <span class="fa-bubble" aria-hidden="true">
         {
             LINES.map((line, i) => (
@@ -72,14 +88,7 @@ const WA_URL = whatsappUrl(
         <span class="fa-bubble-tail"></span>
     </span>
 
-    <a
-        href={WA_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="fa-avatar"
-        data-wa-source="floating_avatar"
-        aria-label="Chat with MEIYU on WhatsApp"
-    >
+    <span class="fa-avatar">
         {
             /* 字母底：照片盖在它上面；照片加载失败时（onerror 藏起 img）它就是可见内容 */
         }
@@ -94,8 +103,8 @@ const WA_URL = whatsappUrl(
             onerror="this.style.display='none'"
         />
         <span class="fa-online" aria-hidden="true"></span>
-    </a>
-</div>
+    </span>
+</a>
 
 <script>
     const lines = Array.from(
@@ -116,11 +125,11 @@ const WA_URL = whatsappUrl(
 </script>
 
 <style>
-    /* 整包锚在右下角，右边缘固定，气泡向左侧生长。bottom 100px 是把头像抬到
-       回顶圆钮上方（回顶 24 + 60 高 + 16 间距，与目标站同尺寸同间距；
-       窄屏同一口径：16 + 52 + 16 = 84）。
-       pointer-events:none 必须放在这一层：气泡与头像之间那 14px gap 属于本容器，
-       只给气泡自己 none 的话，这块隐形区域会拦住底下正文的点击（实测发现）。 */
+    /* 整包现在就是那个链接（见 markup 注释）：锚在右下角，右边缘固定，气泡向左侧
+       生长。bottom 100px 是把头像抬到回顶圆钮上方（回顶 24 + 60 高 + 16 间距，
+       与目标站同尺寸同间距；窄屏同一口径：16 + 52 + 16 = 84）。
+       代价要说清：链接盒子含气泡与那 14px 缝隙，这块区域底下的正文不能再被点到
+       （目标站的气泡链接也是这样，且窄屏气泡整块隐藏，所以只影响桌面端）。 */
     .fa-stack {
         position: fixed;
         right: 24px;
@@ -130,7 +139,8 @@ const WA_URL = whatsappUrl(
         align-items: center;
         justify-content: flex-end;
         gap: 14px;
-        pointer-events: none;
+        text-decoration: none;
+        cursor: pointer;
     }
 
     /* ── 头像 ── */
@@ -138,7 +148,6 @@ const WA_URL = whatsappUrl(
         position: relative;
         flex-shrink: 0;
         display: block;
-        pointer-events: auto; /* 全列只有头像可点 */
         /* 60px / 白环 2px：对齐目标站实测值（它 60px + border-2，白圈占比 3.3%）。
            之前是 56px + 3px（占比 5.4%），业主反馈“白边太粗”就是这个比例差。 */
         width: 60px;
@@ -154,16 +163,19 @@ const WA_URL = whatsappUrl(
             box-shadow 0.2s ease;
     }
 
-    .fa-avatar:hover {
+    /* hover / 按下 / 焦点都改挂到外层链接上：现在整块是一个链接，
+       鼠标落在气泡上也该给同样的反馈，否则客户看不出气泡能点。 */
+    .fa-stack:hover .fa-avatar {
         transform: translateY(-3px) scale(1.05);
         box-shadow: 0 10px 24px rgba(13, 9, 80, 0.26);
     }
 
-    .fa-avatar:active {
+    .fa-stack:active .fa-avatar {
         transform: translateY(0) scale(1);
     }
 
-    .fa-avatar:focus-visible {
+    /* 焦点环只圈头像：圈整块会把 280px 宽的气泡一起框进去，观感很差 */
+    .fa-stack:focus-visible .fa-avatar {
         outline: 2px solid #c09020;
         outline-offset: 3px;
     }
@@ -243,8 +255,15 @@ const WA_URL = whatsappUrl(
         font-size: 0.9rem;
         line-height: 1.45;
         font-weight: 500;
-        /* 气泡只是提示，不能挡住底下的正文与按钮 */
-        pointer-events: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    /* 鼠标落在整块（含气泡）上时，气泡也跟着亮一下，读作“这里能点” */
+    .fa-stack:hover .fa-bubble {
+        border-color: #c09020;
+        box-shadow: 0 8px 22px rgba(13, 9, 80, 0.16);
     }
 
     /* 指向头像的小尾巴：右侧中下，用旋转方块画 */
