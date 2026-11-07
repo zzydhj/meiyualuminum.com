@@ -26,7 +26,11 @@
 
 interface BreadcrumbItem {
   name: string;
-  url: string;
+  /** 省略或空串 = 这一级只是分组标签、没有对应页面（如 Resources）。
+      以前调用方用 url: "#" 占位，结果是面包屑里出现死链（Lighthouse 计入
+      「无法抓取的链接」），而且同一个 # 会被写进 JSON-LD 的 item，
+      new URL("#", site) 算出自指 fragment。现在不链接就干脆不给 url。 */
+  url?: string;
 }
 
 interface Props {
@@ -65,15 +69,21 @@ const resolvedItems: BreadcrumbItem[] = items ?? [
   ...(current && currentUrl ? [{ name: current, url: currentUrl }] : []),
 ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: resolvedItems.map((item, index) => ({
+// JSON-LD 只收有真实目标的那几级，并重排 position：BreadcrumbList 要求除最后
+// 一项外每项都有可用 item，一条指不到任何页面的 crumb 应该整条不报。
+const jsonLdItems = resolvedItems
+  .filter((item) => item.url)
+  .map((item, index) => ({
     "@type": "ListItem",
     position: index + 1,
     name: item.name,
-    item: new URL(item.url, Astro.site).href,
-  })),
+    item: new URL(item.url as string, Astro.site).href,
+  }));
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: jsonLdItems,
 };
 ---
 
@@ -91,8 +101,12 @@ const jsonLd = {
           <li>
             {isLast ? (
               <span aria-current="page">{item.name}</span>
-            ) : (
+            ) : item.url ? (
               <a href={item.url}>{item.name}</a>
+            ) : (
+              /* 分组标签：不是链接就不装成链接（Lighthouse 对无 href 和
+                 href="#" 的 <a> 都记一条） */
+              <span class="crumb-static">{item.name}</span>
             )}
             {!isLast && (
               <span class="separator" aria-hidden="true">
@@ -143,6 +157,11 @@ const jsonLd = {
     font-weight: 600;
   }
 
+  /* 分组标签（无 url 的中间级）：跟普通 crumb 同色但不蓝不带下划线 */
+  .breadcrumb .crumb-static {
+    color: #666;
+  }
+
   .breadcrumb .separator {
     color: #999;
     user-select: none;
@@ -172,6 +191,10 @@ const jsonLd = {
   .breadcrumb.hero [aria-current="page"] {
     color: rgba(255, 255, 255, 0.85);
     font-weight: 500;
+  }
+
+  .breadcrumb.hero .crumb-static {
+    color: rgba(255, 255, 255, 0.72);
   }
 
   .breadcrumb.hero .separator {
