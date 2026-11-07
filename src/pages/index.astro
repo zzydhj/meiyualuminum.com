@@ -3051,7 +3051,14 @@ const websiteJsonLd = {
     // 阶段 2（业主 2026-11-06 定口径）：先让整页能浏览，window load 之后才在
     // 主线程空闲时默默下载视频——首屏有底图垫着，视觉不断档；慢网上几 MB 的
     // 自动播放视频不再和首屏底图/CSS 抢带宽，也不会把 LCP 观测点拖到几十秒。
+    // load() 是「重置」不是「确保已加载」：它会掐掉正在进行的下载、把 currentTime
+    // 推回片段起点（#t=0.1）再重拉。所以下面 rIC 与 4s 定时器两条路径只能生效一次，
+    // 否则业主看到的症状就是「播几秒跳回 0 重播」（2026-11-07 实测：首个 mp4 请求在
+    // load+4s 被掐断并重新发起）；而且第 2 次要重新下载已经下过的字节，慢网上反而更慢。
+    let loadStarted = false;
     const startLoad = () => {
+      if (loadStarted) return;
+      loadStarted = true;
       heroVideo.preload = "auto";
       heroVideo.load();
     };
@@ -3086,16 +3093,29 @@ const websiteJsonLd = {
       );
     }
 
-    // Safety net: 8s 后如果完全没加载到数据，先强制再拉一次（覆盖 rIC/load
-    // 在隐藏面板里不执行的边界）；再 8s 仍无数据才判定真失败，显示兜底图
+    // 兜底 A（8s）：既没解出帧、也没在拉流 → 说明加载根本没开始，放开守卫重试一次。
+    // 必须两个条件一起看：networkState 2 = NETWORK_LOADING，慢网上下载健康进行中时
+    // readyState 也是 0，只看 readyState 会把那条健康下载中的流掐掉重来（今天早些时候就是这么误伤的）。
+    setTimeout(() => {
+      if (heroVideo.readyState === 0 && heroVideo.networkState !== 2) {
+        loadStarted = false;
+        startLoad();
+      }
+    }, 8000);
+
+    // 兜底 B（16s）：16 秒还一帧都没有，不管它是不是“还在拉流”，那条流实际上已经死了
+    // （卡住的连接会一直保持 networkState=2，靠上面的条件永远等不到重试）。最后重试
+    // 一次，再等 8s 仍无数据就判定真失败、回退到底图。这两次重试时屏幕上都只有底图
+    // 或 poster，不会产生任何回跳观感；真正在播的视频 readyState 早就 ≥ 2，进不来。
     setTimeout(() => {
       if (heroVideo.readyState === 0) {
+        loadStarted = false;
         startLoad();
         setTimeout(() => {
           if (heroVideo.readyState === 0) showFallback();
         }, 8000);
       }
-    }, 8000);
+    }, 16000);
 
     // ===== 阶段 4：整页 load 后空闲时，把「首屏附近」的懒加载图升为 eager =====
     // 业主 2026-11-06 口径：图片先加载展示，才轮到视频后台下载。但「全部升级」
