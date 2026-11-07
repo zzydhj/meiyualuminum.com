@@ -30,10 +30,12 @@ export const companyFacts = {
     staff: "80",
     // 2026-11-01 业主指令：对外邮箱换成主联系人邮箱（原 info@ 不再出现在站上）。
     email: "william@meiyualuminum.com",
-    // 2026-11-01 起电话与 WhatsApp 是两个不同号码，必须分开存。此前两者共用 phone 一个字段，
-    // 改直拨号会连带把全站 WhatsApp 链接一起改掉——所以本次只动 phone，WhatsApp 保持旧号。
+    // 号码字段：2026-11-01 曾拆为两个不同号（直拨 139… / WhatsApp 135…），
+    // 2026-11-07 业主指令全站 WhatsApp 改回与直拨同一个号。
+    // 两个字段仍分开保留（而不是合回一个）：当初拆分就是为了“改直拨号不要连带
+    // 改掉全站 wa.me 链接”，合回一个就把那层保护拆了；以后两边再分叉只改本行。
     phone: "+86 139 2214 1133",
-    whatsappPhone: "+86 135 0983 8008",
+    whatsappPhone: "+86 139 2214 1133",
 };
 
 /**
@@ -45,7 +47,9 @@ export const companyFacts = {
  * 其中四处把号码硬写在代码里，而号码换过一次（旧号 8617671728821 已作废），
  * 再换一次就得改六个地方。
  *
- * 带 data-wa-source 的埋点由 BaseLayout 全局监听 wa.me 上报 GA4，新加链接时记得传 waSource。
+ * 带 data-wa-source 的来源标记仍在新加链接时传入：GA 已于 2026-11-06 应业主要求整体
+ * 移除（BaseLayout 的全局 wa.me 上报一并删掉），属性留着当来源标识，以后接任何
+ * 统计都不用再回头补。
  */
 export const WHATSAPP_NUMBER = companyFacts.whatsappPhone.replace(/[^\d]/g, "");
 export const whatsappUrl = (message: string): string =>
@@ -92,6 +96,15 @@ export const standardTerms: TermRow[] = [
 /** 条款限定语：附录 A 要求质保/MOQ/交期必须带此限定 */
 export const termsNote =
     "Figures above are our standard offer; final terms are confirmed with your quotation.";
+
+/**
+ * 产品卡片用的 MOQ 短句（附录 A【MOQ/交期】的半句，不是新口径）。
+ * 卡片只有一行宽度，写不下 standardTerms 的完整双档句式；这里保留
+ * “standard panels” 这个限定词，是为了不把定制（穿孔/异形）的 1,000 m²
+ * 说成 50 m²。完整口径仍在产品页 Ordering & Terms 表与采购须知页。
+ * 数字只此一处，改附录 A 时跟着改 standardTerms 与本行。
+ */
+export const moqCardLine = "50 m² (standard panels)";
 
 /**
  * 询盘首次回复时效（附录 A【响应时效】，业主已确认属实）。

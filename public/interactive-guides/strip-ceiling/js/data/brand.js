@@ -19,7 +19,8 @@ export const BRAND = {
     'https://www.meiyualuminum.com/categories/aluminum-strip-panel/',
   contactPage: 'https://www.meiyualuminum.com/contact/',
   // 2026-11-01 业主指令：对外邮箱改 william@，电话改 139 段（本字段只做 tel: 链接）；
-  // WhatsApp 是另一个号码，不写在本站静态页上。
+  // 2026-11-07 起 WhatsApp 与直拨合用同一个号（wa.me 仍只在主站按 companyProfile.ts 生成，
+  // 本静态页不写 wa.me），所以本字段与 whatsappPhone 同值不矛盾；号码再变要两边同步。
   email: 'william@meiyualuminum.com',
   phone: '+86 139 2214 1133',
   responseTime: '1 hour',

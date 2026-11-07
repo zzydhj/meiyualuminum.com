@@ -1,7 +1,12 @@
-# Blog 交付提示词 v5.7.8
+# Blog 交付提示词 v5.7.9
 
 > 用途：把任意参考文章（网址或 HTML）重写成**质量高于参考原文**的英文 Blog，
 > 并产出一个"交付页面"（预览 + 一键复制正文/字段/整条记录 + 一键导入 SQL），供直接导入 Supabase `posts` 表。
+>
+> v5.7.9 变化（WhatsApp 号码并回直拨号，业主 2026-11-07 指令）：全站 `wa.me` 链接改走
+> **+86 139 2214 1133**，+86 135 0983 8008 不再出现在站上。`companyProfile.ts` 仍保留
+> phone / whatsappPhone 两个字段（同值），目的是保住「改直拨号不连带改掉全站 wa.me」这层保护；
+> 下一句 v5.7.8 里“不得再合并”指的是**不得合并字段**，不是不得同值。
 >
 > v5.7.8 变化（联系方式与对外名称变更，业主 2026-11-01 指令）：官方英文名补全为
 > **MEIYU Aluminum Industry Co., Ltd.**；对外邮箱 info@ → **william@meiyualuminum.com**；
@@ -355,11 +360,12 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
   官网 meiyualuminum.com。
   ⚠ 对外文案禁写城市名（业主 2026-10-27 指令）：网站、博客、SEO 字段、产品正文一律不得出现
   Dongguan / 东莞 / Foshan / 佛山；实际厂区街道地址仅用于合同与物流，见【联系】。
-【联系（可公开）】业主 2026-11-01 指令：邮箱改主联系人邮箱；**电话与 WhatsApp 从此是两个不同号码**。
-  此前两者共用 +86 135 0983 8008 一个号，所以 `companyProfile.ts` 只有一个 phone 字段；现在必须
-  按 phone / whatsappPhone 两字段分开引用，改直拨号不得连带改掉全站 wa.me 链接。
+【联系（可公开）】业主 2026-11-07 指令：**全站 WhatsApp 改回与直拨同一个号**（+86 139 2214 1133）；
+  2026-11-01 那次拆分（直拨 139… / WhatsApp 135…）到此结束，**+86 135 0983 8008 不再出现在站上**。
+  `companyProfile.ts` 仍保留 phone / whatsappPhone 两个字段：当初拆分是为了“改直拨号不要连带
+  改掉全站 wa.me 链接”，合回一个字段就把那层保护拆了；两字段当前同值，以后要分叉只改一行。
   Email: william@meiyualuminum.com；电话（页脚 / tel: 链接 / 售后直拨）: +86 139 2214 1133；
-  WhatsApp（wa.me 与悬浮按钮）: +86 135 0983 8008。
+  WhatsApp（wa.me 与右下角悬浮头像）: +86 139 2214 1133。
   联系人署名 William Wei（公司资料口径；站内暂不显示人名，如需上站另行指令）。
   实物街道地址 Baima Cuiyuan Street, Nancheng Subdistrict, Dongguan City, Guangdong Province, China
   —— 仅供合同/发票/寄样/提货使用，**禁止写进任何网站页面或博客文案**。
@@ -545,6 +551,11 @@ def push(cli, key, data):         # HEAD 去重 → 上传 → 公开 URL 校验
 
 ## 变更记录
 
+- **v5.7.9（2026-11-07）**：业主指令全站 WhatsApp 改走直拨同号 **+86 139 2214 1133**，
+  `companyFacts.whatsappPhone` 改值（+86 135 0983 8008 下线）；phone / whatsappPhone 两字段保留不合并。
+  改动只这一处：全站 `wa.me` 链接均由 `whatsappUrl()` 从该字段推导（页眉 CTA、右下角悬浮头像、
+  产品卡 Get Quote、About、采购须知、询盘区块）；三个 3D 指南的 `brand.js` 只有 tel: 链接，值未变，
+  只把“WhatsApp 是另一个号码”的过时注释改掉。
 - **v5.7.8（2026-11-01）**：官方英文名补全为 MEIYU Aluminum Industry Co., Ltd.（全站 14 处 + 三个
   3D 指南的 brand.js / overview.js / index.html 同步）；对外邮箱 info@ → william@；电话与 WhatsApp
   拆为两个号码（直拨 139 2214 1133 / WhatsApp 保持 135 0983 8008），`companyFacts` 新增
