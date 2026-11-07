@@ -3351,6 +3351,195 @@ const websiteJsonLd = {
     }
   }
 
+  /* ===== 后台预热队列 =====
+     业主 2026-11-07 定的阶梯：静态首屏 → hero 视频 → 首格视频 → 滚动区图片 →
+     隐藏 Tab 图片 → 其余 5 格视频。前三级由上面的既有逻辑负责，这里只补后三级。
+     目标不是省流量，是「看起来整页早就加载完了」：用户还没点的时候慢慢铺，
+     点了就秒开。
+
+     为什么图片用 fetch 而不是 new Image()：预热必须能被中断（业主：用户点了某个
+     资源就全力加载那一个，剩下的等一下），而 img.src 一旦发出去就收不回。
+     no-cors 拿到的是 opaque 响应、读不到状态码，但 HTTP 缓存按 URL 记账，
+     之后 <img> 显示时直接命中。
+
+     为什么视频用真实 <video> 而不是 fetch：浏览器把 Range 列为 privileged header，
+     页面 JS 设了会被静默剥掉——实测 fetch 带 Range 退化成 200 整包（想只热
+     头部+尾部 moov 共 320KB 的方案因此作废，反而下了三遍整片）。媒体层自己发的
+     是 206、会分片缓存。2026-11-07 实测：未预热 play()→首帧 3304ms，预热后 190ms。
+     中断时已下完的分片仍留在缓存里，所以让路不是白干。 */
+  {
+    const conn = (
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string };
+      }
+    ).connection;
+    const saveData = !!conn?.saveData;
+    const slowNet = /2g/.test(conn?.effectiveType || "");
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const desktop = window.matchMedia("(min-width: 1024px)").matches;
+
+    // 用户一动，队列就排队让路
+    let lastInteract = 0;
+    ["pointerdown", "click", "scroll", "keydown"].forEach((evt) =>
+      document.addEventListener(
+        evt,
+        () => {
+          lastInteract = Date.now();
+        },
+        { capture: true, passive: true },
+      ),
+    );
+
+    const nap = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    // idle 必须配一个硬超时：隐藏标签页/后台窗口里 requestIdleCallback 可能一直
+    // 不执行（hero 那条 4s 硬兜底就是为此存在的，同一个坑不踩第二次）。
+    const idle = () =>
+      new Promise<void>((res) => {
+        let done = false;
+        const go = () => {
+          if (done) return;
+          done = true;
+          res();
+        };
+        if (typeof requestIdleCallback === "function")
+          requestIdleCallback(go, { timeout: 4000 });
+        setTimeout(go, 4500);
+      });
+
+    // 必须把 body 读完才算一件完成：fetch() 的 Promise 在响应头到达就 resolve，
+    // 只 await 它的话循环会在几百毫秒内把 82 张图全部发出去（2026-11-07 实测：
+    // 预热全部挤在导航后 2479–2734ms 的 255ms 窗口内），既不是「一次一件」，
+    // 还会在 hero 视频刚起播的那一刻抢满带宽。opaque 响应读不到状态码，但 body 可读。
+    const warmImage = (url: string, signal: AbortSignal) =>
+      fetch(url, { mode: "no-cors", credentials: "omit", signal })
+        .then((r) => r.arrayBuffer().catch(() => undefined))
+        .then(
+          () => {},
+          () => {},
+        );
+
+    /** 整片下完就收摊；被中断、出错、超时都干净退出 */
+    const warmVideo = (url: string, signal: AbortSignal) =>
+      new Promise<void>((res) => {
+        const v = document.createElement("video");
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          v.pause();
+          v.removeAttribute("src");
+          v.load();
+          v.remove();
+          res();
+        };
+        v.muted = true;
+        v.playsInline = true;
+        v.preload = "auto";
+        v.style.cssText =
+          "position:fixed;left:-9999px;top:0;width:2px;height:2px;pointer-events:none";
+        v.addEventListener("error", finish);
+        v.addEventListener("progress", () => {
+          const d = v.duration;
+          if (
+            isFinite(d) &&
+            d > 0 &&
+            v.buffered.length &&
+            v.buffered.end(v.buffered.length - 1) >= d - 0.05
+          )
+            finish();
+        });
+        signal.addEventListener("abort", finish);
+        document.body.appendChild(v);
+        v.src = url;
+        setTimeout(finish, 45000); // 一条流卡住不能把整条队列锁死
+      });
+
+    const tasks: { url: string; run: (s: AbortSignal) => Promise<void> }[] = [];
+    const seen = new Set<string>();
+
+    // P4：滚动会看到的图，按离视口远近排。隐藏容器里的图 rect 全是 0，
+    // 没法比距离，统一排在 P4 末尾（mega-menu 缩略图那批）。
+    const visibleImgs: { rank: number; url: string }[] = [];
+    document
+      .querySelectorAll<HTMLImageElement>('img[loading="lazy"]')
+      .forEach((img) => {
+        // 隐藏 Tab 面板里的图交给 P5，那里要按 Tab 顺序而不是距离排
+        if (img.closest(".gallery-panel:not(.active)")) return;
+        const url = img.src;
+        if (!url || seen.has(url)) return;
+        seen.add(url);
+        const rect = img.getBoundingClientRect();
+        visibleImgs.push({
+          rank: rect.height ? rect.top : Number.MAX_SAFE_INTEGER,
+          url,
+        });
+      });
+    visibleImgs
+      .sort((a, b) => a.rank - b.rank)
+      .forEach((it) =>
+        tasks.push({ url: it.url, run: (s) => warmImage(it.url, s) }),
+      );
+
+    // P5：4 个隐藏 Tab 面板的图，按 Tab 在页面上的先后顺序
+    document
+      .querySelectorAll<HTMLElement>(".gallery-panel:not(.active)")
+      .forEach((panel) => {
+        panel.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
+          const url = img.src;
+          if (!url || seen.has(url)) return;
+          seen.add(url);
+          tasks.push({ url, run: (s) => warmImage(url, s) });
+        });
+      });
+
+    // P6：其余 5 格视频。首格若还没被滚到（未注入）排在这组第一个——
+    // 业主明确「第一个能播放的要最快的先去加载」。手机、省流量、2G、偏好减少
+    // 动态时整段跳过：4.83MB 不该替这些人花。
+    if (desktop && !slowNet && !reduceMotion) {
+      const items = Array.from(
+        document.querySelectorAll<HTMLElement>(".vg-item"),
+      );
+      const featured = items.find((i) => i.hasAttribute("data-vg-auto"));
+      const ordered = featured
+        ? [featured, ...items.filter((i) => i !== featured)]
+        : items;
+      ordered.forEach((item) => {
+        const url = item.dataset.vgSrc;
+        if (!url) return;
+        if (item.querySelector("video")) return; // 已注入就在下，不重复
+        tasks.push({ url, run: (s) => warmVideo(url, s) });
+      });
+    }
+
+    let started = false;
+    const run = async () => {
+      if (started || saveData) return;
+      started = true;
+      for (const task of tasks) {
+        // 让路：最近 2 秒内有交互就等；最多等 20 秒，免得用户一直滚动就永不预热
+        let waited = 0;
+        while (Date.now() - lastInteract < 2000 && waited < 20000) {
+          await nap(600);
+          waited += 600;
+        }
+        await idle();
+        const ac = new AbortController();
+        await task.run(ac.signal);
+      }
+    };
+
+    // 起跑：hero 拿到画面之后。hero 被慢网或自动播放策略卡住时 20 秒也必须放行。
+    const heroVid = document.querySelector<HTMLVideoElement>(".video-hero-bg");
+    if (heroVid && heroVid.readyState >= 2) {
+      run();
+    } else {
+      heroVid?.addEventListener("loadeddata", () => run(), { once: true });
+      setTimeout(run, 20000);
+    }
+  }
+
   /* ===== Global Map Section ===== */
   const DB: Record<string, { n: string; c: string; t: string; r?: string }[]> =
     {
