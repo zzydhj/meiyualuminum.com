@@ -97,9 +97,7 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
             <ul class="m-list m-l2">
               <li class="m-acc">
                 <div class="m-row">
-                  <a class="m-link" tabindex="-1" aria-disabled="true"
-                    >Aluminum Ceilings</a
-                  >
+                  <span class="m-link m-link--static">Aluminum Ceilings</span>
                   <button
                     type="button"
                     class="m-toggle"
@@ -169,8 +167,7 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
               </li>
               <li class="m-acc">
                 <div class="m-row">
-                  <a class="m-link" tabindex="-1" aria-disabled="true"
-                    >Interior Wall Panels</a
+                  <span class="m-link m-link--static">Interior Wall Panels</span
                   >
                   <button
                     type="button"
@@ -234,8 +231,8 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
               </li>
               <li class="m-acc">
                 <div class="m-row">
-                  <a class="m-link" tabindex="-1" aria-disabled="true"
-                    >Facade &amp; Exterior Cladding</a
+                  <span class="m-link m-link--static"
+                    >Facade &amp; Exterior Cladding</span
                   >
                   <button
                     type="button"
@@ -292,8 +289,7 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
               </li>
               <li class="m-acc">
                 <div class="m-row">
-                  <a class="m-link" tabindex="-1" aria-disabled="true"
-                    >Skirting &amp; Trims</a
+                  <span class="m-link m-link--static">Skirting &amp; Trims</span
                   >
                   <button
                     type="button"
@@ -351,8 +347,8 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
               }
               <li class="m-acc">
                 <div class="m-row">
-                  <a class="m-link" tabindex="-1" aria-disabled="true"
-                    >Non-Standard &amp; Bespoke</a
+                  <span class="m-link m-link--static"
+                    >Non-Standard &amp; Bespoke</span
                   >
                   <button
                     type="button"
@@ -463,7 +459,7 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
       }
       <li class="m-acc">
         <div class="m-row">
-          <a class="m-link" tabindex="-1" aria-disabled="true">Resource</a>
+          <span class="m-link m-link--static">Resource</span>
           <button
             type="button"
             class="m-toggle"
@@ -697,6 +693,15 @@ const videoTags = [...groupVideosByTag(await fetchAllVideos()).keys()].sort();
   }
   .m-link:hover {
     background: #faf8f5;
+  }
+
+  /* 分组标题（本身没有着陆页的那几个）：以前渲染成不带 href 的 <a>，
+     浏览器不把它当链接、也不可聚焦，看上去与真链接一样诚实，但 Lighthouse 的
+     SEO 审计会把每一个无 href 的 <a> 记一条「无法抓取的链接」（实测 6 条全来自这里）。
+     改成 <span>：语义上它本来就不是链接，样式靠 .m-link 照旧继承（本组件的导航样式
+     全部走 class，不依赖元素类型），展开仍由右边的 .m-toggle 按钮负责。 */
+  .m-link--static {
+    cursor: default;
   }
 
   /* 二级样式 */

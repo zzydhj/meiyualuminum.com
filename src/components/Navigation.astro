@@ -62,11 +62,12 @@ import MegaMenu from "./MegaMenu.astro";
 
   <div class="has-dropdown">
     {
-      /* Resource 本身没有着陆页（子项才有），所以不给 href：
-         带 href="#" 时点一下会把页面弹回顶部，看起来像菜单坏了。
-         不给 href 的 <a> 不是链接也不可聚焦，下拉仍由 hover/focus 触发。 */
+      /* Resource 本身没有着陆页（子项才有）。以前写成不带 href 的 <a>：比 href="#"
+         诚实（不会把页面弹回顶部），但 Lighthouse 的 SEO 审计仍会把每个无 href 的
+         <a> 记一条「无法抓取的链接」。它本来就不是链接，所以用 <span>；
+         下拉仍由 .has-dropdown 的 hover/focus-within 触发。 */
     }
-    <a tabindex="-1" aria-disabled="true">
+    <span class="nav-static">
       Resource
       <svg
         class="nav-chevron"
@@ -83,7 +84,7 @@ import MegaMenu from "./MegaMenu.astro";
           stroke-linecap="round"
           stroke-linejoin="round"></path>
       </svg>
-    </a>
+    </span>
     <div class="dropdown">
       {/* 三级飞出：子工具挂在 Free Tools 右侧弹出，不平铺进 Resource 下拉 */}
       <div class="has-flyout">
@@ -168,7 +169,8 @@ import MegaMenu from "./MegaMenu.astro";
       overflow: visible;
     }
 
-    .nav-links a {
+    .nav-links a,
+    .nav-links .nav-static {
       display: inline-block;
       padding: 15px 17px;
       font-size: 1rem; /* 16px */
@@ -180,13 +182,20 @@ import MegaMenu from "./MegaMenu.astro";
       position: relative; /* anchor for the ::after underline */
     }
 
+    /* 分组标题不可点，不给文本光标（hover 时的金色下划线保留：它确实会开下拉） */
+    .nav-links .nav-static {
+      cursor: default;
+    }
+
     /* Replace the blocky orange hover background with a refined gold underline
        that grows from the center. Text color is intentionally left unchanged. */
     .nav-links a:hover,
-    .nav-links a:focus {
+    .nav-links a:focus,
+    .nav-links .nav-static:hover {
       background-color: transparent;
     }
-    .nav-links a::after {
+    .nav-links a::after,
+    .nav-links .nav-static::after {
       content: "";
       position: absolute;
       left: 17px;
@@ -199,7 +208,8 @@ import MegaMenu from "./MegaMenu.astro";
       transition: transform 0.25s ease;
     }
     .nav-links a:hover::after,
-    .nav-links a:focus::after {
+    .nav-links a:focus::after,
+    .nav-links .nav-static:hover::after {
       transform: scaleX(1);
     }
 

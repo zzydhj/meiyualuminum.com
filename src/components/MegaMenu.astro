@@ -252,18 +252,9 @@ const MENU: MegaGroup[] = [
             <div class="mega-pane" id={`mega-pane-${i}`} hidden={i !== 0}>
               <div class:list={["mega-grid", { "mega-grid--split": !!m.note }]}>
                 {m.cards.map((c, j) => {
-                  // 没有真实目标就不给 href：<a> 不带 href 时浏览器不把它当链接、
-                  // 也不可聚焦，比 href="#" 诚实；同时不用拆两套 markup，
-                  // 避开 scoped 样式跟不到新组件的坑。
                   const soon = !c.href || c.href === "#";
-                  return (
-                    <a
-                      href={soon ? undefined : c.href}
-                      class:list={["mega-card", { "mega-card--soon": soon }]}
-                      style={`--i:${j}`}
-                      aria-disabled={soon ? "true" : undefined}
-                      tabindex={soon ? "-1" : undefined}
-                    >
+                  const inner = (
+                    <>
                       <img src={c.img} alt={c.title} loading="lazy" />
                       <div class="mega-card-overlay" />
                       <div class="mega-card-content">
@@ -273,6 +264,19 @@ const MENU: MegaGroup[] = [
                         )}
                       </div>
                       <span class="mega-card-accent" />
+                    </>
+                  );
+                  // 占位卡不是链接就渲成 <span>。以前是「不带 href 的 <a>」：点下去
+                  // 不会跳去假地址，这点是诚实的，但 Lighthouse 会把每一个无 href 的
+                  // <a> 记成一条「无法抓取的链接」（SEO 审计实测报过 6 条）。
+                  // 卡片样式全走 class，换标签不影响。
+                  return soon ? (
+                    <span class="mega-card mega-card--soon" style={`--i:${j}`}>
+                      {inner}
+                    </span>
+                  ) : (
+                    <a href={c.href} class="mega-card" style={`--i:${j}`}>
+                      {inner}
                     </a>
                   );
                 })}
