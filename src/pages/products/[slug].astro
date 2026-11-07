@@ -3,6 +3,7 @@ import Breadcrumb from "../../components/Breadcrumb.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import InquiryButton from "../../components/InquiryButton.astro";
 import InquiryFormSection from "../../components/InquiryFormSection.astro";
+import ProductGrid from "../../components/ProductGrid.astro";
 import { supabase } from "../../lib/supabase";
 import { getCategoryChain } from "../../lib/categoryPath";
 import { productKnowledge, type ProductEnrichedSpecs, type ProductKnowledge } from "../../lib/productKnowledge";
@@ -33,18 +34,54 @@ const categoryChain = await getCategoryChain(primaryCategoryId);
 
 /**
  * 同一品类下的其他已发布产品（不含自己）。
- * Docs & Guides 面板用它做站内内链：超级链接策略下，一个产品页要承接整个品类的搜索意图。
+ * 2026-11-07：原本只取 slug,title 给 Docs & Guides 面板做文字内链，现在页面下方
+ * 直接用 ProductGrid 把这些兄弟产品渲成卡片（业主口径：参考同行站的
+ * “You May Also Like”），所以字段要带齐卡片用的图/型号，链接位也移到卡片上——
+ * 常驻可见的卡片比藏在未激活 Tab 里的文字链对内链与客户都更实在，两处并存只算重复。
  */
 const { data: siblingRows } = await supabase
   .from("products")
-  .select("slug,title")
+  .select("slug,title,image_url,image_alt,part_code,primary_category_id")
   .eq("primary_category_id", primaryCategoryId ?? -1)
   .eq("lang", lang)
   .eq("status", "published")
   .neq("slug", slug)
   .order("title", { ascending: true })
-  .limit(6);
+  .limit(8);
 const siblings = siblingRows ?? [];
+
+/**
+ * 同族不足 4 个（包括一个都没有：19 个产品里有四个是自己分类里唯一的）时用全站
+ * 最新产品补位到 8 个。
+ * 理由：19 个产品里大部分分类只有 1–2 个同族，推荐区渲出一两张卡看上去像坏了；
+ * 参考站也是混排的。补位项走同一个查询字段集，卡片渲染不区分两种来源。
+ * relatedIsFamilyOnly 只用于决定副标题：全是同族时才能说“同一个系统家族里的其他产品”，
+ * 补过位后这句就是假的，换成不带家族名的写法。
+ * 推荐区统一不显 Usage 行（showUsage=false）：同族时它就是面包屑里已经写过的那个词，
+ * 混排时拿分类名又要多查一次 categories 表（产品页是 SSR，多一次串行查询就是多一段
+ * TTFB），而卡片标题本身已经把产品说清楚了。不值得为这一行加一次往返。
+ */
+let related = siblings;
+let relatedIsFamilyOnly = true;
+if (siblings.length < 4) {
+  const exclude = [slug, ...siblings.map((s: { slug: string }) => s.slug)];
+  const { data: moreRows } = await supabase
+    .from("products")
+    .select("slug,title,image_url,image_alt,part_code,primary_category_id")
+    .eq("lang", lang)
+    .eq("status", "published")
+    .not("slug", "in", `(${exclude.join(",")})`)
+    .order("created_at", { ascending: false })
+    .limit(8 - siblings.length);
+  const extra = moreRows ?? [];
+  if (extra.length > 0) {
+    related = [...siblings, ...extra];
+    relatedIsFamilyOnly = false;
+  }
+}
+/** 推荐区副标题里的家族名：取分类链最末一级（叶子），拿不到就不写这句 */
+const familyName =
+  categoryChain.length > 0 ? categoryChain[categoryChain.length - 1].name : null;
 
 const pageTitle = product.seo_title || product.title;
 const pageDescription = product.seo_description || product.description;
@@ -415,21 +452,9 @@ const jsonLd = {
             <span class="pk-doc-meta">3 tools</span>
           </a>
 
-          {
-            siblings.length > 0 && (
-              <div class="pk-doc-group">
-                <h4>Other Products in This System Family</h4>
-                <div class="pk-doc-links">
-                  {siblings.map((s: { slug: string; title: string }) => (
-                    <a class="pk-doc-link" href={`/products/${s.slug}/`}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-                      {s.title}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )
-          }
+          {/* 同族产品不再在这里列文字链：已改为页面下方的 ProductGrid 卡片推荐区，
+              两处并存等于同一批链接在本页写两遍（业主 2026-11-07）。用表达式注释，
+              以随页面源码发给访客。 */}
 
           <div class="pk-doc-request">
             <strong>Need a data sheet, edge detail or test report?</strong>
@@ -452,6 +477,37 @@ const jsonLd = {
   {product.content && (
     <div class="pk-db-content" set:html={product.content} />
   )}
+
+  {/* ══ YOU MAY ALSO LIKE ══ 同族 + 补位产品的卡片推荐区（与列表页同一个 ProductGrid，
+     不另写一份卡片）。categoryMap 传空集是配合 showUsage=false：没有 Usage 行就
+     不需要 id→分类名的映射。用表达式注释：HTML 注释会随页面源码发给访客。 */}
+  {
+    related.length > 0 && (
+      <section class="pk-related">
+        <div class="pk-related-head">
+          <span class="pk-related-eyebrow" aria-hidden="true"></span>
+          <h2>You May Also Like</h2>
+          {
+            familyName && relatedIsFamilyOnly ? (
+              <p>
+                More products in the {familyName} family — same build-up logic,
+                different profile.
+              </p>
+            ) : (
+              <p>More panels and ceiling systems from the same factory.</p>
+            )
+          }
+        </div>
+        <ProductGrid
+          products={related}
+          categoryMap={new Map<number, { name: string; slug: string }>()}
+          lang={lang}
+          showUsage={false}
+          minColWidth="220px"
+        />
+      </section>
+    )
+  }
 
   <!-- ══════ BOTTOM INQUIRY FORM ══════ -->
   <InquiryFormSection
@@ -750,16 +806,19 @@ const jsonLd = {
   .pk-doc-body strong { font-size: .95rem; color: #1e293b; font-weight: 600; }
   .pk-doc-body small { font-size: .84rem; line-height: 1.6; color: #64748b; }
   .pk-doc-meta { font-size: .74rem; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; color: #c09020; white-space: nowrap; }
-  .pk-doc-group h4 { margin: 4px 0 8px; font-size: .95rem; color: #1e293b; }
-  .pk-doc-links { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pk-doc-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 999px; text-decoration: none; color: #334155; font-size: .86rem; font-weight: 500; transition: border-color .2s, color .2s, background .2s; }
-  .pk-doc-link svg { width: 14px; height: 14px; }
-  .pk-doc-link:hover { border-color: #c09020; color: #92400e; background: #fefce8; }
   .pk-doc-request { padding: 16px; background: #f8f6f3; border: 1px dashed #c0a882; border-radius: 10px; }
   .pk-doc-request strong { display: block; font-size: .95rem; color: #1e293b; margin-bottom: 6px; }
   .pk-doc-request p { margin: 0 0 12px; font-size: .87rem; line-height: 1.7; color: #475569; }
   .pk-dl-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; cursor: pointer; text-decoration: none; color: #334155; font-size: .88rem; font-weight: 500; transition: border-color .2s, background .2s, color .2s; }
   .pk-dl-btn:hover { border-color: #c09020; background: #fefce8; color: #92400e; }
+
+  /* 同族产品推荐区：标题用与全站一致的眉标 + 金色短线，卡片本身交给 ProductGrid
+     （.pk-doc-group / .pk-doc-link 一组规则已随 Docs 面板里的同族文字链一起下线）*/
+  .pk-related { margin-top: 3rem; }
+  .pk-related-head { margin-bottom: 1.25rem; }
+  .pk-related-eyebrow { display: block; width: 34px; height: 2px; background: #c09020; border-radius: 2px; margin-bottom: .6rem; }
+  .pk-related-head h2 { margin: 0 0 .35rem; font-size: 1.5rem; color: #1e293b; }
+  .pk-related-head p { margin: 0; font-size: .9rem; line-height: 1.7; color: #64748b; }
 
   /* DB content 的排版不在此处：set:html 注入的正文元素拿不到 Astro scoped 属性，
      相关规则统一放到下方 <style is:global> 块里 */

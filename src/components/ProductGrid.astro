@@ -2,87 +2,168 @@
 /**
  * ProductGrid.astro — 产品卡片网格（纯展示组件）
  *
- * - 被 /products/ 第 1 页与 /products/page/N/ 分页页共用，避免卡片 markup+CSS 多处复制
- * - 卡片结构：div.card-box（不可用 <a> 包裹，内部含分类链接/询盘按钮，嵌套 <a> 属非法 HTML）
- *   整卡可点靠标题链接的 stretched-link（::after inset:0）实现
+ * 版式 2026-11-07 按业主口径重构，参考同行站 futeng 的产品卡（只借结构、不借数据与素材）：
+ *   1:1 方图 → 金色短规线 → 两行标题 → 细分隔线 → Usage / Part No / Min. order 要点行
+ *   → 胶囊询盘 + 圆形箭头。
+ *
+ * 图片框为什么是 contain 而不是 cover：实测产品主图 14 张里 11 张本来就是
+ * 700~1024 的正方图（contain 与 cover 结果完全一致、满幅无留白）；剩下 3 张
+ * 800×533 是白底样品拼拍（veneer / fluted / honeycomb-core），中心裁方会把最左
+ * 和最右的样板块直接切掉。contain 在这三张上补出的是与白底无缝的上下留白，
+ * 所以既不动源图、也不动 products 表。（业主红线：图片要看得清产品，不许切。）
+ *
+ * 外层不能用 <a>：内部含分类链接与询盘 <a>，嵌套 <a> 属非法 HTML，浏览器会提前
+ * 闭合外层把卡片拆成横排。整卡可点靠标题链接的 stretched-link（::after inset:0），
+ * 分类链接与两个按钮各自 z-index:1 浮在它上面。
+ *
+ * Min. order 文案取自 lib/companyProfile.ts 的 moqCardLine（附录 A 唯一事实源），
+ * 带 "standard panels" 限定，不写 per item（业主 2026-10-28 口径）。
+ *
+ * 询盘走 WhatsApp 深链并预填产品名，与产品页右栏 2026-10-27 的口径一致（一个主
+ * 按钮、线索自带上下文）；询盘表单入口仍由全局悬浮 FAB 承担，不在此重复。
  */
 import { loc, type Lang } from "../lib/i18n";
+import { moqCardLine, whatsappUrl } from "../lib/companyProfile";
 
 interface Props {
     products: Array<Record<string, any>>;
     categoryMap: Map<number, { name: string; slug: string }>;
     lang: Lang;
+    /**
+     * 是否显示 Usage（适用场景）行。产品页的「You May Also Like」里全部是同品类
+     * 兄弟产品，这一行对每张卡都是同一个词，纯占高度——那种场景传 false。
+     */
+    showUsage?: boolean;
+    /** 网格列宽下限（px 字符串），相关推荐区可与列表页不同 */
+    minColWidth?: string;
 }
 
-const { products, categoryMap, lang } = Astro.props;
+const {
+    products,
+    categoryMap,
+    lang,
+    showUsage = true,
+    minColWidth = "260px",
+} = Astro.props;
 ---
 
-<ul class="product-list">
+<ul class="product-list" style={`--pg-min-col: ${minColWidth}`}>
     {
-        products.map((product) => (
-            <li class="product-card">
-                {/* 外层不能用 <a>：内部分类链接会造成 <a> 套 <a> 的非法 HTML，
-          浏览器会提前闭合外层 <a> 把卡片拆成横排。改用 div + stretched-link */}
-                <div class="card-box">
-                    {product.image_url && (
-                        <a
-                            class="card-media"
-                            href={loc(lang, `/products/${product.slug}/`)}
-                            tabindex="-1"
-                            aria-hidden="true"
-                        >
-                            <img
-                                src={product.image_url}
-                                alt={product.image_alt || product.title}
-                                width="300"
-                                height="180"
-                                loading="lazy"
-                            />
-                        </a>
-                    )}
-                    <div class="product-info">
-                        <h2>
+        products.map((product) => {
+            const href = loc(lang, `/products/${product.slug}/`);
+            const cat =
+                showUsage &&
+                product.primary_category_id &&
+                categoryMap.get(product.primary_category_id);
+            const waMsg = `Hi, I'd like a quotation for ${product.title}${
+                product.part_code ? ` (Part No ${product.part_code})` : ""
+            }. Could you please share pricing and lead time?`;
+
+            return (
+                <li class="product-card">
+                    <div class="card-box">
+                        {product.image_url && (
                             <a
-                                class="card-title"
-                                href={loc(lang, `/products/${product.slug}/`)}
+                                class="card-media"
+                                href={href}
+                                tabindex="-1"
+                                aria-hidden="true"
                             >
-                                {product.title}
+                                <img
+                                    src={product.image_url}
+                                    alt={product.image_alt || product.title}
+                                    width="800"
+                                    height="800"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                             </a>
-                        </h2>
-                        {product.primary_category_id &&
-                            categoryMap.has(product.primary_category_id) && (
-                                <a
-                                    href={`/categories/${categoryMap.get(product.primary_category_id)!.slug}/`}
-                                    class="category"
-                                >
-                                    {
-                                        categoryMap.get(
-                                            product.primary_category_id,
-                                        )!.name
-                                    }
-                                </a>
-                            )}
-                        {product.description && (
-                            <p class="desc">{product.description}</p>
                         )}
-                        <div class="card-footer">
-                            {product.part_code && (
-                                <span class="part-code">
-                                    Part No: {product.part_code}
-                                </span>
-                            )}
-                            <button
-                                type="button"
-                                class="card-inquiry"
-                                data-open-inquiry-modal
-                            >
-                                Inquiry
-                            </button>
+
+                        <div class="product-info">
+                            {/* 金色短规线：图片与文字之间的视觉起笔（借鉴 futeng 卡片） */}
+                            <span class="card-rule" aria-hidden="true" />
+
+                            <h2 class="card-h">
+                                <a class="card-title" href={href}>
+                                    {product.title}
+                                </a>
+                            </h2>
+
+                            <div class="card-divider" aria-hidden="true" />
+
+                            <ul class="card-meta">
+                                {cat && (
+                                    <li>
+                                        <span class="meta-k">Usage:</span>
+                                        <a
+                                            class="meta-v meta-link"
+                                            href={`/categories/${cat.slug}/`}
+                                        >
+                                            {cat.name}
+                                        </a>
+                                    </li>
+                                )}
+
+                                {product.part_code && (
+                                    <li class="meta-part">
+                                        <span class="meta-k">Part No:</span>
+                                        <span class="meta-v">
+                                            {product.part_code}
+                                        </span>
+                                    </li>
+                                )}
+
+                                <li>
+                                    <span class="meta-k">Min. order:</span>
+                                    <span class="meta-v">{moqCardLine}</span>
+                                </li>
+                            </ul>
+
+                            <div class="card-actions">
+                                <a
+                                    class="card-quote"
+                                    href={whatsappUrl(waMsg)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    data-wa-source="product_card"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                                    </svg>
+                                    Get Quote
+                                </a>
+                                <a
+                                    class="card-arrow"
+                                    href={href}
+                                    aria-label={`View details of ${product.title}`}
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M5 12h14M13 6l6 6-6 6" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        ))
+                </li>
+            );
+        })
     }
 </ul>
 
@@ -91,13 +172,16 @@ const { products, categoryMap, lang } = Astro.props;
         list-style: none;
         padding: 0;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(var(--pg-min-col, 260px), 1fr)
+        );
         grid-auto-rows: 1fr; /* 所有行等高 → 全部卡片统一高度 */
         gap: 1.5rem;
     }
 
     .product-card {
-        display: flex; /* 让内部 <a> 能撑满网格行高 */
+        display: flex; /* 让 card-box 能撑满网格行高 */
     }
 
     .card-box {
@@ -105,33 +189,75 @@ const { products, categoryMap, lang } = Astro.props;
         display: flex;
         flex-direction: column;
         flex: 1;
-        border: 1px solid #e9edf2;
-        border-radius: 0.625rem;
-        overflow: hidden;
         background: #fff;
+        border: 1px solid #eef0f3;
+        border-radius: 14px;
+        overflow: hidden;
         /* 静置即有柔和投影 → 卡片从一开始就像浮在平面上的独立物体 */
         box-shadow:
-            0 1px 2px rgba(15, 23, 42, 0.06),
-            0 2px 8px rgba(15, 23, 42, 0.05);
+            0 1px 2px rgba(13, 9, 80, 0.05),
+            0 4px 16px rgba(13, 9, 80, 0.05);
         transition:
-            box-shadow 0.2s ease,
-            transform 0.2s ease;
+            box-shadow 0.25s ease,
+            transform 0.25s ease,
+            border-color 0.25s ease;
     }
 
     .card-box:hover {
-        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
-        transform: translateY(-3px);
+        transform: translateY(-4px);
+        box-shadow: 0 18px 40px rgba(13, 9, 80, 0.13);
+        border-color: #e6dcc8;
     }
 
+    /* 1:1 图片框：比例由容器固定，切换/加载都不产生 layout shift。
+       水印脚本会把 img 包进 .img-watermark（它是 .card-media 的唯一子元素，
+       global.css 已让 only-child wrapper 铺满 100%），所以这里的尺寸规则作用
+       到 img 上仍然成立。 */
     .card-media {
         display: block;
+        aspect-ratio: 1 / 1;
+        background: #fff;
+        overflow: hidden;
     }
 
     .card-media img {
         width: 100%;
-        height: 180px;
-        object-fit: cover;
+        height: 100%;
+        object-fit: contain;
         display: block;
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .card-box:hover .card-media img {
+        transform: scale(1.02);
+    }
+
+    .product-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 0.9rem 1rem 1rem;
+    }
+
+    .card-rule {
+        display: block;
+        width: 34px;
+        height: 2px;
+        border-radius: 2px;
+        background: #c09020;
+        margin: 0 0 0.6rem;
+    }
+
+    .card-h {
+        margin: 0;
+        font-size: 1.02rem;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #0d0950;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     /* 标题链接铺满整卡（stretched-link），实现整卡可点 */
@@ -139,130 +265,214 @@ const { products, categoryMap, lang } = Astro.props;
         color: inherit;
         text-decoration: none;
     }
+
     .card-title::after {
         content: "";
         position: absolute;
         inset: 0;
     }
 
-    .product-info {
-        padding: 0.75rem;
-        flex: 1;
+    .card-divider {
+        height: 1px;
+        background: #eef0f3;
+        margin: 0.7rem 0 0.75rem;
+    }
+
+    .card-meta {
+        list-style: none;
+        margin: 0 0 0.95rem;
+        padding: 0;
         display: flex;
         flex-direction: column;
-    }
-
-    .product-info h2 {
-        margin: 0 0 0.35rem;
-        font-size: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    /* Part No 沉到底行左侧，作为 muted 信息平衡右下询盘按钮 */
-    .part-code {
-        flex: 1;
-        min-width: 0;
-        margin: 0;
-        font-size: 0.75rem;
-        color: #94a3b8;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .desc {
-        margin: 0 0 0.5rem;
+        gap: 0.32rem;
         font-size: 0.85rem;
-        color: #475569;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* 描述默认只保留两行 */
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
-    .category {
+    .card-meta li {
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        min-width: 0;
+    }
+
+    .meta-k {
+        flex-shrink: 0;
+        color: #94a3b8;
+    }
+
+    .meta-v {
+        min-width: 0;
+        color: #334155;
+        font-weight: 500;
+    }
+
+    .meta-link {
         position: relative;
         z-index: 1; /* 浮在 stretched-link 之上，保证分类可单独点击 */
-        align-self: flex-start;
-        display: inline-block;
-        margin: 0 0 0.4rem;
-        font-size: 0.8rem;
-        background: #f1f5f9;
-        border-radius: 0.25rem;
-        padding: 0.15rem 0.5rem;
         color: #334155;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
     }
 
-    /* 卡片底行：Part No 左、询盘按钮右；沉底对齐 */
-    .card-footer {
+    .meta-link:hover {
+        color: #0d0950;
+        border-bottom-color: #c09020;
+    }
+
+    /* 底行：左询盘、右箭头；margin-top:auto 让多卡等高时按钮始终对齐底部 */
+    .card-actions {
         margin-top: auto;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
+        gap: 0.6rem;
     }
 
-    .card-inquiry {
+    .card-quote {
         position: relative;
         z-index: 1; /* 浮在 stretched-link 之上，保证按钮可点 */
-        flex-shrink: 0;
-        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.5rem 1.05rem;
+        border: 1.5px solid #0d0950;
         border-radius: 999px;
-        background: #69574a;
+        background: transparent;
+        color: #0d0950;
+        font-size: 0.85rem;
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
+        text-decoration: none;
+        transition:
+            background-color 0.2s,
+            color 0.2s,
+            box-shadow 0.2s;
+    }
+
+    .card-quote:hover {
+        background: #0d0950;
         color: #fff;
-        font-size: 0.75rem;
-        font-weight: 600;
-        padding: 0.3rem 0.7rem;
-        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(13, 9, 80, 0.22);
+    }
+
+    .card-quote svg {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+    }
+
+    .card-arrow {
+        position: relative;
+        z-index: 1;
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #c09020;
+        color: #fff;
+        text-decoration: none;
         transition:
             background-color 0.2s,
             transform 0.2s,
             box-shadow 0.2s;
     }
 
-    .card-inquiry:hover {
-        background: #5a4a3e;
-        transform: translateY(-1px) scale(1.05);
-        box-shadow: 0 4px 10px rgba(105, 87, 74, 0.35);
+    .card-arrow:hover {
+        background: #a97e14;
+        transform: translateX(3px);
+        box-shadow: 0 6px 14px rgba(192, 144, 32, 0.35);
     }
 
-    .card-inquiry:active {
-        transform: translateY(0) scale(0.98);
-        box-shadow: none;
+    .card-arrow svg {
+        width: 17px;
+        height: 17px;
     }
 
-    /* 移动端：两列紧凑卡片，提升浏览效率 */
+    /* 全站 reset 关掉了 outline，交互元素自己补焦点环（键盘可达性） */
+    .card-title:focus-visible,
+    .meta-link:focus-visible,
+    .card-quote:focus-visible,
+    .card-arrow:focus-visible {
+        outline: 2px solid #c09020;
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    /* 移动端：两列紧凑卡片（保持一屏能对比多个产品），信息按优先级降级 */
     @media (max-width: 640px) {
         .product-list {
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
         }
-        .card-media img {
-            height: 110px;
-        }
+
         .product-info {
-            padding: 0.5rem;
+            padding: 0.65rem 0.7rem 0.75rem;
         }
-        .product-info h2,
-        .product-info h3 {
+
+        .card-rule {
+            width: 24px;
+            margin-bottom: 0.45rem;
+        }
+
+        .card-h {
             font-size: 0.82rem;
-            margin-bottom: 0.25rem;
         }
-        /* 窄列下描述/型号/分类标签过挤，隐藏以保证两列紧凑可读 */
-        .part-code,
-        .desc,
-        .category {
+
+        .card-divider {
+            margin: 0.5rem 0 0.55rem;
+        }
+
+        .card-meta {
+            font-size: 0.7rem;
+            gap: 0.22rem;
+            margin-bottom: 0.7rem;
+        }
+
+        /* 窄列下 Part No 最不值钱，先让它让位。选择器必须带上 .card-meta li：
+           基础规则 .card-meta li 的特异性是 (0,1,1)，单写 .meta-part 只有 (0,1,0)，
+           媒体查询里的后发不赢高特异性——实测 390 下它仍是 display:flex 就是这个坑。 */
+        .card-meta li.meta-part {
             display: none;
         }
-        .card-footer {
-            justify-content: flex-end;
+
+        /* 窄列下“标签: 值”同行会把值挤到三行（“Min. order:” 先占掉 60px，
+           给 50 m² (standard panels) 只剩 ~85px）；改成标签在上、值整行给宽。 */
+        .card-meta li {
+            display: block;
         }
-        .card-inquiry {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.6rem;
+
+        .meta-k {
+            display: block;
+            font-size: 0.62rem;
+            letter-spacing: 0.02em;
+        }
+
+        .meta-v {
+            display: block;
+        }
+
+        .card-quote {
+            padding: 0.4rem 0.7rem;
+            font-size: 0.72rem;
+            gap: 0.3rem;
+        }
+
+        .card-quote svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .card-arrow {
+            width: 30px;
+            height: 30px;
+        }
+
+        .card-arrow svg {
+            width: 15px;
+            height: 15px;
         }
     }
 </style>
