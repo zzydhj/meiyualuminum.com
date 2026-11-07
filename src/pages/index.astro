@@ -4,6 +4,19 @@ import FactoryTourRail from "../components/FactoryTourRail.astro";
 import OrderProcess from "../components/OrderProcess.astro";
 import { VG_COVERS } from "../lib/videoCovers";
 
+/**
+ * 画廊 6 条视频共用的缓存版本号。
+ *
+ * R2 直链被 Cloudflare 边缘缓存一年（实测 GET 命中 cf-cache-status: HIT、
+ * Cache-Control: max-age=31536000），在桶里同名替换文件后边缘仍会回旧字节。
+ * 业主 2026-11-07 换 xiamen 那条就撞上了：源站已是 3,103,320 B（HEAD 可见），
+ * 而浏览器走的 GET 仍拿到 23,585,673 B 的旧对象，TTL 还剩约 364 天。
+ * 项内没有 Cloudflare API Token、wrangler 也无 purge 子命令，所以只能换缓存键。
+ * 以后在 R2 里换过任何一条画廊视频，把这个值往上抬一次并部署即可（hero 那条
+ * 同理，写死在 markup 里的 ?v=20261028）。
+ */
+const VG_V = "?v=20261107";
+
 // 纯静态预渲染：首页除 FactoryTourRail（工厂视频轨，构建时查一次 videos 表）外
 // 全是下方写死的常量，没有按请求取数的内容。曾经 prerender = false 的理由是
 // 多语言 rewrite 目标（/en/ /zh/ 内部重写到 /），而 i18n 的 MULTILINGUAL_ENABLED
@@ -207,7 +220,7 @@ const websiteJsonLd = {
       <div class="vg-grid">
         <div
           class="vg-item"
-          data-vg-src="https://file.meiyualuminum.com/video-project/xiamen-205e2-project.mp4#t=0.1"
+          data-vg-src={`https://file.meiyualuminum.com/video-project/xiamen-205e2-project.mp4${VG_V}#t=0.1`}
           data-vg-auto
         >
           <div class="vg-cell">
@@ -244,7 +257,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src="https://file.meiyualuminum.com/video-project/liangjiang-hub-project.mp4"
+          data-vg-src={`https://file.meiyualuminum.com/video-project/liangjiang-hub-project.mp4${VG_V}`}
         >
           <div class="vg-cell">
             <img
@@ -280,7 +293,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src="https://file.meiyualuminum.com/video-project/wuhan-gateway-trade-center.mp4"
+          data-vg-src={`https://file.meiyualuminum.com/video-project/wuhan-gateway-trade-center.mp4${VG_V}`}
         >
           <div class="vg-cell">
             <img
@@ -316,7 +329,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src="https://file.meiyualuminum.com/video-project/chengdu-cloud-plaza-canopy-project.mp4"
+          data-vg-src={`https://file.meiyualuminum.com/video-project/chengdu-cloud-plaza-canopy-project.mp4${VG_V}`}
         >
           <div class="vg-cell">
             <img
@@ -352,7 +365,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src="https://file.meiyualuminum.com/video-project/hangzhou-gateway-tower-garage.mp4"
+          data-vg-src={`https://file.meiyualuminum.com/video-project/hangzhou-gateway-tower-garage.mp4${VG_V}`}
         >
           <div class="vg-cell">
             <img
@@ -388,7 +401,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src="https://file.meiyualuminum.com/video-project/suzhou-starlight-gateway-project.mp4"
+          data-vg-src={`https://file.meiyualuminum.com/video-project/suzhou-starlight-gateway-project.mp4${VG_V}`}
         >
           <div class="vg-cell">
             <img
@@ -3181,8 +3194,9 @@ const websiteJsonLd = {
        进懒加载队列，不会比后面章节的图更慢，也不跟 hero 底图抢带宽
      - 点 Play 才创建 <video preload=auto> 盖在封面上全力下载（用户动作 =
        最高优先级）；再点暂停，按钮文案 Play/Pause 同步
-     - 仅首格（data-vg-auto）在 window load + 进视口后自动注入并播——整站因此
-       只剩 hero + 首格两个视频请求（业主 2026-11-06 口径） */
+     - 仅首格（data-vg-auto）在 window load + hero 已拿到画面 + 进视口后才注入并播，
+       离开视口只暂停不预先下载（业主 2026-11-07 口径：开屏视频全力优先，才轮到首格；
+       整站因此只剩 hero + 首格两个视频请求） */
   const vgSection = document.getElementById("videoGallery");
   if (vgSection) {
     /** 首次调用才把 <video> 注入 .vg-cell（盖在封面 img 上层），之后复用 */
@@ -3275,17 +3289,25 @@ const websiteJsonLd = {
       manual = true;
     });
     if (featured && !reduceMotion) {
+      let featuredObserver: IntersectionObserver | null = null;
       const startFeatured = () => {
-        const featuredObserver = new IntersectionObserver(
+        if (featuredObserver) return; // 事件与超时两条路都可能走到这里，只允许起一次
+        featuredObserver = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
               if (manual) return;
-              const video = ensureVideo(featured);
-              if (!video) return;
               if (entry.isIntersecting) {
-                video.play().catch(() => {});
+                // 下载门控（业主 2026-11-07）：ensureVideo 里是 preload="auto"，
+                // <video> 一创建就开始整片下载，后面的 pause() 拦不住它。
+                // 而 IntersectionObserver 在 observe() 那一刻必定先投递一次
+                // isIntersecting=false 的初始回调——以前 ensureVideo 写在这个
+                // 回调外面，等于屏幕外就把 23.6MB 拉走了（实测 buffered 先涨到
+                // 14.8/25.2s，滚过去之后一条新的 mp4 请求都没产生）。
+                const video = ensureVideo(featured);
+                video?.play().catch(() => {});
               } else {
-                video.pause();
+                // 只有已经注入过的（用户滚回来又滚走）才需要暂停；没注入就什么都不做
+                featured.querySelector<HTMLVideoElement>("video")?.pause();
               }
             });
           },
@@ -3293,10 +3315,32 @@ const websiteJsonLd = {
         );
         featuredObserver.observe(featured);
       };
+
+      // 顺序保证（业主 2026-11-07 口径：开屏视频全力优先，然后才是画廊首格）：
+      // hero 拿到画面（readyState ≥ 2）之前，首格一个字节都不得下载。
+      // 首格 23.6MB 是 hero 5.9MB 的 4 倍，两路并发实测把 hero 首帧从 3.8s 推到 13s。
+      const hero = document.querySelector<HTMLVideoElement>(".video-hero-bg");
+      const heroHasPicture = () => !!hero && hero.readyState >= 2;
+      const waitHero = () => {
+        if (!hero || heroHasPicture()) {
+          startFeatured();
+          return;
+        }
+        const onHeroData = () => {
+          if (!heroHasPicture()) return;
+          hero.removeEventListener("loadeddata", onHeroData);
+          startFeatured();
+        };
+        hero.addEventListener("loadeddata", onHeroData);
+        // 上限兜底：hero 被慢网或自动播放策略卡住时，不能把画廊永远锁死。
+        // 12s 后不管 hero 有没有画面都放行（首格自己仍受上面的视口门控约束）。
+        setTimeout(startFeatured, 12000);
+      };
+
       if (document.readyState === "complete") {
-        startFeatured();
+        waitHero();
       } else {
-        window.addEventListener("load", startFeatured, { once: true });
+        window.addEventListener("load", waitHero, { once: true });
       }
     }
   }
