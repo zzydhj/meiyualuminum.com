@@ -14,8 +14,14 @@ import { VG_COVERS } from "../lib/videoCovers";
  * 项内没有 Cloudflare API Token、wrangler 也无 purge 子命令，所以只能换缓存键。
  * 以后在 R2 里换过任何一条画廊视频，把这个值往上抬一次并部署即可（hero 那条
  * 同理，写死在 markup 里的 ?v=20261028）。
+ *
+ * 20261107b 的来由：20261107 上线后业主把 6 条全部压缩重传，但边缘在 ?v=20261107
+ * 这个键上存的仍是旧内容（实测 liangjiang 返回 2,909,902 B / Last-Modified 10 月 8 日，
+ * 而源站已是 555 kB）。旧内容是被开发时的探测请求写进去的：量体积时用了 ffprobe
+ * 与 curl 的 GET，它们在业主替换完成之前就命中了这个缓存键（HEAD 不进缓存，GET 进）。
+ * 教训：探测 R2 素材体积要用 HEAD 或带一个一次性的 query，不要把即将更换的正式键预热。
  */
-const VG_V = "?v=20261107";
+const VG_V = "?v=20261107b";
 
 // 纯静态预渲染：首页除 FactoryTourRail（工厂视频轨，构建时查一次 videos 表）外
 // 全是下方写死的常量，没有按请求取数的内容。曾经 prerender = false 的理由是
