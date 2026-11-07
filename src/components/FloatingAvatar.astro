@@ -1,0 +1,307 @@
+---
+/**
+ * FloatingAvatar.astro — 右下角头像悬浮钮（全站唯一的悬浮询盘入口）
+ *
+ * 2026-11-07 业主口径：右下角只留两枚——头像（本质是 WhatsApp 入口）+ 回到顶部，
+ * 并且**头像在上、回顶在下**（回顶贴窗口下沿，头像抬高到它上方；业主原话：
+ * 不然太往下了）。两枚尺寸与间距按目标站实测拉齐（同 60px、列间距 16px），
+ * 整包 bottom 因此是 100px（= 回顶 24 + 60 + 16），气泡跟着头像一起上移。
+ * 原先这一摞有四枚：询盘弹窗 FAB、Sample Panels 胶囊、绿色 WhatsApp、回顶底座，
+ * 其中三枚在做同一件事（把客户送进询盘渠道）。去掉弹窗 FAB 不会让客户找不到表单：
+ * 站内另有 19 处按钮能开 InquiryModal，产品页 / 博客页 / 视频页底部还有一整块
+ * 询盘表单区块（InquiryFormSection）。
+ *
+ * 头像本体是 <a href={whatsappUrl(...)}>：
+ * - 号码与链接一律走 lib/companyProfile.ts 的 whatsappUrl（唯一来源 whatsappPhone）
+ * - 预填正文固定一句，不跟着气泡文案轮换：客户点开后看到的会话内容必须稳定可预期
+ * - data-wa-source="floating_avatar" 标明来源位
+ *
+ * 气泡文案轮换：桌面端每 4.5s 换一条，纯装饰，整块 aria-hidden，可访问名字交给
+ * 链接自己的 aria-label。窄屏（<1280px，与页眉桌面断点一致）整块隐藏只留头像——
+ * 390 宽下气泡会横吃掉半屏并压住正文（业主明确选「只显示头像」）。
+ * 尊重 prefers-reduced-motion：减弱动效时不轮换，只显第一条。
+ *
+ * 角标是绿色在线小圆点。参考站那个红色「1」「4」是假的未读消息数：本站没有任何
+ * 消息系统，编一个未读计数等于对客户撒谎（数据诚实红线），所以不做。
+ *
+ * 头像照片已到位（2026-11-07 业主提供，工程师形象插画）。img 加载失败时 onerror
+ * 把自己藏掉，露出底下的品牌字母底——这层兜底保留，因为 CDN 或网络偶尔会报错，
+ * 一个破图比一个字母底难看得多。
+ */
+import { responseTime, whatsappUrl } from "../lib/companyProfile";
+
+// 业主提供的头像插画：原图 263×260 PNG（90KB）→ 按内容实际边界裁方 → 160×160 webp q82（4.5KB）。
+// 必须按内容边界裁（crop=250:250:9:5）而不是按画布中心裁：插画自带的圆直径 250px，
+// 在画布里左白边 9px / 右白边 4px，本身就偏右 2.5px；按画布裁会把这层不对称留白搬进来，
+// 叠上 CSS 白环就变成“白边粗、图像不居中”。
+//
+// ⚠ ?v= 不是可选项：R2 直链被 Cloudflare 边缘缓存一年（max-age=31536000），
+// 同名覆盖对象后边缘仍会返回旧字节（实测：cf-cache-status: HIT，新传的文件要加 query 才拿到）。
+// 所以换图必须同时把这个版本号往上抬（与 hero 视频 ?v=20261028 同一惯例）。
+const AVATAR_SRC =
+    "https://file.meiyualuminum.com/home/floating-avatar.webp?v=20261107";
+
+/**
+ * 轮换文案。全部按附录 A 口径写：
+ * - 回复时效读 responseTime 常量，不在这里敲数字
+ * - 样品只说「可寄样确认颜色与表面」，不写 free / 免费（费用承诺红线）
+ * - 「15 条产线」是附录 A【定位】里的原值
+ */
+const LINES = [
+    "Hello! Looking for a quotation or a solution?",
+    `First reply within ${responseTime} on working days.`,
+    "Send drawings or a room size — we'll quote it.",
+    "Direct factory, 15 production lines.",
+    "Sample panels available to approve colour & finish.",
+];
+
+const WA_URL = whatsappUrl(
+    "Hi, I'd like a quotation for aluminium panels — could you please advise pricing and lead time?",
+);
+---
+
+<div class="fa-stack">
+    <span class="fa-bubble" aria-hidden="true">
+        {
+            LINES.map((line, i) => (
+                <span class:list={["fa-line", { "fa-line--on": i === 0 }]}>
+                    {line}
+                </span>
+            ))
+        }
+        <span class="fa-bubble-tail"></span>
+    </span>
+
+    <a
+        href={WA_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="fa-avatar"
+        data-wa-source="floating_avatar"
+        aria-label="Chat with MEIYU on WhatsApp"
+    >
+        {
+            /* 字母底：照片盖在它上面；照片加载失败时（onerror 藏起 img）它就是可见内容 */
+        }
+        <span class="fa-mono" aria-hidden="true">M</span>
+        <img
+            src={AVATAR_SRC}
+            alt=""
+            width="160"
+            height="160"
+            loading="eager"
+            decoding="async"
+            onerror="this.style.display='none'"
+        />
+        <span class="fa-online" aria-hidden="true"></span>
+    </a>
+</div>
+
+<script>
+    const lines = Array.from(
+        document.querySelectorAll<HTMLElement>(".fa-line"),
+    );
+    // 只有一条或用户要求减弱动效时不轮换
+    if (
+        lines.length > 1 &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+        let i = 0;
+        setInterval(() => {
+            lines[i].classList.remove("fa-line--on");
+            i = (i + 1) % lines.length;
+            lines[i].classList.add("fa-line--on");
+        }, 4500);
+    }
+</script>
+
+<style>
+    /* 整包锚在右下角，右边缘固定，气泡向左侧生长。bottom 100px 是把头像抬到
+       回顶圆钮上方（回顶 24 + 60 高 + 16 间距，与目标站同尺寸同间距；
+       窄屏同一口径：16 + 52 + 16 = 84）。
+       pointer-events:none 必须放在这一层：气泡与头像之间那 14px gap 属于本容器，
+       只给气泡自己 none 的话，这块隐形区域会拦住底下正文的点击（实测发现）。 */
+    .fa-stack {
+        position: fixed;
+        right: 24px;
+        bottom: 100px;
+        z-index: 900;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 14px;
+        pointer-events: none;
+    }
+
+    /* ── 头像 ── */
+    .fa-avatar {
+        position: relative;
+        flex-shrink: 0;
+        display: block;
+        pointer-events: auto; /* 全列只有头像可点 */
+        /* 60px / 白环 2px：对齐目标站实测值（它 60px + border-2，白圈占比 3.3%）。
+           之前是 56px + 3px（占比 5.4%），业主反馈“白边太粗”就是这个比例差。 */
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        background: #f1ece5; /* 字母底背景：照片没到时的可见样式 */
+        box-shadow: 0 6px 18px rgba(13, 9, 80, 0.18);
+        overflow: visible;
+        text-decoration: none;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .fa-avatar:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 24px rgba(13, 9, 80, 0.26);
+    }
+
+    .fa-avatar:active {
+        transform: translateY(0) scale(1);
+    }
+
+    .fa-avatar:focus-visible {
+        outline: 2px solid #c09020;
+        outline-offset: 3px;
+    }
+
+    .fa-mono {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: #69574a;
+        border-radius: 50%;
+    }
+
+    /* 照片盖在字母底上（圆形裁切 + 白环内侧） */
+    .fa-avatar img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    /* 在线标记：绿色小圆点 + 白描边，压在头像右下沿（16px，与 60px 头像成比例） */
+    .fa-online {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #25d366;
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 呼吸一圈，读作「有人在线」。用伪元素画，省一个节点 */
+    .fa-online::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 50%;
+        border: 2px solid #25d366;
+        animation: fa-ripple 2.4s ease-out infinite;
+    }
+
+    @keyframes fa-ripple {
+        0% {
+            transform: scale(1);
+            opacity: 0.55;
+        }
+        100% {
+            transform: scale(2.1);
+            opacity: 0;
+        }
+    }
+
+    /* ── 气泡 ──
+       display:grid + 五条文案同一格堆叠：气泡宽度由最长那条决定。
+       以前用 position:absolute 堆，气泡里没有流内内容，盒子塌成 38×46
+       （= 左右 padding 36 + 两条 1px 描边），文字被压成 0 宽逐字换行的竖条。 */
+    .fa-bubble {
+        position: relative;
+        display: grid;
+        max-width: 280px;
+        min-height: 46px; /* 兜住两行文案，轮换时高度不跳 */
+        padding: 12px 18px;
+        background: #fff;
+        border: 1px solid #e6ded2;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(13, 9, 80, 0.1);
+        color: #0d0950;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        font-weight: 500;
+        /* 气泡只是提示，不能挡住底下的正文与按钮 */
+        pointer-events: none;
+    }
+
+    /* 指向头像的小尾巴：右侧中下，用旋转方块画 */
+    .fa-bubble-tail {
+        position: absolute;
+        right: -6px;
+        bottom: 14px;
+        width: 11px;
+        height: 11px;
+        background: #fff;
+        border-right: 1px solid #e6ded2;
+        border-bottom: 1px solid #e6ded2;
+        transform: rotate(-45deg);
+    }
+
+    /* 五条文案叠在同一格（grid-area:1/1），当前显示的那条靠 --on 淡入；
+       行高一致所以盒子不跳，宽度取最宽一条。 */
+    .fa-line {
+        grid-area: 1 / 1;
+        opacity: 0;
+        transform: translateY(6px);
+        transition:
+            opacity 0.45s ease,
+            transform 0.45s ease;
+    }
+
+    .fa-line--on {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .fa-line,
+        .fa-avatar {
+            transition: none;
+        }
+        .fa-online::after {
+            animation: none;
+        }
+    }
+
+    /* 窄屏（阈值与页眉桌面断点一致）：只留头像，气泡整块隐藏；
+       同样把头像抬到回顶钮上方（回顶 16 + 52 高 + 16 间距） */
+    @media screen and (max-width: 1279.98px) {
+        .fa-stack {
+            right: 14px;
+            bottom: 84px;
+        }
+        .fa-bubble {
+            display: none;
+        }
+        .fa-avatar {
+            width: 52px;
+            height: 52px;
+        }
+        .fa-mono {
+            font-size: 22px;
+        }
+    }
+</style>

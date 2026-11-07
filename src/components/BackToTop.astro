@@ -1,12 +1,17 @@
 ---
 /**
- * BackToTop.astro — 全局"回到顶部"粘性底座标签
+ * BackToTop.astro — 全局“回到顶部”圆钮
  *
- * - 位于右下角悬浮列的最底部：询盘 FAB 正下方
- * - 底边贴合浏览器窗口下沿（bottom:0），仅左上/右上圆角
- * - 宽度与上方圆形按钮一致（桌面 56 / 移动 50），右对齐同一列
- * - 滚动超过阈值（600px）后从底部滑入；回到顶部附近滑出
- * - 在 BaseLayout.astro 中引入一次即可，所有页面自动生效
+ * 2026-11-07：从“贴窗口下沿的扁底座”改成圆形按钮。右下角现在只有两枚（业主口径：
+ * 头像 + 回顶），尺寸与间距按目标站实测拉齐（它两枚同尺寸 60px、列间距 16px），
+ * **只是上下顺序相反：我们回顶在下、头像在上**（业主原话：询盘那个不然太往下了）：
+ *   本钮 60px @ bottom 24 / right 24
+ *   头像 60px @ bottom 100 / right 24（= 24 + 60 + 16 间距，FloatingAvatar）
+ *   窄屏：本钮 52px @ bottom 16 / right 14；头像 52px @ bottom 84 / right 14
+ *   两枚同尺寸同 right，圆心自然落在同一条竖线上，不再需要补半差。
+ * 白底藏青箭头 + 暖色描边（纯白页上没描边就看不见），hover 转品牌棕。
+ * 滚动超过 600px 才从下方滑入，回到顶部附近滑出（阈值未变）。
+ * 在 BaseLayout.astro 中引入一次即可，所有页面自动生效。
  */
 ---
 
@@ -18,8 +23,8 @@
 >
     <svg
         viewBox="0 0 24 24"
-        width="22"
-        height="22"
+        width="24"
+        height="24"
         fill="none"
         stroke="currentColor"
         stroke-width="2.2"
@@ -46,27 +51,32 @@
 <style>
     .back-to-top {
         position: fixed;
-        bottom: 0; /* 底边贴合窗口下沿 */
-        right: 32px; /* 与悬浮列同列 */
+        bottom: 24px; /* 回顶在下、头像在上（本钮贴窗口下沿一侧） */
+        right: 24px; /* 与头像同尺寸同 right，圆心自然同列 */
         z-index: 899;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 56px; /* 与上方圆钮同宽 */
-        height: 32px; /* 扁长方形 */
-        border: none;
-        border-radius: 10px 10px 0 0; /* 仅左上/右上圆角 */
-        background-color: #69574a; /* 与询盘 FAB 同色，读作同一根柱子 */
-        color: #fff;
+        width: 60px;
+        height: 60px;
+        border: 1px solid #e6ded2;
+        border-radius: 50%;
+        background-color: #fff;
+        color: #0d0950;
         cursor: pointer;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
-        transform: translateY(100%); /* 隐藏时完全沉到窗口下沿之外 */
+        box-shadow: 0 6px 18px rgba(13, 9, 80, 0.12);
+        transform: translateY(
+            200%
+        ); /* 隐藏时得完全沉到视口外：要盖过 bottom 24 + 自身 60 = 84px；
+              200% = 120px 够干净（140% 只有 84px，刚好卡在边界上会露白边） */
         visibility: hidden;
         pointer-events: none;
         transition:
             transform 0.3s ease,
             visibility 0.3s ease,
-            background-color 0.2s;
+            background-color 0.2s,
+            color 0.2s,
+            box-shadow 0.2s;
     }
 
     .back-to-top.visible {
@@ -76,24 +86,32 @@
     }
 
     .back-to-top:hover {
-        background-color: #5a4a3e;
+        background-color: #69574a;
+        border-color: #69574a;
+        color: #fff;
+        box-shadow: 0 8px 22px rgba(105, 87, 74, 0.32);
     }
 
     .back-to-top:active {
-        background-color: #4e4238;
+        background-color: #5a4a3e;
     }
 
-    /* 移动端：与移动端悬浮列同宽同列（阈值与页眉桌面断点 1280px 一致） */
+    .back-to-top:focus-visible {
+        outline: 2px solid #c09020;
+        outline-offset: 3px;
+    }
+
+    /* 移动端：与窄屏头像同尺寸同列（阈值与页眉桌面断点 1280px 一致） */
     @media screen and (max-width: 1279.98px) {
         .back-to-top {
-            width: 50px;
-            height: 36px; /* 扁但可点；配合移动端悬浮列上移 26px */
-            right: 18px;
-            border-radius: 8px 8px 0 0;
+            width: 52px;
+            height: 52px;
+            bottom: 16px; /* 本钮在下，头像在上方 84px 处（16 + 52 + 16） */
+            right: 14px; /* 与头像同 right */
         }
         .back-to-top svg {
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
         }
     }
 </style>

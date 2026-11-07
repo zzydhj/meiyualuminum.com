@@ -37,8 +37,8 @@
  * 8. 窄屏（≤900）的分类不常驻：同一个 aside 变成底部抽屉，入口是左下角悬浮球。
  *    原先是贴在头上的一条横滑条，两个问题：sticky 常吃 55px 高度；20 个分类时一屏
  *    只看得见 4–5 个。球上写当前主题名而不是 "Menu"（这本质是筛选不是导航，叫 Menu
- *    会和站点汉堡菜单混淆），且抽屉收起时也能看到自己在看哪一组。右下角已被 WhatsApp
- *    FAB（bottom 44px）与 BackToTop 底座（bottom 0）占住，所以球放左下。
+ *    会和站点汉堡菜单混淆），且抽屉收起时也能看到自己在看哪一组。右下角已被
+ *    头像悬浮钮（FloatingAvatar）与回顶圆钮（BackToTop）占住，所以球放左下。
  *    分类按钮只有一份（不复制一套进抽屉），否则计数与选中态迟早漂移。
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -195,8 +195,8 @@ for (const t of INSPO_TABS) {
     </section>
 
     {
-        /* 窄屏专用：左下角悬浮球 + 底部抽屉。右下角已经被 WhatsApp FAB（bottom 44px）
-           与 BackToTop 底座（bottom 0）占住，左边才是空位。球上不写 "Menu" 而写当前
+        /* 窄屏专用：左下角悬浮球 + 底部抽屉。右下角已经被头像悬浮钮
+           （FloatingAvatar）与回顶圆钮（BackToTop）占住，左边才是空位。球上不写 "Menu" 而写当前
            主题名：这本质是筛选不是导航，叫 Menu 会和站点的汉堡菜单混淆，而名字本身
            能让抽屉收起时也看得到自己在看哪一组。 */
     }
@@ -857,7 +857,7 @@ for (const t of INSPO_TABS) {
             display: none;
         }
 
-        /* 右下角是 WhatsApp FAB（bottom 44px）+ BackToTop 底座（bottom 0），所以球放左下 */
+        /* 右下角是头像悬浮钮 + 回顶圆钮（两枚都在右侧），所以球放左下 */
         .ins-fab {
             position: fixed;
             left: 14px;
