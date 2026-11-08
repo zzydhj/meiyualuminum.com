@@ -475,7 +475,8 @@ const jsonLd = {
 
   <!-- ══════ DB CONTENT (legacy) ══════ -->
   {product.content && (
-    <div class="pk-db-content" set:html={product.content} />
+    /* data-video-cover 是给 src/scripts/videoCover.js 的显式标记 */
+    <div class="pk-db-content" data-video-cover set:html={product.content} />
   )}
 
   {/* ══ YOU MAY ALSO LIKE ══ 同族 + 补位产品的卡片推荐区（与列表页同一个 ProductGrid，
