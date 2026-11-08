@@ -27,29 +27,33 @@
 export const CDN = "https://file.meiyualuminum.com";
 
 const VERSIONS: Record<string, string> = {
-  // 画廊 6 条视频（video-project/ 整个目录）
-  "video-project/": "20261107b",
-  // 首页 hero 背景视频，它的第一个画面就是本页的 LCP 元素
-  "meiyu-video-3.mp4": "20261028",
-  // 右下角客服头像
-  "home/floating-avatar.webp": "20261107",
+    // 画廊 6 条视频（video-project/ 整个目录）
+    // 20261108：7 条视频全部 faststart 重封装（moov 提到 mdat 之前；mdat 载荷 MD5 与
+    // 原文件逐位相同，即码流一帧未动，体积只小了 0.02–0.07%）。不抬这个键，边缘
+    // 会照旧发非 faststart 的旧字节，重封装就白做了。
+    "video-project/": "20261108",
+    // 首页 hero 背景视频，它的第一个画面就是本页的 LCP 元素
+    // 20261108：同上，已 faststart，5,901,353 -> 5,899,126 B
+    "meiyu-video-3.mp4": "20261108",
+    // 右下角客服头像
+    "home/floating-avatar.webp": "20261107",
 };
 
 /** 精确路径优先，其次最长目录前缀；都没命中就没有版本号 */
 function versionFor(path: string): string | undefined {
-  const exact = VERSIONS[path];
-  if (exact) return exact;
+    const exact = VERSIONS[path];
+    if (exact) return exact;
 
-  let best: string | undefined;
-  let bestLen = -1;
-  for (const [key, value] of Object.entries(VERSIONS)) {
-    if (!key.endsWith("/")) continue;
-    if (path.startsWith(key) && key.length > bestLen) {
-      best = value;
-      bestLen = key.length;
+    let best: string | undefined;
+    let bestLen = -1;
+    for (const [key, value] of Object.entries(VERSIONS)) {
+        if (!key.endsWith("/")) continue;
+        if (path.startsWith(key) && key.length > bestLen) {
+            best = value;
+            bestLen = key.length;
+        }
     }
-  }
-  return best;
+    return best;
 }
 
 /**
@@ -64,7 +68,7 @@ function versionFor(path: string): string | undefined {
  * 片段（`#t=0.1`）不属于缓存键的一部分，由调用方自己接在返回值后面。
  */
 export function mediaUrl(path: string): string {
-  const clean = path.replace(/^\/+/, "");
-  const v = versionFor(clean);
-  return v ? `${CDN}/${clean}?v=${v}` : `${CDN}/${clean}`;
+    const clean = path.replace(/^\/+/, "");
+    const v = versionFor(clean);
+    return v ? `${CDN}/${clean}?v=${v}` : `${CDN}/${clean}`;
 }

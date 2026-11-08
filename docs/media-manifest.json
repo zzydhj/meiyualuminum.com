@@ -822,126 +822,6 @@
    "last_modified": "Fri, 06 Nov 2026 14:57:48 GMT",
    "size": 64526
   },
-  "docs/acoustic-performance-report.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/anodized-finish-guide.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/baffle-ceiling-spec.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/ceiling-installation-manual.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/ceiling-suspension-details.zip": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/ceiling-system-spec.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/cleaning-maintenance-guide.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/color-finish-chart.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/facade-installation-manual.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/facade-node-details.zip": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/fire-classification-report.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "docs/wind-load-performance.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
   "home/aluminum-ceiling-project/beijing-daxing-airport-terminal-tree-column-curved-aluminum-ceiling-interior.webp": {
    "busted": false,
    "cache_keys": [
@@ -3035,12 +2915,12 @@
   "meiyu-video-3.mp4": {
    "busted": true,
    "cache_keys": [
-    "v=20261028"
+    "v=20261108"
    ],
-   "etag": "7911132713899d71aecfa412d0eeed1a",
+   "etag": "ca8489eae2875a628e5605f84b49275b",
    "hashed_name": false,
-   "last_modified": "Sat, 07 Nov 2026 02:35:31 GMT",
-   "size": 5901353
+   "last_modified": "Sun, 08 Nov 2026 00:57:15 GMT",
+   "size": 5899126
   },
   "meiyu-video-4.webp": {
    "busted": false,
@@ -3051,66 +2931,6 @@
    "hashed_name": false,
    "last_modified": "Tue, 28 Jul 2026 14:40:14 GMT",
    "size": 16558
-  },
-  "products/aluminum-wall-panels-2.webp": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "products/aluminum-wall-panels-3.webp": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "products/aluminum-wall-panels-detail.webp": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "products/aluminum-wall-panels-exterior.webp": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "products/aluminum-wall-panels-interior.webp": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
-  "products/aluminum-wall-panels-main.webp": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
   },
   "products/clip-in-aluminum-ceiling/clip-in-edge-profile-stack-0bc704.webp": {
    "busted": false,
@@ -4162,75 +3982,65 @@
    "last_modified": "Sat, 10 Oct 2026 10:06:46 GMT",
    "size": 18114
   },
-  "technical-documentation/MC%20catalogue.pdf": {
-   "busted": false,
-   "cache_keys": [
-    ""
-   ],
-   "etag": "",
-   "hashed_name": false,
-   "last_modified": "",
-   "size": 0
-  },
   "video-project/chengdu-cloud-plaza-canopy-project.mp4": {
    "busted": true,
    "cache_keys": [
-    "v=20261107b"
+    "v=20261108"
    ],
-   "etag": "08b19393f628d0693676bd2bfb675f28",
+   "etag": "b8ad0faa42e5744efae7393f540b178e",
    "hashed_name": false,
-   "last_modified": "Sat, 07 Nov 2026 08:41:37 GMT",
-   "size": 502406
+   "last_modified": "Sun, 08 Nov 2026 01:29:59 GMT",
+   "size": 502068
   },
   "video-project/hangzhou-gateway-tower-garage.mp4": {
    "busted": true,
    "cache_keys": [
-    "v=20261107b"
+    "v=20261108"
    ],
-   "etag": "6dd1d79c8dcb0ca8e6f3d8ecf34b5e3d",
+   "etag": "11df06aaf26ec913d37628d75b1f2b3d",
    "hashed_name": false,
-   "last_modified": "Sat, 07 Nov 2026 08:38:06 GMT",
-   "size": 2192174
+   "last_modified": "Sun, 08 Nov 2026 01:30:04 GMT",
+   "size": 2191627
   },
   "video-project/liangjiang-hub-project.mp4": {
    "busted": true,
    "cache_keys": [
-    "v=20261107b"
+    "v=20261108"
    ],
-   "etag": "5ce0817f1e0355990068844345b3dccd",
+   "etag": "11767186e63aefcd624b5d06ef31d725",
    "hashed_name": false,
-   "last_modified": "Sat, 07 Nov 2026 08:40:35 GMT",
-   "size": 555864
+   "last_modified": "Sun, 08 Nov 2026 00:56:01 GMT",
+   "size": 555513
   },
   "video-project/suzhou-starlight-gateway-project.mp4": {
    "busted": true,
    "cache_keys": [
-    "v=20261107b"
+    "v=20261108"
    ],
-   "etag": "8ede0f8d5d06058aa5476491f68a2469",
+   "etag": "30b5207723c6b196ac451887985bde57",
    "hashed_name": false,
-   "last_modified": "Sat, 07 Nov 2026 08:36:12 GMT",
-   "size": 1131877
+   "last_modified": "Sun, 08 Nov 2026 01:30:09 GMT",
+   "size": 1131498
   },
   "video-project/wuhan-gateway-trade-center.mp4": {
    "busted": true,
    "cache_keys": [
-    "v=20261107b"
+    "v=20261108"
    ],
-   "etag": "e6b9f9dd04b2770cb8ebed59eac076a5",
+   "etag": "4d4f7e38a66642857c95b0ed9e98b89f",
    "hashed_name": false,
-   "last_modified": "Sat, 07 Nov 2026 08:39:37 GMT",
-   "size": 677850
+   "last_modified": "Sun, 08 Nov 2026 01:29:55 GMT",
+   "size": 677575
   },
   "video-project/xiamen-205e2-project.mp4": {
    "busted": true,
    "cache_keys": [
-    "v=20261107b"
+    "v=20261108"
    ],
-   "etag": "1225cb4ec5bc137809273a9a0f40a871",
+   "etag": "266d1dfa3dd54eb57b4fe6dda2c9a90b",
    "hashed_name": false,
-   "last_modified": "Sat, 07 Nov 2026 07:46:18 GMT",
-   "size": 3103320
+   "last_modified": "Sun, 08 Nov 2026 01:29:50 GMT",
+   "size": 3101741
   }
  }
 }
