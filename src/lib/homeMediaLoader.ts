@@ -21,18 +21,25 @@
  * 2. Range 是 privileged no-CORS header，页面 JS 设了会被静默剥掉，fetch 退化成 200
  *    整包。想热视频只能用真实 <video> 走媒体层（206 + 分片缓存）。
  * 3. fetch() 的 Promise 在响应头到达就 resolve，不等 body；而 mode:"no-cors" 的 opaque
- *    response 又读不到 body（实测 body===null，arrayBuffer() 不报错但返回 0 字节），
- *    所以「预热必须把 body 读完」这句在当前写法下根本做不到。2026-11-08 干净量过：
- *    190,938B 的图在 1.6Mbps 下 fetch(no-cors) 315ms 就 resolve（那是 header 时间），
- *    同一张图 <img> onload 要 659ms（body 时间）；再看网络层（CDP requestWillBeSent →
- *    loadingFinished）：队列那 76 个 URL 的下载 peak=13、84 个相邻间隔里 74 个是负数
- *    （中位 -1287ms）。结论是 **JS 串行、网络不串行** —— 队列边放行，Chrome 边在后台收 body，
- *    所以 2026-11-07 那次「两三百毫秒把几十张图全发出去」只是被减轻，没有消失。
- *    要修就得让 warmImage 真等这一件收完：no-cors 之后轮询 resource timing 里「比本次 fetch
- *    更新的那条条目」出现（带封顶，超时就算了，别让一件卡死整条队列）。mode:"cors" 用不了 ——
- *    实测 R2 不发 Access-Control-Allow-Origin，cors 模式直接 Failed to fetch，预热会整条失效。
- *    在修好之前，home-runtime-probe.js 的 I3 在桌面上就该是 FAIL；那是已知缺陷在顶着，
- *    不要把它改成「反正一直红」而放行。
+ *    response 又读不到 body（实测 body===null，arrayBuffer() 不报错但返回 0 字节）。
+ *    所以「预热必须把 body 读完」不能靠读 body 实现 —— 2026-11-08 实测过它的后果：
+ *    190,938B 的图在 1.6Mbps 下 fetch(no-cors) 315ms 就 resolve，同一张图 <img> onload
+ *    要 659ms；网络层（CDP requestWillBeSent → loadingFinished）当时是 peak=13、
+ *    84 个相邻间隔里 74 个是负数 —— JS 串行而下载并行，2026-11-07 那次「两三百毫秒把
+ *    几十张图全发出去」只被减轻，没有消失。
+ *    现在的实现是 warmImage 里等 resource timing 入表：那条目是在这次 load 结束时才加进去的，
+ *    所以「本次 fetch 之后出现一条 startTime≥t0 的条目」就是收尾信号，不需要 CORS、也不用读 body
+ *    （mode:"cors" 实测用不了：R2 不发 Access-Control-Allow-Origin，直接 Failed to fetch）。
+ *    home-runtime-probe.js 的 I3 是这条的回归防线：peak≠1 就 FAIL，别把它改成「反正一直红」。
+ *    2026-11-08 部署后复测（abe8de9f，桌面 1.6Mbps 画像）：并发被钉住了 —— 网络层 peak=8 →
+ *    peak=1、真重叠 66/75 → 0/69；RT 口径 75/75 对全串行，76 件从首件 7.6s 铺到 49.2s。
+ *    代价是「铺完时间不再稳定」：串行后总时长由每件重新起的慢启动决定，单件延迟本身随链路
+ *    摆动（同批见过 p50=1.6s，也见过 2.2s、最长 10.9s），所以同一份代码两次采集是 49s 和
+ *    「170 秒才发到 64 件」两种结果。这是铁律 3 要付的价，不是 bug。
+ *    首屏是否被拖慢另用 docs/home-first-screen-probe.mjs 量：手机预热 0 条；桌面首屏最晚
+ *    资源 13788ms 完成，队列 14932ms 才起跑，且不重复抓首屏正在下的图（V1/V2/V3 均 PASS）。
+ *    WAIT_CAP_MS 必须高于参照画像的最坏单件（80 秒采集 p99=4.3s，170 秒采集 max=10.9s），
+ *    封顶一生效就等于两件同飞，调小就会退回 peak=2、I3 又红。
  *
  * 另有一条不变量：requestIdleCallback 在隐藏标签页/后台窗口里可能一直不执行，
  * 所以本文件里每一个 idle 都配硬超时（同一个坑不踩第二次）。
@@ -462,11 +469,11 @@ function wireVideoGallery(hero: HeroLoader | null, profile: NetProfile): void {
  * 一旦发出去就收不回。no-cors 拿到 opaque 响应、读不到状态码，但 HTTP 缓存
  * 按 URL 记账，之后 <img> 显示时直接命中。
  *
- * 一次只跑一件：串行由 runLadder 的 await 保证 —— 但只保到 JS 层，网络层会并行收 body
- * （铁律 3 末尾记的实测：peak=13）。“用户点了就全力加载那一个”今天靠件与件之间的
- * 让路（quietSince），不靠中断：AbortController 每建一个新的就丢掉一个，全站没有任何地方
- * 调 ac.abort()。要真做成件内中断，得把 current controller 提到模块级、在交互监听里 abort，
- * 现在这句只是说清现状，不是已经实现的目标。
+ * 一次只跑一件：串行由 runLadder 的 await 保证，而 await 的对象必须真等这一件收完
+ * （见铁律 3；只 await fetch() 的话 JS 串行、网络仍然 13 路并行）。
+ * “用户点了就全力加载那一个”靠件与件之间的让路（quietSince），不靠中断：
+ * AbortController 每轮 new 一个就丢掉，全站没有任何地方调 ac.abort()。要真做成件内中断，
+ * 得把 current controller 提到模块级、在交互监听里 abort —— 这句是现状，不是目标。
  * 重构前这两个能力分属两层（先不串行、后加中断），现在只有一个循环。
  */
 interface WarmTask {
@@ -536,14 +543,70 @@ function collectGalleryVideos(): WarmTask[] {
     return tasks;
 }
 
-/** 必须把 body 读完才算一件完成（见文件头铁律 3） */
+/**
+ * 封顶只防一件事：某条流真的卡死，别让整条队列跟着白等。它一生效就等于放走一件还在飞的，
+ * 所以取值必须高于参照画像的最坏单件，这不是风格问题，是直接反映在 I3 上的。
+ * 2026-11-08 在这条队列上实测（1.6Mbps + 150ms RTT + 4x CPU，桌面）：
+ *   封顶 3000 → 超它的件 7/39，网络层真重叠正好 7/38（peak=2）；
+ *   封顶 8000 → 80 秒采集干净（p99=4292ms），但 170 秒采集被一条 10.9s 的流绕过（3/62）；
+ *   封顶 15000 → 线上 170 秒采集 peak=1、0/69 真重叠，同批最长单件 7675ms。
+ * 卡死时最坏白等 15 秒，代价是铺完更久，不抢首屏 —— 比放回并发更符合铁律 3。
+ */
+const WAIT_CAP_MS = 15000;
+/** 轮询粒度。实测相邻两件的间隔中位 55–67ms 就是它，再小只是白转。 */
+const WAIT_STEP_MS = 60;
+
+/**
+ * resource timing 缓冲默认 250 条，满了以后新条目不再入表，waitWarmDone 的收尾信号就永远等不到。
+ * 这个开关的作用是让 warmImage 在那之后立刻放弃等待：不然整条队列会从「每件真下完才走」
+ * （实测 1.5–2.1s）退化成每件白等 15 秒封顶（76 件 = 十九分钟），那才是真正的退化。
+ */
+let rtBufferFull = false;
+
+function watchResourceTimingBuffer(): void {
+    addEventListener(
+        "resourcetimingbufferfull",
+        () => {
+            rtBufferFull = true;
+        },
+        { once: true, passive: true },
+    );
+}
+
+/**
+ * 这一件收完没有 —— 看 resource timing 的入表时刻：条目是在这次 load 结束（拿到最后一个字节）
+ * 之后才加进 performance 的，所以「本次 fetch 之后出现一条 startTime≥t0 的同 URL 条目」
+ * 就等于真下完了。缓存命中的场合条目一样会新增（实测 dur=1-4ms），不会白等；
+ * 2026-11-08 拿 CDP 的网络时间戳对平过：同 URL 上「RT 结束 − 网络结束」中位 0ms（样本 70），
+ * 所以这个信号不是近似。三条退路都只退回「不等待」：缓冲满、封顶到点、被中断。
+ */
+function waitWarmDone(url: string, t0: number, signal: AbortSignal): Promise<void> {
+    if (rtBufferFull) return Promise.resolve();
+    return new Promise<void>((res) => {
+        const tick = () => {
+            if (signal.aborted || performance.now() - t0 >= WAIT_CAP_MS) {
+                res();
+                return;
+            }
+            const fresh = performance
+                .getEntriesByName(url)
+                .some((e) => e.startTime >= t0);
+            if (fresh) {
+                res();
+                return;
+            }
+            setTimeout(tick, WAIT_STEP_MS);
+        };
+        tick();
+    });
+}
+
+/** 一件收完才放行下一件：runLadder 的 await 等的就是这个（铁律 3） */
 function warmImage(url: string, signal: AbortSignal): Promise<void> {
+    const t0 = performance.now();
     return fetch(url, { mode: "no-cors", credentials: "omit", signal })
-        .then((r) => r.arrayBuffer().catch(() => undefined))
-        .then(
-            () => { },
-            () => { },
-        );
+        .then(() => waitWarmDone(url, t0, signal))
+        .catch(() => undefined);
 }
 
 /**
@@ -657,6 +720,8 @@ async function runLadder(
  */
 export function startHomeMediaLoader(): void {
     const profile = readProfile();
+    // 预热队列靠 resource timing 入表判收尾，所以要先知道缓冲有没有满（铁律 3）
+    watchResourceTimingBuffer();
 
     const heroEl = document.querySelector<HTMLVideoElement>(".video-hero-bg");
     const hero = heroEl ? new HeroLoader(heroEl) : null;
