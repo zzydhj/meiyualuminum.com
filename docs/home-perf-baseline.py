@@ -78,13 +78,22 @@ AUDITS = [
 #   只计入 2887/3284KB（窗口提前关）。所以方差主因是「测量窗口跑完没跑完」，
 #   不是网络。拿它当门限（tolerance = spread）得到的就是一个永不 FAIL 的判据，
 #   那比没有闸门更坏 —— 它会给人假安全感。
-#   桌面没这个问题：LCP 极差 259ms、bytes 517KB、req 16，可以判。
-#   移动端「什么时候完成」这类结构性问题交给静态层 + 运行时探针判，
-#   它们不受窗口早关影响。
+#   「桌面没这个问题」—— 这句上一版写在这里，**它错了**：重跑时
+#   desktop #1 = 4.51MB / 55 req，desktop #2 = 14.80MB / 125 req，LCP 1676 vs 2248。
+#   种子那 4 次碰巧全落在「早关」模式，spread 才只有 259ms —— 幸运样本不是稳定性质。
+#   真正的驱动量是「后台预热队列在测量窗口内跑完没跑完」，**两个端都会分裂**。
+# 所以只判 CLS 与 TBT：今天累计 10+ 次实测里，CLS 每次都落在 0 / 0.0056，
+# TBT 除一次 155 外全为 0 —— 只有这两个不随机器负载变。
+# FCP 也不行：同一份代码桌面 FCP 实测 357 ↔ 1072（本文件上一版把 FCP/TTFB 放进
+# 判定集，紧接着就撞上桌面 FCP 1072 的误报 —— 那就是假 FAIL 的代价）。
 GATED = {
-    "mobile": {"CLS", "FCP", "TTFB"},
-    "desktop": {"score", "FCP", "LCP", "CLS", "TBT", "SI", "TTFB", "bytes", "requests"},
+    "mobile": {"CLS", "TBT"},
+    "desktop": {"CLS", "TBT"},
 }
+
+# requests 极差超过这个数，就认定这一批 run 分裂成了两种完成度。
+# 实测两个群体：早关 33~66，跑完 106~125，跳 25 能把它们分开。
+MODE_SPLIT_REQ = 25
 
 
 def strip_js_comments(text):
@@ -193,7 +202,12 @@ def metrics_from(data):
 
 
 def collect(runs):
-    """每个端跑 runs 次，返回 {form: {metric: [值...]}}；任何一次拿不到就整体失败。"""
+    """每个端跑 runs 次，返回 {form: {metric: [值...]}}；任何一次拿不到就整体失败。
+
+    每条进度都带 flush=True：2026-11-08 把本脚本重定向到文件后台跑时，
+    stdout 被全缓冲，运行期间文件是 0 字节，看上去像「还没开始」；
+    而另一个后台实例被控制台 CTRL_C 打断时，同样什么都没留下。
+    一个报不了进度的计时工具，会被当成「还在跑」而白等。"""
     samples = {}
     tmp = Path(tempfile.mkdtemp(prefix="home-perf-"))
     for form in ("mobile", "desktop"):
@@ -202,15 +216,28 @@ def collect(runs):
             p = tmp / ("lh-%s-%d.json" % (form, i))
             data, err = run_lighthouse(form, p)
             if err:
-                print("   !! %s #%d 无效：%s" % (form, i, err))
+                print("   !! %s #%d 无效：%s" % (form, i, err), flush=True)
                 return None
             m = metrics_from(data)
             vals.append(m)
             print("   %s #%d  LCP=%s FCP=%s bytes=%s req=%s" % (
                 form, i, _fmt(m, "LCP"), _fmt(m, "FCP"),
-                _fmt(m, "bytes"), _fmt(m, "requests")))
+                _fmt(m, "bytes"), _fmt(m, "requests")), flush=True)
         samples[form] = vals
     return samples
+
+
+def _fmtv(v, label):
+    """按指标名把一个数值格式化。单独拆出来是因为上一版在这里出过显示 bug：
+    打印时把整个 {"median":…, "spread":…} 字典传给了按标签取值的函数，
+    取不到就一律打「—」—— 数字算对了，显示层是空的，这种错最难发现。"""
+    if v is None:
+        return "—"
+    if label == "bytes":
+        return "%.2fMB" % (v / 1048576)
+    if label == "CLS":
+        return "%.4f" % v
+    return "%.0f" % v
 
 
 def _fmt(m, label):
@@ -311,24 +338,38 @@ def main():
     regress = judge(base, cur_sum)
     for form in ("mobile", "desktop"):
         print("  %s:  (只判 %s)" % (form, "/".join(sorted(GATED.get(form, set()))) or "无"))
-        for label, _, _, _ in [(l for _, l, _, _ in AUDITS)] + ["score", "requests"]:
+        # 先把每个 run 原样列出来：中位数会把「早关」和「跑完」两个群体混成一个
+        # 没意义的数，但完成度分裂本身就是要看的对象。
+        reqs = [m.get("requests") for m in cur.get(form, []) if m.get("requests")]
+        lcs = [m.get("LCP") for m in cur.get(form, []) if m.get("LCP") is not None]
+        print("      逐 run req=%s  LCP=%s" % (
+            reqs, [int(x) for x in lcs]))
+        if reqs and (max(reqs) - min(reqs)) > MODE_SPLIT_REQ:
+            print("      ⚠ 这一批 run 分裂成两种完成度（req 极差 %d > %d）："
+                  "LCP/SI/bytes 的中位数跨了两个群体，不要当结论"
+                  % (max(reqs) - min(reqs), MODE_SPLIT_REQ))
+        labels = [l for _, l, _, _ in AUDITS] + ["score", "requests"]
+        for label in labels:
             b = base["forms"].get(form, {}).get(label)
             c = cur_sum.get(form, {}).get(label)
             if not b or not c:
                 continue
             gated = label in GATED.get(form, set())
-            mark = "·"
             if gated and (form, label) in [(r[0], r[1]) for r in regress]:
                 mark = "❌"
             elif gated:
                 mark = "✓"
-            tail = "" if gated else "  仅报告（窗口完成度主导方差，不拿它判）"
+            else:
+                mark = "·"
+            tail = "" if gated else "  仅报告（受预热队列完成度影响，不拿它判）"
             print("    %s %-6s 基线 %s → 本次 %s （极差 基线%.1f / 本次%.1f）%s" % (
-                mark, label, _fmt(b, label), _fmt(c, label), b["spread"], c["spread"], tail))
+                mark, label, _fmtv(b["median"], label), _fmtv(c["median"], label),
+                b["spread"], c["spread"], tail))
 
     ok = not regress and not bad_static
     print("\n结论：%s" % ("闸门通过" if ok else
-                          "有 %d 个指标超出同码噪声门限，勿部署/需回看" % (len(regress) + bad_static)))
+                          "有 %d 项超标（判定集 = CLS/TBT + 静态不变量），勿部署/需回看"
+                          % (len(regress) + bad_static)))
     sys.exit(0 if ok else 1)
 
 
