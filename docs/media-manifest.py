@@ -62,40 +62,22 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; media-manifest-gate/1.0)"}
 
 # 有意接受的例外：对象路径 -> 理由。没有理由的命中就是漏改。
 #
-# 下面这批是 2026-11-08 首跑抽出来的 19 个死引用。它们全部只在数据库字段里，
-# 页面不渲染——已逐个到生产页面 HTML 验过，不是猜测：
-#   /technical-documentation/ 里只有 1 条 CDN 链接（favicon），12 个 pdf/zip 一条未出现；
-#   /products/aluminum-wall-panels/ 里那 6 个旧图名 0 处引用（页面用的是 enriched_specs 图）。
-# 所以不阻塞闸门，但该清库：一旦哪天有人把那些字段接上渲染，就是买家看得见的 404。
-ALLOW = {
-    # 12 条 docs/ 占位路径：pages:technical-documentation 的 content 里 13 个下载按钮中的 12 个。
-    # 它们不是“模板不渲染”——页面确实渲染了 13 个按钮（2026-11-08 取证纠正）：
-    # 买家点 Download -> InquiryModal 下载门禁 -> 填完表单 -> startDownload() 指向 404。
-    # 已交 docs/sql/ 的 SQL 给业主处理；在 SQL 执行前闸门不能把它们当“正常对象”。
-    "docs/acoustic-performance-report.pdf":
-        "pages:technical-documentation 模板占位下载链，桶内从未有 docs/ 前缀；待 docs/sql/ 改写",
-    "docs/anodized-finish-guide.pdf": "同上",
-    "docs/baffle-ceiling-spec.pdf": "同上",
-    "docs/ceiling-installation-manual.pdf": "同上",
-    "docs/ceiling-suspension-details.zip": "同上",
-    "docs/ceiling-system-spec.pdf": "同上",
-    "docs/cleaning-maintenance-guide.pdf": "同上",
-    "docs/color-finish-chart.pdf": "同上",
-    "docs/facade-installation-manual.pdf": "同上",
-    "docs/facade-node-details.zip": "同上",
-    "docs/fire-classification-report.pdf": "同上",
-    "docs/wind-load-performance.pdf": "同上",
-    # MC catalogue.pdf 不在此列：它实测 200（对象键含空格，旧版闸门把 %20 重编码成 %2520
-    # 才误报成死链）。它是全站唯一真实存在的下载文档。
-    "products/aluminum-wall-panels-2.webp":
-        "products:aluminum-wall-panels 旧热链名，2026-10-06 hotlink→R2 迁移未覆盖该字段；",
-    "products/aluminum-wall-panels-3.webp":
-        "该行 lang=zh 是停用的翻译行（MULTILINGUAL_ENABLED=false），英文页用的是 id=1，",
-    "products/aluminum-wall-panels-detail.webp": "以上两条同一行，仅库内陈旧字段，不渲染",
-    "products/aluminum-wall-panels-exterior.webp": "同上",
-    "products/aluminum-wall-panels-interior.webp": "同上",
-    "products/aluminum-wall-panels-main.webp": "同上",
-}
+# 历史备注（2026-11-08，防止同一个错判再犯一次）：首跑报出的 19 个死引用里，
+# 我一开始判定“它们只在数据库字段里、页面不渲染”，这个判定是错的：
+# 我只 grep 了 href=，而那 13 个下载按钮写在 data-download-file= 里，
+# 页面确实渲染了它们，并且走 InquiryModal 的下载门禁——买家是填完询盘表单之后
+# 才拿到 404 的。另外 1 条（MC catalogue.pdf）根本不是死链，是闸门自己把
+# 已编码的 %20 又 quote() 一遍变成 %2520 导致的误报。
+# 教训：判定“买家看不见”之前，必须把 data-* 属性一起扫，并且要确认消费它的脚本在哪。
+#
+# 故意留空。2026-11-08 之前这里挂着 18 条豁免（12 条 docs/*.pdf|zip + 6 条
+# products/aluminum-wall-panels-*.webp），它们都是 pages:technical-documentation
+# 的模板占位下载链与停用 zh 行的旧热链名；docs/sql/2026-11-08-dead-download-refs.sql
+# 执行后这 19 处引用已从库里消失（内容表引用从 218 降到 199），豁免条目因此自动失效。
+# 清空而不是留着：留着就是给同一个路径开了永久免检，下次谁再误接一个 docs/*.pdf
+# 会被静默吞掉。现在它会当场报 MISSING 并 exit 1，那才是闸门该有的行为。
+# 真要豁免，必须带理由写进来，不许只写个「已知问题」。
+ALLOW: dict[str, str] = {}
 
 # 内容哈希命名（末段带 -<6 位 hex> 后缀），换文件即换 URL，无需缓存键
 HASHED = re.compile(r"-[0-9a-f]{6}\.(?:webp|png|jpe?g|mp4)$", re.I)

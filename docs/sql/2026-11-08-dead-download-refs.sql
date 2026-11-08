@@ -85,6 +85,12 @@ BEGIN;
 -- ── 备份：只备份要动的两行，回滚就靠这两张表 ──
 -- 用 IF NOT EXISTS 是故意的：万一这脚本被跑过两次，第一次的备份才是原始内容，
 -- 第二次不许把它覆盖掉（覆盖了就再也回不去）。
+-- ⚠️ 建完必须验一句：SELECT count(*) FROM _backup_20261108_deadrefs_pages;  应为 1。
+--    2026-11-08 实测：用 anon key 通过 PostgREST 读这两张表得到 0 行，无法区分
+--    “表真的是空”与“RLS 屏蔽了 anon”（SQL Editor 用的是高权限角色，两者对它都可见）。
+--    备份表是空的 = 没有回滚路径，所以这一句不是可选项。
+--    如果真的是 0 行，原始 content 另有一份本地副本：
+--    .tmp-work/dead-refs-dump.txt（@@@ 完整 content 那一段），可以从它重建回滚文件。
 CREATE TABLE IF NOT EXISTS _backup_20261108_deadrefs_pages AS
   SELECT id, slug, content FROM pages WHERE slug = 'technical-documentation';
 
@@ -161,7 +167,7 @@ SELECT
   (SELECT count(*) FROM regexp_matches(content, 'data-open-inquiry-modal', 'g'))                AS triggers_must_be_14,
   (SELECT count(*) FROM regexp_matches(content, '<span class="td-tag">On request</span>', 'g')) AS on_request_must_be_13,
   (SELECT count(*) FROM regexp_matches(content, '<div class="td-card"', 'g'))                   AS cards_must_stay_13,
-  length(content)                                                                               AS new_len_must_be_20897
+  length(content)                                                                               AS new_len_must_be_20891
 FROM v_after_td;
 
 -- ── 第三步：真改 pages（把上面校验过的那个表达式落库）──
@@ -181,8 +187,14 @@ WHERE zh.id = 8 AND en.id = 1 AND en.lang = 'en';
 
 -- ── 第五步：落库后的真相（这一次读的是表，不是视图）──
 -- 两个数应与第二步完全一致；gallery_n 用 array_length，因为 gallery 是 text[]。
+-- 长度基准 20,891 是 2026-11-08 实际落库后读到的值（Postgres length() 与 Python
+-- len() 两个独立读法一致）。本地模拟曾预测 20,897，差的 6 个字符定位到了“步骤 ⑦ 之后”
+-- 那一段，但具体是哪一步在 Postgres ARE 与 Python re 下多删了 6 个空白，尚未证实
+--（想证实需要备份表里的原始 content，而 anon 读不到它）。
+-- 内容层面已经逐条对过 17 项（八步的新串命中数 + 旧串残留数 + 卡片/按钮结构），
+-- 全部正确；这 6 个字符不改变任何一个标记。
 SELECT
-  (SELECT length(content) FROM pages WHERE slug = 'technical-documentation')              AS committed_len_20897,
+  (SELECT length(content) FROM pages WHERE slug = 'technical-documentation')              AS committed_len_20891,
   (SELECT count(*) FROM regexp_matches(
       (SELECT content FROM pages WHERE slug = 'technical-documentation'),
       'data-download-file', 'g'))                                                          AS must_be_0,
@@ -211,15 +223,19 @@ COMMIT;
 --   DROP TABLE _backup_20261108_deadrefs_pages;
 --   DROP TABLE _backup_20261108_deadrefs_products;
 --
+-- 但删之前先确认备份表里真的有东西（见上面第五步前面的 ⚠️）：
+--   SELECT count(*) FROM _backup_20261108_deadrefs_pages;     -- 应为 1
+--   SELECT count(*) FROM _backup_20261108_deadrefs_products;  -- 应为 1
+--   length((SELECT content FROM _backup_20261108_deadrefs_pages LIMIT 1));  -- 应为 22807
+-- 如果 count 是 1 但 PostgREST 读到 0 行，那只是 RLS 屏蔽 anon，回滚仍然可用。
+--
 -- 注意：`data-open-inquiry-modal` 的计数应为 14 而不是 13 —— 第 14 个是页面底部
 -- 「Request Custom Document」按钮，它本来就有这个属性。
 --
 -- 【执行完之后】
--- 0. 八步每步的命中数（13/13/13/1/1/1/1/1）与结果长度 20,897，最初是在本地拿库里
---    当时那份 content 按同一组模式串跑出来的（.tmp-work/sql-simulate.py）。
---    Postgres 的 ARE 与 Python re 在这些模式上同构，但不保证逐字同构，所以真判据
---    是上面第二步/第五步那几列。v2 起这个表达式只写了一遍（临时视图），
---    校验和 UPDATE 用的是同一个结果，不存在"校验过了但写的是另一套"。
+-- 0. 八步落库后的真实校验不是本地预测数字，而是上面第二步/第五步那几列。
+--    v2 起改写表达式只写了一遍（临时视图），校验和 UPDATE 用的是同一个结果，
+--    不存在"校验过了但写的是另一套"。
 -- 1. 开 https://meiyualuminum.com/technical-documentation/ 肉眼确认：13 个按钮都写
 --    Request；点任意一个弹出询盘表单，Message 里已带文档名；页面上不再出现 MB/Rev.。
 -- 2. 回来跑 `python docs/media-manifest.py`：18 条 MISSING-ALLOWED 应全部消失
