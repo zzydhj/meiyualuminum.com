@@ -167,10 +167,7 @@ const websiteJsonLd = {
         /* 版本号由 mediaVersions.ts 统一给，不在这里写死（否则一处一改、
           其余几处就会漏抬）。#t=0.1 是起播偏移，不属于缓存键的一部分。 */
       }
-      <source
-        src={`${mediaUrl("meiyu-video-3.mp4")}#t=0.1`}
-        type="video/mp4"
-      />
+      <source src={`${mediaUrl("meiyu-video-3.mp4")}#t=0.1`} type="video/mp4" />
     </video>
     <div class="video-hero-overlay"></div>
     <div class="video-hero-content">
@@ -319,7 +316,9 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={mediaUrl("video-project/chengdu-cloud-plaza-canopy-project.mp4")}
+          data-vg-src={mediaUrl(
+            "video-project/chengdu-cloud-plaza-canopy-project.mp4",
+          )}
         >
           <div class="vg-cell">
             <img
@@ -355,7 +354,9 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={mediaUrl("video-project/hangzhou-gateway-tower-garage.mp4")}
+          data-vg-src={mediaUrl(
+            "video-project/hangzhou-gateway-tower-garage.mp4",
+          )}
         >
           <div class="vg-cell">
             <img
@@ -391,7 +392,9 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={mediaUrl("video-project/suzhou-starlight-gateway-project.mp4")}
+          data-vg-src={mediaUrl(
+            "video-project/suzhou-starlight-gateway-project.mp4",
+          )}
         >
           <div class="vg-cell">
             <img
