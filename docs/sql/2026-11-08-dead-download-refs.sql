@@ -68,30 +68,38 @@ CREATE TABLE IF NOT EXISTS _backup_20261108_deadrefs_products AS
   SELECT id, slug, lang, image_url, gallery FROM products WHERE id = 8;
 
 -- ── 1. pages:technical-documentation ──
--- 七步套在同一个表达式里，一次 UPDATE 落库。执行顺序＝由内向外，注释里的编号就是顺序。
+-- 八步套在同一个表达式里，一次 UPDATE 落库。执行顺序＝由内向外（② 最内，⑧ 最外）。
 -- 任何一步打不中不会报错（replace/regexp_replace 都是原样返回），所以紧跟的
--- 【执行后校验】必须逐项对上，这是本脚本唯一的成功判据。
+-- 【执行后校验】必须逐项对上，那是本脚本唯一的成功判据。
+-- 共 6 个 regexp_replace( + 2 个 replace( = 8 个开括号，对 8 个右括号（静态查过：
+-- 括号配平、每层元数正确；上一版少了一个 regexp_replace(，Postgres 会直接报语法错）。
 UPDATE pages SET content =
-  -- ⑧ 05 分区副标题：「Third-party verified performance data」是对不存在的报告的出具方断言，
-  --    改成不带验证身份的说法（字面 replace，唯一命中）
+  -- ⑧ 05 分区副标题：「Third-party verified performance data」是对不存在的报告的出具方断言
+  --    去掉身份断言，保留不靠它的说法（字面 replace，唯一命中）
   replace(
-  -- ⑦ 最后一个 h2 断言：字面 replace()，不用 regexp —— `?` 在正则里是量词，
-  --    写成 regexp 会把 "publishe" 也算命中，能过但不严谨
+  -- ⑦ 最后一个 h2 断言「Need a document we haven't published?」→ 中性提问。
+  --    这里用 replace() 而不是 regexp_replace()：`?` 在正则里是量词，
+  --    写成正则会把 "publishe" 也算命中，能过但不严谨
   replace(
   -- ⑥ 顶部维护注释整块删除：「占位文件地址：把 data-download-file 换成真实 PDF 链接即可」
-  --    是模板施工说明，不该留在对外字段里，而且它也已经过时
+  --    是模板施工说明，不该留在对外字段里；而且 `^` 锁定了串首，不会误吃后面的分节注释
   regexp_replace(
-  -- ⑤b 承诺性文案改写（均不含数字）
+  -- ⑤b 「Free download … the file starts immediately」→ 免费但由工程师准备后email
+  --    （svg 原样保留，它不参与匹配；整段 <span> 由 (?s) 跨行吃掉）
   regexp_replace(
-  -- ⑤a 同上
+  -- ⑤a 「publishes complete technical documentation … All documents reflect current
+  --    production standards」这句空头断言 → 不含数字的能力陈述（AGENTS.md 口径）
   regexp_replace(
   -- ④ td-meta 三标签 → 两标签：保留格式（PDF/DWG），把编造的大小/版本/出具方换成 On request
   --    '\1' 是反向引用，依赖 standard_conforming_strings=on（Supabase 默认 on）；
   --    若被显式关掉过，请先 SET standard_conforming_strings = on;
   regexp_replace(
-  -- ③ 按钮文字 Download → Request；svg 与缩进原样保留
+  -- ③ 按钮文字 Download → Request；svg 与缩进由 \s* 跨过 CRLF 原样保留
   regexp_replace(
-  -- ② 死链下载属性 → 现有的询盘触发属性（data-doc-name 保持不动）
+  -- ② 死链下载属性 → 现有的询盘触发属性（data-doc-name 保持不动，InquiryModal 用它预填 Message）
+  --    只吃 data-download-file="…" 这一段属性，不动 <button> 本体
+  --    顶部那条注释里的 data-download-file 不带 ="…"，所以这一步不会命中它（共 13 处）
+  regexp_replace(
     content,
     'data-download-file="[^"]*"',
     'data-open-inquiry-modal', 'g'),
@@ -134,7 +142,7 @@ SELECT
   (SELECT count(*) FROM regexp_matches(content, 'class="td-btn"', 'g'))                  AS buttons_must_stay_13,
   (SELECT count(*) FROM regexp_matches(content, 'data-open-inquiry-modal', 'g'))         AS triggers_must_be_14,
   (SELECT count(*) FROM regexp_matches(content, '<span class="td-tag">On request</span>', 'g')) AS on_request_must_be_13,
-  length(content) AS new_len_around_20900,
+  length(content) AS new_len_must_be_20897,
   (content ~ '<div class="td-card">') AS structure_intact_true
 FROM pages WHERE slug = 'technical-documentation';
 
@@ -160,6 +168,10 @@ COMMIT;
 -- 「Request Custom Document」按钮，它本来就有这个属性。
 --
 -- 【执行完之后】
+-- 0. 上面八步每步的命中数（13/13/13/1/1/1/1/1）和结果长度 20,897，是在本地拿库里
+--    当前 content 按同一组模式串跑出来的（.tmp-work/sql-simulate.py）。
+--    Postgres 的 ARE 与 Python re 在这些模式上同构，但不保证逐字同构，
+--    所以真判据是上面【执行后校验】那几列，任何一列对不上就 ROLLBACK（或重跑备份表回滚）。
 -- 1. 开 https://meiyualuminum.com/technical-documentation/ 肉眼确认：13 个按钮都写
 --    Request；点任意一个弹出询盘表单，Message 里已带文档名；页面上不再出现 MB/Rev.。
 -- 2. 回来跑 `python docs/media-manifest.py`：18 条 MISSING-ALLOWED 应全部消失
