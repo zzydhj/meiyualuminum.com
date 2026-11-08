@@ -56,6 +56,12 @@
       cur += d;
       if (cur > peak) peak = cur;
     });
+    // 同刻以 -1 优先（上面那句排序就是这意思）：上一件恰好在 t 结束、下一件在 t
+    // 开始，不算并发 —— 这样 peak 与下面的 serialPairs 才是同一个口径。
+    // 代价是零时长条目（缓存命中时 dur=0）会被自己抵消，peak 报 0。
+    // 2026-11-08 子代理实测到：n=1 的 css 组 peakConcurrency=0。所以有东西在飞时
+    // 至少报 1，并在 cold-cache 不成立时把 peak 当**下界**读（anyRealBytes=false 就是提示）。
+    if (sorted.length) peak = Math.max(peak, 1);
     // 相邻两件「上一件结束后才开始」的对数，就是串行度
     let serial = 0;
     for (let i = 1; i < sorted.length; i++)
@@ -107,6 +113,15 @@
   const loadEnd = Math.round(nav.loadEventEnd || 0);
   const heroFirstStart = heroReq.length ? Math.min(...heroReq.map((x) => x.s)) : null;
 
+  // I7 用得上：拿最后一个 LCP 候选（最晚发生的那次接管）看它到底是谁。
+  // 2026-11-08 实测：移动端 4 次 Lighthouse 的 LCP 是 23226/3985/6214/4058，
+  // 最差那次恰好是“窗口跑完”那次（req=106）。怀疑 LCP 候选不在 hero 底图上，
+  // 而是被后台队列里更晚出现、面积更大的元素接管了。中位数抓不住这件事，
+  // DOM 终态能——所以把它当成一条不变量放这里，而不是放 Lighthouse 层。
+  const lcpEl = Array.isArray(lcpEntries) && lcpEntries.length
+    ? lcpEntries[lcpEntries.length - 1]
+    : null;
+
   const checks = {
     "I1 hero poster 仍在（没被兜底脚本摘掉）": !!(v && v.getAttribute("poster")),
     "I2 hero 首条 mp4 不早于 DOMContentLoaded":
@@ -121,10 +136,21 @@
       document.querySelectorAll('img[loading="eager"]').length > 0,
     "I6 LCP 有候选（需窗口可见才成立）":
       Array.isArray(lcpEntries) && lcpEntries.length > 0,
+    // UNKNOWN 不是 FAIL：页面 hidden 时 Chrome 根本不产 LCP 条目。
+    "I7 LCP 元素是首屏 hero（不是队列里更晚的图）": !lcpEl
+      ? "UNKNOWN"
+      : /video-hero-poster/.test(lcpEl.cls || "") ||
+        lcpEl.tag === "H1" ||
+        /video-hero/.test(lcpEl.cls || "")
+      ? "PASS"
+      : "FAIL",
   };
 
   const verdict = Object.fromEntries(
-    Object.entries(checks).map(([k, ok]) => [k, ok ? "PASS" : "FAIL"]),
+    Object.entries(checks).map(([k, pass]) => [
+      k,
+      typeof pass === "string" ? pass : pass ? "PASS" : "FAIL",
+    ]),
   );
 
   console.log(
@@ -148,6 +174,7 @@
         eagerImgs: document.querySelectorAll('img[loading="eager"]').length,
         lazyImgs: document.querySelectorAll('img[loading="lazy"]').length,
         lcpEntries,
+        lcpLastElement: lcpEl,
         verdict,
         note:
           "visibility=hidden 时 I6 为空属正常；全部 xfer=0 说明命中缓存，" +

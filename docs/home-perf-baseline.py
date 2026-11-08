@@ -6,6 +6,12 @@ r"""首页性能闸门：把「有没有变慢」和「逻辑有没有被改坏�
     python docs/home-perf-baseline.py --runs 6         # 每个端跑 6 次（噪声大时用）
     python docs/home-perf-baseline.py --update --reason "业主把 hero 换成 2MB 版"
                                                         # 写回基线，理由必须给
+    python docs/home-perf-baseline.py --update --reason-file docs/baseline-reason.txt
+                                                        # 同一个理由，从文件读
+
+--reason-file 不是锦上添花：2026-11-08 用 PowerShell 传中文 --reason 时，参数被
+编码拆坏，argparse 直接报 unrecognized arguments，Lighthouse 一次都没跑，
+而 stdout 是空的 —— 看上去像「还在跑」。中文理由一律走文件，别走命令行。
 
 为什么分两层（2026-11-08 的教训）：
   这台机器单次 Lighthouse 不是证据。同码重复实测的移动端 total-byte-weight 极差
@@ -36,9 +42,7 @@ Lighthouse 调用的两个坑（都踩过，别再试）：
   报告写完还要回读 configSettings.formFactor 核对，因为"文件存在"不等于"端类型对"。
 """
 import argparse
-import io
 import json
-import os
 import re
 import statistics
 import subprocess
@@ -46,7 +50,11 @@ import sys
 import tempfile
 from pathlib import Path
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+# 用 reconfigure，不用 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, ...)：
+# 后者在被 import 时会把上一轮 wrapper 连同底层 buffer 一起关掉，自测脚本
+# （.tmp-work/gate-negative-test.py）import 本文件时就是当场炸
+# ValueError: I/O operation on closed file。dist-leak-gate.py 早就用的是 reconfigure。
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parent.parent
 BASELINE = ROOT / "docs" / "home-perf-baseline.json"
@@ -62,6 +70,21 @@ AUDITS = [
     ("server-response-time", "TTFB", False, 250.0),
     ("total-byte-weight", "bytes", False, 1_500_000.0),
 ]
+
+
+# 哪些指标真的参与判定。这不是偷懒，是 2026-11-08 实测出来的：
+#   移动端 4 次 LCP = 23226 / 3985 / 6214 / 4058，极差 19.2 秒；请求数 33↔106。
+#   分组一看就明白：req=106 的两次 hero mp4 计入 5768KB（下完），req=33/35 的两次
+#   只计入 2887/3284KB（窗口提前关）。所以方差主因是「测量窗口跑完没跑完」，
+#   不是网络。拿它当门限（tolerance = spread）得到的就是一个永不 FAIL 的判据，
+#   那比没有闸门更坏 —— 它会给人假安全感。
+#   桌面没这个问题：LCP 极差 259ms、bytes 517KB、req 16，可以判。
+#   移动端「什么时候完成」这类结构性问题交给静态层 + 运行时探针判，
+#   它们不受窗口早关影响。
+GATED = {
+    "mobile": {"CLS", "FCP", "TTFB"},
+    "desktop": {"score", "FCP", "LCP", "CLS", "TBT", "SI", "TTFB", "bytes", "requests"},
+}
 
 
 def strip_js_comments(text):
@@ -218,13 +241,14 @@ def summarize(vals):
 
 
 def judge(base, cur):
-    """拿两侧实测离散度的较大者与地板值当门限；单次样本永不参与判定。"""
+    """只对 GATED 里的指标判；其余只报不判（原因见 GATED 上方那段）。"""
     bad = []
     for form in ("mobile", "desktop"):
         b, c = base["forms"].get(form, {}), cur.get(form, {})
-        for label, higher_better, floor in [(l, hb, fl) for _, l, hb, fl in AUDITS] + \
-                                           [("score", True, 6.0), ("requests", False, 6.0)]:
-            if label not in b or label not in c:
+        pairs = [(l, hb, fl) for _, l, hb, fl in AUDITS] + \
+                [("score", True, 6.0), ("requests", False, 6.0)]
+        for label, higher_better, floor in pairs:
+            if label not in GATED.get(form, set()) or label not in b or label not in c:
                 continue
             bm, cm = b[label]["median"], c[label]["median"]
             tol = max(b[label]["spread"], c[label]["spread"], floor)
@@ -243,6 +267,8 @@ def main():
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--update", action="store_true", help="把本次结果写回基线")
     ap.add_argument("--reason", default="", help="--update 必须给理由")
+    ap.add_argument("--reason-file", default="",
+                    help="从 UTF-8 文件读理由（PowerShell 传中文参数会被拆坏，走这个）")
     ap.add_argument("--url", default=DEFAULT_URL)
     args = ap.parse_args()
 
@@ -260,16 +286,20 @@ def main():
     cur_sum = {f: summarize(v) for f, v in cur.items()}
 
     if args.update:
-        if not args.reason.strip():
-            print("\n❌ --update 必须带 --reason，写清这次基线为什么可以变。")
+        reason = args.reason.strip()
+        if args.reason_file:
+            reason = (Path(args.reason_file).read_text(encoding="utf-8").strip()
+                      or reason)
+        if not reason:
+            print("\n❌ --update 必须带 --reason 或 --reason-file，写清这次基线为什么可以变。")
             sys.exit(1)
         doc = {"url": DEFAULT_URL, "runs_per_form": args.runs,
-               "updated": "2026-11-08", "reason": args.reason,
+               "updated": "2026-11-08", "reason": reason,
                "note": "spread 是同码重复实测的极差，判据门限取 max(spread_a, spread_b, 地板值)；"
                        "单次样本永不参与判定。地板值在 docs/home-perf-baseline.py 的 AUDITS 里。",
                "forms": cur_sum}
         BASELINE.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
-        print("\n已写回基线：%s（理由：%s）" % (BASELINE.name, args.reason))
+        print("\n已写回基线：%s（理由：%s）" % (BASELINE.name, reason))
         sys.exit(0 if not bad_static else 1)
 
     if not BASELINE.exists():
@@ -280,17 +310,21 @@ def main():
     print("\n=== 与基线比对（基线 %s，%d 次/端）===" % (base.get("updated"), base.get("runs_per_form")))
     regress = judge(base, cur_sum)
     for form in ("mobile", "desktop"):
-        print("  %s:" % form)
-        for label, _, _, _ in AUDITS + [("score", "", "", ""), ("requests", "", "", "")]:
+        print("  %s:  (只判 %s)" % (form, "/".join(sorted(GATED.get(form, set()))) or "无"))
+        for label, _, _, _ in [(l for _, l, _, _ in AUDITS)] + ["score", "requests"]:
             b = base["forms"].get(form, {}).get(label)
             c = cur_sum.get(form, {}).get(label)
             if not b or not c:
                 continue
+            gated = label in GATED.get(form, set())
             mark = "·"
-            if (form, label) in [(r[0], r[1]) for r in regress]:
+            if gated and (form, label) in [(r[0], r[1]) for r in regress]:
                 mark = "❌"
-            print("    %s %-6s 基线 %s → 本次 %s （极差 基线%.1f / 本次%.1f）" % (
-                mark, label, _fmt(b, label), _fmt(c, label), b["spread"], c["spread"]))
+            elif gated:
+                mark = "✓"
+            tail = "" if gated else "  仅报告（窗口完成度主导方差，不拿它判）"
+            print("    %s %-6s 基线 %s → 本次 %s （极差 基线%.1f / 本次%.1f）%s" % (
+                mark, label, _fmt(b, label), _fmt(c, label), b["spread"], c["spread"], tail))
 
     ok = not regress and not bad_static
     print("\n结论：%s" % ("闸门通过" if ok else

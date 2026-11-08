@@ -209,8 +209,10 @@ const articleContent = (post.content || "").replace(
         )
       }
 
-      {/* data-video-cover 是给 src/scripts/videoCover.js 的显式标记：
-          正文里内嵌的自托管 <video> 靠它拿到首帧封面（组件自己的视频不在此列） */}
+      {
+        /* data-video-cover 是给 src/scripts/videoCover.js 的显式标记：
+          正文里内嵌的自托管 <video> 靠它拿到首帧封面（组件自己的视频不在此列） */
+      }
       <div class="article-content" data-video-cover set:html={articleContent} />
     </article>
 

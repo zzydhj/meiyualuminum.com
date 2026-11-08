@@ -1,0 +1,139 @@
+{
+ "url": "https://www.meiyualuminum.com/",
+ "runs_per_form": 4,
+ "updated": "2026-11-08",
+ "reason": "建立基线：videoCover.js 作用域修复上线后（commit 43c7166，版本 e04d692b）。\n首页此刻的状态 = T6 加载器（homeMediaLoader.ts）+ 7 条视频 faststart + 缓存键抬到\n?v=20261108 + 6 条画廊视频压到 0.5-3.1MB + hero poster 不再被兜底脚本摘掉。\n本基线代表「videoCover 修复后」，不代表「本轮全部做完」；后续任何改动拿它当起点。\n判据门限来自同码重复实测的极差（本机移动 total-byte-weight 曾观测到 7.69MB 极差），\n不是拍脑袋定的百分比。",
+ "note": "spread 是同码重复实测的极差，判据门限取 max(spread_a, spread_b, 地板值)；单次样本永不参与判定。地板值在 docs/home-perf-baseline.py 的 AUDITS 里。",
+ "forms": {
+  "mobile": {
+   "CLS": {
+    "median": 0.0,
+    "spread": 0,
+    "lo": 0,
+    "hi": 0,
+    "n": 4
+   },
+   "FCP": {
+    "median": 1179.9808,
+    "spread": 153.2388,
+    "lo": 1087.616,
+    "hi": 1240.8548,
+    "n": 4
+   },
+   "LCP": {
+    "median": 5136.0471,
+    "spread": 19241.0385,
+    "lo": 3984.9305,
+    "hi": 23225.969,
+    "n": 4
+   },
+   "SI": {
+    "median": 3603.6492,
+    "spread": 6263.6779,
+    "lo": 2534.7405,
+    "hi": 8798.4183,
+    "n": 4
+   },
+   "TBT": {
+    "median": 61.0,
+    "spread": 155,
+    "lo": 0,
+    "hi": 155,
+    "n": 4
+   },
+   "TTFB": {
+    "median": 91.5,
+    "spread": 483,
+    "lo": 56,
+    "hi": 539,
+    "n": 4
+   },
+   "bytes": {
+    "median": 7503098.0,
+    "spread": 7369598,
+    "lo": 3582985,
+    "hi": 10952583,
+    "n": 4
+   },
+   "requests": {
+    "median": 70.5,
+    "spread": 73,
+    "lo": 33,
+    "hi": 106,
+    "n": 4
+   },
+   "score": {
+    "median": 79.5,
+    "spread": 20.0,
+    "lo": 67.0,
+    "hi": 87.0,
+    "n": 4
+   }
+  },
+  "desktop": {
+   "CLS": {
+    "median": 0.0056,
+    "spread": 0.0,
+    "lo": 0.0056,
+    "hi": 0.0056,
+    "n": 4
+   },
+   "FCP": {
+    "median": 363.3807,
+    "spread": 169.3414,
+    "lo": 356.6752,
+    "hi": 526.0166,
+    "n": 4
+   },
+   "LCP": {
+    "median": 1688.7407,
+    "spread": 258.5829,
+    "lo": 1631.5868,
+    "hi": 1890.1697,
+    "n": 4
+   },
+   "SI": {
+    "median": 1015.2099,
+    "spread": 479.0461,
+    "lo": 963.1445,
+    "hi": 1442.1906,
+    "n": 4
+   },
+   "TBT": {
+    "median": 0.0,
+    "spread": 0,
+    "lo": 0,
+    "hi": 0,
+    "n": 4
+   },
+   "TTFB": {
+    "median": 59.0,
+    "spread": 83,
+    "lo": 53,
+    "hi": 136,
+    "n": 4
+   },
+   "bytes": {
+    "median": 5544234.0,
+    "spread": 517145,
+    "lo": 5405403,
+    "hi": 5922548,
+    "n": 4
+   },
+   "requests": {
+    "median": 64.5,
+    "spread": 16,
+    "lo": 50,
+    "hi": 66,
+    "n": 4
+   },
+   "score": {
+    "median": 93.0,
+    "spread": 4.0,
+    "lo": 90.0,
+    "hi": 94.0,
+    "n": 4
+   }
+  }
+ }
+}
