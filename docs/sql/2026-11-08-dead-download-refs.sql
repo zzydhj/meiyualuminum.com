@@ -1,13 +1,21 @@
 -- ============================================================================
 -- 死引用清理：/technical-documentation/ 的 13 个下载按钮 + 停用 zh 产品行的 6 个旧图名
--- 生成于 2026-11-08（docs/media-manifest.py 首跑抓到 19 处 404 引用，本脚本处理其中 18 处）
--- 执行方式：Supabase → SQL Editor → 整段粘贴 → Run（一个事务，任一步报错整体回滚）
+-- 生成于 2026-11-08（docs/media-manifest.py 首跑报 19 处 404 引用；复验后其中 18 处
+-- 是真死链，1 处是闸门自己的误报——MC catalogue.pdf 实际 200，本脚本把 19 处引用一并摘掉）
+-- 修订于同日 v2：校验改成读临时视图，先看数字再落库；并修掉 v1 的两处错
+--   v1 错① 八步嵌套只开了 7 个括号（Postgres 当场语法错）
+--   v1 错② jsonb_array_length(gallery) —— gallery 真实类型是 text[]，不是 jsonb，
+--         那句炸在 LINE 149，整个事务回滚，库里一个字都没变（已读回确认）
+--
+-- 推荐流程：先按下边【预演】那一段跑（带 ROLLBACK），十二列数字全对，再整段 Run 本文件。
+--
+-- 执行方式：Supabase → SQL Editor → 整段粘贴 → Run
 -- 幂等：可重复运行。第二次跑各步命中 0 处，内容不再变化。
 -- 回滚：见文件末尾【回滚】段（执行时先落了两张备份表）
 --
--- ⚠️ 顺序：先部署随本 SQL 一起的 InquiryModal.astro 改动，再跑本 SQL。
---    反了不会坏 —— 按钮照样打开询盘弹窗，只是 Message 里不会自动带上客户点的那份
---    文档名，业主收到询盘时不知道对方要哪一份。
+-- ⚠️ 顺序：先部署随本 SQL 一起的 InquiryModal.astro 改动（commit 3049805，已上线），
+--    再跑本 SQL。反了不会坏 —— 按钮照样打开询盘弹窗，只是 Message 里不会自动带上
+--    客户点的那份文档名，业主收到询盘时不知道对方要哪一份。
 --
 -- ── 为什么要改（取证结论，全部实测过）────────────────────────────────────
 -- 1) /technical-documentation/ 是主导航里的公开页（Navigation.astro L134、
@@ -37,7 +45,7 @@
 --   按钮   Download + 死链            →  Request + 打开询盘弹窗（带文档名）
 --   标签   PDF | 9.8 MB | Rev. 2026-01 →  PDF | On request
 --   文案   publishes complete technical documentation / the file starts immediately
---          → 工程师准备好后寄给你，不含任何数字
+--          / Third-party verified → 不含数字、不含身份断言的能力陈述
 -- 询盘线索一条不少，只是不再假承诺一个不存在的文件。
 -- ============================================================================
 
@@ -58,22 +66,34 @@ SELECT
   (SELECT count(*) FROM products WHERE id = 8 AND lang = 'zh'
      AND image_url LIKE '%aluminum-wall-panels-main.webp%')                             AS f_product_row_expected_1;
 
+-- ─────────────────────────────────────────────────────────────────────────
+-- 【预演】想先看到"改完是什么样"再决定落不落库：
+--   选中从下面 BEGIN; 到「第二步：先校验」那句 SELECT 结尾的全部文字，
+--   在末尾自己补一句 ROLLBACK; ，然后 Run 这一整段。
+--   数字全对  → 回头整段跑本文件（含 COMMIT）；
+--   数字不对  → 什么都不要改，把结果拍给我。
+--   备份表也在事务里，ROLLBACK 后不会留下；临时视图只在这条连接里存在。
+-- 不要把 BEGIN 和后面的语句分开跑：分开就是自动提交，预演会变成真改。
+-- ─────────────────────────────────────────────────────────────────────────
+
 BEGIN;
 
 -- ── 备份：只备份要动的两行，回滚就靠这两张表 ──
+-- 用 IF NOT EXISTS 是故意的：万一这脚本被跑过两次，第一次的备份才是原始内容，
+-- 第二次不许把它覆盖掉（覆盖了就再也回不去）。
 CREATE TABLE IF NOT EXISTS _backup_20261108_deadrefs_pages AS
   SELECT id, slug, content FROM pages WHERE slug = 'technical-documentation';
 
 CREATE TABLE IF NOT EXISTS _backup_20261108_deadrefs_products AS
   SELECT id, slug, lang, image_url, gallery FROM products WHERE id = 8;
 
--- ── 1. pages:technical-documentation ──
--- 八步套在同一个表达式里，一次 UPDATE 落库。执行顺序＝由内向外（② 最内，⑧ 最外）。
--- 任何一步打不中不会报错（replace/regexp_replace 都是原样返回），所以紧跟的
--- 【执行后校验】必须逐项对上，那是本脚本唯一的成功判据。
--- 共 6 个 regexp_replace( + 2 个 replace( = 8 个开括号，对 8 个右括号（静态查过：
--- 括号配平、每层元数正确；上一版少了一个 regexp_replace(，Postgres 会直接报语法错）。
-UPDATE pages SET content =
+-- ── 第一步：定义临时视图 = 把八步改写算出来，但不写库 ──
+-- 八步套在同一个表达式里。执行顺序＝由内向外（② 最内，⑧ 最外）。
+-- 任何一步打不中不会报错（replace/regexp_replace 都是原样返回），所以第二步的
+-- 校验必须逐项对上，那是本脚本唯一的成功判据。
+-- 共 6 个 regexp_replace( + 2 个 replace( = 8 个开括号，对 8 个右括号。
+CREATE TEMP VIEW v_after_td AS
+SELECT
   -- ⑧ 05 分区副标题：「Third-party verified performance data」是对不存在的报告的出具方断言
   --    去掉身份断言，保留不靠它的说法（字面 replace，唯一命中）
   replace(
@@ -84,7 +104,7 @@ UPDATE pages SET content =
   -- ⑥ 顶部维护注释整块删除：「占位文件地址：把 data-download-file 换成真实 PDF 链接即可」
   --    是模板施工说明，不该留在对外字段里；而且 `^` 锁定了串首，不会误吃后面的分节注释
   regexp_replace(
-  -- ⑤b 「Free download … the file starts immediately」→ 免费但由工程师准备后email
+  -- ⑤b 「Free download … the file starts immediately」→ 免费，但由工程师准备后 email
   --    （svg 原样保留，它不参与匹配；整段 <span> 由 (?s) 跨行吃掉）
   regexp_replace(
   -- ⑤a 「publishes complete technical documentation … All documents reflect current
@@ -97,7 +117,7 @@ UPDATE pages SET content =
   -- ③ 按钮文字 Download → Request；svg 与缩进由 \s* 跨过 CRLF 原样保留
   regexp_replace(
   -- ② 死链下载属性 → 现有的询盘触发属性（data-doc-name 保持不动，InquiryModal 用它预填 Message）
-  --    只吃 data-download-file="…" 这一段属性，不动 <button> 本体
+  --    只吃 data-download-file="…" 这一段属性，不动 <button> 本体；
   --    顶部那条注释里的 data-download-file 不带 ="…"，所以这一步不会命中它（共 13 处）
   regexp_replace(
     content,
@@ -119,35 +139,58 @@ UPDATE pages SET content =
     'Need something not listed here?'),
     '<p>Third-party verified performance data for approvals and tenders</p>',
     '<p>Performance data for approvals and tenders, compiled for your project</p>')
+AS content
+FROM pages
 WHERE slug = 'technical-documentation';
 
--- ── 2. products id=8：旧热链名 → 直接抄 id=1 的现值 ──
+-- ── 第二步：先校验（此时库里还没动，看的是"改完应该是什么样"）──
+-- 十二列必须逐个对上；任何一列不对，就只跑 ROLLBACK; 不要跑后面的 UPDATE。
+SELECT
+  (SELECT count(*) FROM regexp_matches(content, 'data-download-file', 'g'))                     AS refs_must_be_0,
+  (SELECT count(*) FROM regexp_matches(content, 'file\.meiyualuminum\.com/', 'g'))              AS r2_urls_must_be_0,
+  (SELECT count(*) FROM regexp_matches(content, '[0-9.]+ MB</span>', 'g'))                      AS fake_mb_must_be_0,
+  (SELECT count(*) FROM regexp_matches(content, 'Rev\. 20', 'g'))                               AS fake_rev_must_be_0,
+  (SELECT count(*) FROM regexp_matches(content, 'AutoCAD 2018', 'g'))                           AS fake_cad_must_be_0,
+  (SELECT count(*) FROM regexp_matches(content, 'Third-party', 'g'))                            AS fake_3p_must_be_0,
+  (SELECT count(*) FROM regexp_matches(content, '占位|haven''t published|the file starts immediately|publishes complete', 'g')) AS fake_words_must_be_0,
+  (SELECT count(*) FROM regexp_matches(content, 'class="td-btn"', 'g'))                         AS buttons_must_stay_13,
+  (SELECT count(*) FROM regexp_matches(content, 'data-open-inquiry-modal', 'g'))                AS triggers_must_be_14,
+  (SELECT count(*) FROM regexp_matches(content, '<span class="td-tag">On request</span>', 'g')) AS on_request_must_be_13,
+  (SELECT count(*) FROM regexp_matches(content, '<div class="td-card"', 'g'))                   AS cards_must_stay_13,
+  length(content)                                                                               AS new_len_must_be_20897
+FROM v_after_td;
+
+-- ── 第三步：真改 pages（把上面校验过的那个表达式落库）──
+UPDATE pages
+SET content = (SELECT content FROM v_after_td)
+WHERE slug = 'technical-documentation';
+
+-- ── 第四步：products id=8 旧热链名 → 直接抄 id=1 的现值 ──
 -- 素材路径与语言无关，停用的 zh 行没理由保留一套 404 名。抄同一产品的英文行，
 -- 以后开多语言时它天然就是对的；这一句不新增任何猜测。
+-- gallery 是 text[]（不是 jsonb），所以这里直接等值赋值即可，不需要任何类型转换。
 UPDATE products AS zh SET
   image_url = en.image_url,
   gallery   = en.gallery
 FROM products AS en
 WHERE zh.id = 8 AND en.id = 1 AND en.lang = 'en';
 
--- ── 【执行后校验】紧跟着看结果，前 7 列必须逐个对上，对不上就 ROLLBACK ──
+-- ── 第五步：落库后的真相（这一次读的是表，不是视图）──
+-- 两个数应与第二步完全一致；gallery_n 用 array_length，因为 gallery 是 text[]。
 SELECT
-  (SELECT count(*) FROM regexp_matches(content, 'data-download-file', 'g'))              AS refs_must_be_0,
-  (SELECT count(*) FROM regexp_matches(content, 'file\.meiyualuminum\.com/', 'g'))       AS r2_urls_must_be_0,
-  (SELECT count(*) FROM regexp_matches(content, '[0-9.]+ MB</span>', 'g'))               AS fake_mb_must_be_0,
-  (SELECT count(*) FROM regexp_matches(content, 'Rev\. 20', 'g'))                        AS fake_rev_must_be_0,
-  (SELECT count(*) FROM regexp_matches(content, 'AutoCAD 2018', 'g'))                    AS fake_cad_must_be_0,
-  (SELECT count(*) FROM regexp_matches(content, 'Third-party verified', 'g'))            AS fake_3p_must_be_0,
-  (SELECT count(*) FROM regexp_matches(content, '占位|haven''t published|the file starts immediately|publishes complete', 'g')) AS fake_words_must_be_0,
-  (SELECT count(*) FROM regexp_matches(content, 'class="td-btn"', 'g'))                  AS buttons_must_stay_13,
-  (SELECT count(*) FROM regexp_matches(content, 'data-open-inquiry-modal', 'g'))         AS triggers_must_be_14,
-  (SELECT count(*) FROM regexp_matches(content, '<span class="td-tag">On request</span>', 'g')) AS on_request_must_be_13,
-  length(content) AS new_len_must_be_20897,
-  (content ~ '<div class="td-card">') AS structure_intact_true
-FROM pages WHERE slug = 'technical-documentation';
-
-SELECT id, lang, image_url, jsonb_array_length(gallery) AS gallery_n
-FROM products WHERE id IN (1, 8) ORDER BY id;
+  (SELECT length(content) FROM pages WHERE slug = 'technical-documentation')              AS committed_len_20897,
+  (SELECT count(*) FROM regexp_matches(
+      (SELECT content FROM pages WHERE slug = 'technical-documentation'),
+      'data-download-file', 'g'))                                                          AS must_be_0,
+  (SELECT count(*) FROM regexp_matches(
+      (SELECT content FROM pages WHERE slug = 'technical-documentation'),
+      'data-open-inquiry-modal', 'g'))                                                     AS must_be_14,
+  z.id, z.lang, z.image_url,
+  array_length(z.gallery, 1)                                                              AS gallery_n_must_be_6,
+  (SELECT count(*) FROM regexp_matches(array_to_string(z.gallery, ','),
+      'aluminum-wall-panels-(main|2|3|interior|exterior|detail)\.webp', 'g'))              AS old_names_must_be_0
+FROM products z
+WHERE z.id = 8;
 
 COMMIT;
 
@@ -168,10 +211,11 @@ COMMIT;
 -- 「Request Custom Document」按钮，它本来就有这个属性。
 --
 -- 【执行完之后】
--- 0. 上面八步每步的命中数（13/13/13/1/1/1/1/1）和结果长度 20,897，是在本地拿库里
---    当前 content 按同一组模式串跑出来的（.tmp-work/sql-simulate.py）。
---    Postgres 的 ARE 与 Python re 在这些模式上同构，但不保证逐字同构，
---    所以真判据是上面【执行后校验】那几列，任何一列对不上就 ROLLBACK（或重跑备份表回滚）。
+-- 0. 八步每步的命中数（13/13/13/1/1/1/1/1）与结果长度 20,897，最初是在本地拿库里
+--    当时那份 content 按同一组模式串跑出来的（.tmp-work/sql-simulate.py）。
+--    Postgres 的 ARE 与 Python re 在这些模式上同构，但不保证逐字同构，所以真判据
+--    是上面第二步/第五步那几列。v2 起这个表达式只写了一遍（临时视图），
+--    校验和 UPDATE 用的是同一个结果，不存在"校验过了但写的是另一套"。
 -- 1. 开 https://meiyualuminum.com/technical-documentation/ 肉眼确认：13 个按钮都写
 --    Request；点任意一个弹出询盘表单，Message 里已带文档名；页面上不再出现 MB/Rev.。
 -- 2. 回来跑 `python docs/media-manifest.py`：18 条 MISSING-ALLOWED 应全部消失
