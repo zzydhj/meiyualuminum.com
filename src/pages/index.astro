@@ -3,25 +3,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import FactoryTourRail from "../components/FactoryTourRail.astro";
 import OrderProcess from "../components/OrderProcess.astro";
 import { VG_COVERS } from "../lib/videoCovers";
+import { mediaUrl } from "../lib/mediaVersions";
 
-/**
- * 画廊 6 条视频共用的缓存版本号。
- *
- * R2 直链被 Cloudflare 边缘缓存一年（实测 GET 命中 cf-cache-status: HIT、
- * Cache-Control: max-age=31536000），在桶里同名替换文件后边缘仍会回旧字节。
- * 业主 2026-11-07 换 xiamen 那条就撞上了：源站已是 3,103,320 B（HEAD 可见），
- * 而浏览器走的 GET 仍拿到 23,585,673 B 的旧对象，TTL 还剩约 364 天。
- * 项内没有 Cloudflare API Token、wrangler 也无 purge 子命令，所以只能换缓存键。
- * 以后在 R2 里换过任何一条画廊视频，把这个值往上抬一次并部署即可（hero 那条
- * 同理，写死在 markup 里的 ?v=20261028）。
- *
- * 20261107b 的来由：20261107 上线后业主把 6 条全部压缩重传，但边缘在 ?v=20261107
- * 这个键上存的仍是旧内容（实测 liangjiang 返回 2,909,902 B / Last-Modified 10 月 8 日，
- * 而源站已是 555 kB）。旧内容是被开发时的探测请求写进去的：量体积时用了 ffprobe
- * 与 curl 的 GET，它们在业主替换完成之前就命中了这个缓存键（HEAD 不进缓存，GET 进）。
- * 教训：探测 R2 素材体积要用 HEAD 或带一个一次性的 query，不要把即将更换的正式键预热。
- */
-const VG_V = "?v=20261107b";
+// R2 直链被 Cloudflare 边缘缓存一年，同名覆盖后边缘仍回旧字节，只能换缓存键。
+// 版本号的唯一来源是 src/lib/mediaVersions.ts 那张表（为什么要这么定、抬键规则、
+// 历史踩坑都写在那里），换素材后跟 docs/media-manifest.py 校对，别在页面里写死 ?v=。
 
 // 纯静态预渲染：首页除 FactoryTourRail（工厂视频轨，构建时查一次 videos 表）外
 // 全是下方写死的常量，没有按请求取数的内容。曾经 prerender = false 的理由是
@@ -178,13 +164,11 @@ const websiteJsonLd = {
       poster="https://file.meiyualuminum.com/meiyu-video-4.webp"
     >
       {
-        /* 版本号是必需的，不是装饰：R2 自定义域名对这类文件回 `cache-control:
-          max-age=31536000`（一年），而键名不变。业主 2026-10-28 重传了视频，
-          源站与边缘都已是新字节，但回访浏览器的旧条目还有一年才过期——
-          不改 URL 就只能你自己 Ctrl+F5 看得到。换视频时跟着改 ?v= 。 */
+        /* 版本号由 mediaVersions.ts 统一给，不在这里写死（否则一处一改、
+          其余几处就会漏抬）。#t=0.1 是起播偏移，不属于缓存键的一部分。 */
       }
       <source
-        src="https://file.meiyualuminum.com/meiyu-video-3.mp4?v=20261028#t=0.1"
+        src={`${mediaUrl("meiyu-video-3.mp4")}#t=0.1`}
         type="video/mp4"
       />
     </video>
@@ -226,7 +210,7 @@ const websiteJsonLd = {
       <div class="vg-grid">
         <div
           class="vg-item"
-          data-vg-src={`https://file.meiyualuminum.com/video-project/xiamen-205e2-project.mp4${VG_V}#t=0.1`}
+          data-vg-src={`${mediaUrl("video-project/xiamen-205e2-project.mp4")}#t=0.1`}
           data-vg-auto
         >
           <div class="vg-cell">
@@ -263,7 +247,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={`https://file.meiyualuminum.com/video-project/liangjiang-hub-project.mp4${VG_V}`}
+          data-vg-src={mediaUrl("video-project/liangjiang-hub-project.mp4")}
         >
           <div class="vg-cell">
             <img
@@ -299,7 +283,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={`https://file.meiyualuminum.com/video-project/wuhan-gateway-trade-center.mp4${VG_V}`}
+          data-vg-src={mediaUrl("video-project/wuhan-gateway-trade-center.mp4")}
         >
           <div class="vg-cell">
             <img
@@ -335,7 +319,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={`https://file.meiyualuminum.com/video-project/chengdu-cloud-plaza-canopy-project.mp4${VG_V}`}
+          data-vg-src={mediaUrl("video-project/chengdu-cloud-plaza-canopy-project.mp4")}
         >
           <div class="vg-cell">
             <img
@@ -371,7 +355,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={`https://file.meiyualuminum.com/video-project/hangzhou-gateway-tower-garage.mp4${VG_V}`}
+          data-vg-src={mediaUrl("video-project/hangzhou-gateway-tower-garage.mp4")}
         >
           <div class="vg-cell">
             <img
@@ -407,7 +391,7 @@ const websiteJsonLd = {
         </div>
         <div
           class="vg-item"
-          data-vg-src={`https://file.meiyualuminum.com/video-project/suzhou-starlight-gateway-project.mp4${VG_V}`}
+          data-vg-src={mediaUrl("video-project/suzhou-starlight-gateway-project.mp4")}
         >
           <div class="vg-cell">
             <img

@@ -31,17 +31,17 @@
  * 一个破图比一个字母底难看得多。
  */
 import { responseTime, whatsappUrl } from "../lib/companyProfile";
+import { mediaUrl } from "../lib/mediaVersions";
 
 // 业主提供的头像插画：原图 263×260 PNG（90KB）→ 按内容实际边界裁方 → 160×160 webp q82（4.5KB）。
 // 必须按内容边界裁（crop=250:250:9:5）而不是按画布中心裁：插画自带的圆直径 250px，
 // 在画布里左白边 9px / 右白边 4px，本身就偏右 2.5px；按画布裁会把这层不对称留白搬进来，
 // 叠上 CSS 白环就变成“白边粗、图像不居中”。
 //
-// ⚠ ?v= 不是可选项：R2 直链被 Cloudflare 边缘缓存一年（max-age=31536000），
-// 同名覆盖对象后边缘仍会返回旧字节（实测：cf-cache-status: HIT，新传的文件要加 query 才拿到）。
-// 所以换图必须同时把这个版本号往上抬（与 hero 视频 ?v=20261028 同一惯例）。
-const AVATAR_SRC =
-    "https://file.meiyualuminum.com/home/floating-avatar.webp?v=20261107";
+// 版本号不写在这里：集中在 src/lib/mediaVersions.ts。R2 直链被 Cloudflare 边缘
+// 缓存一年，同名覆盖后边缘仍会返回旧字节（实测 cf-cache-status: HIT），只有换 ?v=
+// 才对访客生效。换图就抬那张表里的值，并跑 docs/media-manifest.py 对账。
+const AVATAR_SRC = mediaUrl("home/floating-avatar.webp");
 
 /**
  * 轮换文案。全部按附录 A 口径写：

@@ -1,0 +1,4236 @@
+{
+ "cdn": "https://file.meiyualuminum.com/",
+ "generated_note": "docs/media-manifest.py --update \u751f\u6210\uff1b\u6bd4\u5bf9\u7528\u57fa\u7ebf\uff0c\u52ff\u624b\u6539",
+ "objects": {
+  "blog/acoustic-ceiling/boardroom-layin-tiles-devices-b1445a.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "36f2993c8b4e108d9f9f14b2a9211b3d",
+   "hashed_name": true,
+   "last_modified": "Sun, 11 Oct 2026 14:43:45 GMT",
+   "size": 231097
+  },
+  "blog/acoustic-ceiling/ceiling-plenum-hvac-sprinkler-565d94.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "106af8f0d1a7967ae6390d04f6bca365",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 08:50:21 GMT",
+   "size": 181368
+  },
+  "blog/acoustic-ceiling/dark-tile-ceiling-luminaire-array-835fae.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "55156255c38904f221bcb1aa860fcf37",
+   "hashed_name": true,
+   "last_modified": "Sun, 11 Oct 2026 14:43:47 GMT",
+   "size": 328048
+  },
+  "blog/acoustic-ceiling/perforated-acoustic-tile-face-786fb1.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "668e08f5d3d5c19198c4e19e7e633f59",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:10:02 GMT",
+   "size": 128608
+  },
+  "blog/acoustic-ceiling/perforated-ceiling-concourse-0fadb1.png": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c30d6f73635cf6c652f26a394671259f",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:09:57 GMT",
+   "size": 1093929
+  },
+  "blog/acoustic-ceiling/perforation-open-area-drawing-20211e.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2293fd59ab167bcbd2c9c7fc7113ce2e",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:10:06 GMT",
+   "size": 265427
+  },
+  "blog/acoustic-ceiling/square-tile-office-grid-7d6341.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "707c80464d85b338b5e5206bec6f2a7b",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 14:43:03 GMT",
+   "size": 279998
+  },
+  "blog/acoustic-ceiling/transit-hall-tile-linear-recess-6109d4.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ea80cefb464f94dc2ae001ed1d42e8a4",
+   "hashed_name": true,
+   "last_modified": "Sun, 11 Oct 2026 14:43:46 GMT",
+   "size": 127452
+  },
+  "blog/ceiling-grid-baffle/airport-j-baffle-color-ceiling-722a0e.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ce7eee87b83e1ada7a48ac9cf62e33ca",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 08:50:24 GMT",
+   "size": 336635
+  },
+  "blog/facade-cladding/facade-canopy-fin-interface-215e24.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e281a9ba13218ad420cac63a90f6ff55",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:36 GMT",
+   "size": 94548
+  },
+  "blog/facade-cladding/facade-final-dusk-elevation-d79dc6.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "dd030cd99160351e25b62ff9dc9817c2",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:36 GMT",
+   "size": 98727
+  },
+  "blog/facade-cladding/facade-solution-day-elevation-90dc62.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "eaff9630027b764ac6f85d64ce721163",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:37 GMT",
+   "size": 76717
+  },
+  "blog/facade-cladding/mall-facade-arched-portal-detail-937af4.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "078def026ca12fa5dfa5c087248f7863",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:52:03 GMT",
+   "size": 137604
+  },
+  "blog/facade-cladding/mall-facade-arched-portal-wide-d2b5ed.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f980910f5edc8c2fa9c3eaa5be39863a",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:17:21 GMT",
+   "size": 67545
+  },
+  "blog/facade-cladding/mall-facade-gradient-perf-detail-879609.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a1734ec2736c33969bd244213c8a8f2d",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:17:21 GMT",
+   "size": 88427
+  },
+  "blog/facade-cladding/mall-facade-gradient-perf-wide-a538bb.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0fa4b96f3d57c80e54c8ec2fb7707936",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:52:03 GMT",
+   "size": 99957
+  },
+  "blog/facade-cladding/mall-facade-ornate-lattice-detail-4306cc.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d0dff28dcafe68f27310bd57fc61c310",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:17:21 GMT",
+   "size": 94086
+  },
+  "blog/facade-cladding/mall-facade-ornate-lattice-wide-6a0c30.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e3420a974da72a65cf8fb4e79ade1e36",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:17:21 GMT",
+   "size": 56357
+  },
+  "blog/facade-cladding/mall-facade-rib-mesh-detail-7ff474.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c143cdea02ee34b633a789c10d66796a",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:17:22 GMT",
+   "size": 88678
+  },
+  "blog/facade-cladding/mall-facade-rib-mesh-wide-77f249.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "15538345a9cd8588d3d5daa9b5e097e5",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 08:22:45 GMT",
+   "size": 150900
+  },
+  "blog/facade-cladding/nigeria-hotel-champagne-gold-3bfd6d.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f7983680c0507f874bca6588e3254f17",
+   "hashed_name": true,
+   "last_modified": "Sun, 11 Oct 2026 15:03:00 GMT",
+   "size": 291766
+  },
+  "blog/facade-cladding/nigeria-hotel-curved-glass-8bc879.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ac6007e17be8a3c6ebf38ffec0cbaf95",
+   "hashed_name": true,
+   "last_modified": "Sun, 11 Oct 2026 15:02:59 GMT",
+   "size": 299258
+  },
+  "blog/facade-cladding/nigeria-hotel-facade-hero-6b6187.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "857bda3e0dc0416af3935343bdbd50d4",
+   "hashed_name": true,
+   "last_modified": "Sun, 11 Oct 2026 15:02:57 GMT",
+   "size": 339412
+  },
+  "blog/facade-cladding/nigeria-hotel-horizontal-lines-49084e.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "24b4591e267665988486e632887226cd",
+   "hashed_name": true,
+   "last_modified": "Sun, 11 Oct 2026 15:02:58 GMT",
+   "size": 295144
+  },
+  "blog/facade-cladding/v1-chevron-fin-day-f59d43.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f1b0350d0e6763360302a60f6c824151",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:36 GMT",
+   "size": 91262
+  },
+  "blog/facade-cladding/v1-chevron-fin-dusk-f9b4d4.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7431d1948e9eb4829a6291d1b8de0b5d",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:36 GMT",
+   "size": 93304
+  },
+  "blog/facade-cladding/v1-curved-baffle-day-adda26.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "129cb2b2989f9d054e708e576a524a2a",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:39 GMT",
+   "size": 97311
+  },
+  "blog/facade-cladding/v1-curved-baffle-night-5a445c.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "963eebdb58ff7b87054f9855cfda06ef",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:39 GMT",
+   "size": 86284
+  },
+  "blog/facade-cladding/v2-cloud-parapet-screen-84c0bb.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d0c434e3db143edd74886e72d9092c09",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:39 GMT",
+   "size": 78012
+  },
+  "blog/facade-cladding/v2-wave-grille-day-951b58.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1479ef894c6d1f5ce688740937d0d382",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:39 GMT",
+   "size": 95094
+  },
+  "blog/facade-cladding/v2-wave-grille-dusk-939e94.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "735464a0b4fecf5144aa6d7c8904bb41",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:39 GMT",
+   "size": 90383
+  },
+  "blog/facade-cladding/v3-canopy-star-module-343c20.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "00a73df12d05ad5a749fbb1f151cd7af",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:41 GMT",
+   "size": 127109
+  },
+  "blog/facade-cladding/v3-faceted-parapet-dusk-a5b16b.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c8b7541f1d79dc04577dc39c238d0141",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:42 GMT",
+   "size": 86767
+  },
+  "blog/facade-cladding/v3-tree-cut-screen-c0d086.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7242df86ffb63bc7fcfd240ee1ec1d02",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:42 GMT",
+   "size": 99172
+  },
+  "blog/facade-cladding/v4-converged-day-front-375803.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "8d6c378c397dbddc884d8ff357a77655",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:45 GMT",
+   "size": 78716
+  },
+  "blog/facade-cladding/v4-converged-dusk-front-1c57c6.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0969318d638b3aaea6cd62985b1f65a1",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:42 GMT",
+   "size": 86911
+  },
+  "blog/facade-cladding/v5-approved-elevation-8538cd.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ed83c08c1e8af38323c2764b8a35ae9a",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:00:43 GMT",
+   "size": 87070
+  },
+  "blog/general/ceiling-shop-drawing-detail-46e304.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "75ebad506c78e5c6bdc78d8ffc13fe98",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 08:50:22 GMT",
+   "size": 299844
+  },
+  "blog/metal-ceiling/commercial-drop-ceiling-install-db839e.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1d725f9374bed03e456cab111d28d11f",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 08:50:25 GMT",
+   "size": 186794
+  },
+  "blog/metal-ceiling/dubai-emaar-ceiling-3-b2354d.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "230f204bea1af101acedeaa40e2ab44d",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 06:49:54 GMT",
+   "size": 320115
+  },
+  "blog/metal-ceiling/humid-metal-ceiling-1-5270a1.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "42de656d05fb9e6ff4a0ab90ea038ab3",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 06:50:46 GMT",
+   "size": 183371
+  },
+  "blog/metal-ceiling/humid-metal-ceiling-2-df3c58.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "258c9d978fed0c9f2ef1fc9ad8a6d4fa",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 06:50:48 GMT",
+   "size": 367563
+  },
+  "blog/metal-ceiling/humid-metal-ceiling-3-a08f3c.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d541884d51f667edcf04393ab72e3fc7",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 06:50:49 GMT",
+   "size": 345097
+  },
+  "blog/metal-ceiling/humid-metal-ceiling-4-ed7114.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fa5c5eb9f96116d4f549f28c85bc6062",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 06:50:51 GMT",
+   "size": 284122
+  },
+  "blog/metal-ceiling/humid-metal-ceiling-5-13fbd6.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5bc00868390886a41e57e2a3d6b760b3",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 06:50:54 GMT",
+   "size": 292022
+  },
+  "blog/metal-ceiling/large-format-panel-lobby-db6879.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "36b96679b6db25bb270872b9edea7bd9",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 14:43:12 GMT",
+   "size": 315496
+  },
+  "blog/metal-ceiling/lay-in-module-reveal-joints-0c6ce2.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bb87bebff29eca344bec45e1c7ef4471",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 14:43:11 GMT",
+   "size": 296940
+  },
+  "blog/metal-ceiling/lounge-arch-row-daylight-5237c3.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4e2beed262adcbb49d3bfd3eb8f34854",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:44:42 GMT",
+   "size": 163625
+  },
+  "blog/metal-ceiling/lounge-curved-slat-ceiling-hero-6dd0b7.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c14de2d820f1dd6d6c39418d54d8230b",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:44:42 GMT",
+   "size": 167385
+  },
+  "blog/metal-ceiling/lounge-flared-column-canopy-9dfbe7.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9fbedbab52c9e1d0fb4eed8bd147a1cc",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:44:42 GMT",
+   "size": 148217
+  },
+  "blog/metal-ceiling/lounge-gold-canopy-lattice-7b607d.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4efad24916f292d42703c7c680809f07",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:44:42 GMT",
+   "size": 155255
+  },
+  "blog/metal-ceiling/lounge-slat-grid-shadow-4e6525.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bdc7d23b4f3f22e68e1f557fe4b4f3bb",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:44:42 GMT",
+   "size": 194055
+  },
+  "blog/metal-ceiling/lounge-slat-splice-detail-301c70.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b5cd58c5817908cfa94b9493c756018a",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:44:43 GMT",
+   "size": 182065
+  },
+  "blog/metal-ceiling/lounge-slot-diffuser-ceiling-bc2612.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "aeea5d6ecfd46774e9f9384b4e65d223",
+   "hashed_name": true,
+   "last_modified": "Mon, 12 Oct 2026 14:44:43 GMT",
+   "size": 128769
+  },
+  "blog/metal-ceiling/rectangular-module-corridor-light-f91924.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "741722dca25fc309814c4745b0263034",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 14:44:42 GMT",
+   "size": 197447
+  },
+  "blog/metal-ceiling/rectangular-panel-linear-light-db8ca4.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "cc944195d0fe9ac51e6278829f39239e",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 14:43:09 GMT",
+   "size": 236959
+  },
+  "blog/metal-ceiling/starlight-ceiling-complete-bronze-a82b72.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0f5c413a4ed94a005199cb2460daf432",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 08:37:31 GMT",
+   "size": 256582
+  },
+  "blog/metal-ceiling/starlight-ceiling-installation-progress-7e0b57.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1e3fa8429dca77e1d588361047ec775d",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 08:37:41 GMT",
+   "size": 272347
+  },
+  "blog/metal-ceiling/starlight-gatehouse-photo-and-shop-f7cbb1.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1fcb33cb27fe9f33c4eebb641265ca91",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 12:53:18 GMT",
+   "size": 178394
+  },
+  "blog/metal-ceiling/starlight-panel-600-non-sprayed-ac2270.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b07b79fa6f8da1949cc92adddde5c05c",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 08:37:43 GMT",
+   "size": 114955
+  },
+  "blog/metal-ceiling/starlight-panel-900-sprayed-face-68d40b.png": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b6adaac5be05d465ea3ee662a7419644",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 08:37:48 GMT",
+   "size": 49986
+  },
+  "blog/metal-ceiling/starlight-panel-raw-formed-packed-d69abb.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c51452771779101c9660e43fbad70041",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 08:37:37 GMT",
+   "size": 169231
+  },
+  "blog/metal-ceiling/starlight-shop-drawing-jg34-9f54fa.png": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f9dd3319ae1d38f9a9c7637ce14786da",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 08:37:45 GMT",
+   "size": 64908
+  },
+  "blog/projects/bim-ceiling-coordination-model-c6732a.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4bd51b667ce1d2d7e123985e744de305",
+   "hashed_name": true,
+   "last_modified": "Tue, 06 Oct 2026 08:50:23 GMT",
+   "size": 338345
+  },
+  "covers/factory-01-efbf2c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b9e5524a797730d6377191bd5dbf106a",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:19:49 GMT",
+   "size": 54032
+  },
+  "covers/factory-02-cb489c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9b823a67e099b5aadc1341a231da7244",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:19:55 GMT",
+   "size": 49308
+  },
+  "covers/factory-03-cc730f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1167ade31e9c8e38738ab1d554580532",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:01 GMT",
+   "size": 65370
+  },
+  "covers/factory-04-d2bc32.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6dac30ab564ce7c6370e8b628ea3002b",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:06 GMT",
+   "size": 59764
+  },
+  "covers/factory-05-2c4b7c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c39a120c1daa91cc22b960a7637c5eba",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:12 GMT",
+   "size": 59382
+  },
+  "covers/factory-06-c0c3a9.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9bc6dc0bbaf740e9b1e5e0b32cf6c987",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:26 GMT",
+   "size": 59626
+  },
+  "covers/factory-07-f66b4b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0eb1c1aed5a84fc5f79fd0b07dc4f3ef",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:34 GMT",
+   "size": 55594
+  },
+  "covers/factory-08-8fe8aa.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4d02065da7aa6716fefadf2a93b4e126",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:43 GMT",
+   "size": 41210
+  },
+  "covers/factory-09-7a17cd.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "08a8f0045a0f1166d3b36b7fdd330dda",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:50 GMT",
+   "size": 44296
+  },
+  "covers/factory-10-633f95.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "80a1d92b89e64658ae98058c42ccb937",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:20:58 GMT",
+   "size": 50934
+  },
+  "covers/factory-11-25da6b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7f0ca909f226ad67367618100a69856f",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:21:06 GMT",
+   "size": 57632
+  },
+  "covers/factory-12-ef1564.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "86796756f84626207dcd37e46021b8b8",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 17:22:27 GMT",
+   "size": 67272
+  },
+  "covers/vg-chengdu-cloud-plaza-canopy-b5e2e6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "671648b37f32a8f326127d538c0500c5",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 14:56:53 GMT",
+   "size": 39664
+  },
+  "covers/vg-hangzhou-gateway-tower-garage-500c02.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e682c489f7f778a2e9f3281ff5109af1",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 14:57:03 GMT",
+   "size": 51900
+  },
+  "covers/vg-liangjiang-hub-2a9b8f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "330ac2a2eef58f0ffe8a7bce15091e52",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 14:57:08 GMT",
+   "size": 62040
+  },
+  "covers/vg-suzhou-starlight-gateway-caf24b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "521122aaa03e0cb9a9667e710dcf4d13",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 14:57:23 GMT",
+   "size": 57726
+  },
+  "covers/vg-wuhan-gateway-trade-center-2387bf.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0c7a09ed740301921c5f78a70cdbff79",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 14:57:31 GMT",
+   "size": 48258
+  },
+  "covers/vg-xiamen-205e2-86487d.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ff226c392dab8ebc0dccd0aeeb58e675",
+   "hashed_name": true,
+   "last_modified": "Fri, 06 Nov 2026 14:57:48 GMT",
+   "size": 64526
+  },
+  "docs/acoustic-performance-report.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/anodized-finish-guide.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/baffle-ceiling-spec.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/ceiling-installation-manual.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/ceiling-suspension-details.zip": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/ceiling-system-spec.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/cleaning-maintenance-guide.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/color-finish-chart.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/facade-installation-manual.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/facade-node-details.zip": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/fire-classification-report.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "docs/wind-load-performance.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "home/aluminum-ceiling-project/beijing-daxing-airport-terminal-tree-column-curved-aluminum-ceiling-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e6cd22bef2a1293e266b96d9f9d07b7b",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 07:42:01 GMT",
+   "size": 91000
+  },
+  "home/aluminum-ceiling-project/black-perforated-aluminum-ceiling-circular-holes-backlit-office-lobby.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e555091f4971232a76ee24cc1e82c54b",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 07:42:02 GMT",
+   "size": 110206
+  },
+  "home/aluminum-ceiling-project/gradient-perforated-aluminum-ceiling-panels-linear-led-library-office.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a96f027e57d275d6449cb5d6c9c9c14d",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:06:28 GMT",
+   "size": 110028
+  },
+  "home/aluminum-ceiling-project/hexagonal-honeycomb-aluminum-ceiling-large-span-public-space.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fab7a59b04431d9483c194f58e7006ed",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 07:42:02 GMT",
+   "size": 46804
+  },
+  "home/aluminum-ceiling-project/modular-aluminum-strip-ceiling-diamond-steel-node-commercial-arcade.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f5da1ba9ebf02fe53abda88c567a4042",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:06:28 GMT",
+   "size": 65180
+  },
+  "home/aluminum-ceiling-project/perforated-metal-ceiling-backlit-triangular-pattern-building-entrance.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3cfaa0577539d688d0744abaceafd61c",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 07:42:01 GMT",
+   "size": 71916
+  },
+  "home/aluminum-ceiling-project/white-curved-aluminum-panel-ceiling-tree-column-airport-transit-hub.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7171da51461afbde5944db3eecbcc238",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 07:42:01 GMT",
+   "size": 128484
+  },
+  "home/aluminum-ceiling-project/wood-finish-aluminum-strip-ceiling-steel-frame-office-lobby-8-bishopsgate.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "cb05adc4d5b69e922061dd8da5180a2e",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 07:42:01 GMT",
+   "size": 88238
+  },
+  "home/aluminum-facade/avant-garde-skyscraper-dark-fins-gold-trim-under-construction.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e7b12878a5eac2bb5989706b252e2490",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 06:48:05 GMT",
+   "size": 59306
+  },
+  "home/aluminum-facade/mizuho-building-metallic-lattice-facade-wave-base-low-angle.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e718ff941948093b3cfec245057ef66e",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 06:48:05 GMT",
+   "size": 78454
+  },
+  "home/aluminum-facade/modern-building-corner-perforated-metal-panel-louvers-detail.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e646950c5d4ee555fa790e5446c14e5f",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 06:48:05 GMT",
+   "size": 105378
+  },
+  "home/aluminum-facade/modern-skyscraper-perforated-facade-low-angle.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ec8282d4b7b87b19ab8426783381e42c",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 06:48:07 GMT",
+   "size": 62308
+  },
+  "home/aluminum-facade/modern-stadium-white-canopy-colonnade-exterior-architecture.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6079e61ba801a86e027defcc6996bdc2",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 06:48:05 GMT",
+   "size": 30590
+  },
+  "home/aluminum-facade/organic-wave-balcony-apartment-building-streetview.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9ec47808c090a7d5f9418f426332ac5a",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 06:48:05 GMT",
+   "size": 56556
+  },
+  "home/aluminum-facade/parametric-tower-undulating-metal-fins-aerial.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c719b8ffc0ffec923fdbae8b268dac4d",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 06:48:06 GMT",
+   "size": 60080
+  },
+  "home/aluminum-facade/white-wave-balcony-residential-tower-facade.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2ec39068d6c732f402070ffdd326b35a",
+   "hashed_name": true,
+   "last_modified": "Mon, 27 Jul 2026 06:48:08 GMT",
+   "size": 66872
+  },
+  "home/aluminum-fluted-panel/aluminium-batten-corridor-doorway-cladding-integrated-linear-lighting.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "81122035f3924cc90dfe07bad1fac9c6",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:08 GMT",
+   "size": 40324
+  },
+  "home/aluminum-fluted-panel/aluminium-batten-feature-wall-backlit-landscape-projection-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fc68a39eb462e4a8fce0379365a911c7",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:07 GMT",
+   "size": 49152
+  },
+  "home/aluminum-fluted-panel/aluminium-batten-partition-wall-moss-green-wall-biophilic-office-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "379cfb76e2203f246530f8c8e00cbf23",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:08 GMT",
+   "size": 39522
+  },
+  "home/aluminum-fluted-panel/aluminium-batten-wall-ceiling-continuous-cladding-led-strip-public-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "20db16dbbb6114e3d8b61cb7cb3f0861",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:07 GMT",
+   "size": 52006
+  },
+  "home/aluminum-fluted-panel/black-aluminium-batten-wall-wave-woven-accent-luxury-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "69d5cd0d2b8b8f12cc3983b2aa54ea27",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:08 GMT",
+   "size": 22246
+  },
+  "home/aluminum-fluted-panel/curved-aluminium-batten-ceiling-wall-luxury-restaurant-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fa2d9593c36d5fcaf1229f90160a910a",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:07 GMT",
+   "size": 62522
+  },
+  "home/aluminum-fluted-panel/exterior-aluminium-batten-facade-cladding-commercial-building.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d28e4e0f8e857b97a40877f8934a10b4",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:07 GMT",
+   "size": 60698
+  },
+  "home/aluminum-fluted-panel/large-scale-aluminium-batten-wall-ceiling-corridor-white-linear-lights.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c2b867e472e58a0515768f7078a16d24",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:51:07 GMT",
+   "size": 41724
+  },
+  "home/aluminum-square-tube/airport-terminal-curved-white-aluminum-baffle-ceiling-mushroom-columns.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "556f32ebf85e761f7053de85bf5df926",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:47 GMT",
+   "size": 82788
+  },
+  "home/aluminum-square-tube/circular-ring-aluminum-baffle-ceiling-led-strip-shopping-mall-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e762efce12dd57050f58cd6ba397670c",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:49 GMT",
+   "size": 59312
+  },
+  "home/aluminum-square-tube/curved-wood-grain-aluminum-baffle-ceiling-linear-led-public-building-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5b58a7d2f8d01c4d19b7b503a0755756",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:48 GMT",
+   "size": 102414
+  },
+  "home/aluminum-square-tube/curved-wood-grain-aluminum-baffle-ceiling-warm-led-cove-lighting-hotel-lobby.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f5852130ecae5e16bebae40b63ac790b",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:47 GMT",
+   "size": 61906
+  },
+  "home/aluminum-square-tube/dark-gray-aluminum-baffle-ceiling-linear-led-marble-staircase-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "8db6e6f13d40a3f6ad11731ed8a3f05d",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:47 GMT",
+   "size": 45436
+  },
+  "home/aluminum-square-tube/u-baffle-wood-grain-aluminum-square-tube-ceiling-commercial-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "176208e265348ed1b31c2c8c0e267185",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:47 GMT",
+   "size": 72796
+  },
+  "home/aluminum-square-tube/wave-wood-grain-aluminum-baffle-ceiling-shopping-mall.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "706a55702280d6cf07e341cbda5b0757",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:49 GMT",
+   "size": 58030
+  },
+  "home/aluminum-square-tube/white-wave-aluminum-baffle-ceiling-atrium-large-columns-shopping-complex.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fa2dade631962527679fe2ff4d6ebb02",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:23:49 GMT",
+   "size": 52036
+  },
+  "home/aluminum-strip-ceiling/commercial-interior-aluminium-strip-ceiling-grid-recessed-warm-lights.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "73b6c41f35fe5c23fbf3839060263936",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:12:24 GMT",
+   "size": 75544
+  },
+  "home/aluminum-strip-ceiling/indoor-aluminium-strip-ceiling-glass-curtain-wall-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7d995b5877935e5d5cc7a81fd5c23040",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:12:25 GMT",
+   "size": 28014
+  },
+  "home/aluminum-strip-ceiling/large-span-outdoor-aluminium-strip-ceiling-steel-structure-canopy.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "520b099efc8b5d4bec046d1211ebb6ac",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 11:58:16 GMT",
+   "size": 112912
+  },
+  "home/aluminum-strip-ceiling/luxury-interior-aluminium-strip-ceiling-living-room-design.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0968e2119c0558c1319bf1d2e6aef671",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:12:24 GMT",
+   "size": 52492
+  },
+  "home/aluminum-strip-ceiling/modern-exterior-aluminium-strip-ceiling-black-steel-frame-glass-facade.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "020828bc5edd4af3a234096f47db8f7e",
+   "hashed_name": true,
+   "last_modified": "Tue, 28 Jul 2026 10:12:25 GMT",
+   "size": 55376
+  },
+  "home/aluminum-strip-ceiling/outdoor-aluminium-strip-ceiling-balcony-overhang-spotlight.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e5e3521dc0105e9be22816e38b35b056",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:12:25 GMT",
+   "size": 35156
+  },
+  "home/aluminum-strip-ceiling/semi-outdoor-aluminium-strip-ceiling-recessed-lights-open-air-space.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "70a41899b8411b49100b3c3ef9a8c85b",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:12:24 GMT",
+   "size": 42038
+  },
+  "home/aluminum-strip-ceiling/wide-plank-aluminium-strip-ceiling-outdoor-corridor-wood-grain-texture.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "cab7a303038d2c52ae5fa4f821cf3a36",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 10:12:24 GMT",
+   "size": 28550
+  },
+  "home/custom-aluminum-single-panel-design-factory-installation-building-facade.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bdefb6c76ae71358fa3b05c8855f60c6",
+   "hashed_name": true,
+   "last_modified": "Tue, 28 Jul 2026 07:02:46 GMT",
+   "size": 58768
+  },
+  "home/favicon.ico": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "82b3e271b066f9903703eb35785d8ca5",
+   "hashed_name": false,
+   "last_modified": "Sat, 25 Jul 2026 02:24:55 GMT",
+   "size": 15406
+  },
+  "home/floating-avatar.webp": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261107"
+   ],
+   "etag": "ad74e17873b80eed451abf2609e00790",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 03:22:59 GMT",
+   "size": 4568
+  },
+  "home/general/Background.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a55952051d3a7b59ad295d2a95d716ff",
+   "hashed_name": false,
+   "last_modified": "Tue, 06 Oct 2026 13:26:23 GMT",
+   "size": 131630
+  },
+  "home/general/acoustic-aluminum-panels.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "19657a0f6ba3a906f6c836d9a196f824",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 13:36:40 GMT",
+   "size": 66158
+  },
+  "home/general/aluminum-clip-in-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ecdd3834c2043af83e39eb9710e739c0",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 11:25:08 GMT",
+   "size": 110884
+  },
+  "home/general/aluminum-edge-trim-strip.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b602b5baf065014ff56b9bf1a9e2d24d",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 15:08:22 GMT",
+   "size": 80034
+  },
+  "home/general/aluminum-honeycomb-panel.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "24315543f0ba19cbda3f2cdc2d6761a0",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 12:30:10 GMT",
+   "size": 56390
+  },
+  "home/general/aluminum-mesh-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "908800de3fb7a6b5be6ecd7cf8772513",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 11:36:26 GMT",
+   "size": 190938
+  },
+  "home/general/aluminum-open-cell-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "8858dee6b40234b8a318711bfd5cfa0e",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 11:35:11 GMT",
+   "size": 88854
+  },
+  "home/general/aluminum-skirting-board.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2b6e5947a83c1864fe7accbbcd0a98a0",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 11:25:08 GMT",
+   "size": 61014
+  },
+  "home/general/ceiling-aluminum-honeycomb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "00a0be2059bd47815871db094f35f00e",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 12:30:10 GMT",
+   "size": 46066
+  },
+  "home/general/led-aluminum-skirting-board.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5686b9977e94c00518f6203e8f1b1d28",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 11:25:08 GMT",
+   "size": 48852
+  },
+  "home/general/round-tube-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bbb69e425299333e0070786162cc83c2",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 08:43:01 GMT",
+   "size": 37284
+  },
+  "home/general/teardrop-shape-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a9c9c5b0425cc317009a27543abb8a42",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 08:33:17 GMT",
+   "size": 39772
+  },
+  "home/general/u-type-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1a0a9eb83770de8c50673bd099c4e24a",
+   "hashed_name": false,
+   "last_modified": "Wed, 07 Oct 2026 08:43:01 GMT",
+   "size": 38986
+  },
+  "home/logo-1.png": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b41bd875a832a474099f4e624bd5f7b4",
+   "hashed_name": false,
+   "last_modified": "Wed, 29 Jul 2026 14:17:31 GMT",
+   "size": 22232
+  },
+  "home/logo-white-2.png": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c8fcaaf67756cd3ed29f1e4c1c30a120",
+   "hashed_name": false,
+   "last_modified": "Wed, 29 Jul 2026 14:17:31 GMT",
+   "size": 19161
+  },
+  "home/mega-menu/aluminum-ceiling-tile.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4fa9c3c69c9da7d1ddf64d5b7078008f",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:12 GMT",
+   "size": 5978
+  },
+  "home/mega-menu/aluminum-honeycomb-core-panel.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3daf6212d3a92c40dd16eb9ebf53450f",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:12 GMT",
+   "size": 21398
+  },
+  "home/mega-menu/aluminum-skirting-board.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e88a6566c332a16694c8f0885c2c16d8",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:12 GMT",
+   "size": 14590
+  },
+  "home/mega-menu/aluminum-square-tube.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6249f240da7702dc4cfd6232af1fa734",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:12 GMT",
+   "size": 17548
+  },
+  "home/mega-menu/aluminum-strip-panel.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4fb61948b26dfda3cafb8bef916182f3",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:12 GMT",
+   "size": 11476
+  },
+  "home/mega-menu/aluminum-veneer.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3067588b8df05cac0f964af254424e70",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:13 GMT",
+   "size": 23988
+  },
+  "home/mega-menu/fluted-aluminum-panel.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d550d5c59af75156d800f0ad9e96002c",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:13 GMT",
+   "size": 13734
+  },
+  "home/mega-menu/u-shaped-aluminum-square-tube.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9b147c2afd46dac3d3bb0bbe46fe376b",
+   "hashed_name": false,
+   "last_modified": "Fri, 07 Aug 2026 14:24:13 GMT",
+   "size": 14000
+  },
+  "home/meiyu-engineer-architectural-3d-modeling-laser-scanner-construction-site.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f2d7e2bf064a7b6c0fa706154d2d3b1f",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 14:45:37 GMT",
+   "size": 60132
+  },
+  "home/social-share-card-aecd1d.jpg": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ff5697602760eddcea02e1d619cbd65a",
+   "hashed_name": true,
+   "last_modified": "Sun, 25 Oct 2026 16:07:41 GMT",
+   "size": 171916
+  },
+  "home/south-gate-tower-aluminum-single-panel-curtain-wall-construction-drawing-3d-render.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ef365b4619ba8741af7a99a28cfb4d3c",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 14:49:09 GMT",
+   "size": 51222
+  },
+  "home/video/01-Meiyu-Aluminum-Panel-Factory-Introduction.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b09bd0f4b8bddbf9d02c4059394a0243",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:42 GMT",
+   "size": 18797779
+  },
+  "home/video/02-Meiyu-Aluminum-Panel-Laser-Cutting.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7c4be3f7bfb754320d61f46d8d679941",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:04:15 GMT",
+   "size": 68258093
+  },
+  "home/video/03-Meiyu-Aluminum-Panel-Grooving-And-Bending.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ad7ef23161042ccec472e9756798a05f",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:04:15 GMT",
+   "size": 71276807
+  },
+  "home/video/04-Meiyu-Aluminum-Panel-Grinding-And-Polishing.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bbbbbedcd951b531555155bc8e56ec2e",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:25 GMT",
+   "size": 11239634
+  },
+  "home/video/05-Meiyu-Aluminum-Panel-Reinforcement.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "90ab09cdb0bf8d32f63018ec31ce94e6",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:34 GMT",
+   "size": 11536765
+  },
+  "home/video/06-Meiyu-Aluminum-Panel-Hanging-Ear-Installation.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "542d18619ec588691b41e0518b883828",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:24 GMT",
+   "size": 12263832
+  },
+  "home/video/07-Meiyu-Aluminum-Panel-Cleaning.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c066976d4e329113afc5877694db3d1a",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:21 GMT",
+   "size": 39034958
+  },
+  "home/video/08-Meiyu-Aluminum-Panel-Spray-Painting.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9f1838eba49b546a15bc587925cfb283",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:07 GMT",
+   "size": 25340451
+  },
+  "home/video/09-Meiyu-Aluminum-Panel-Baking-Paint.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0f330f1c9b183ec437a4e34fb9b76612",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:24 GMT",
+   "size": 46270670
+  },
+  "home/video/10-Meiyu-Aluminum-Panel-Quality-Inspection.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c6b9f28a79e56a5788556746623415ea",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:09 GMT",
+   "size": 13278524
+  },
+  "home/video/11-Meiyu-Aluminum-Panel-Packaging.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2706127ba49cf8d9eac7cc2c4ecec428",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:23 GMT",
+   "size": 35389802
+  },
+  "home/video/12-Meiyu-Aluminum-Panel-Warehouse-Storage.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "972caa3819519b532e8ba06ad39da181",
+   "hashed_name": false,
+   "last_modified": "Mon, 12 Oct 2026 16:03:39 GMT",
+   "size": 5938538
+  },
+  "home/video/zhaoqing-community-gatehouse-project.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ff643276df32c50dbc42baa67701eaf8",
+   "hashed_name": false,
+   "last_modified": "Sun, 25 Oct 2026 11:34:51 GMT",
+   "size": 19088392
+  },
+  "home/world-map.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "040b24a1a1547ae98a682677d379182e",
+   "hashed_name": false,
+   "last_modified": "Sun, 26 Jul 2026 13:02:30 GMT",
+   "size": 68092
+  },
+  "inspiration/ceiling/aluminum-ceiling-tile-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ceba79c75b27560af3aa663a5d885a0b",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:05 GMT",
+   "size": 7968
+  },
+  "inspiration/ceiling/aluminum-clip-in-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ecdd3834c2043af83e39eb9710e739c0",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:54 GMT",
+   "size": 110884
+  },
+  "inspiration/ceiling/aluminum-edge-trim-strip.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b602b5baf065014ff56b9bf1a9e2d24d",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:55 GMT",
+   "size": 80034
+  },
+  "inspiration/ceiling/aluminum-mesh-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "908800de3fb7a6b5be6ecd7cf8772513",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:57 GMT",
+   "size": 190938
+  },
+  "inspiration/ceiling/aluminum-open-cell-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "8858dee6b40234b8a318711bfd5cfa0e",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:58 GMT",
+   "size": 88854
+  },
+  "inspiration/ceiling/aluminum-square-tube-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b020bc257c48b4166aeb82a4e8b9b7fe",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:06 GMT",
+   "size": 21578
+  },
+  "inspiration/ceiling/aluminum-strip-panel-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b291612e43408147d3790d01b62ce723",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:07 GMT",
+   "size": 12944
+  },
+  "inspiration/ceiling/atrium-ceiling-scene-dd5b6f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "17e4c82b412518151d5e3aef1c75536e",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:43 GMT",
+   "size": 240966
+  },
+  "inspiration/ceiling/atrium-radial-blade-ceiling-6ac322.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2d40def6f667b873e46e3e294dd0e7ff",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:49 GMT",
+   "size": 136052
+  },
+  "inspiration/ceiling/black-perforated-aluminum-ceiling-circular-holes-backlit-office-lobby.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e555091f4971232a76ee24cc1e82c54b",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:32 GMT",
+   "size": 110206
+  },
+  "inspiration/ceiling/blade-row-rolled-heads-73deeb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "76502c18c5fa9ff2c3e55348159e4124",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:50 GMT",
+   "size": 58452
+  },
+  "inspiration/ceiling/blade-spacing-density-samples-98d196.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "850c6b5890d0605f98182c26b11e1d6b",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:51 GMT",
+   "size": 39032
+  },
+  "inspiration/ceiling/c-shape-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "95efc89dd53008a6fd14ae1018fb7ebc",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:59 GMT",
+   "size": 54004
+  },
+  "inspiration/ceiling/ceiling-aluminum-honeycomb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "00a0be2059bd47815871db094f35f00e",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:00 GMT",
+   "size": 46066
+  },
+  "inspiration/ceiling/channel-crossing-joint-detail-8f0259.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3f80f3598215371468262415bd18df00",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:41 GMT",
+   "size": 27824
+  },
+  "inspiration/ceiling/circular-ring-aluminum-baffle-ceiling-led-strip-shopping-mall-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e762efce12dd57050f58cd6ba397670c",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:46 GMT",
+   "size": 59312
+  },
+  "inspiration/ceiling/clip-in-edge-profile-stack-0bc704.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "77c3b82874763caa7ddf070e19c9de44",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:11 GMT",
+   "size": 48568
+  },
+  "inspiration/ceiling/clip-in-panel-corner-stacked-1e9eab.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7f662d595b0d750a65a0a12a973fbd74",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:11 GMT",
+   "size": 73938
+  },
+  "inspiration/ceiling/clip-in-sharp-edge-closeup-74c3ed.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a55e46ea7c32dc8e6d7b8f1c1a78cbe7",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:13 GMT",
+   "size": 24058
+  },
+  "inspiration/ceiling/clip-in-spring-clip-edge-70ecf0.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "194d14c1b6a491bda1006a37e9f14484",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:13 GMT",
+   "size": 69306
+  },
+  "inspiration/ceiling/clip-in-tile-demount-hand-d12d33.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fd1ab8499f7f9fb53376df5dd1906a3b",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:14 GMT",
+   "size": 169418
+  },
+  "inspiration/ceiling/commercial-interior-aluminium-strip-ceiling-grid-recessed-warm-lights.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "73b6c41f35fe5c23fbf3839060263936",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:50 GMT",
+   "size": 75544
+  },
+  "inspiration/ceiling/corridor-ceiling-scene-db8f61.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7170dd729e4f7addce51b0c27d76de1b",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:38 GMT",
+   "size": 67760
+  },
+  "inspiration/ceiling/curved-aluminium-batten-ceiling-wall-luxury-restaurant-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fa2d9593c36d5fcaf1229f90160a910a",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:44 GMT",
+   "size": 62522
+  },
+  "inspiration/ceiling/curved-wood-grain-aluminum-baffle-ceiling-warm-led-cove-lighting-hotel-lobby.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f5852130ecae5e16bebae40b63ac790b",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:47 GMT",
+   "size": 61906
+  },
+  "inspiration/ceiling/dark-gray-aluminum-baffle-ceiling-linear-led-marble-staircase-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "8db6e6f13d40a3f6ad11731ed8a3f05d",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:47 GMT",
+   "size": 45436
+  },
+  "inspiration/ceiling/decorative-perforated-tile-932a30.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "01adb4a5a621e4ff0094b98c914daeb9",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:14 GMT",
+   "size": 142396
+  },
+  "inspiration/ceiling/expanded-metal-diamond-mesh-74cebb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4d3a76d9e963da6198668c97d2a1cd6e",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:22 GMT",
+   "size": 68938
+  },
+  "inspiration/ceiling/gradient-perforated-aluminum-ceiling-panels-linear-led-library-office.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a96f027e57d275d6449cb5d6c9c9c14d",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:34 GMT",
+   "size": 110028
+  },
+  "inspiration/ceiling/grid-concourse-installed-43c744.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f707074a480d59db89d3235b092a42bc",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:41 GMT",
+   "size": 127218
+  },
+  "inspiration/ceiling/hexagonal-honeycomb-aluminum-ceiling-large-span-public-space.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fab7a59b04431d9483c194f58e7006ed",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:34 GMT",
+   "size": 46804
+  },
+  "inspiration/ceiling/installed-ceiling-access-opening-4a8fc8.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "dd1a354eec4945b7293315740da78529",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:15 GMT",
+   "size": 196460
+  },
+  "inspiration/ceiling/installed-office-corridor-ceiling-93dac3.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9a493fc16ed4386557a60c87020792b6",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:16 GMT",
+   "size": 169262
+  },
+  "inspiration/ceiling/installed-perforated-room-ceiling-b6a228.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "48f02294ba2548a4df98235a764c8315",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:17 GMT",
+   "size": 253040
+  },
+  "inspiration/ceiling/large-panel-concourse-ceiling-57f00c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bf150eff6253277c3129a56de7ab10ee",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:22 GMT",
+   "size": 42150
+  },
+  "inspiration/ceiling/large-scale-aluminium-batten-wall-ceiling-corridor-white-linear-lights.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c2b867e472e58a0515768f7078a16d24",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:45 GMT",
+   "size": 41724
+  },
+  "inspiration/ceiling/luxury-interior-aluminium-strip-ceiling-living-room-design.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0968e2119c0558c1319bf1d2e6aef671",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:51 GMT",
+   "size": 52492
+  },
+  "inspiration/ceiling/mesh-cassette-stiffened-edge-04873e.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d6861d18d996cf4242b64548b42c04ac",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:24 GMT",
+   "size": 135556
+  },
+  "inspiration/ceiling/mesh-retail-installed-45d3fd.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e5b944cdb945ac481200649302df7ac2",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:25 GMT",
+   "size": 276060
+  },
+  "inspiration/ceiling/metal-furring-channel.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fbca9b978274344a4ba4fa4bfd146fdc",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:01 GMT",
+   "size": 53458
+  },
+  "inspiration/ceiling/modular-aluminum-strip-ceiling-diamond-steel-node-commercial-arcade.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f5da1ba9ebf02fe53abda88c567a4042",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:35 GMT",
+   "size": 65180
+  },
+  "inspiration/ceiling/open-cell-grid-panel-920f4b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "05113b0b7fcda0b05e1005dddf8bb7db",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:42 GMT",
+   "size": 61020
+  },
+  "inspiration/ceiling/round-tube-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bbb69e425299333e0070786162cc83c2",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:02 GMT",
+   "size": 37284
+  },
+  "inspiration/ceiling/semi-outdoor-aluminium-strip-ceiling-recessed-lights-open-air-space.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "70a41899b8411b49100b3c3ef9a8c85b",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:53 GMT",
+   "size": 42038
+  },
+  "inspiration/ceiling/square-tube-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4f5a0e84d24003fc312c9b58507123e3",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:02 GMT",
+   "size": 94838
+  },
+  "inspiration/ceiling/teardrop-shape-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a9c9c5b0425cc317009a27543abb8a42",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:03 GMT",
+   "size": 39772
+  },
+  "inspiration/ceiling/threaded-ceiling-hanger-rod.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "48237f6cb683a42b9c3308a4d01f5d9b",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:03 GMT",
+   "size": 36048
+  },
+  "inspiration/ceiling/u-baffle-wood-grain-aluminum-square-tube-ceiling-commercial-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "176208e265348ed1b31c2c8c0e267185",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:48 GMT",
+   "size": 72796
+  },
+  "inspiration/ceiling/u-shaped-aluminum-square-tube-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d7f3008d15d251448fc9c80c5fca2280",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:09 GMT",
+   "size": 16104
+  },
+  "inspiration/ceiling/u-type-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1a0a9eb83770de8c50673bd099c4e24a",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:04 GMT",
+   "size": 38986
+  },
+  "inspiration/ceiling/v-shape-baffle-ceiling.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "139141ae11e5260ebfa330eeef799e65",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:05 GMT",
+   "size": 24886
+  },
+  "inspiration/ceiling/wave-wood-grain-aluminum-baffle-ceiling-shopping-mall.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "706a55702280d6cf07e341cbda5b0757",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:48 GMT",
+   "size": 58030
+  },
+  "inspiration/ceiling/white-wave-aluminum-baffle-ceiling-atrium-large-columns-shopping-complex.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fa2dade631962527679fe2ff4d6ebb02",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:49 GMT",
+   "size": 52036
+  },
+  "inspiration/ceiling/wide-plank-aluminium-strip-ceiling-outdoor-corridor-wood-grain-texture.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "cab7a303038d2c52ae5fa4f821cf3a36",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:54 GMT",
+   "size": 28550
+  },
+  "inspiration/ceiling/wood-finish-aluminum-strip-ceiling-steel-frame-office-lobby-8-bishopsgate.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "cb05adc4d5b69e922061dd8da5180a2e",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:37 GMT",
+   "size": 88238
+  },
+  "inspiration/ceiling/woven-crimped-wire-mesh-d6030a.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f0b635cbdd5ef89454db7058ef7a7a5c",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:25 GMT",
+   "size": 78276
+  },
+  "inspiration/facade/aluminium-batten-corridor-doorway-cladding-integrated-linear-lighting.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "81122035f3924cc90dfe07bad1fac9c6",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:42 GMT",
+   "size": 40324
+  },
+  "inspiration/facade/aluminium-batten-wall-ceiling-continuous-cladding-led-strip-public-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "20db16dbbb6114e3d8b61cb7cb3f0861",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:43 GMT",
+   "size": 52006
+  },
+  "inspiration/facade/aluminum-veneer-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "87fbbec34a12715af6d89e5e056a4e51",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:08 GMT",
+   "size": 28532
+  },
+  "inspiration/facade/avant-garde-skyscraper-dark-fins-gold-trim-under-construction.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e7b12878a5eac2bb5989706b252e2490",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:38 GMT",
+   "size": 59306
+  },
+  "inspiration/facade/canopy-fascia-scene-de42a3.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fba1af1b5fc6a855c31720b87576ae85",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:30 GMT",
+   "size": 52938
+  },
+  "inspiration/facade/canopy-radial-joints-28a261.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "218c1c0ca77ed10a7d9de75715049301",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:27 GMT",
+   "size": 39334
+  },
+  "inspiration/facade/canopy-soffit-scene-935c6e.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "79b7373059d4c7fbab46255c4d9b6ddb",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:47 GMT",
+   "size": 43616
+  },
+  "inspiration/facade/curved-wood-grain-aluminum-baffle-ceiling-linear-led-public-building-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5b58a7d2f8d01c4d19b7b503a0755756",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:46 GMT",
+   "size": 102414
+  },
+  "inspiration/facade/exterior-aluminium-batten-facade-cladding-commercial-building.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d28e4e0f8e857b97a40877f8934a10b4",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:45 GMT",
+   "size": 60698
+  },
+  "inspiration/facade/facade-screen-shade-scene-438c49.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "92fcbdab2fccdc084593b25c015ca8f8",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:44 GMT",
+   "size": 215604
+  },
+  "inspiration/facade/fluted-facade-scene-954e31.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "54e6c77909f4096f43fa7b95cafec434",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:30 GMT",
+   "size": 36954
+  },
+  "inspiration/facade/indoor-aluminium-strip-ceiling-glass-curtain-wall-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7d995b5877935e5d5cc7a81fd5c23040",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:50 GMT",
+   "size": 28014
+  },
+  "inspiration/facade/large-span-outdoor-aluminium-strip-ceiling-steel-structure-canopy.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6422312c3f096f32ac032123f28fdc9c",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:51 GMT",
+   "size": 1176368
+  },
+  "inspiration/facade/modern-building-corner-perforated-metal-panel-louvers-detail.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e646950c5d4ee555fa790e5446c14e5f",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:39 GMT",
+   "size": 105378
+  },
+  "inspiration/facade/modern-exterior-aluminium-strip-ceiling-black-steel-frame-glass-facade.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "020828bc5edd4af3a234096f47db8f7e",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:13:52 GMT",
+   "size": 55376
+  },
+  "inspiration/facade/modern-skyscraper-perforated-facade-low-angle.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ec8282d4b7b87b19ab8426783381e42c",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:40 GMT",
+   "size": 62308
+  },
+  "inspiration/facade/organic-wave-balcony-apartment-building-streetview.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9ec47808c090a7d5f9418f426332ac5a",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:40 GMT",
+   "size": 56556
+  },
+  "inspiration/facade/outdoor-aluminium-strip-ceiling-balcony-overhang-spotlight.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e5e3521dc0105e9be22816e38b35b056",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:53 GMT",
+   "size": 35156
+  },
+  "inspiration/facade/parametric-tower-undulating-metal-fins-aerial.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c719b8ffc0ffec923fdbae8b268dac4d",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:41 GMT",
+   "size": 60080
+  },
+  "inspiration/facade/perforated-metal-ceiling-backlit-triangular-pattern-building-entrance.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3cfaa0577539d688d0744abaceafd61c",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:37 GMT",
+   "size": 71916
+  },
+  "inspiration/facade/soffit-column-scene-6a6b7d.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e73b48744032aefd4457f998729b18a9",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:35 GMT",
+   "size": 27466
+  },
+  "inspiration/facade/tower-elevation-scene-619664.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b182416cea5cda065d4ad398c7232972",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:35 GMT",
+   "size": 66614
+  },
+  "inspiration/facade/tower-facade-scene-426d98.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "27e6f308148be15aee1b85d9d19822b3",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:49 GMT",
+   "size": 27666
+  },
+  "inspiration/facade/white-wave-balcony-residential-tower-facade.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2ec39068d6c732f402070ffdd326b35a",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:13:41 GMT",
+   "size": 66872
+  },
+  "inspiration/finish/allmetal-core-macro-f598ab.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4549e9605a81d3208052b1adf4986afb",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:32 GMT",
+   "size": 70826
+  },
+  "inspiration/finish/cell-size-samples-ad582e.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "50d798bd3f68649705ae54b98fde94e8",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:48 GMT",
+   "size": 105374
+  },
+  "inspiration/finish/finish-options-samples-339f98.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0cda0c3cf2f3ab4477d09a8382ff5248",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:20 GMT",
+   "size": 58260
+  },
+  "inspiration/finish/finish-options-samples-9d79dc.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "34a4ded099e91b6d0a35d14279d95d82",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:46 GMT",
+   "size": 45922
+  },
+  "inspiration/finish/finish-options-samples-c31f42.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5e5e8ba93f6157eb1c2c90b4a8574fd7",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:26 GMT",
+   "size": 38606
+  },
+  "inspiration/finish/finish-options-samples-d4fca6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6fca59fe0e281f92d8f68ce9dca277a4",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:23 GMT",
+   "size": 152802
+  },
+  "inspiration/finish/finish-options-samples-f0533c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "44cddda56f2e1d09dda4589f132be02a",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:52 GMT",
+   "size": 56526
+  },
+  "inspiration/finish/finish-samples-254f42.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b4f5b7e1f5c7bf75fd4c1e6e82a0fddf",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:39 GMT",
+   "size": 33976
+  },
+  "inspiration/finish/hygiene-cutout-detail-5c8e61.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "22373a20071150c42a9e01878afbbdfb",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:37 GMT",
+   "size": 17354
+  },
+  "inspiration/finish/install-clip-detail-c023d6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "66f4abe833c01cfa37aae074623995b5",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:39 GMT",
+   "size": 41456
+  },
+  "inspiration/finish/joint-options-samples-475031.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "67b800b51cc8841096f49c934d14935f",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:27 GMT",
+   "size": 53852
+  },
+  "inspiration/finish/open-joint-detail-e86b14.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9218c4c3b630618de3ef854b9a4449de",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:33 GMT",
+   "size": 29412
+  },
+  "inspiration/finish/open-joint-drain-detail-809151.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b7359ac8e00b34d2e6d511fb8511d209",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:31 GMT",
+   "size": 45710
+  },
+  "inspiration/finish/pitch-spacing-samples-e65ab0.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a163d29641771479855a26a854a35297",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:47 GMT",
+   "size": 31924
+  },
+  "inspiration/finish/pvdf-color-range-6d9b67.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3b0f6411faf4739dd595f90b83fbbc9a",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:31 GMT",
+   "size": 33832
+  },
+  "inspiration/finish/pvdf-finish-samples-990c33.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "73cb28533fc9d4f9419798e034837494",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:34 GMT",
+   "size": 54574
+  },
+  "inspiration/finish/rib-geometry-samples-eddf28.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3eff275f89ff01532b3dbcdfc11e1e91",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:40 GMT",
+   "size": 56714
+  },
+  "inspiration/finish/wood-grain-finish-options-9a666a-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b9e66561dd9ddf6c8f4818220bde9074",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:16 GMT",
+   "size": 136248
+  },
+  "inspiration/fluted-wall/aluminium-batten-feature-wall-backlit-landscape-projection-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fc68a39eb462e4a8fce0379365a911c7",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:42 GMT",
+   "size": 49152
+  },
+  "inspiration/fluted-wall/aluminium-batten-partition-wall-moss-green-wall-biophilic-office-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "379cfb76e2203f246530f8c8e00cbf23",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:43 GMT",
+   "size": 39522
+  },
+  "inspiration/fluted-wall/aluminum-honeycomb-core-panel-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "71b00fb113682f7f6f32173c6fe5ae26",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:05 GMT",
+   "size": 24882
+  },
+  "inspiration/fluted-wall/aluminum-honeycomb-panel.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "24315543f0ba19cbda3f2cdc2d6761a0",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:56 GMT",
+   "size": 56390
+  },
+  "inspiration/fluted-wall/aluminum-skirting-board.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e88a6566c332a16694c8f0885c2c16d8",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:07 GMT",
+   "size": 14590
+  },
+  "inspiration/fluted-wall/black-aluminium-batten-wall-wave-woven-accent-luxury-corridor.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "69d5cd0d2b8b8f12cc3983b2aa54ea27",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:13:44 GMT",
+   "size": 22246
+  },
+  "inspiration/fluted-wall/column-wrap-lobby-42f79a.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "21f7e5778ac5238d1d9df96d3407c935",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:26 GMT",
+   "size": 30022
+  },
+  "inspiration/fluted-wall/column-wrap-lobby-51d9c6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "33f6f8d660abcd94f364a10d2bce042b",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:36 GMT",
+   "size": 20022
+  },
+  "inspiration/fluted-wall/edge-treatment-options-81c65c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "28d9e3d929b1c9d5122a173656309aa5",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:36 GMT",
+   "size": 44676
+  },
+  "inspiration/fluted-wall/faceted-vs-true-arc-column-aa664f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "24b1b093417c418ce3ddc0ce65039e24",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:28 GMT",
+   "size": 16116
+  },
+  "inspiration/fluted-wall/fluted-aluminum-panel-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2c662c93d4545bb84934284484adb3d2",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:09 GMT",
+   "size": 16378
+  },
+  "inspiration/fluted-wall/folded-edge-cassette-hook-5f1766.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "23e2b665e816dd5dfcfeb9fbefb9338b",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:20 GMT",
+   "size": 29936
+  },
+  "inspiration/fluted-wall/honeycomb-core-cutaway-b3b352.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "948b06adc5065eed6988bb77b934da1f",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:21 GMT",
+   "size": 48300
+  },
+  "inspiration/fluted-wall/led-aluminum-skirting-board.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5686b9977e94c00518f6203e8f1b1d28",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 08:14:01 GMT",
+   "size": 48852
+  },
+  "inspiration/fluted-wall/lobby-feature-wall-scene-b545ad.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "cfbb8c8013ee1a113eb61a819572cf8d",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:40 GMT",
+   "size": 37746
+  },
+  "inspiration/fluted-wall/wave-feature-wall-lobby-25146f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0a36da2017c7b454224d3aa35f9d7ec0",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:29 GMT",
+   "size": 43946
+  },
+  "inspiration/other/metro-concourse-installed-a7c71b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b2c3b15712e286af3fd89c569b13a2fb",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:46 GMT",
+   "size": 116440
+  },
+  "inspiration/other/roll-bending-workshop-0b4e1d.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4efa3c39df170c195dc22b611fd98a28",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:28 GMT",
+   "size": 52474
+  },
+  "inspiration/other/transit-platform-scene-e0c8c4.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e0949271ec90272baf45a640d100b4e5",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:33 GMT",
+   "size": 88922
+  },
+  "inspiration/perforation/acoustic-perforated-detail-af0268.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "77ea47a0b80d07539726ca7b683a32b5",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:37 GMT",
+   "size": 63932
+  },
+  "inspiration/perforation/aluminum-screen-partition-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9e4af6f5e3c8d4151bfc797f6a070e2a",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:04 GMT",
+   "size": 22574
+  },
+  "inspiration/perforation/gradient-partition-screen-cd10ec.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f9d4feea5da2141ca3c94ae1131baa55",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:44 GMT",
+   "size": 81490
+  },
+  "inspiration/perforation/hole-family-samples-f927aa.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1e20fe69130e28efd5336e3a5d63915c",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:45 GMT",
+   "size": 90978
+  },
+  "inspiration/perforation/installed-perforated-showroom-b49dac.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ab809931fc9a6d875b841c2e18e55ecb",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:17 GMT",
+   "size": 84184
+  },
+  "inspiration/perforation/macro-hole-fleece-a504bb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0d6e54e4fa6daffdf07e5a811514a55e",
+   "hashed_name": true,
+   "last_modified": "Fri, 30 Oct 2026 08:14:45 GMT",
+   "size": 59020
+  },
+  "inspiration/perforation/perforated-pattern-options-8bc2c1-sq.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c9e67a6f60e5cf188b8337cb95c0a77d",
+   "hashed_name": false,
+   "last_modified": "Fri, 30 Oct 2026 12:22:11 GMT",
+   "size": 72596
+  },
+  "logo-clear.png": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ca3621992ffc33d6565b933a1723cfd5",
+   "hashed_name": false,
+   "last_modified": "Mon, 27 Jul 2026 08:59:33 GMT",
+   "size": 4413
+  },
+  "meiyu-factory-video.mp4": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "df38b23c05b17be688f1f339e33ca1da",
+   "hashed_name": false,
+   "last_modified": "Fri, 24 Jul 2026 16:14:36 GMT",
+   "size": 3028721
+  },
+  "meiyu-video-3.mp4": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261028"
+   ],
+   "etag": "7911132713899d71aecfa412d0eeed1a",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 02:35:31 GMT",
+   "size": 5901353
+  },
+  "meiyu-video-4.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0183b6abb3215f9e1bad875dec53e5b2",
+   "hashed_name": false,
+   "last_modified": "Tue, 28 Jul 2026 14:40:14 GMT",
+   "size": 16558
+  },
+  "products/aluminum-wall-panels-2.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "products/aluminum-wall-panels-3.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "products/aluminum-wall-panels-detail.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "products/aluminum-wall-panels-exterior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "products/aluminum-wall-panels-interior.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "products/aluminum-wall-panels-main.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "products/clip-in-aluminum-ceiling/clip-in-edge-profile-stack-0bc704.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "77c3b82874763caa7ddf070e19c9de44",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:05 GMT",
+   "size": 48568
+  },
+  "products/clip-in-aluminum-ceiling/clip-in-panel-corner-stacked-1e9eab.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7f662d595b0d750a65a0a12a973fbd74",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:11 GMT",
+   "size": 73938
+  },
+  "products/clip-in-aluminum-ceiling/clip-in-sharp-edge-closeup-74c3ed.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a55e46ea7c32dc8e6d7b8f1c1a78cbe7",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:13 GMT",
+   "size": 24058
+  },
+  "products/clip-in-aluminum-ceiling/clip-in-spring-clip-edge-70ecf0.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "194d14c1b6a491bda1006a37e9f14484",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:07 GMT",
+   "size": 69306
+  },
+  "products/clip-in-aluminum-ceiling/clip-in-tile-demount-hand-d12d33.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fd1ab8499f7f9fb53376df5dd1906a3b",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:00 GMT",
+   "size": 169418
+  },
+  "products/clip-in-aluminum-ceiling/decorative-perforated-tile-932a30.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "01adb4a5a621e4ff0094b98c914daeb9",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:16 GMT",
+   "size": 142396
+  },
+  "products/clip-in-aluminum-ceiling/installed-ceiling-access-opening-4a8fc8.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "dd1a354eec4945b7293315740da78529",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:31 GMT",
+   "size": 196460
+  },
+  "products/clip-in-aluminum-ceiling/installed-office-corridor-ceiling-93dac3.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9a493fc16ed4386557a60c87020792b6",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:26 GMT",
+   "size": 169262
+  },
+  "products/clip-in-aluminum-ceiling/installed-perforated-room-ceiling-b6a228.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "48f02294ba2548a4df98235a764c8315",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:28 GMT",
+   "size": 253040
+  },
+  "products/clip-in-aluminum-ceiling/installed-perforated-showroom-b49dac.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ab809931fc9a6d875b841c2e18e55ecb",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:23 GMT",
+   "size": 84184
+  },
+  "products/clip-in-aluminum-ceiling/perforated-pattern-options-8bc2c1.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "89feb6586fa7565fc9c83c6f67435ce1",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:08 GMT",
+   "size": 90962
+  },
+  "products/clip-in-aluminum-ceiling/perforation-pattern-chart-c7594e.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ef6e17daecf7a6d1833ff48791401cad",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:20 GMT",
+   "size": 146772
+  },
+  "products/clip-in-aluminum-ceiling/ral-color-finish-options-a5745c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a3441289a5e25c9c37a275841bc889c3",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:32 GMT",
+   "size": 6348
+  },
+  "products/clip-in-aluminum-ceiling/wood-grain-finish-options-9a666a.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9116ee4227e8215bd997751f757ccfd2",
+   "hashed_name": true,
+   "last_modified": "Thu, 08 Oct 2026 15:30:35 GMT",
+   "size": 146028
+  },
+  "renders/aluminum-honeycomb-ceiling/cassette-suspension-exploded-7b694b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b9c64b1feca91175e254298aff33875a",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 01:40:57 GMT",
+   "size": 34730
+  },
+  "renders/aluminum-honeycomb-ceiling/finish-options-samples-339f98.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0cda0c3cf2f3ab4477d09a8382ff5248",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 01:41:02 GMT",
+   "size": 58260
+  },
+  "renders/aluminum-honeycomb-ceiling/folded-edge-cassette-hook-5f1766.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "23e2b665e816dd5dfcfeb9fbefb9338b",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 01:40:55 GMT",
+   "size": 29936
+  },
+  "renders/aluminum-honeycomb-ceiling/honeycomb-core-cutaway-b3b352.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "948b06adc5065eed6988bb77b934da1f",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 01:40:53 GMT",
+   "size": 48300
+  },
+  "renders/aluminum-honeycomb-ceiling/installation-steps-four-stage-4c4ae3.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6697d4e0ca91e35697e1340f1eb52f6d",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 01:40:58 GMT",
+   "size": 58390
+  },
+  "renders/aluminum-honeycomb-ceiling/large-panel-concourse-ceiling-57f00c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "bf150eff6253277c3129a56de7ab10ee",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 01:41:00 GMT",
+   "size": 42150
+  },
+  "renders/aluminum-mesh-ceiling/expanded-metal-diamond-mesh-74cebb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4d3a76d9e963da6198668c97d2a1cd6e",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:14:57 GMT",
+   "size": 68938
+  },
+  "renders/aluminum-mesh-ceiling/finish-options-samples-d4fca6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6fca59fe0e281f92d8f68ce9dca277a4",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:15:03 GMT",
+   "size": 152802
+  },
+  "renders/aluminum-mesh-ceiling/installation-steps-four-stage-d49850.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d577be479884b57314d37ec41ebfd33f",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:15:01 GMT",
+   "size": 98116
+  },
+  "renders/aluminum-mesh-ceiling/mesh-cassette-stiffened-edge-04873e.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d6861d18d996cf4242b64548b42c04ac",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:15:00 GMT",
+   "size": 135556
+  },
+  "renders/aluminum-mesh-ceiling/mesh-retail-installed-45d3fd.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e5b944cdb945ac481200649302df7ac2",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:15:02 GMT",
+   "size": 276060
+  },
+  "renders/aluminum-mesh-ceiling/mesh-suspension-exploded-e73ed2.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "25ee50ba6d2f3e4d1ec3168bb2bb0469",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:15:01 GMT",
+   "size": 72784
+  },
+  "renders/aluminum-mesh-ceiling/woven-crimped-wire-mesh-d6030a.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f0b635cbdd5ef89454db7058ef7a7a5c",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:14:59 GMT",
+   "size": 78276
+  },
+  "renders/aluminum-strip-panel/as1530-fire-test-report-325703.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a5df553c4b462ec3677a19b04ec544ac",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:32:51 GMT",
+   "size": 84382
+  },
+  "renders/aluminum-strip-panel/interior-colour-chart-f3b9ff.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "787d246936fe580aec81b8a6cba2ca96",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:32:47 GMT",
+   "size": 49910
+  },
+  "renders/aluminum-strip-panel/linear-ceiling-isometrics-af69e7.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d26b200d1b4e6a68f35613a94d4167f2",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:32:45 GMT",
+   "size": 88990
+  },
+  "renders/aluminum-strip-panel/perforation-patterns-8e1880.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7c3dba76273ca67335688fd2fd9544df",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:32:49 GMT",
+   "size": 85318
+  },
+  "renders/aluminum-strip-panel/suspension-carrier-layout-60c4c6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "adc9e7dfa3396e305e92da1491c9b644",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 13:32:41 GMT",
+   "size": 75134
+  },
+  "renders/aluminum-wall-panels/column-wrap-lobby-42f79a.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "21f7e5778ac5238d1d9df96d3407c935",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 06:21:52 GMT",
+   "size": 30022
+  },
+  "renders/aluminum-wall-panels/finish-options-samples-c31f42.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5e5e8ba93f6157eb1c2c90b4a8574fd7",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 06:21:54 GMT",
+   "size": 38606
+  },
+  "renders/aluminum-wall-panels/joint-options-samples-475031.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "67b800b51cc8841096f49c934d14935f",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 06:21:49 GMT",
+   "size": 53852
+  },
+  "renders/aluminum-wall-panels/mounting-exploded-c83478.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9c62e9e3e88337bb412c2ea02ea81804",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 06:21:48 GMT",
+   "size": 52450
+  },
+  "renders/aluminum-wall-panels/panel-back-stiffeners-e2cab0.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "92baa817bd45649c4fdc8716f299bd74",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 06:21:46 GMT",
+   "size": 51832
+  },
+  "renders/aluminum-wall-panels/panel-section-formed-edge-95ecf6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "08b29ebf68a77b7d7ef19a2411583e8e",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 06:21:43 GMT",
+   "size": 19820
+  },
+  "renders/curved-aluminum-veneer-panel/canopy-radial-joints-28a261.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "218c1c0ca77ed10a7d9de75715049301",
+   "hashed_name": true,
+   "last_modified": "Tue, 27 Oct 2026 04:43:38 GMT",
+   "size": 39334
+  },
+  "renders/curved-aluminum-veneer-panel/curvature-families-b8c27b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0d7c3989d1f3ec24ca125513283f8e7a",
+   "hashed_name": true,
+   "last_modified": "Tue, 27 Oct 2026 04:43:31 GMT",
+   "size": 40066
+  },
+  "renders/curved-aluminum-veneer-panel/faceted-vs-true-arc-column-aa664f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "24b1b093417c418ce3ddc0ce65039e24",
+   "hashed_name": true,
+   "last_modified": "Tue, 27 Oct 2026 04:43:34 GMT",
+   "size": 16116
+  },
+  "renders/curved-aluminum-veneer-panel/roll-bending-workshop-0b4e1d.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4efa3c39df170c195dc22b611fd98a28",
+   "hashed_name": true,
+   "last_modified": "Tue, 27 Oct 2026 04:43:43 GMT",
+   "size": 52474
+  },
+  "renders/curved-aluminum-veneer-panel/rolled-section-locked-radius-720fb2.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7af8c97750ca0cdd5faa074b8fa2d347",
+   "hashed_name": true,
+   "last_modified": "Tue, 27 Oct 2026 04:43:33 GMT",
+   "size": 27876
+  },
+  "renders/curved-aluminum-veneer-panel/wave-feature-wall-lobby-25146f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0a36da2017c7b454224d3aa35f9d7ec0",
+   "hashed_name": true,
+   "last_modified": "Tue, 27 Oct 2026 04:43:41 GMT",
+   "size": 43946
+  },
+  "renders/exterior-fluted-facade-panel/canopy-fascia-scene-de42a3.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "fba1af1b5fc6a855c31720b87576ae85",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:49 GMT",
+   "size": 52938
+  },
+  "renders/exterior-fluted-facade-panel/fluted-facade-scene-954e31.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "54e6c77909f4096f43fa7b95cafec434",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:39 GMT",
+   "size": 36954
+  },
+  "renders/exterior-fluted-facade-panel/open-joint-drain-detail-809151.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b7359ac8e00b34d2e6d511fb8511d209",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:47 GMT",
+   "size": 45710
+  },
+  "renders/exterior-fluted-facade-panel/pvdf-color-range-6d9b67.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3b0f6411faf4739dd595f90b83fbbc9a",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:52 GMT",
+   "size": 33832
+  },
+  "renders/exterior-fluted-facade-panel/rib-bracket-section-5f306b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0ce2fc83163db6777c09e9021fae6e3f",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:43 GMT",
+   "size": 44530
+  },
+  "renders/fire-rated-honeycomb-panel/allmetal-core-macro-f598ab.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4549e9605a81d3208052b1adf4986afb",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:19 GMT",
+   "size": 70826
+  },
+  "renders/fire-rated-honeycomb-panel/floor-firestop-section-06d840.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "c3e1a591e7fc5a78ca4f0fbc4d64b15c",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:22 GMT",
+   "size": 42124
+  },
+  "renders/fire-rated-honeycomb-panel/transit-platform-scene-e0c8c4.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e0949271ec90272baf45a640d100b4e5",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:24 GMT",
+   "size": 88922
+  },
+  "renders/flat-aluminum-veneer-panel/open-joint-detail-e86b14.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9218c4c3b630618de3ef854b9a4449de",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 07:30:15 GMT",
+   "size": 29412
+  },
+  "renders/flat-aluminum-veneer-panel/panel-bracket-section-b1b6b0.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "16bfb43da011989884629893d26271df",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 07:30:11 GMT",
+   "size": 20942
+  },
+  "renders/flat-aluminum-veneer-panel/pvdf-finish-samples-990c33.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "73cb28533fc9d4f9419798e034837494",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 07:30:26 GMT",
+   "size": 54574
+  },
+  "renders/flat-aluminum-veneer-panel/soffit-column-scene-6a6b7d.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "e73b48744032aefd4457f998729b18a9",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 07:30:24 GMT",
+   "size": 27466
+  },
+  "renders/flat-aluminum-veneer-panel/tower-elevation-scene-619664.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b182416cea5cda065d4ad398c7232972",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 07:30:22 GMT",
+   "size": 66614
+  },
+  "renders/flat-aluminum-veneer-panel/ventilated-cavity-exploded-db3136.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5569f5608ff918e39f5a6a8f433fde00",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 07:30:13 GMT",
+   "size": 53724
+  },
+  "renders/honeycomb-wall-panel/column-wrap-lobby-51d9c6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "33f6f8d660abcd94f364a10d2bce042b",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 14:47:42 GMT",
+   "size": 20022
+  },
+  "renders/honeycomb-wall-panel/door-leaf-section-cd7e9d.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5eefb203d8f9b929b464ff49f1ab3c16",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 14:47:40 GMT",
+   "size": 53288
+  },
+  "renders/honeycomb-wall-panel/edge-treatment-options-81c65c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "28d9e3d929b1c9d5122a173656309aa5",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 14:47:38 GMT",
+   "size": 44676
+  },
+  "renders/honeycomb-wall-panel/hygiene-cutout-detail-5c8e61.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "22373a20071150c42a9e01878afbbdfb",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 14:47:43 GMT",
+   "size": 17354
+  },
+  "renders/honeycomb-wall-panel/interior-lining-exploded-8d6ac7.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "6c16eb525626f6c5b63eafe79d693d7e",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 14:47:34 GMT",
+   "size": 57604
+  },
+  "renders/honeycomb-wall-panel/telegraphing-comparison-a9e628.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3860ffda1b01654a2058c98ea6c8ceec",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 14:47:36 GMT",
+   "size": 31428
+  },
+  "renders/insulated-facade-panel/panel-section-mineral-core-b53778.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4d23a1c6c66d244ebd75dce3fbe77df7",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 03:06:09 GMT",
+   "size": 42622
+  },
+  "renders/interior-fluted-wall-panel/acoustic-perforated-detail-af0268.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "77ea47a0b80d07539726ca7b683a32b5",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:30 GMT",
+   "size": 63932
+  },
+  "renders/interior-fluted-wall-panel/corridor-ceiling-scene-db8f61.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "7170dd729e4f7addce51b0c27d76de1b",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:34 GMT",
+   "size": 67760
+  },
+  "renders/interior-fluted-wall-panel/finish-samples-254f42.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b4f5b7e1f5c7bf75fd4c1e6e82a0fddf",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:32 GMT",
+   "size": 33976
+  },
+  "renders/interior-fluted-wall-panel/install-clip-detail-c023d6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "66f4abe833c01cfa37aae074623995b5",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:27 GMT",
+   "size": 41456
+  },
+  "renders/interior-fluted-wall-panel/lobby-feature-wall-scene-b545ad.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "cfbb8c8013ee1a113eb61a819572cf8d",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:24 GMT",
+   "size": 37746
+  },
+  "renders/interior-fluted-wall-panel/rib-geometry-samples-eddf28.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3eff275f89ff01532b3dbcdfc11e1e91",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:51:22 GMT",
+   "size": 56714
+  },
+  "renders/open-cell-ceiling/channel-crossing-joint-detail-8f0259.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "3f80f3598215371468262415bd18df00",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:07:12 GMT",
+   "size": 27824
+  },
+  "renders/open-cell-ceiling/finish-options-samples-d972af.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f0263fcf15652fb50226801951842df5",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:07:17 GMT",
+   "size": 85230
+  },
+  "renders/open-cell-ceiling/grid-concourse-installed-43c744.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f707074a480d59db89d3235b092a42bc",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:07:19 GMT",
+   "size": 127218
+  },
+  "renders/open-cell-ceiling/grid-suspension-exploded-9c59a4.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "45075f5a75c3f07b2c523339783c1713",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:07:14 GMT",
+   "size": 62282
+  },
+  "renders/open-cell-ceiling/installation-steps-four-stage-e2ca0b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "543a65321a71d2b0f021ce6fdf74ec16",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:07:15 GMT",
+   "size": 80552
+  },
+  "renders/open-cell-ceiling/open-cell-grid-panel-920f4b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "05113b0b7fcda0b05e1005dddf8bb7db",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:07:09 GMT",
+   "size": 61020
+  },
+  "renders/open-cell-ceiling/pallet-packing-export-2a1105.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "119949971194f0574575c08a2182837d",
+   "hashed_name": true,
+   "last_modified": "Fri, 09 Oct 2026 15:07:21 GMT",
+   "size": 144416
+  },
+  "renders/perforated-aluminum-panel/acoustic-buildup-exploded-784a68.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "ea90ca99eb733d3345853c3c469b33c7",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 10:01:14 GMT",
+   "size": 94300
+  },
+  "renders/perforated-aluminum-panel/atrium-ceiling-scene-dd5b6f.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "17e4c82b412518151d5e3aef1c75536e",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 10:01:15 GMT",
+   "size": 240966
+  },
+  "renders/perforated-aluminum-panel/border-folded-edge-section-d1e769.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "41ee3a58fdad93e60c371e05c1c8114b",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 10:01:13 GMT",
+   "size": 65410
+  },
+  "renders/perforated-aluminum-panel/facade-screen-shade-scene-438c49.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "92fcbdab2fccdc084593b25c015ca8f8",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 10:01:16 GMT",
+   "size": 215604
+  },
+  "renders/perforated-aluminum-panel/gradient-partition-screen-cd10ec.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "f9d4feea5da2141ca3c94ae1131baa55",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 10:01:16 GMT",
+   "size": 81490
+  },
+  "renders/perforated-aluminum-panel/hole-family-samples-f927aa.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "1e20fe69130e28efd5336e3a5d63915c",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 10:01:10 GMT",
+   "size": 90978
+  },
+  "renders/perforated-aluminum-panel/macro-hole-fleece-a504bb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "0d6e54e4fa6daffdf07e5a811514a55e",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 10:01:11 GMT",
+   "size": 59020
+  },
+  "renders/round-tube-baffle-ceiling/finish-options-samples-9d79dc.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "34a4ded099e91b6d0a35d14279d95d82",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 06:43:12 GMT",
+   "size": 45922
+  },
+  "renders/round-tube-baffle-ceiling/installation-steps-four-stage-56a930.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "9683bc16a647dd486d27c8f4db22a7de",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 06:43:04 GMT",
+   "size": 96862
+  },
+  "renders/round-tube-baffle-ceiling/metro-concourse-installed-a7c71b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "b2c3b15712e286af3fd89c569b13a2fb",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 06:43:07 GMT",
+   "size": 116440
+  },
+  "renders/round-tube-baffle-ceiling/pitch-spacing-samples-e65ab0.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "a163d29641771479855a26a854a35297",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 06:43:10 GMT",
+   "size": 31924
+  },
+  "renders/round-tube-baffle-ceiling/rolled-open-tube-section-0daa51.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5bebdee69bcbd55df680fdc6acfb700d",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 06:42:58 GMT",
+   "size": 28550
+  },
+  "renders/round-tube-baffle-ceiling/rolled-vs-extruded-sections-20dc1b.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "755015fb4ec1f575154f086fb7ae1550",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 06:43:00 GMT",
+   "size": 37810
+  },
+  "renders/round-tube-baffle-ceiling/tube-suspension-exploded-7d9f36.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2828230341c1d12c4643e827a76fec22",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 06:43:02 GMT",
+   "size": 57102
+  },
+  "renders/standard-honeycomb-facade-panel/canopy-soffit-scene-935c6e.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "79b7373059d4c7fbab46255c4d9b6ddb",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:15 GMT",
+   "size": 43616
+  },
+  "renders/standard-honeycomb-facade-panel/cell-size-samples-ad582e.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "50d798bd3f68649705ae54b98fde94e8",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:06 GMT",
+   "size": 105374
+  },
+  "renders/standard-honeycomb-facade-panel/edge-closure-section-6bcc87.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "27af6bc39e12904100a4c8aea9248f6b",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:08 GMT",
+   "size": 43190
+  },
+  "renders/standard-honeycomb-facade-panel/panel-anatomy-exploded-3d6e24.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "8ad71b4c6f6a383d8e62b6c6e27fffe5",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:02 GMT",
+   "size": 42114
+  },
+  "renders/standard-honeycomb-facade-panel/sliding-bracket-detail-f034c9.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "4516fca0026b2994ea61fa2747bd1b29",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:10 GMT",
+   "size": 33738
+  },
+  "renders/standard-honeycomb-facade-panel/tower-facade-scene-426d98.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "27e6f308148be15aee1b85d9d19822b3",
+   "hashed_name": true,
+   "last_modified": "Mon, 26 Oct 2026 08:17:12 GMT",
+   "size": 27666
+  },
+  "renders/teardrop-shape-baffle-ceiling/atrium-radial-blade-ceiling-6ac322.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "2d40def6f667b873e46e3e294dd0e7ff",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 10:06:55 GMT",
+   "size": 136052
+  },
+  "renders/teardrop-shape-baffle-ceiling/blade-row-rolled-heads-73deeb.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "76502c18c5fa9ff2c3e55348159e4124",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 10:06:49 GMT",
+   "size": 58452
+  },
+  "renders/teardrop-shape-baffle-ceiling/blade-spacing-density-samples-98d196.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "850c6b5890d0605f98182c26b11e1d6b",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 10:06:57 GMT",
+   "size": 39032
+  },
+  "renders/teardrop-shape-baffle-ceiling/blade-suspension-exploded-528075.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "5f5d3f0d578c8f7b4a7814ac5e32e442",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 10:06:51 GMT",
+   "size": 59538
+  },
+  "renders/teardrop-shape-baffle-ceiling/finish-options-samples-f0533c.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "44cddda56f2e1d09dda4589f132be02a",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 10:07:00 GMT",
+   "size": 56526
+  },
+  "renders/teardrop-shape-baffle-ceiling/installation-steps-four-stage-4d3d56.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "d9ab7a7d7546a9e2d5dd217b195ce80a",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 10:06:53 GMT",
+   "size": 77884
+  },
+  "renders/teardrop-shape-baffle-ceiling/teardrop-blade-section-46fbf6.webp": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "14c0524ddd7ac22bf280411cc2be64f2",
+   "hashed_name": true,
+   "last_modified": "Sat, 10 Oct 2026 10:06:46 GMT",
+   "size": 18114
+  },
+  "technical-documentation/MC%20catalogue.pdf": {
+   "busted": false,
+   "cache_keys": [
+    ""
+   ],
+   "etag": "",
+   "hashed_name": false,
+   "last_modified": "",
+   "size": 0
+  },
+  "video-project/chengdu-cloud-plaza-canopy-project.mp4": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261107b"
+   ],
+   "etag": "08b19393f628d0693676bd2bfb675f28",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 08:41:37 GMT",
+   "size": 502406
+  },
+  "video-project/hangzhou-gateway-tower-garage.mp4": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261107b"
+   ],
+   "etag": "6dd1d79c8dcb0ca8e6f3d8ecf34b5e3d",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 08:38:06 GMT",
+   "size": 2192174
+  },
+  "video-project/liangjiang-hub-project.mp4": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261107b"
+   ],
+   "etag": "5ce0817f1e0355990068844345b3dccd",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 08:40:35 GMT",
+   "size": 555864
+  },
+  "video-project/suzhou-starlight-gateway-project.mp4": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261107b"
+   ],
+   "etag": "8ede0f8d5d06058aa5476491f68a2469",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 08:36:12 GMT",
+   "size": 1131877
+  },
+  "video-project/wuhan-gateway-trade-center.mp4": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261107b"
+   ],
+   "etag": "e6b9f9dd04b2770cb8ebed59eac076a5",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 08:39:37 GMT",
+   "size": 677850
+  },
+  "video-project/xiamen-205e2-project.mp4": {
+   "busted": true,
+   "cache_keys": [
+    "v=20261107b"
+   ],
+   "etag": "1225cb4ec5bc137809273a9a0f40a871",
+   "hashed_name": false,
+   "last_modified": "Sat, 07 Nov 2026 07:46:18 GMT",
+   "size": 3103320
+  }
+ }
+}
