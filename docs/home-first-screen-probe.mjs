@@ -16,10 +16,11 @@
 // 三条判据（任何一条 FAIL 就 exit 1）：
 //   V1 首屏视口内面积最大的元素必须是 hero 底图（.video-hero-poster / .video-hero-bg）。
 //      它是 LCP 元素；队列里的屏外图按定义不可能成为更大的候选，这条就是那句话的形式化。
-//   V2 队列不许重复抓「首屏元素正在下的那个 URL」。重复 = 白干一遍 + 和首屏撞带宽。
-//      （2026-11-08 实测到过：同一张 mega-menu 图 346ms 由 img 下、2979ms 又被 fetch 一遍。
-//      这条比「队列起跑必须晚于首屏资源完成」信得过：后者在不限速时会因 85ms 报假警，
-//      而前者直接指到机制。）时间关系只打印不判。
+//   V2 队列不许重复下载「首屏元素正在下的那个 URL」—— 同 URL 的 fetch 条目 dur>50ms 才算。
+//      （2026-11-08 首跑就抓到：同一张 mega-menu 图 346ms 由 img 下、2979ms 又被 fetch 一遍。
+//      R2 是 immutable 长缓存，dur=1-4ms 的重复只是命中、不花带宽，所以不能一律判 FAIL；
+//      跨域无 timing-allow-origin，transferSize 永远是 0，只能以时长为准。）
+//      起跑时间与首屏完成时间的关系只打印不判：不限速时实测会因 85ms 报假警。
 //   V3 视口 <1024px 时整条预热队列不许跑：R2 域名上不该出现任何 fetch 类预热请求
 //      （P6 用真实 <video>，initiatorType 是 video，另算）。
 //
@@ -86,14 +87,19 @@ function snapshot(vw, vh, r2) {
       tag: el.tagName.toLowerCase(), a, cls: cls(el), id: el.id || null, url: url || null,
       top: Math.round(el.getBoundingClientRect().top),
       ends: hit.map((x) => x.end),
+      durs: hit.map((x) => x.end - x.st),
       kinds: hit.map((x) => x.kind),
     });
   });
   els.sort((x, y) => y.a - x.a);
   const warm = res.filter((x) => x.kind === 'fetch' && x.u.startsWith(r2));
   const firstScreenEnd = Math.max(...els.flatMap((e) => e.ends), 0);
-  // 首屏元素自己的 URL 又被 fetch 了一遍 —— 这就是队列和首屏抢同一份东西的指纹
-  const warmDup = els.filter((e) => e.kinds.includes('fetch')).map((e) => e.url);
+  // 首屏元素自己的 URL 又被 fetch 了一遍，而且 dur>50ms —— 那才是真的下了两遍。
+  // R2 是 immutable 长缓存，dur=1-4ms 的重复只是命中，不花带宽（11-08 实测）。
+  // 跨域无 timing-allow-origin，transferSize 永远是 0，只能以时长为准。
+  const warmDup = els
+    .filter((e) => e.kinds.some((k, i) => k === 'fetch' && e.durs[i] > 50))
+    .map((e) => e.url + ' dur=' + Math.max(...e.durs));
   return {
     at: Math.round(performance.now()), vis: document.visibilityState,
     inner: innerWidth + 'x' + innerHeight,

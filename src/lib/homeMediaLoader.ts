@@ -20,8 +20,19 @@
  *    且首发只能生效一次。2026-11-07 的回归症状就是「播几秒跳回 0 重播」。
  * 2. Range 是 privileged no-CORS header，页面 JS 设了会被静默剥掉，fetch 退化成 200
  *    整包。想热视频只能用真实 <video> 走媒体层（206 + 分片缓存）。
- * 3. fetch() 的 Promise 在响应头到达就 resolve，不等 body。预热必须把 body 读完，
- *    否则整条队列会在两三百毫秒里把几十张图全发出去（2026-11-07 实测过）。
+ * 3. fetch() 的 Promise 在响应头到达就 resolve，不等 body；而 mode:"no-cors" 的 opaque
+ *    response 又读不到 body（实测 body===null，arrayBuffer() 不报错但返回 0 字节），
+ *    所以「预热必须把 body 读完」这句在当前写法下根本做不到。2026-11-08 干净量过：
+ *    190,938B 的图在 1.6Mbps 下 fetch(no-cors) 315ms 就 resolve（那是 header 时间），
+ *    同一张图 <img> onload 要 659ms（body 时间）；再看网络层（CDP requestWillBeSent →
+ *    loadingFinished）：队列那 76 个 URL 的下载 peak=13、84 个相邻间隔里 74 个是负数
+ *    （中位 -1287ms）。结论是 **JS 串行、网络不串行** —— 队列边放行，Chrome 边在后台收 body，
+ *    所以 2026-11-07 那次「两三百毫秒把几十张图全发出去」只是被减轻，没有消失。
+ *    要修就得让 warmImage 真等这一件收完：no-cors 之后轮询 resource timing 里「比本次 fetch
+ *    更新的那条条目」出现（带封顶，超时就算了，别让一件卡死整条队列）。mode:"cors" 用不了 ——
+ *    实测 R2 不发 Access-Control-Allow-Origin，cors 模式直接 Failed to fetch，预热会整条失效。
+ *    在修好之前，home-runtime-probe.js 的 I3 在桌面上就该是 FAIL；那是已知缺陷在顶着，
+ *    不要把它改成「反正一直红」而放行。
  *
  * 另有一条不变量：requestIdleCallback 在隐藏标签页/后台窗口里可能一直不执行，
  * 所以本文件里每一个 idle 都配硬超时（同一个坑不踩第二次）。
@@ -451,7 +462,11 @@ function wireVideoGallery(hero: HeroLoader | null, profile: NetProfile): void {
  * 一旦发出去就收不回。no-cors 拿到 opaque 响应、读不到状态码，但 HTTP 缓存
  * 按 URL 记账，之后 <img> 显示时直接命中。
  *
- * 一次只跑一件：串行由 runLadder 的 await 保证，中断由 AbortController 保证。
+ * 一次只跑一件：串行由 runLadder 的 await 保证 —— 但只保到 JS 层，网络层会并行收 body
+ * （铁律 3 末尾记的实测：peak=13）。“用户点了就全力加载那一个”今天靠件与件之间的
+ * 让路（quietSince），不靠中断：AbortController 每建一个新的就丢掉一个，全站没有任何地方
+ * 调 ac.abort()。要真做成件内中断，得把 current controller 提到模块级、在交互监听里 abort，
+ * 现在这句只是说清现状，不是已经实现的目标。
  * 重构前这两个能力分属两层（先不串行、后加中断），现在只有一个循环。
  */
 interface WarmTask {

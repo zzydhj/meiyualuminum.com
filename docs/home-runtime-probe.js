@@ -1,7 +1,7 @@
 /* home-runtime-probe.js — 首页加载逻辑的运行时不变量探针（只读，不改任何东西）
  *
- * 用法：打开 https://www.meiyualuminum.com/ ，等页面完全跑完（≥20 秒），
- * 把本文件整段粘进控制台执行，它打印一份 JSON + 每条不变量的 PASS/FAIL。
+ * 用法：打开 https://www.meiyualuminum.com/ ，等页面完全跑完（≥25 秒，I8 桌面那一条要看
+ * 队列是不是已经起跑），把本文件整段粘进控制台执行，它打印一份 JSON + 每条不变量的 PASS/FAIL。
  * 也可以直接把这个文件交给浏览器子代理，让它原样抄回输出。
  *
  * 为什么需要它（Lighthouse 测不到的那一层）：
@@ -122,16 +122,41 @@
     ? lcpEntries[lcpEntries.length - 1]
     : null;
 
+  // I8/I9 不依赖 LCP API（本机 Chrome 156 实测不投递 LCP 条目，headless 与屏外窗口都是），
+  // 它们拿的是今天刚修的那一类：队列该不该跑、跑了有没有重复抓首屏在下的图。
+  const base = (u) => String(u || "").replace(CD, "").split("?")[0].split("/").pop();
+  const fetchList = groups.fetch || [];
+  const eagerBases = new Set(
+    [...document.querySelectorAll('img[loading="eager"]')].map((i) => base(i.currentSrc || i.src)),
+  );
+  const dupWarm = fetchList.filter((x) => eagerBases.has(x.file)).map((x) => x.file);
+  // 重复本身不一定是错：R2 是 immutable 长缓存，队列撞上浏览器已经在下的同一 URL 时
+  // 是一次命中（实测 dur=1-4ms）。只有 dur>50ms 的重复才是真的下了两遍。
+  // （跨域无 timing-allow-origin，transferSize 永远是 0，以时长为准。）
+  const dupReal = fetchList.filter((x) => eagerBases.has(x.file) && x.d > 50).map((x) => x.file + " dur=" + x.d);
+  const warmVideos = [...document.querySelectorAll("video")].filter((x) =>
+    /-9999px/.test(x.style.left || ""),
+  );
+  const isDesktop = window.innerWidth >= 1024;
+
   const checks = {
     "I1 hero poster 仍在（没被兜底脚本摘掉）": !!(v && v.getAttribute("poster")),
     "I2 hero 首条 mp4 不早于 DOMContentLoaded":
       heroFirstStart === null || heroFirstStart >= dcl,
-    "I3 fetch 组预热队列严格串行（peakConcurrency=1）":
+    // I3 口径的来龙去脉（不要拿改后的版本当证据）：
+    //   11-08 线上实测本条报 peak=11～13。一开始我以为那是 resource timing 把窗口拉长了
+    //   （opaque no-cors 条目的 responseEnd 晚于 promise 落地），把阈值放宽到 ≤2 —— 错了。
+    //   拿 CDP 网络层时间戳（requestWillBeSent → loadingFinished）重测：
+    //   队列那 76 个 URL 的下载 peak=13、84 个相邻间隔里 74 个是负数（中位 -1287ms），
+    //   又在 about:blank 上干净量了一个机制：190,938B 的图在 1.6Mbps 下
+    //   fetch(no-cors) 315ms 就 resolve（header 时间），而 <img> onload 要 659ms（body 时间）。
+    //   → 峰值是真的：JS 串行但网络不串行，铁律 3 想防的抢占没防住。本条保持严格，
+    //   在 warmImage 改成真等 body 收尾之前，它在桌面上就是 FAIL（已知、不是探针问题）。
+    "I3 fetch 组预热队列串行（peakConcurrency=1）":
       (groups.fetch ? summarize(groups.fetch).peakConcurrency : 1) === 1,
-    "I4 离屏预热 video 无残留":
-      [...document.querySelectorAll("video")].filter((x) =>
-        /-9999px/.test(x.style.left || ""),
-      ).length === 0,
+    // warmVideo 正在热的时候本来就有 1 个屏外 <video>（finish() 才移），所以 ≤ 1 正常；
+    // ≥ 2 才说明上一件没收尾（阶梯串行下不可能同时热两条视频）。
+    "I4 离屏预热 video 无残留（≤1 = 正在热一件）": warmVideos.length <= 1,
     "I5 首屏图已 eager 提升":
       document.querySelectorAll('img[loading="eager"]').length > 0,
     "I6 LCP 有候选（需窗口可见才成立）":
@@ -144,6 +169,14 @@
         /video-hero/.test(lcpEl.cls || "")
       ? "PASS"
       : "FAIL",
+    // 手机上整条预热队列不许跑（NetProfile.desktop 的注释本来就是这个意思，
+    // 11-08 之前 buildLadder 只有 P6 真按它做）。桌面上队列还没起跑时不判 FAIL。
+    "I8 预热队列按视口收口（<1024px 不铺图）": isDesktop
+      ? fetchList.length
+        ? "PASS"
+        : "UNKNOWN"
+      : fetchList.length === 0,
+    "I9 队列不重复下载首屏 eager 图（命中不算）": dupReal.length === 0,
   };
 
   const verdict = Object.fromEntries(
@@ -171,6 +204,11 @@
           Object.entries(groups).map(([k, l]) => [k, summarize(l)]),
         ),
         videoCount: document.querySelectorAll("video").length,
+        innerWidth: window.innerWidth,
+        fetchWarmCount: fetchList.length,
+        dupWarmFetches: dupWarm,
+        dupRealRedownloads: dupReal,
+        offscreenWarmVideos: warmVideos.length,
         eagerImgs: document.querySelectorAll('img[loading="eager"]').length,
         lazyImgs: document.querySelectorAll('img[loading="lazy"]').length,
         lcpEntries,
