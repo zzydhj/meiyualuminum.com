@@ -3,22 +3,30 @@ import InquiryForm from "./InquiryForm.astro";
 import { responseTime } from "../lib/companyProfile";
 ---
 
-<!--
+{
+  /*
   Inquiry modal — included once in BaseLayout.astro.
   Triggered from any button with data-open-inquiry-modal attribute.
   Close only via the X button or Escape key. Clicking the backdrop does nothing.
 
+  A trigger may carry data-doc-name="<document title>"; prefill() then writes a
+  "send me this document" line into Message so the inquiry email says which
+  document the buyer clicked.
+
   Download gate mode: buttons with data-download-file="<file URL>" (and optional
   data-doc-name="<document title>") open this same modal; on form submit the
   file download is triggered and the requested document is recorded in the
-  inquiry email (hidden "requested_document" field).
+  inquiry email (hidden "requested_document" field). Only point data-download-file
+  at a URL that really returns 200 — the buyer has already handed over their
+  contact details by the time the download runs.
 
   Uses the native HTML <dialog> element. The browser handles, for free:
   - scroll lock on the body while the modal is open
   - focus trapping inside the modal
   - closing on Escape
   - dimming via ::backdrop (clicking it does not close by default)
--->
+*/
+}
 <dialog
   class="inquiry-modal"
   id="inquiry-modal"
@@ -99,9 +107,23 @@ import { responseTime } from "../lib/companyProfile";
     ) as HTMLTextAreaElement | null;
     let lastAuto = "";
 
+    // showModal() 对已经开着的 <dialog> 会抛 InvalidStateError。触发器现在有两套
+    // （data-open-inquiry-modal 和 data-download-file），同一个元素两个属性都带时两个处理器
+    // 会各调一次，第二次就炸。统一走这个幂等入口。
+    const openModal = () => {
+      if (dialog && !dialog.open) dialog.showModal();
+    };
+
     function prefill(btn: Element) {
       if (!messageEl) return;
-      const want = btn.getAttribute("data-inquiry-message") || "";
+      const doc = btn.getAttribute("data-doc-name") || "";
+      const want =
+        btn.getAttribute("data-inquiry-message") ||
+        // 文档索取按钮只有 data-doc-name：把客户点的那份文档名带进 Message，
+        // 业主才知道这条询盘对应哪一份资料。/technical-documentation/ 的 13 个按钮
+        // 在 2026-11-08 死链改造后只剩这个属性，没有这句话的话，询盘内容和客户
+        // 在页面上点的东西就彻底脱钩了。
+        (doc ? `Could you please send me this document? ${doc}` : "");
       if (!want) {
         if (lastAuto && messageEl.value === lastAuto) messageEl.value = "";
         lastAuto = "";
@@ -115,7 +137,7 @@ import { responseTime } from "../lib/companyProfile";
     openButtons.forEach((btn) =>
       btn.addEventListener("click", () => {
         prefill(btn);
-        dialog?.showModal();
+        openModal();
       }),
     );
 
@@ -239,7 +261,8 @@ import { responseTime } from "../lib/companyProfile";
           pendingDoc = btn.getAttribute("data-doc-name") || "";
           docNameEl.textContent = pendingDoc;
           banner.hidden = false;
-          dialog.showModal();
+          // 上面那个 openModal 在另一个 IIFE 里，不跨作用域引用；这里就地守开闭状态
+          if (!dialog.open) dialog.showModal();
         });
       });
   })();

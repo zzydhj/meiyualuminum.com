@@ -68,8 +68,12 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; media-manifest-gate/1.0)"}
 #   /products/aluminum-wall-panels/ 里那 6 个旧图名 0 处引用（页面用的是 enriched_specs 图）。
 # 所以不阻塞闸门，但该清库：一旦哪天有人把那些字段接上渲染，就是买家看得见的 404。
 ALLOW = {
+    # 12 条 docs/ 占位路径：pages:technical-documentation 的 content 里 13 个下载按钮中的 12 个。
+    # 它们不是“模板不渲染”——页面确实渲染了 13 个按钮（2026-11-08 取证纠正）：
+    # 买家点 Download -> InquiryModal 下载门禁 -> 填完表单 -> startDownload() 指向 404。
+    # 已交 docs/sql/ 的 SQL 给业主处理；在 SQL 执行前闸门不能把它们当“正常对象”。
     "docs/acoustic-performance-report.pdf":
-        "pages:technical-documentation 陈旧下载字段，模板不渲染；桶内从未有 docs/ 前缀对象",
+        "pages:technical-documentation 模板占位下载链，桶内从未有 docs/ 前缀；待 docs/sql/ 改写",
     "docs/anodized-finish-guide.pdf": "同上",
     "docs/baffle-ceiling-spec.pdf": "同上",
     "docs/ceiling-installation-manual.pdf": "同上",
@@ -81,12 +85,13 @@ ALLOW = {
     "docs/facade-node-details.zip": "同上",
     "docs/fire-classification-report.pdf": "同上",
     "docs/wind-load-performance.pdf": "同上",
-    "technical-documentation/MC%20catalogue.pdf":
-        "同上；第三方目录册，本来就不该站外热链到自家页面上",
+    # MC catalogue.pdf 不在此列：它实测 200（对象键含空格，旧版闸门把 %20 重编码成 %2520
+    # 才误报成死链）。它是全站唯一真实存在的下载文档。
     "products/aluminum-wall-panels-2.webp":
-        "products:aluminum-wall-panels 旧热链名，2026-10-06 hotlink→R2 迁移未覆盖该字段；页面实际不用它",
-    "products/aluminum-wall-panels-3.webp": "同上",
-    "products/aluminum-wall-panels-detail.webp": "同上",
+        "products:aluminum-wall-panels 旧热链名，2026-10-06 hotlink→R2 迁移未覆盖该字段；",
+    "products/aluminum-wall-panels-3.webp":
+        "该行 lang=zh 是停用的翻译行（MULTILINGUAL_ENABLED=false），英文页用的是 id=1，",
+    "products/aluminum-wall-panels-detail.webp": "以上两条同一行，仅库内陈旧字段，不渲染",
     "products/aluminum-wall-panels-exterior.webp": "同上",
     "products/aluminum-wall-panels-interior.webp": "同上",
     "products/aluminum-wall-panels-main.webp": "同上",
@@ -198,7 +203,11 @@ def head(path, query, attempts=4):
     把取不到当通过更糟：2026-10-29 那轮锚点审计就是因为把 403 归为“无问题”，
     报了“0 问题”的假通过。所以重试完仍取不到就是 UNREACHABLE，并且退出码 1。
     """
-    target = "/" + urllib.parse.quote(path)
+    # path 从 HTML/JSON 里的 URL 拆出来时已经是编码好的（urlsplit 不解码）。
+    # 再 quote() 一次会把 %20 变成 %2520，键名带空格的对象就永久 404 —— 2026-11-08
+    # 就是因此把 actually 200 的 MC catalogue.pdf 报成了 MISSING 死链。
+    # 所以 % 必须留在 safe 集合里：只补真需要编码的字符，不重编码已编码的。
+    target = "/" + urllib.parse.quote(path, safe="%!$&'()*+,;=:@~/")
     if query:
         target += "?" + query
     conn = getattr(_tls, "conn", None)
