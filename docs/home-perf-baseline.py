@@ -151,6 +151,20 @@ def static_checks():
         hit = re.search(r'class="%s"[^>]*data-video-cover|data-video-cover[^>]*class="%s"'
                         % (cls, cls), txt)
         out.append(("正文容器 .%s 已打标记" % cls, bool(hit), where))
+
+    # 预热阶梯三级都必须看 desktop：NetProfile.desktop 的注释本来就写着
+    # 「<1024px 不预热视频，也不做整页铺图」，而 2026-11-08 之前只有 P6 真按它做。
+    # 手机上实测多下 ~3.3MB / 59 张屏外图、跑 38.5 秒 —— 一个 enabled: true 就能推翻
+    # 整份口径，所以这条留在静态层，不靠人记。
+    lad = strip_js_comments((ROOT / "src" / "lib" / "homeMediaLoader.ts").read_text(encoding="utf-8"))
+    block = re.search(r"function buildLadder[\s\S]*?\n}", lad)
+    # 只拿返回数组里的三个对象字面量：函数签名 `{ enabled: boolean; tasks: … }[]`
+    # 也是这个形状，靠「值后面紧跟一个逗号再接 tasks:」把它排除掉（它是分号）。
+    tiers = re.findall(r"\{\s*enabled:\s*([^{}]+?),\s*tasks:", block.group(0)) if block else []
+    out.append(("buildLadder 三级都按 profile.desktop 收口", bool(block) and len(tiers) == 3
+                and all("profile.desktop" in t for t in tiers),
+                "无 buildLadder" if not block else "%d 级：%s" % (
+                    len(tiers), " | ".join(re.sub(r"\s+", " ", t).strip() for t in tiers))))
     return out
 
 

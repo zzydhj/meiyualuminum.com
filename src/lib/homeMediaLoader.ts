@@ -11,7 +11,7 @@
  *                                            首屏 1.25 屏高以内的 lazy 图升 eager（P1.5）
  *   P2 hero 视频（LCP 元素）              —— HeroLoader
  *   P3 画廊首格视频                        —— wireVideoGallery 的 featured 分支
- *   P4 滚动区图片  P5 隐藏 Tab 图  P6 其余视频 —— 预热队列 LADDER
+ *   P4 滚动区图片  P5 隐藏 Tab 图  P6 其余视频 —— 预热队列 LADDER（整条只在 ≥1024px 跑）
  * 前三级由各自的实现负责，LADDER 只补后三级；任何一级都不许越过前一级抢带宽。
  *
  * 三条铁律（每条都用真金白银的实测换来，别顺手"优化"掉）：
@@ -271,6 +271,18 @@ class HeroLoader {
    P1.5：把首屏附近的 lazy 图升为 eager
    ============================================================ */
 /**
+ * 「首屏以内」只定义这一次：1.25 屏高（首屏 + 一点提前量）。
+ * P1.5 用它决定升不升 eager，P4 用它决定要不要绕开——两处必须是同一个判据，
+ * 否则队列会把首屏正在下的图再 fetch 一遍（桌面实测：同一 URL 两条请求，
+ * 346ms 的 img 与 2979ms 的 fetch，后者和首屏尾巴撞在一起）。
+ */
+function inFirstScreen(el: Element): boolean {
+    const rect = el.getBoundingClientRect();
+    if (!rect.height) return false; // display:none 或无渲染盒
+    return rect.top <= window.innerHeight * 1.25 && rect.bottom >= 0;
+}
+
+/**
  * 只升「首屏 1.25 屏高以内」的图。全部升级是错的：移动端实测会把
  * facade/mega-menu/factory 等 ~40 张屏外图一次拉满，从 load 堵到 30s+，
  * 反把 hero 视频首帧挤到最后（LCP 爆到 24s）。屏外一律保持原生 lazy，
@@ -278,15 +290,13 @@ class HeroLoader {
  */
 function eagerFirstScreenImages(): void {
     void onIdle({ ricTimeout: 5000, noRicDelay: 2000 }).then(() => {
-        const limit = window.innerHeight * 1.25; // 首屏 + 一点提前量
         document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => {
             // 隐藏 Tab 面板（display:none）里的图一律跳过：不点就不加载。
             // 升 eager 会让 5 个 Tab 的图一起在后台抢带宽（业主明确不要）。
             // 这批图交给预热队列的 P5，那里按 Tab 顺序排。
             if (img.closest(".gallery-panel:not(.active)")) return;
-            const rect = img.getBoundingClientRect();
-            // 无渲染盒（display:none）或落在首屏之外：保持 lazy，滚到再加载
-            if (!rect.height || rect.top > limit || rect.bottom < 0) return;
+            // 落在首屏之外：保持 lazy，滚到再加载
+            if (!inFirstScreen(img)) return;
             img.loading = "eager";
             // decode() 在后台线程解码，不阻塞主线程（避免滚动时卡顿）
             if (!img.complete) img.decode().catch(() => { });
@@ -449,7 +459,7 @@ interface WarmTask {
     run: (signal: AbortSignal) => Promise<void>;
 }
 
-/** P4：滚动会看到的图，按离视口的距离排 */
+/** P4：滚动会看到的图，按离视口的距离排（首屏以内的不算，那是 P1.5 的活） */
 function collectScrollImages(seen: Set<string>): WarmTask[] {
     const ranked: { rank: number; url: string }[] = [];
     document
@@ -457,6 +467,15 @@ function collectScrollImages(seen: Set<string>): WarmTask[] {
         .forEach((img) => {
             // 隐藏容器里的图交给 P5，那里要按 Tab 顺序而不是距离排
             if (img.closest(".gallery-panel:not(.active)")) return;
+            // 首屏以内的图已经由 P1.5 升 eager、由浏览器直接下，
+            // 再 fetch 一遍只是多一条同 URL 请求、和首屏自己撞带宽。
+            // 注意采集发生在脚本执行时（那时属性还是 lazy），所以这条判据不能被顺序干扰。
+            // 绕开的同时必须把 URL 记进 seen：P5 的隐藏面板里可能有同一张图，
+            // 不记就会从那一路重复抓（桌面实测：strip-ceiling 那张被 img 和 fetch 各要一次）。
+            if (inFirstScreen(img)) {
+                if (img.src) seen.add(img.src);
+                return;
+            }
             const url = img.src;
             if (!url || seen.has(url)) return;
             seen.add(url);
@@ -554,12 +573,19 @@ function warmVideo(url: string, signal: AbortSignal): Promise<void> {
  * 阶梯定义成一个数组：加一级就是加一项，不用改调度循环。
  * enabled 为假的那级整个跳过（手机 / 省流量 / 2G / 偏好减少动态不该替
  * 桌面用户的热身买单）。
+ *
+ * P4/P5 也从 2026-11-08 起按 desktop 收口，与本文件 NetProfile.desktop 的注释对齐：
+ * 之前只有 P6 看 desktop，手机上照样铺全站图。实测代价（412×823 / 1.6Mbps / 4×CPU，
+ * 线上同一份代码）：队列在手机上跑 38.5 秒，多下约 3.3MB / 59 张屏外图。
+ * 它不伤 LCP（首屏面积最大的候选是 hero 底图 314,356px²，比第二名大 7.8 倍，
+ * 队列起跑 4,916ms 又晚于首屏最晚资源 1,268ms），伤的是买家的流量和电量；
+ * 屏外的图本来就有原生 lazy 兜着，滚到才下，功能不减（Tab 走 wireGalleryTabs）。
  */
 function buildLadder(profile: NetProfile): { enabled: boolean; tasks: WarmTask[] }[] {
     const seen = new Set<string>();
     return [
-        { enabled: true, tasks: collectScrollImages(seen) },
-        { enabled: true, tasks: collectHiddenPanels(seen) },
+        { enabled: profile.desktop, tasks: collectScrollImages(seen) },
+        { enabled: profile.desktop, tasks: collectHiddenPanels(seen) },
         {
             enabled: profile.desktop && !profile.slowNet && !profile.reduceMotion,
             tasks: collectGalleryVideos(),
