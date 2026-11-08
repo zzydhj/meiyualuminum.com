@@ -49,9 +49,13 @@
 -- 询盘线索一条不少，只是不再假承诺一个不存在的文件。
 -- ============================================================================
 
--- ── 【执行前体检】先单独选中这一段跑一次，六个数必须完全对上 ──
+-- ── 【执行前体检】先单独选中这一段跑一次，七个数必须完全对上 ──
 --    对不上说明库内形状已变，停下来找我，不要直接 Run 下面的事务。
+--    最后一列是真正的开关：步骤 ③ 的 \s 和步骤 ④ 的 \1 都靠
+--    standard_conforming_strings=on 才能原样进到正则里；它要是被关过，
+--    Postgres 会先把反斜杠吃掉，那两步静默打不中（不报错，只是没改）。
 SELECT
+  current_setting('standard_conforming_strings')                                          AS g_must_be_on,
   (SELECT length(content) FROM pages WHERE slug = 'technical-documentation')            AS a_content_len_expected_22807,
   (SELECT count(*) FROM regexp_matches(
       (SELECT content FROM pages WHERE slug = 'technical-documentation'),
