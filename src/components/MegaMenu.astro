@@ -85,9 +85,13 @@ const MENU: MegaGroup[] = [
         href: "/categories/open-cell-ceiling/",
       },
       {
+        // 2026-11-09 业主拍板：mesh 吊顶这一类实质上只有一个产品（expanded mesh 已改归到
+        // 幕墙与天花两个根分类），所以卡片不再经一道只有1 张卡的目录页，直接进产品页。
+        // 同文件 Linear Strip Ceilings 卡片本来就是这个写法，不是新增特例。
+        // 分类页 URL 仍保留（不删数据、不断外链），只是退回薄分类 → noindex、不进 sitemap。
         img: "https://file.meiyualuminum.com/home/general/aluminum-mesh-ceiling.webp",
         title: "Mesh Ceilings",
-        href: "/categories/aluminum-mesh-ceiling/",
+        href: "/products/aluminum-mesh-ceiling/",
       },
       {
         img: "https://file.meiyualuminum.com/home/general/ceiling-aluminum-honeycomb.webp",
