@@ -179,6 +179,19 @@ class HeroLoader {
         this.video.querySelectorAll("source").forEach((s) => {
             s.addEventListener("error", () => this.fail());
         });
+        // 2026-11-09 手机端修复：visibilitychange 恢复播放。
+        // 手机切到其他 app 再切回来，系统会把视频暂停；没有这层监听就永远停在封面。
+        // 条件：已加载到可播放（readyState>=2）且当前暂停、且没被判定失败。
+        document.addEventListener("visibilitychange", () => {
+            if (
+                document.visibilityState === "visible" &&
+                !this.failed &&
+                this.video.readyState >= 2 &&
+                this.video.paused
+            ) {
+                this.video.play().catch(() => { });
+            }
+        });
         // 不设 once：canplay 可能早于这个监听器挂载
         this.video.addEventListener("canplay", () => {
             if (this.video.paused) this.tryPlay();
@@ -279,9 +292,16 @@ class HeroLoader {
         });
         this.watchdog(8000, false);
         this.watchdog(16000, true);
+        // 2026-11-09 手机端修复：24s → 45s，且超时后不再隐藏视频。
+        // 之前 24s 判定失败就 fail() 永久隐藏，慢网上用户永远看不到视频。
+        // 现在超时只是停止重试（attempts 已到上限），视频元素保留、继续下载，
+        // 下完了 canplay 事件自然触发 tryPlay()，总会播出来。
         setTimeout(() => {
-            if (this.noPicture() && !this.failed) this.fail();
-        }, 24000);
+            if (this.noPicture() && !this.failed) {
+                // 不再调 this.fail()：不隐藏视频，让它继续下。
+                // attempts 已到 MAX_ATTEMPTS，start() 会直接 return，不会再重试。
+            }
+        }, 45000);
     }
 }
 
