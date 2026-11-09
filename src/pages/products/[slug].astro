@@ -30,24 +30,21 @@ if (error || !product) {
 }
 
 const primaryCategoryId = product.primary_category_id ?? null;
-const categoryChain = await getCategoryChain(primaryCategoryId);
 
-/**
- * 同一品类下的其他已发布产品（不含自己）。
- * 2026-11-07：原本只取 slug,title 给 Docs & Guides 面板做文字内链，现在页面下方
- * 直接用 ProductGrid 把这些兄弟产品渲成卡片（业主口径：参考同行站的
- * “You May Also Like”），所以字段要带齐卡片用的图/型号，链接位也移到卡片上——
- * 常驻可见的卡片比藏在未激活 Tab 里的文字链对内链与客户都更实在，两处并存只算重复。
- */
-const { data: siblingRows } = await supabase
-  .from("products")
-  .select("slug,title,image_url,image_alt,part_code,primary_category_id")
-  .eq("primary_category_id", primaryCategoryId ?? -1)
-  .eq("lang", lang)
-  .eq("status", "published")
-  .neq("slug", slug)
-  .order("title", { ascending: true })
-  .limit(8);
+// 2026-11-09 性能优化：categoryChain 与 siblings 互不依赖，并行发出，省一次串行往返。
+// 之前是 await getCategoryChain → await supabase(siblings)，两段网络 RTT 叠加。
+const [categoryChain, { data: siblingRows }] = await Promise.all([
+  getCategoryChain(primaryCategoryId),
+  supabase
+    .from("products")
+    .select("slug,title,image_url,image_alt,part_code,primary_category_id")
+    .eq("primary_category_id", primaryCategoryId ?? -1)
+    .eq("lang", lang)
+    .eq("status", "published")
+    .neq("slug", slug)
+    .order("title", { ascending: true })
+    .limit(8),
+]);
 const siblings = siblingRows ?? [];
 
 /**

@@ -19,6 +19,25 @@ export interface CategoryNode {
 }
 
 /**
+ * categories 全表的模块级缓存。
+ * categories 只有 19 行、极少变动，但 getCategoryChain 之前每次 SSR 都全表扫一遍，
+ * 等于每个产品页多一次没必要的网络往返。Worker 实例在处理多个请求时是复用的，
+ * 模块级变量在实例存活期间有效，后续请求直接命中内存。
+ * TTL 5 分钟：即使改了分类，最多 5 分钟内新实例自然拿到新数据。
+ */
+let _catCache: CategoryNode[] | null = null;
+let _catCacheTime = 0;
+const CAT_CACHE_TTL = 300_000;
+
+async function getAllCategories(): Promise<CategoryNode[]> {
+  if (_catCache && Date.now() - _catCacheTime < CAT_CACHE_TTL) return _catCache;
+  const { data } = await supabase.from("categories").select("id, name, slug, parent_id");
+  _catCache = (data as CategoryNode[]) ?? [];
+  _catCacheTime = Date.now();
+  return _catCache;
+}
+
+/**
  * Build the full category chain from a given category up to the root.
  * e.g., given "Brake Pads" (parent: Brake System), returns:
  *   [{ name: "Brake System", url: "/categories/brake-system/" }, { name: "Brake Pads", url: "/categories/brake-pads/" }]
@@ -26,15 +45,11 @@ export interface CategoryNode {
 export async function getCategoryChain(categoryId: number | null): Promise<{ name: string; url: string; slug: string }[]> {
   if (!categoryId) return [];
 
-  const { data: allCategories } = await supabase
-    .from("categories")
-    .select("id, name, slug, parent_id");
-
-  if (!allCategories) return [];
+  const allCategories = await getAllCategories();
 
   const categoryMap = new Map<number, CategoryNode>();
   for (const cat of allCategories) {
-    categoryMap.set(cat.id, cat as CategoryNode);
+    categoryMap.set(cat.id, cat);
   }
 
   const chain: { name: string; url: string; slug: string }[] = [];

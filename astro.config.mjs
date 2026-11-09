@@ -10,7 +10,10 @@ import cloudflare from "@astrojs/cloudflare";
 import { cacheCloudflare } from "@astrojs/cloudflare/cache";
 
 // 所有 SSR 内容路由共用的缓存窗口，理由见下方 routeRules 注释。
-const PAGE_CACHE = { maxAge: 60, swr: 86400 };
+// 2026-11-09：maxAge 60 → 300。低流量站点 60s 内很多页面没人访问，每次都要冷渲染
+// （TTFB 800ms+）。拉长到 5 分钟后，同一页面 5 分钟内的重复访问直接命中边缘缓存
+// （TTFB <100ms）。改库后最多 5 分钟反映，急着看加 ?fresh=1 绕过。
+const PAGE_CACHE = { maxAge: 300, swr: 86400 };
 
 // https://astro.build/config
 export default defineConfig({
