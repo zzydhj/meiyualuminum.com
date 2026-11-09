@@ -212,7 +212,7 @@ P3 命名：blog/<主题>/<语义名>-<sha1前6位>.jpg
    - 主题 = 有界文件夹（恒定不增长）：acoustic-ceiling / metal-ceiling / other-ceiling /
      facade-cladding / metal-panel / wall-panel / ceiling-grid-baffle / projects / general；
    - 语义名 = 2~5 个连字符关键词、全小写、含本节关键词；
-   - 竞品品牌词（prance / lifisher / autopartsfirst，可追加）从语义名中删除或替换为 meiyu；
+   - 竞品品牌词（prance / lifisher / autopartsfirst / futeng，可追加）从语义名中删除或替换为 meiyu；
    - sha1 前 6 位由文件内容计算 → 并发 / 跨 AI / 重写均不撞名，无需任何登记表。
    - 【v5.7.3 主题判定顺序（确定性，跨 AI 一致）】① 材质/产品族（铝吊顶族→metal-ceiling；幕墙/外立面/soffit→
      facade-cladding；墙板→metal-panel 或 wall-panel；格栅/挡板/龙骨→ceiling-grid-baffle）→
@@ -385,6 +385,17 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
   密度、成品 U 值均无本厂自测数据 → 行业数字一律标 [vendor-typical]，防火只按【认证】现有口径写
   （ASTM E84 Class A / EN 13501-1 B-s1），不得写 A2-s1,d0（无报告）；保温层与面板的组装热工性能
   归为“按项目测试/建模”，不给单值。
+【产品线补充（业主 2026-11-08 确认「都做」，口径来自对照同行站点后的能力核对）】
+  aluminum louvers & sun-shading fins（通风百叶 / 遮阳翻板 / 幕墙竖向 fins 线）；
+  outdoor AC unit cover & ventilated louver cover（空调外机罩、风口盖，属装配件）；
+  laser-cut decorative screens, grilles & partitions（激光切割花格、屏风、隔断，含中式窗棂样式）；
+  double-curved / 2.5D parametric panels（双曲与不规则成型板）；
+  stone-effect transfer honeycomb panels（石纹转印蜂窝板）。
+  ⚠ 本次确认只授权「能做」这一个事实，**未给任何规格数值**：这几条线的叶片角度与间距、
+  穿孔率与孔径、板厚、型材断面、抗风压值均无本厂确证数据 → 对外只写不含数字的能力陈述，
+  行业数值一律标 [vendor-typical] 或不写，具体数字走报价单。
+  ⚠ 【方通与条形吊顶下料】里「闭口方管做幕墙 fins / 包柱的开口端封头」那条口径仍未确认，
+  本条不覆盖它，productKnowledge.ts 的 aluminum-square-tube 第 4 步 End Caps 照旧不得删。
 【产品规格（业主 2026-11-01 提供的《Product Specification & Distributor Price List》）】
   本条是厚度档 / 幅面 / 芯材 / 配件用量 / 取料换算的唯一引用源。**价目部分一律不上站**（见末尾红线）。
   · 铝单板 / 冲孔铝单板：厚 1.5 / 2.0 / 2.5 / 3.0 mm，按平米计价；颜色（含 RAL）、规格、形状全定制。
@@ -482,7 +493,7 @@ ENDPOINT = "https://c58d6530184ba13658bd5a73cf611ff6.r2.cloudflarestorage.com"
 BUCKET, PUBLIC, PREFIX = "meiyu", "https://file.meiyualuminum.com/", "blog"
 TOPICS = {"acoustic-ceiling","metal-ceiling","other-ceiling","facade-cladding","metal-panel",
           "wall-panel","ceiling-grid-baffle","projects","general"}
-BRANDS = ("prance", "lifisher", "autopartsfirst")
+BRANDS = ("prance", "lifisher", "autopartsfirst", "futeng")
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"}
 
