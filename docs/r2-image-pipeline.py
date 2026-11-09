@@ -89,7 +89,7 @@ TOPICS = (
 )
 FALLBACK_TOPIC = "general"
 # 竞品品牌词：从语义名中删除（与提示词 denylist 同步）
-BRAND_DENY = ("prance", "lifisher", "autopartsfirst")
+BRAND_DENY = ("prance", "lifisher", "autopartsfirst", "futeng")
 
 USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
@@ -101,7 +101,11 @@ _ROOT = os.path.dirname(_HERE) if os.path.basename(_HERE) == "docs" else _HERE
 TMP_DIR = os.path.join(_ROOT, ".tmp-img")
 
 MIN_BYTES = 1024          # 小于此值视为下载失败（占位图/错误页）
-SEMANTIC_MAX_TOKENS = 5
+# 语义名 token 上限。2026-11-08 由 5 提到 7：产品图集要求「一张图一个名字」，
+# 名字 = 产品词干（3~4 词）+ 画面描述（1~3 词），5 词时 4 词干的产品只剩 1 词描述，
+# 同页多张图会撞成同一个文件名与 alt（图片搜索读不出差别）。
+# 60 字符硬上限仍在 sanitize_semantic 里兜底；blog 命名的截断行为不变（语义名本就不长）。
+SEMANTIC_MAX_TOKENS = 7
 CORE_VERSION = "pipeline-core v1.2"
 
 CT = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
