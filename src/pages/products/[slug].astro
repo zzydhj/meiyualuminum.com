@@ -115,6 +115,22 @@ const step3dHref = (n: number) =>
 /** 是否有图集：决定画廊是否预留左侧缩略图槽位 */
 const hasThumbs = !!(product.gallery && product.gallery.length > 0);
 
+/**
+ * 图集逐张的 alt：gallery 列只存一串 URL，逐图的描述只能从文件名里取。
+ * R2 key 由 docs/r2-image-pipeline.py 生成，格式是 `<语义名>-<内容哈希6位>.<ext>`，
+ * 语义名 = 产品词干 + 这张图在拍什么（honeycomb-facade-panel-marble-trio-core）。
+ * 2026-11-08 之前这里写死 `${title} - image N`：图改名改成可描述了，但图片搜索主要读
+ * alt，那份语义名在 HTML 里仍是丢掉的。现在把哈希后缀剔掉、连字符还原成空格当作 alt。
+ * 对不上这个格式（外链、老数据、纯数字截屏名）一律退回原来的写法，不编造描述。
+ */
+function galleryAlt(url: string, title: string, index: number): string {
+  const base = (url.split("/").pop() || "").replace(/\.(webp|jpe?g|png|avif)$/i, "");
+  const stem = base.replace(/-[0-9a-f]{6}$/, "");
+  const words = stem.split("-").filter((w) => w.length > 1 && !/^\d+$/.test(w));
+  if (words.length < 2) return `${title} - image ${index + 2}`;
+  return words.join(" ");
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
@@ -160,7 +176,7 @@ const jsonLd = {
               <img src={product.image_url} alt={product.image_alt || product.title} class="pk-thumb active" data-full={product.image_url} width="80" height="60" />
             )}
             {product.gallery.map((url: string, i: number) => (
-              <img src={url} alt={`${product.title} - image ${i + 2}`} class="pk-thumb" data-full={url} width="80" height="60" loading="lazy" />
+              <img src={url} alt={galleryAlt(url, product.title, i)} class="pk-thumb" data-full={url} width="80" height="60" loading="lazy" />
             ))}
           </div>
           {/* 缩略图列上下箭头：列高 = 大图高，装不下的靠箭头滚 */}
