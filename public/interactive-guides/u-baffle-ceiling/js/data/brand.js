@@ -41,12 +41,12 @@ export const BRAND = {
   facts: [
     {
       k: 'Manufacturer',
-      // 同步 companyProfile.ts：成立 2011，对外地址不写城市，全称含 Industry。
-      v: 'MEIYU Aluminum Industry Co., Ltd. — established 2011, Guangdong Province, China',
+      // 同步 companyProfile.ts：成立 2017，对外地址不写城市，全称含 Industry。
+      v: 'MEIYU Aluminum Industry Co., Ltd. — established 2017, Guangdong Province, China',
     },
     {
       k: 'Plant',
-      v: '15,000 m² · 15 production lines · 80 staff · OEM & ODM, factory-direct',
+      v: '30,000–50,000 m² · 9 production lines · 80 staff · OEM & ODM, factory-direct',
     },
     {
       k: 'Coating warranty',

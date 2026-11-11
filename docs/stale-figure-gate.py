@@ -36,6 +36,13 @@ PATTERNS = [
     ("禁用城市名", ["Dongguan", "Foshan", "东莞", "佛山"]),
     ("旧交期分档", ["20–25 working", "20-25 working", "30–40 working", "30-40 working"]),
     ("旧厂房面积", ["25,000 m", "25000 m"]),
+    # 2026-11-11 公司基础数据三项变更（成立 2011→2017、厂房 15,000→30,000–50,000 m²、
+    # 产线 15→9）。只列完整短语：裸“2011”会命中 CPR 法规号 (EU) No 305/2011，
+    # 裸“15 years”会命中 PVDF 涂层质保，两者都不是公司年限。
+    ("作废公司数据（2026-11-11）", ["15,000 m²", "15,000 m&sup2;", "15 production lines",
+                                "15 in-house lines", "established 2011", "established in 2011",
+                                "founded in 2011", "Since 2011", "since 2011", "Est. 2011",
+                                "15 条产线", "15 条生产线"]),
     ("作废联系方式/旧全称", ["info@meiyualuminum", "MEIYU Aluminum Co., Ltd."]),
     ("未授权费用承诺", ["free sample", "Free sample", "免费样品", "at no cost"]),
     ("无报告防火断言", ["A2-s1,d0 certified", "A2 fire rating", "non-combustible A2"]),
@@ -53,8 +60,8 @@ ALLOW = {
         "保温复合板：同上，且本厂资料未覆盖该产品线",
     ("posts", "nigeria-hotel-resort-aluminum-glass-facade-design", "content"):
         "该句标的是 (manufacturer range) 行业范围，不是我方能力宣称",
-    ("products", "wave-square-tube-ceiling", "content"):
-        "闭口方管三个格式待厂里确认；本厂资料只有 U 型，不擅自改（2026-11-02 挂起）",
+    # wave-square-tube-ceiling 的 50×150 / 100×200 曾挂在这里等厂里确认，
+    # 2026-11-11 复查该行已不含这些格式 → 例外已撤。以后若再回潮就是意外，该报错。
 }
 
 

@@ -84,10 +84,10 @@ export const PROCESS_NODES: ProcessNode[] = [
     {
         n: "05",
         t: "Production",
-        tag: "15 in-house lines · 7–10 working days",
-        s: "Forming, perforation and coating run on our own 15 lines — 7–10 working days for standard and custom work alike.",
+        tag: "9 in-house lines · 7–10 working days",
+        s: "Forming, perforation and coating run on our own 9 lines — 7–10 working days for standard and custom work alike.",
         you: "The approved drawing revision and the released order.",
-        ours: "Cut, formed, perforated and coated material to the approved drawings, on 15 in-house lines under a controlled process change record.",
+        ours: "Cut, formed, perforated and coated material to the approved drawings, on 9 in-house lines under a controlled process change record.",
         gate: "A drawing issued after release is a change order, not an edit; we tell you what it costs and what it does to the date before we act on it.",
         clock: "Lead time is 7–10 working days for standard panels and for perforated, formed and special-surface work alike, subject to order size and shop loading. The starting date is the one on your proforma.",
     },

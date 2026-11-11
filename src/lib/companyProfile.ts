@@ -21,12 +21,14 @@ export const companyFacts = {
     // 2026-11-01 业主指令：对外全称按公司资料补上 Industry，本站长期用的是短版。
     name: "MEIYU Aluminum Industry Co., Ltd.",
     brand: "MEIYU",
-    // 2026-10-27 业主指令：成立年份由 2015 改为 2011，对外地址不再写城市（东莞/佛山禁用）。
-    // 注意：由此推出的“约 15 年经验”仍不得写成 “15+ Years Experience”（页脚历史注释里有此红线）。
-    established: "2011",
+    // 2026-10-27 业主指令：对外地址不再写城市（东莞/佛山禁用）。
+    // 2026-11-11 业主指令：成立年份 2011 → 2017，厂房 15,000 m² → 30,000–50,000 m²，产线 15 → 9。
+    // 注意：由此推出的“约 9 年经验”仍不得写成 “9+ Years Experience”（页脚历史注释里有此红线）。
+    established: "2017",
     location: "Guangdong Province, China",
-    plantArea: "15,000 m²",
-    productionLines: "15",
+    // 厂房面积按业主资料给的区间写，不取中值也不取单值。
+    plantArea: "30,000–50,000 m²",
+    productionLines: "9",
     staff: "80",
     // 2026-11-01 业主指令：对外邮箱换成主联系人邮箱（原 info@ 不再出现在站上）。
     email: "william@meiyualuminum.com",
