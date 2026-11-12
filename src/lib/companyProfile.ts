@@ -100,6 +100,59 @@ export const termsNote =
     "Figures above are our standard offer; final terms are confirmed with your quotation.";
 
 /**
+ * 服务边界与费用（附录 A【服务边界与费用】，业主 2026-11-12 口径）。
+ *
+ * 判定线不是逐项定价，而是「要不要我方人员到客户所在国家」：远程能做的不额外收费，
+ * 要人到现场的单独协商。业主原话「有一些项目我们也不说明确收费」——所以两侧都只列
+ * 点名的几项，不得扩写成「其余全部免费 / everything else is free」。
+ *
+ * 措辞红线：只用 included / no additional charge，不用 free / Free / 免费；
+ * 样品至今无附录 A 授权，不得归进本条的任何一侧。
+ *
+ * 对外完整展开只允许出现在 /procurement-guide/#service-scope；产品页 Ordering & Terms
+ * 与售后页只放链接指过来。同一清单写两遍，迟早变成两个答案。
+ */
+export const serviceScope = {
+    rule: "If it can be done from our plant, it carries no additional charge. If it requires our people in your country, it is priced with the job.",
+    included: [
+        {
+            name: "Shop drawing development",
+            detail: "Your architect's set comes back as fabrication drawings — panel set-out, joint widths, edge and return details, fixing zones, and the perforation pattern marked against the elevation. Revisions that follow from reading it are part of the same pass.",
+        },
+        {
+            name: "Basic technical adjustments",
+            detail: "Moving a module split, a joint width, a panel boundary or a fixing detail once we have read your drawings — anything that does not change the alloy, the gauge or the finish system. Where a request does cross that line, we say so before it is drawn.",
+        },
+        {
+            name: "Remote installation guidance",
+            detail: "Sequence and method by video call, annotated drawings, and our panel-to-position schedule read against your plan while the job is up — the same support whatever time zone your crew is working in.",
+        },
+        {
+            name: "Take-off and quotation documentation",
+            detail: "A take-off from your drawing, a line-by-line offer with its assumptions written on the face of it, and the revision that follows when the drawing moves.",
+        },
+    ],
+    quoted: [
+        {
+            name: "On-site installation supervision",
+            detail: "Our engineer with your crew, setting out the first bay and holding the line on the rest. Quoted against the location, the duration and the travel.",
+        },
+        {
+            name: "Site survey and dimensional verification",
+            detail: "As-built measurement, checking the substrate and the setting-out lines before anything is cut. Quoted for the visit — the site, the extent and the date are what move it.",
+        },
+        {
+            name: "Standing site attendance",
+            detail: "An engineer resident on site for the installation. The largest of these — and the one most often replaced by remote guidance plus a competent local crew.",
+        },
+        {
+            name: "Travel and accommodation",
+            detail: "Airfare, local transport and lodging for any of the above, itemised on the quotation rather than folded into a unit rate, so you can see what the panel costs and what the trip costs.",
+        },
+    ],
+};
+
+/**
  * 产品卡片用的 MOQ 短句（附录 A【MOQ/交期】的半句，不是新口径）。
  * 卡片只有一行宽度，写不下 standardTerms 的完整双档句式；这里保留
  * “standard panels” 这个限定词，是为了不把定制（穿孔/异形）的 1,000 m²

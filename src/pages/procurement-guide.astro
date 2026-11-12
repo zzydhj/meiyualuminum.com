@@ -18,6 +18,7 @@ import {
     companyFacts,
     standardTerms,
     termsNote,
+    serviceScope,
     responseTime,
     whatsappUrl as waUrl,
 } from "../lib/companyProfile";
@@ -147,6 +148,10 @@ const faqs = [
         a: "Yes — colour, perforation and surface finish can be confirmed on physical samples before production starts, and our team matches an RAL reference in-house. Sample and courier arrangements are confirmed when you request them, since they depend on the destination.",
     },
     {
+        q: "Which of your services cost extra?",
+        a: "None of the ones we can do from our own end. Shop drawing development, basic technical adjustments, remote installation guidance and the take-off and quotation paperwork come with the order at no additional charge. What carries a separate cost is anything that needs our people in your country — on-site supervision, a site survey, resident attendance, and the travel and accommodation behind them. If a request falls outside both lists, we tell you which side it is on before you commit.",
+    },
+    {
         q: "Do you provide the documents our technical approval needs?",
         a: "Yes: shop drawings, EN 13964 declarations for the configuration quoted, reaction-to-fire data to the standard your project is approved against, and coating QC records from our own lab. Certificate and report numbers go to partners at quotation stage rather than being published on a website. See the evidence index on our About page for what each document does and does not cover.",
     },
@@ -258,6 +263,88 @@ const faqJsonLd = {
                     ))
                 }
             </ul>
+        </div>
+    </section>
+
+    {/* ══════ 2b. 服务边界与费用 ══════ */}
+    {/* 附录 A【服务边界与费用】的全站唯一展开处（id 被产品页与售后页链住，不要改名）。
+        两侧清单都读 companyProfile.ts 的 serviceScope，不得在这里敲字：
+        业主原话「有一些项目我们也不说明确收费」，所以结尾那句只能写「不在列的问我们」，
+        不能写成「其余全部免费」。 */}
+    <section class="pg-band" id="service-scope">
+        <div class="pg-wrap">
+            <div class="pg-head">
+                <span class="pg-eyebrow">Service Scope</span>
+                <h2 class="pg-h2">
+                    The Service <span class="pg-hl">Boundary</span>
+                </h2>
+                <p class="pg-sub">
+                    Before you order, the question is usually which of these services
+                    are already paid for in the panel rate and which arrive as a second
+                    invoice. There is one test, and it is not a price list.
+                </p>
+            </div>
+            <p class="pg-ss-rule">{serviceScope.rule}</p>
+            <div class="pg-ss">
+                <div class="pg-ss-col">
+                    <p class="pg-ss-tag pg-ss-tag--inc">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                        Included, no additional charge
+                    </p>
+                    <ul>
+                        {
+                            serviceScope.included.map((s) => (
+                                <li class="pg-ss-item">
+                                    <strong>{s.name}</strong>
+                                    <span>{s.detail}</span>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+                <div class="pg-ss-col">
+                    <p class="pg-ss-tag pg-ss-tag--q">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M12 21s-7-6.5-7-11a7 7 0 1114 0c0 4.5-7 11-7 11z" />
+                            <circle cx="12" cy="10" r="2.4" />
+                        </svg>
+                        Quoted separately, with the job
+                    </p>
+                    <ul>
+                        {
+                            serviceScope.quoted.map((s) => (
+                                <li class="pg-ss-item">
+                                    <strong>{s.name}</strong>
+                                    <span>{s.detail}</span>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            </div>
+            <p class="pg-note">
+                Neither list is exhaustive on our side of the line, and the second list
+                is not a tariff — the figures on it depend on where you are and how long
+                we stay. Send the plan and the scope comes back written on the quotation.
+            </p>
         </div>
     </section>
 
@@ -552,6 +639,72 @@ const faqJsonLd = {
         color: #1e293b;
     }
     .pg-scope-row span:not(.pg-scope-inc) {
+        display: block;
+        margin-top: 3px;
+        font-size: 0.88rem;
+        line-height: 1.7;
+        color: #475569;
+    }
+
+    /* 服务边界（2b）：两列对照。minmax 里包 min(…, 100%) 是为了窄屏不顶出视口——
+       本站 body 是 overflow-x: clip，真溢出了买家不会知道，只会看到右侧被切。 */
+    .pg-ss-rule {
+        margin: 0 0 clamp(16px, 2.4vw, 22px);
+        padding: 1rem 1.15rem;
+        background: #fbf7f0;
+        border-left: 3px solid #c0a882;
+        border-radius: 0 10px 10px 0;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.6;
+        color: #33291c;
+    }
+    .pg-ss {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+        gap: 14px;
+        align-items: start;
+    }
+    .pg-ss-col {
+        padding: clamp(16px, 2.2vw, 20px);
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 12px;
+    }
+    .pg-ss-col ul {
+        display: grid;
+        gap: 15px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .pg-ss-tag {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 15px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    .pg-ss-tag svg {
+        flex-shrink: 0;
+        width: 17px;
+        height: 17px;
+    }
+    .pg-ss-tag--inc {
+        color: #2d7a4f;
+    }
+    .pg-ss-tag--q {
+        color: #8a6d3b;
+    }
+    .pg-ss-item strong {
+        display: block;
+        font-size: 0.95rem;
+        color: #1e293b;
+    }
+    .pg-ss-item span {
         display: block;
         margin-top: 3px;
         font-size: 0.88rem;
