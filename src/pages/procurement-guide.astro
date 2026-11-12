@@ -646,24 +646,40 @@ const faqJsonLd = {
         color: #475569;
     }
 
-    /* 服务边界（2b）：两列对照。minmax 里包 min(…, 100%) 是为了窄屏不顶出视口——
-       本站 body 是 overflow-x: clip，真溢出了买家不会知道，只会看到右侧被切。 */
+    /* 服务边界（2b）。锚点跳转避开 sticky 页眉：本页唯一带 id 的 section 就是 #service-scope，
+       产品页 .pk-tabs 与安装指南页 .ig-categories 已经用同一个 90px，不是另起一套。
+       实测：390 档页眉 58px，不加这行 eyebrow 会被压掉 13.3px。 */
+    section[id] {
+        scroll-margin-top: 90px;
+    }
+    /* 规则句直接复用 .pg-missing 的 token（4px #c09020 + #faf6f3 + 0 8px 8px 0），
+       不再用 #c0a882/#fbf7f0——同页已经有三套香槟金了，不能再加第四套。 */
     .pg-ss-rule {
         margin: 0 0 clamp(16px, 2.4vw, 22px);
-        padding: 1rem 1.15rem;
-        background: #fbf7f0;
-        border-left: 3px solid #c0a882;
-        border-radius: 0 10px 10px 0;
+        padding: 1rem 1.2rem;
+        background: #faf6f3;
+        border-left: 4px solid #c09020;
+        border-radius: 0 8px 8px 0;
         font-size: 1rem;
         font-weight: 600;
-        line-height: 1.6;
+        line-height: 1.65;
         color: #33291c;
     }
+    /* 翻列用单边 min-width 查询，不用 auto-fit + minmax：实测
+       repeat(auto-fit, minmax(320px, 1fr)) 的翻列阈值落在 clientWidth≈763，
+       而 768 视口给出的内容宽 657.7、两列共需 654，只剩 3.7px 余量——
+       字体缩放或内边距一变就翻，而且翻过去每列只 322px、说明文字 6–7 行。
+       900px 以下单列，两列时每列最少 407px。单边查询没有这种临界值。 */
     .pg-ss {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+        grid-template-columns: 1fr;
         gap: 14px;
-        align-items: start;
+        align-items: stretch;
+    }
+    @media (min-width: 900px) {
+        .pg-ss {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
     }
     .pg-ss-col {
         padding: clamp(16px, 2.2vw, 20px);
@@ -690,8 +706,8 @@ const faqJsonLd = {
     }
     .pg-ss-tag svg {
         flex-shrink: 0;
-        width: 17px;
-        height: 17px;
+        width: 15px;
+        height: 15px;
     }
     .pg-ss-tag--inc {
         color: #2d7a4f;
