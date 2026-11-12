@@ -1,7 +1,15 @@
-# Blog 交付提示词 v5.7.12
+# Blog 交付提示词 v5.7.13
 
 > 用途：把任意参考文章（网址或 HTML）重写成**质量高于参考原文**的英文 Blog，
 > 并产出一个"交付页面"（预览 + 一键复制正文/字段/整条记录 + 一键导入 SQL），供直接导入 Supabase `posts` 表。
+>
+> v5.7.13 变化（业主 2026-11-12 指令，评审 F05）：新增【海外项目口径与首页地图数字】。
+> 口径定为「**海外只发过货，没有现场文档记录**」：首页地图区从 Global Projects /
+> Our Work Worldwide 改成供货半径口径；计数器 38 / 240+ / 120+ 缩到 **14 / 40+ / 25+**；
+> 八个区域的分项项目数（合计 226+）与按项目数分档的图例全删，只留区域名与 ship-to 城市；
+> 首页挂的十多个**可查真实地标项目名**（Dubai Mall Expansion、Singapore Changi T5、
+> Riyadh Metro Station 一类）全部下线；About 的「documented references are domestic」保留不动。
+> 作废词与旧数字已入 `docs/dist-leak-gate.py`。
 >
 > v5.7.12 变化（业主 2026-11-12 再确认）：【最大板幅】补上两条——（1）值本身不变，
 > 仍是 **2000 × 6000 mm**（业主原话「最大铝单板可定制为 2 米×6 米」）；（2）新增规则：
@@ -515,6 +523,21 @@ Zone 6 通栏大按钮 "Copy Import SQL"（主推）：点击实时生成一条�
   长度 6000 与 tools/ceiling-take-off 的 max=6000 保持一致。
 【出口市场】东南亚（Vietnam、Philippines、Indonesia、Malaysia）、中东（UAE、Saudi Arabia、Qatar）、
   部分非洲与南美市场。
+【海外项目口径与首页地图数字（业主 2026-11-12 确认）】
+  口径：**海外只发过货，没有现场文档记录**。因此：
+  · 首页地图区不得叫 Global Projects / Our Work Worldwide / Case Studies 这类「完成工程」说法，
+    改用供货半径口径（Global Delivery / Where Our Panels Ship / Projects Supplied）。
+  · About 的 FAQ「documented project references to date are domestic」**保留**，它是真话，
+    也是全站海外口径的基准（首页与它矛盾时，改首页，不改 About）。
+  · **禁止把可查的真实地标建筑名写成我方项目**（首页曾有十多个，已全部下线）。
+    案例只能按下面【代表项目类型】的「地区 + 行业 + 产品」粒度写，不具名、不指楼。
+  · 首页三个计数器授权值：**Countries 14 / Projects 40+ / Cities 25+**（以前是 38 / 240+ / 120+）。
+    业主指令是先缩、后面慢慢加；加数字时先改本条再改 index.astro。
+  · 分项区域项目数（80+/55+/30+/25+/12+/10+/8+/6+，合计 226+）与按项目数分档的图例
+    （50+ / 20–50 / <20）**全部删除**，只留区域名与 ship-to 城市清单。
+  ⚠ 待业主确认：Europe / Australia / N. America 三个区域图钉与 Berlin·Amsterdam·Paris·
+    Sydney·Melbourne·Toronto·Los Angeles 七个城市，**本条与【出口市场】都未覆盖**。
+    它们当次被要求保留，但拿不到凭证就应该删。
 【代表项目类型（案例写作粒度 = 地区 + 行业 + 产品）】
   东南亚商业零售：perforated aluminum acoustic ceiling panels 用于 atrium/corridor 吸声；
   中东交通基建：strip linear aluminum ceiling 用于 terminal/concourse（轻质 + 防火表面）；
@@ -605,6 +628,21 @@ def push(cli, key, data):         # HEAD 去重 → 上传 → 公开 URL 校验
 
 ## 变更记录
 
+- **v5.7.13（2026-11-12）**：新增【海外项目口径与首页地图数字】（业主指令，评审 F05）。
+  口径：**海外只发过货，没有现场文档记录**。改动：首页地图区改口径（Global Delivery /
+  Where Our Panels Ship / Projects Supplied）、计数器 38→14 / 240+→40+ / 120+→25+、
+  八区域分项项目数与三档图例全删（只留区域名 + ship-to 城市，面板改由 TD 驱动）、
+  tooltip 的 count 行与对应死样式下线、CTA 从 View All Case Studies 改 Browse the Project Gallery、
+  About 的 Export Documentation 从 Delivered across 改 Included with export shipments。
+  **About 的 FAQ「documented references to date are domestic」保留**——它是全站海外口径的
+  基准，与它矛盾时改首页不改 About。
+  首页原挂十多个可查真实地标作项目名（全站最危的假参考），整块下线；注释里也不复列，
+  以免下一轮 grep 把它们当成仍在生效的宣称——名字只存在 `dist-leak-gate.py` 的否决列表里。
+  展示页（pages id=28）五个字段的包层口径已收（hero_title / hero_subtitle / content /
+  seo_title / seo_description，PATCH 204 + 回读零残留，备份 `gallery-row-backup.json`）；
+  其四个条目本身是 posts（包含 Zhaoqing 国内项目），与新口径一致，未动。
+  ⚠ 待确认：Europe / Australia / N. America 三个图钉与 Berlin·Amsterdam·Paris·Sydney·
+  Melbourne·Toronto·Los Angeles 七个城市，【出口市场】与本条都未覆盖。
 - **v5.7.12（2026-11-12）**：【最大板幅】值再确认（2000 × 6000 mm，业主「最大铝单板可定制
   为 2 米×6 米」），并新增一条规则：幅面类规格行必须显式写出上限，不得只给常规档。
   实际发现：12 个英文在售产品里**7 个已写对**，漏写的恰好是铝单板自己那一页

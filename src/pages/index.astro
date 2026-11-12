@@ -1147,8 +1147,12 @@ const websiteJsonLd = {
       {/* 顶部标题 + 数据 */}
       <div class="meiyu-map-topbar">
         <div>
-          <div class="meiyu-map-tl-tag">Global Projects</div>
-          <div class="meiyu-map-tl-h">Our Work, <span>Worldwide</span></div>
+          {/* 业主 2026-11-12 口径：海外只发过货、没有现场文档记录，而 About 的 FAQ 明写
+              documented references to date are domestic。所以这里不能叫 Global Projects /
+              Our Work Worldwide——那是「完成工程」的说法，跟 About 直接打架。
+              改成供货半径口径，数字也按业主给的 14 / 40+ / 25+ 收。 */}
+          <div class="meiyu-map-tl-tag">Global Delivery</div>
+          <div class="meiyu-map-tl-h">Where Our Panels <span>Ship</span></div>
         </div>
         <div class="meiyu-map-stats">
           <div>
@@ -1162,7 +1166,7 @@ const websiteJsonLd = {
             <div class="meiyu-map-st-num" id="meiyu-sP">0</div><div
               class="meiyu-map-st-lbl"
             >
-              Projects
+              Projects Supplied
             </div>
           </div>
           <div>
@@ -1276,28 +1280,15 @@ const websiteJsonLd = {
             </div><div class="core"></div>
           </div>
 
-          {/* 图例 */}
-          <div class="meiyu-map-legend">
-            <div class="meiyu-map-leg-i">
-              <div class="meiyu-map-leg-d" style="background:#C0A882"></div>50+
-              projects
-            </div>
-            <div class="meiyu-map-leg-i">
-              <div class="meiyu-map-leg-d" style="background:#DDD0B8">
-              </div>20–50
-            </div>
-            <div class="meiyu-map-leg-i">
-              <div class="meiyu-map-leg-d" style="background:#8C7B6E">
-              </div>&lt;20
-            </div>
-          </div>
+          {/* 图例已整块下线：原来三个色块按「50+ / 20–50 / <20 个项目」编码，
+              那是分项项目数的另一种写法。分项数按业主指令全删，图例留着就等于
+              从形状里把数字又请回来了。图钉大小只当版面层级看，不再对应任何量。 */}
 
           <!-- Tooltip -->
           <div class="meiyu-map-tip" id="meiyu-tip">
             <div class="meiyu-map-tip-reg" id="meiyu-tReg"></div>
             <div class="meiyu-map-tip-name" id="meiyu-tName"></div>
             <div class="meiyu-map-tip-meta" id="meiyu-tMeta"></div>
-            <span class="meiyu-map-tip-count" id="meiyu-tCount"></span>
           </div>
         </div>
 
@@ -1305,7 +1296,7 @@ const websiteJsonLd = {
         <div class="meiyu-map-panel">
           <div class="meiyu-map-p-head">
             <h3 id="meiyu-pReg">All Regions</h3>
-            <p id="meiyu-pDesc">Click a pin to explore projects</p>
+            <p id="meiyu-pDesc">Ship-to markets we serve</p>
           </div>
           <div class="meiyu-map-filters">
             <button class="meiyu-map-fb on" data-r="all">All</button>
@@ -1321,7 +1312,7 @@ const websiteJsonLd = {
               买家看完地图想查实绩，点下去只会被弹回页顶。 */
           }
           <a class="meiyu-map-cta" href="/project-gallery/"
-            ><span>View All Case Studies →</span></a
+            ><span>Browse the Project Gallery →</span></a
           >
         </div>
       </div>
@@ -2814,38 +2805,8 @@ const websiteJsonLd = {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.45);
   }
-  .meiyu-map-tip-count {
-    display: inline-block;
-    margin-top: 8px;
-    background: rgba(192, 168, 130, 0.12);
-    border: 1px solid rgba(192, 168, 130, 0.3);
-    color: #c0a882;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-
-  .meiyu-map-legend {
-    position: absolute;
-    bottom: 14px;
-    left: 16px;
-    display: flex;
-    gap: 14px;
-    z-index: 5;
-  }
-  .meiyu-map-leg-i {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.45);
-  }
-  .meiyu-map-leg-d {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-  }
+  /* .meiyu-map-tip-count 与 .meiyu-map-legend 三条规则随分项项目数一起下线（2026-11-12）：
+     tooltip 不再有 count，图例的三档项目数也已删除，留着就是无人引用的死样式。 */
 
   .meiyu-map-panel {
     width: 320px;
@@ -3011,7 +2972,7 @@ const websiteJsonLd = {
 </style>
 
 <script>
-import { startHomeMediaLoader } from "../lib/homeMediaLoader";
+  import { startHomeMediaLoader } from "../lib/homeMediaLoader";
 
   /* 首页「什么时候下载什么」的全部逻辑在 src/lib/homeMediaLoader.ts（T6，2026-11-08）。
      这里只负责调用一次；页面其余脚本（世界地图等）与本文件无关。
@@ -3019,91 +2980,13 @@ import { startHomeMediaLoader } from "../lib/homeMediaLoader";
   startHomeMediaLoader();
 
   /* ===== Global Map Section ===== */
-  const DB: Record<string, { n: string; c: string; t: string; r?: string }[]> =
-    {
-      all: [
-        {
-          n: "Guangzhou Finance Center",
-          c: "Guangzhou, CN",
-          t: "Facade Panel",
-          r: "cn",
-        },
-        {
-          n: "Dubai Mall Expansion",
-          c: "Dubai, UAE",
-          t: "Ceiling System",
-          r: "me",
-        },
-        {
-          n: "Singapore Changi T5",
-          c: "Singapore",
-          t: "Acoustic Ceiling",
-          r: "sea",
-        },
-        {
-          n: "Berlin Office Tower",
-          c: "Berlin, DE",
-          t: "Curtain Wall",
-          r: "eu",
-        },
-        {
-          n: "Sydney Convention Ctr",
-          c: "Sydney, AU",
-          t: "Facade Panel",
-          r: "au",
-        },
-        {
-          n: "Shenzhen Bay HQ",
-          c: "Shenzhen, CN",
-          t: "Decorative Screen",
-          r: "cn",
-        },
-        {
-          n: "Abu Dhabi Cultural Hub",
-          c: "Abu Dhabi, UAE",
-          t: "Facade Panel",
-          r: "me",
-        },
-        {
-          n: "KL Tower Renovation",
-          c: "Kuala Lumpur, MY",
-          t: "Ceiling System",
-          r: "sea",
-        },
-      ],
-      cn: [
-        {
-          n: "Guangzhou Finance Center",
-          c: "Guangzhou, CN",
-          t: "Facade Panel",
-        },
-        { n: "Shenzhen Bay HQ", c: "Shenzhen, CN", t: "Decorative Screen" },
-        { n: "Shanghai Bund Plaza", c: "Shanghai, CN", t: "Curtain Wall" },
-      ],
-      me: [
-        { n: "Dubai Mall Expansion", c: "Dubai, UAE", t: "Ceiling System" },
-        { n: "Abu Dhabi Cultural Hub", c: "Abu Dhabi, UAE", t: "Facade Panel" },
-        { n: "Riyadh Metro Station", c: "Riyadh, SA", t: "Acoustic Ceiling" },
-      ],
-      sea: [
-        { n: "Singapore Changi T5", c: "Singapore", t: "Acoustic Ceiling" },
-        {
-          n: "KL Tower Renovation",
-          c: "Kuala Lumpur, MY",
-          t: "Ceiling System",
-        },
-      ],
-      eu: [
-        { n: "Berlin Office Tower", c: "Berlin, DE", t: "Curtain Wall" },
-        { n: "Amsterdam Arena Roof", c: "Amsterdam, NL", t: "Facade Panel" },
-      ],
-      au: [{ n: "Sydney Convention Ctr", c: "Sydney, AU", t: "Facade Panel" }],
-      na: [{ n: "Toronto Mixed-Use", c: "Toronto, CA", t: "Facade Panel" }],
-      af: [{ n: "Lagos Business Hub", c: "Lagos, NG", t: "Ceiling System" }],
-      sa: [
-        { n: "São Paulo Tower", c: "São Paulo, BR", t: "Decorative Screen" },
-      ],
-    };
+  /* 这里原来是一份 DB：八个区域下挂着十多个具名项目，全是可查的真实地标建筑名。
+     业主 2026-11-12 定的口径是「海外只发过货，没有现场文档记录」，About 的 FAQ 也明写
+     documented references to date are domestic——把可查地标写成我方工程，买家一搜就穿，
+     竞品也会拿它说事。所以整块撤下，右侧面板改由下面 TD 的 ship-to 城市清单驱动；
+     等业主给到真实项目资料，再按城市逐条加回（一次只加有凭据的）。
+     这里故意不复列那些名字：注释里点名它们，下一轮 grep 会把它们当成仍在生效的宣称。 */
+
   const RN: Record<string, string> = {
     all: "All Regions",
     cn: "China",
@@ -3115,73 +2998,72 @@ import { startHomeMediaLoader } from "../lib/homeMediaLoader";
     af: "Africa",
     sa: "South America",
   };
-  const TD: Record<
-    string,
-    { reg: string; name: string; meta: string; count: string }
-  > = {
+  const TD: Record<string, { reg: string; name: string; meta: string }> = {
     cn: {
       reg: "EAST ASIA",
-      name: "China Projects",
+      name: "China",
       meta: "Foshan · Shenzhen · Guangzhou · Shanghai",
-      count: "80+ Projects",
     },
     me: {
       reg: "MIDDLE EAST",
-      name: "Middle East Projects",
+      name: "Middle East",
       meta: "Dubai · Abu Dhabi · Riyadh",
-      count: "55+ Projects",
     },
     sea: {
       reg: "SOUTHEAST ASIA",
-      name: "SE Asia Projects",
+      name: "SE Asia",
       meta: "Singapore · Kuala Lumpur · Bangkok",
-      count: "30+ Projects",
     },
     eu: {
       reg: "EUROPE",
-      name: "Europe Projects",
+      name: "Europe",
       meta: "Berlin · Amsterdam · Paris",
-      count: "25+ Projects",
     },
     au: {
       reg: "OCEANIA",
-      name: "Australia Projects",
+      name: "Australia",
       meta: "Sydney · Melbourne",
-      count: "12+ Projects",
     },
     na: {
       reg: "NORTH AMERICA",
-      name: "N. America Projects",
+      name: "N. America",
       meta: "Toronto · Los Angeles",
-      count: "10+ Projects",
     },
     af: {
       reg: "AFRICA",
-      name: "Africa Projects",
+      name: "Africa",
       meta: "Lagos · Nairobi",
-      count: "8+ Projects",
     },
     sa: {
       reg: "SOUTH AMERICA",
-      name: "S. America Projects",
+      name: "S. America",
       meta: "São Paulo · Buenos Aires",
-      count: "6+ Projects",
     },
   };
 
+  /* 面板列表 = TD 里的 ship-to 城市，不再有任何具名项目与分项项目数。 */
   function renderMap(r: string) {
-    const d = DB[r] || DB.all;
+    const keys = r === "all" ? Object.keys(TD) : [r];
+    const rows: { city: string; region: string }[] = [];
+    for (const k of keys) {
+      const d = TD[k];
+      if (!d) continue;
+      const region = RN[k] || d.reg;
+      for (const city of d.meta.split(" · ")) {
+        rows.push({ city: city.trim(), region });
+      }
+    }
     const clist = document.getElementById("meiyu-clist");
     if (clist) {
-      clist.innerHTML = d
+      clist.innerHTML = rows
         .map(
           (c, i) => `
         <div class="meiyu-map-cc ${i === 0 ? "on" : ""}">
           <div class="meiyu-map-cc-dot"></div>
           <div style="min-width:0;flex:1">
-            <div class="meiyu-map-cc-name">${c.n}</div>
-            <div class="meiyu-map-cc-meta">${c.c}</div>
-            <span class="meiyu-map-cc-tag">${c.t}</span>
+            <div class="meiyu-map-cc-name">${c.city}</div>
+            <div class="meiyu-map-cc-meta">${c.region}</div>
+            <span class="meiyu-map-cc-tag">Ship-to market</span>
           </div>
         </div>`,
         )
@@ -3192,7 +3074,10 @@ import { startHomeMediaLoader } from "../lib/homeMediaLoader";
     if (pReg) pReg.textContent = RN[r] || "All Regions";
     if (pDesc)
       pDesc.textContent =
-        d.length + " project" + (d.length > 1 ? "s" : "") + " in this region";
+        rows.length +
+        " ship-to market" +
+        (rows.length > 1 ? "s" : "") +
+        (r === "all" ? " listed" : " in this region");
   }
   renderMap("all");
 
@@ -3206,11 +3091,9 @@ import { startHomeMediaLoader } from "../lib/homeMediaLoader";
       const tReg = document.getElementById("meiyu-tReg");
       const tName = document.getElementById("meiyu-tName");
       const tMeta = document.getElementById("meiyu-tMeta");
-      const tCount = document.getElementById("meiyu-tCount");
       if (tReg) tReg.textContent = d.reg;
       if (tName) tName.textContent = d.name;
       if (tMeta) tMeta.textContent = d.meta;
-      if (tCount) tCount.textContent = d.count;
       tip.classList.add("on");
     });
     p.addEventListener("mousemove", (e) => {
@@ -3257,7 +3140,7 @@ import { startHomeMediaLoader } from "../lib/homeMediaLoader";
       if (v >= end) clearInterval(t);
     }, 28);
   }
-  anim("meiyu-sC", 38);
-  anim("meiyu-sP", 240, "+");
-  anim("meiyu-sK", 120, "+");
+  anim("meiyu-sC", 14);
+  anim("meiyu-sP", 40, "+");
+  anim("meiyu-sK", 25, "+");
 </script>

@@ -30,10 +30,33 @@ BANNED = [
     "virtually indistinguishable", # 木纹转印的过度承诺
     "standard suspended ceiling grid",  # U 型方通走龙骨，不是 T 型格栅
     "1500mm × 6000mm",             # 板幅上限已统一 2000 × 6000
+    # 2026-11-12 海外口径：只发过货、无现场文档记录。业主当次授权 14 / 40+ / 25+。
+    # 前三条是「完成工程」说法；后三条是旧计数器值，它们在 JS 里，本闸门也扫 JS。
+    "Our Work, Worldwide",
+    "Global Projects",              # 地图区标题，已改 Global Delivery
+    "View All Case Studies",
+    "Our Global Portfolio",
+    # 计数器旧值 38 / 240 / 120 不在这里：压缩后 `anim("meiyu-sC", 38)` 会变成
+    # `A(`meiyu-sC`,14)`——函数名被改、双引号变反引号、空格被删，
+    # 字符串字面量匹配不到。它们移到下面 BANNED_RE 用正则查。
+    # 可查的真实地标写成我方项目——全站最危的一类假参考，已全部下线。
+    # 注释里也不许出现这些词，所以本列表就是它们在这一仓里唯一的存活处。
+    "Dubai Mall Expansion", "Singapore Changi", "Riyadh Metro",
+    "Amsterdam Arena", "Sydney Convention", "Shanghai Bund Plaza",
+    "Guangzhou Finance Center", "Toronto Mixed-Use", "Lagos Business Hub",
+    "São Paulo Tower", "KL Tower Renovation", "Abu Dhabi Cultural Hub",
 ]
 for i, a in enumerate(sys.argv):
     if a == "--extra" and i + 1 < len(sys.argv):
         BANNED.append(sys.argv[i + 1])
+
+# 需要正则才能拦住的那些：只锚住「不会变的部分」（元素 id + 数字），
+# 引号、函数名、空格都按可能变形处理。实测压缩后形态：A(`meiyu-sC`,14)
+BANNED_RE = [
+    (re.compile(r"meiyu-sC[`\"]?,\s*38"), "Countries 计数器回潮 38（已改 14）"),
+    (re.compile(r"meiyu-sP[`\"]?,\s*240"), "Projects 计数器回潮 240（已改 40）"),
+    (re.compile(r"meiyu-sK[`\"]?,\s*120"), "Cities 计数器回潮 120（已改 25）"),
+]
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
 root = Path("dist")
@@ -47,6 +70,9 @@ for f in files:
     for w in BANNED:
         if w in src:
             phrase_hits.append((f.as_posix(), w))
+    for pat, why in BANNED_RE:
+        if pat.search(src):
+            phrase_hits.append((f.as_posix(), why))
     if f.suffix != ".html":
         continue
     # 可见文本：先剔除 script/style（其中内容不是可见文字），再剥标签
@@ -75,7 +101,8 @@ if phrase_hits:
     for path, w in phrase_hits[:12]:
         print("   · %s 含 %r" % (path, w))
 else:
-    print("✅ %d 条否决措辞在产物里全部归零" % len(BANNED))
+    print("✅ %d 条否决措辞 + %d 条正则否决式在产物里全部归零"
+          % (len(BANNED), len(BANNED_RE)))
 
 ok = not html_leaks and not phrase_hits
 print("\n结论：%s" % ("闸门通过" if ok else "有项需修，勿部署"))
