@@ -13,10 +13,14 @@ videos 的正文与 JSON 字段里，而 anon key 写不进 posts，所以每次
    就是漏改。新增否决项时往 PATTERNS 加，别靠记忆。
 2) 产品级 enriched_specs 覆盖品类层（仅报告，不影响退出码）。productKnowledge.ts 是
    品类层，产品行自己的 specs 优先级更高——改了品类层却发现页面没变，八成是被挡住了。
+
+还有第三类（仅报告）：幅面类规格行没写出公司级上限。评审 F03 的根因就是这一类——
+它不是写错数字，而是正文有上限、规格表只给常规档，字符串黑名单对「缺失」无能为力。
 """
 import csv
 import json
 import os
+import re
 import sys
 import urllib.request
 
@@ -43,6 +47,13 @@ PATTERNS = [
                                 "15 in-house lines", "established 2011", "established in 2011",
                                 "founded in 2011", "Since 2011", "since 2011", "Est. 2011",
                                 "15 条产线", "15 条生产线"]),
+    # 2026-11-12 板幅上限。附录 A 统一公司级上限 2000 × 6000 mm，作废值 1500 × 6000
+    # 曾藏在 aluminum-wall-panels 的停放**中文行**里——中文行不渲染，所以 dist-leak-gate
+    # 看不到它，只有数据库层能拦住。只列「1500 与 6000 成对」的写法，避免误伤：
+    # 蜂窝幕墙板的 1500–1800 mm wide and 3000–6000 mm long、吊顶模块 600 × 1500、
+    # 曲面板 1500 × 4000 都是附录 A 允许的带工程理由上限，不是漏改。
+    ("作废板幅上限（2026-11-12）", ["1500mm × 6000mm", "1500 × 6000 mm", "1500×6000",
+                              "1,500 × 6,000", "1500 x 6000", "1500mmx6000mm"]),
     ("作废联系方式/旧全称", ["info@meiyualuminum", "MEIYU Aluminum Co., Ltd."]),
     ("未授权费用承诺", ["free sample", "Free sample", "免费样品", "at no cost"]),
     ("无报告防火断言", ["A2-s1,d0 certified", "A2 fire rating", "non-combustible A2"]),
@@ -97,6 +108,12 @@ def ident_of(row):
             or str(row.get("id")))
 
 
+# 幅面类规格行的标签特征（附录 A【最大板幅】）。故意不收 module size / unit size /
+# curved length 这类——吊顶模块与百叶箱体不吃板幅上限，把它们列进来只会造常年噪音。
+FORMAT_LABEL = re.compile(r"(format|板幅|panel size)", re.I)
+CAP_MENTION = re.compile(r"2[\s,]?0[\s,]?0[\s,]?0\s*[×x]\s*6[\s,]?0[\s,]?0[\s,]?0", re.I)
+
+
 def main():
     to_csv = None
     if "--csv" in sys.argv:
@@ -106,7 +123,7 @@ def main():
         to_csv = sys.argv[i + 1]
 
     base, key = load_env()
-    hits, shadowed, scanned = [], [], 0
+    hits, shadowed, nocap, scanned = [], [], [], 0
     for table in ("products", "pages", "posts", "videos", "categories"):
         try:
             rows = sb_get(base, key, table)
@@ -136,6 +153,13 @@ def main():
                         es = None
                 if isinstance(es, dict) and es.get("specs"):
                     shadowed.append((ident, len(es["specs"])))
+                    # 按产品聚合：只要该行集合里任何一处写过公司上限就算覆盖
+                    # （蜂窝板那类用单独一行 Maximum Single Piece 表达）。
+                    fmt = [s for s in es["specs"]
+                           if FORMAT_LABEL.search(s.get("label", ""))]
+                    if fmt and not any(CAP_MENTION.search(s.get("value", ""))
+                                       for s in es["specs"]):
+                        nocap.append((ident, " / ".join(s.get("label", "") for s in fmt)))
 
     unexpected = [h for h in hits if not h[6]]
     allowed = [h for h in hits if h[6]]
@@ -162,6 +186,16 @@ def main():
               "（改品类层时页面不会变）：")
         for ident, n in sorted(shadowed):
             print("   · %-40s %d 行" % (ident, n))
+
+    if nocap:
+        # 已知应继续亮着的一项：insulated-facade-panel。附录 A【产品线】只授权了铝皮
+        # 复合工艺本身，未给该线的幅面数据，拿公司级上限去填就是替厂里认下一个
+        # 没确认的能力。业主哪天确认了夹芯板的可成幅面，这行就该消失。
+        print("\nℹ 有幅面类规格行但全页未写出公司级上限 2000 × 6000 mm（评审 F03 型缺口，仅提示）："
+              "\n   若该产品确实有更小的工程上限（蜂窝板总厚、曲面板弯曲半径），把理由写在那一行里；"
+              "\n   否则就是只写了常规档、买家从规格表拿不到上限：")
+        for ident, labs in sorted(nocap):
+            print("   · %-34s %s" % (ident[:34], labs[:60]))
 
     if to_csv:
         with open(to_csv, "w", newline="", encoding="utf-8-sig") as f:

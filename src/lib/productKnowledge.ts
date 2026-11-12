@@ -98,7 +98,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         technicalSpecs: [
             { label: "Material", value: "AA1100 / AA3003 / AA5005 Aluminum Alloy" },
             { label: "Panel Thickness", value: "Our standard range 0.8–1.5 mm; facade gauges of 1.5 / 2.0 / 2.5 / 3.0 mm produced to the specified drawing" },
-            { label: "Panel Format", value: "Cut to project drawing — no fixed module for facade veneer" },
+            { label: "Panel Format", value: "Cut to project drawing — no fixed module for facade veneer; single pieces up to our 2000 × 6000 mm company ceiling" },
             { label: "Weight", value: "≈ gauge (mm) × 2.7 kg/m² — 2.0 mm ≈ 5.4, 3.0 mm ≈ 8.1 kg/m²" },
             { label: "Tensile Strength", value: "AA3003-H24 nominal ≈ 130 MPa minimum (material property, not a design value)" },
             { label: "Yield Strength", value: "AA3003-H24 nominal ≈ 115 MPa (material property, not a design value)" },
@@ -868,7 +868,7 @@ export const productKnowledge: Record<string, ProductKnowledge> = {
         ],
         technicalSpecs: [
             { label: "Material", value: "AA3003 / AA5005 aluminium; our standard sheet range 0.8–1.5 mm, heavier facade gauges to the specified drawing" },
-            { label: "Panel Format", value: "Cut to the project drawing; 300 × 300 to 600 × 1200 mm is our standard working envelope, larger modules are a project decision" },
+            { label: "Panel Format", value: "Cut to the project drawing; 300 × 300 to 600 × 1200 mm is our standard working envelope, and the single-piece bound is our 2000 × 6000 mm company ceiling — on a cored panel the practical limit is the total thickness, the skin gauge and how it is lifted, so larger areas are a designed split" },
             { label: "Edge / Form", value: "Cassette folds, welded returns and square-corner mitres per the elevation; curved panels formed to the model" },
             { label: "Weight", value: "gauge (mm) × 2.7 kg/m² — 1.0 mm ≈ 2.7, 1.5 mm ≈ 4.05 kg/m² of skin [calculated at 2 700 kg/m³]; add core and rear layer for a sandwich" },
             { label: "Fire", value: "Aluminium is not a fuel. Our declarations are ASTM E84 Class A and EN 13501-1 B-s1,d0; a cored build-up is classified as an assembly, and an A2 declaration needs a test report for that exact construction — we do not quote a class we have not tested" },
